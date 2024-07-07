@@ -19,6 +19,12 @@
           "buildTarget": "quick-test-backend:build:production"
         }
       }
+    },
+    "dev": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "quick-test-backend:build:development"
+      }
     }
   }
 }
