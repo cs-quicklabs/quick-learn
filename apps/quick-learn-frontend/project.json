@@ -1,0 +1,9 @@
+{
+  "name": "quick-learn-frontend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/quick-learn-frontend",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project quick-learn-frontend --web",
+  "targets": {}
+}

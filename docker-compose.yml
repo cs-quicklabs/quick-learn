@@ -1,5 +1,5 @@
 services:
-  quick-test:
+  quick-learn:
     image: postgres:16
     ports:
       - 5500:5432
@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: root@123
       POSTGRES_DB: bugplot
     networks:
-      - quick-test
+      - quick-learn
 
 networks:
-  quick-test:
+  quick-learn:

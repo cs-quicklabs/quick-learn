@@ -1,7 +1,7 @@
 {
-  "name": "quick-test-backend",
+  "name": "quick-learn-backend",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/quick-test-backend/src",
+  "sourceRoot": "apps/quick-learn-backend/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -9,21 +9,21 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "quick-test-backend:build"
+        "buildTarget": "quick-learn-backend:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "quick-test-backend:build:development"
+          "buildTarget": "quick-learn-backend:build:development"
         },
         "production": {
-          "buildTarget": "quick-test-backend:build:production"
+          "buildTarget": "quick-learn-backend:build:production"
         }
       }
     },
     "dev": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "quick-test-backend:build:development"
+        "buildTarget": "quick-learn-backend:build:development"
       }
     }
   }

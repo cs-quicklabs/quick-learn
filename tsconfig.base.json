@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@quick-test/shared": ["lib/shared/src/index.ts"]
+      "@quick-learn/shared": ["lib/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
