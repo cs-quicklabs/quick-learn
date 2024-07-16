@@ -1,8 +1,8 @@
 import { registerAs } from "@nestjs/config";
-import { EnvironmentEnum } from "@src/common/constants/constants";
+import { EnvironmentEnum } from "../../src/common/constants/constants";
 import { IsEnum, IsInt, IsOptional, IsString, IsUrl, Max, Min } from "class-validator";
 import { AppConfig } from "./app-config";
-import validateConfig from "@src/common/utils/validate-config";
+import validateConfig from "../../src/common/utils/validate-config";
 
 class EnvironmentVariablesValidator {
   @IsEnum(EnvironmentEnum)

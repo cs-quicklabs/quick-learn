@@ -11,10 +11,7 @@
     "removeComments": true,
     "sourceMap": true,
     "baseUrl": "./",
-    "noImplicitAny": false,
-    "paths": {
-      "@src/*": ["src/*"]
-    }
+    "noImplicitAny": false
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
   "include": ["src/**/*.ts"]

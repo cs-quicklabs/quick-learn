@@ -5,6 +5,21 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "buildTarget": "quick-learn-backend:build",
+        "tsConfig": "apps/quick-learn-backend/tsconfig.app.json",
+        "outputPath": "dist/apps/quick-learn-backend/",
+        "main": "apps/quick-learn-backend/src/main.ts",
+        "assets": [
+          "apps/quick-learn-backend/assets"
+        ]
+      }
+    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
@@ -24,6 +39,61 @@
       "executor": "@nx/js:node",
       "options": {
         "buildTarget": "quick-learn-backend:build:development"
+      }
+    },
+    "migration:run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/quick-learn-backend/",
+        "nodeOptions": "-r ts-node/register -r tsconfig-paths/register",
+        "node": true,
+        "watch": false,
+        "environment": {
+          "NODE_SERVICE": "cli"
+        },
+        "command": "typeorm -- --dataSource=src/database/data-source.ts migration:run"
+      }
+    },
+    "migration:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/quick-learn-backend/",
+        "nodeOptions": "-r ts-node/register -r tsconfig-paths/register",
+        "node": true,
+        "watch": false,
+        "environment": {
+          "NODE_SERVICE": "cli"
+        },
+        "command": "typeorm -- --dataSource=src/database/data-source.ts migration:generate"
+      }
+    },
+    "migration:create": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/quick-learn-backend/",
+        "nodeOptions": "-r ts-node/register -r tsconfig-paths/register",
+        "node": true,
+        "watch": false,
+        "environment": {
+          "NODE_SERVICE": "cli"
+        },
+        "command": "typeorm migration:create src/database/migrations/{args.name}",
+        "args": [
+          "--name=migration"
+        ]
+      }
+    },
+    "migration:revert": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/quick-learn-backend/",
+        "nodeOptions": "-r ts-node/register -r tsconfig-paths/register",
+        "node": true,
+        "watch": false,
+        "environment": {
+          "NODE_SERVICE": "cli"
+        },
+        "command": "typeorm -- --dataSource=src/database/data-source.ts migration:revert"
       }
     }
   }

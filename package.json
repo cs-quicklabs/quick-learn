@@ -2,7 +2,9 @@
   "name": "@quick-learn/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "typeorm": "ts-node node_modules/typeorm/cli.js"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^10.0.2",

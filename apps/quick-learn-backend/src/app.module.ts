@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app/app.controller';
-import { AppService } from './app/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigModule } from '@nestjs/config';
 import databaseConfig from './database/config/database.config';
 import appConfig from './config/app.config';
+import { HealthCheckModule } from './routes';
 
 @Module({
   imports: [
@@ -20,8 +19,7 @@ import appConfig from './config/app.config';
         return new DataSource(options).initialize();
       },
     }),
+    HealthCheckModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule { }
