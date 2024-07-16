@@ -5,6 +5,9 @@ import { ApiOperation, ApiTags } from "@nestjs/swagger";
 @Controller()
 export class HealthCheckController {
 
+  /** API endpoint to server health.
+   * @returns a response body containing status.
+   */
   @Get('health-check')
   @ApiOperation({ summary: 'Checks if the server is running or not.' })
   @HttpCode(HttpStatus.OK)
