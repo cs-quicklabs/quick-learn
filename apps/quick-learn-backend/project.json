@@ -6,18 +6,21 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/webpack:webpack",
       "outputs": [
         "{options.outputPath}"
       ],
       "options": {
-        "buildTarget": "quick-learn-backend:build",
-        "tsConfig": "apps/quick-learn-backend/tsconfig.app.json",
-        "outputPath": "dist/apps/quick-learn-backend/",
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/quick-learn-backend",
         "main": "apps/quick-learn-backend/src/main.ts",
+        "tsConfig": "apps/quick-learn-backend/tsconfig.app.json",
         "assets": [
-          "apps/quick-learn-backend/assets"
-        ]
+          "apps/quick-learn-backend/src/assets"
+        ],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/quick-learn-backend/webpack.config.js"
       }
     },
     "serve": {
@@ -43,57 +46,38 @@
     },
     "migration:run": {
       "executor": "nx:run-commands",
+      "outputs": [],
       "options": {
-        "cwd": "apps/quick-learn-backend/",
-        "nodeOptions": "-r ts-node/register -r tsconfig-paths/register",
-        "node": true,
-        "watch": false,
-        "environment": {
-          "NODE_SERVICE": "cli"
-        },
-        "command": "typeorm -- --dataSource=src/database/data-source.ts migration:run"
+        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:run -d src/database/data-source.ts",
+        "cwd": "apps/quick-learn-backend",
+        "envFile": "apps/quick-learn-backend/.env.dev"
       }
     },
     "migration:generate": {
       "executor": "nx:run-commands",
+      "outputs": [],
       "options": {
-        "cwd": "apps/quick-learn-backend/",
-        "nodeOptions": "-r ts-node/register -r tsconfig-paths/register",
-        "node": true,
-        "watch": false,
-        "environment": {
-          "NODE_SERVICE": "cli"
-        },
-        "command": "typeorm -- --dataSource=src/database/data-source.ts migration:generate"
+        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:generate -d src/database/data-source.ts src/database/migrations/migration",
+        "cwd": "apps/quick-learn-backend",
+        "envFile": "apps/quick-learn-backend/.env.dev"
       }
     },
     "migration:create": {
       "executor": "nx:run-commands",
+      "outputs": [],
       "options": {
-        "cwd": "apps/quick-learn-backend/",
-        "nodeOptions": "-r ts-node/register -r tsconfig-paths/register",
-        "node": true,
-        "watch": false,
-        "environment": {
-          "NODE_SERVICE": "cli"
-        },
-        "command": "typeorm migration:create src/database/migrations/{args.name}",
-        "args": [
-          "--name=migration"
-        ]
+        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:create src/database/migrations/migration",
+        "cwd": "apps/quick-learn-backend",
+        "envFile": "apps/quick-learn-backend/.env.dev"
       }
     },
     "migration:revert": {
       "executor": "nx:run-commands",
+      "outputs": [],
       "options": {
-        "cwd": "apps/quick-learn-backend/",
-        "nodeOptions": "-r ts-node/register -r tsconfig-paths/register",
-        "node": true,
-        "watch": false,
-        "environment": {
-          "NODE_SERVICE": "cli"
-        },
-        "command": "typeorm -- --dataSource=src/database/data-source.ts migration:revert"
+        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:revert -d src/database/data-source.ts",
+        "cwd": "apps/quick-learn-backend",
+        "envFile": "apps/quick-learn-backend/.env.dev"
       }
     }
   }
