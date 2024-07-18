@@ -1,15 +1,15 @@
 import React from 'react';
-import Loginpagecomp from './Loginpagecomp';
+import Login from './components/Login';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Quick Learn :: Login',
+  title: 'Quick Learn: Login',
   description: 'Quick Learn from Crownstack',
 };
 const login = () => {
   return (
     <>
-      <Loginpagecomp />
+      <Login />
     </>
   );
 };
