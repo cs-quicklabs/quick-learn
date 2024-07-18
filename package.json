@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "typeorm": "ts-node node_modules/typeorm/cli.js"
+    "typeorm": "ts-node node_modules/typeorm/cli.js",
+    "dev": "npx nx run-many --target=dev --all=true "
   },
   "private": true,
   "dependencies": {
