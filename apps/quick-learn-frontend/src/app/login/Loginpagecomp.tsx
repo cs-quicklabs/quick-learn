@@ -1,5 +1,6 @@
 'use client';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 const Loginpagecomp = () => {
@@ -78,21 +79,21 @@ const Loginpagecomp = () => {
                       </label>
                     </div>
                   </div>
-                  <a
-                    href="#"
+                  <Link
+                    href="/forgot-password"
                     className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
-                <a href="/quick-learn/team">
+                <Link href="#">
                   <button
                     type="submit"
                     className="w-full mt-4 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                   >
                     Sign in
                   </button>
-                </a>
+                </Link>
               </form>
             </div>
           </div>
