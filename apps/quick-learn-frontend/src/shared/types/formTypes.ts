@@ -4,4 +4,5 @@ export interface FieldConfig {
   label: string;
   name: string;
   type: FieldType;
+  placeholder?: string;
 }

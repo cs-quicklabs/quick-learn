@@ -1,12 +1,13 @@
 import React from 'react';
-import Forgotpasswordcomp from './Forgotpasswordcomp';
+import AuthTemplate from '../../shared/pageTemplates/AuthTemplate';
+import ForgotPassword from './ForgotPassword';
 
-const forgotpassword = () => {
+const ForgotPasswordPage = () => {
   return (
-    <>
-      <Forgotpasswordcomp />
-    </>
+    <AuthTemplate>
+      <ForgotPassword />
+    </AuthTemplate>
   );
 };
 
-export default forgotpassword;
+export default ForgotPasswordPage;

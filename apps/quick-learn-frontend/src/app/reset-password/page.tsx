@@ -1,12 +1,13 @@
 import React from 'react';
-import Resetpasswordcomp from './Resetpasswordcomp';
+import AuthTemplate from '../../shared/pageTemplates/AuthTemplate';
+import Resetpasswordcomp from './ResetPasswordComponent';
 
-const resetpassword = () => {
+const ResetPasswordPage = () => {
   return (
-    <>
+    <AuthTemplate>
       <Resetpasswordcomp />
-    </>
+    </AuthTemplate>
   );
 };
 
-export default resetpassword;
+export default ResetPasswordPage;

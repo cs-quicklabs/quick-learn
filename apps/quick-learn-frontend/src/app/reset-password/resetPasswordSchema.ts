@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const loginFormSchema = z.object({
+export const resetPasswordFormSchema = z.object({
   email: z
     .string()
     .min(1, { message: 'This field is required' })

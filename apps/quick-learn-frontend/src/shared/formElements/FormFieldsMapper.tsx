@@ -35,6 +35,7 @@ function FormFieldsMapper<T extends z.ZodType<any, any>>({
           label={field.label}
           name={field.name}
           type={field.type}
+          placeholder={field.placeholder || ''}
           register={register}
           errorMsg={errors[field.name]?.message as string}
         />
