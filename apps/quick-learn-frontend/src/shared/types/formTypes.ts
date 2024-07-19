@@ -1,4 +1,4 @@
-export type FieldType = 'text' | 'email' | 'password' | 'number';
+export type FieldType = 'text' | 'email' | 'password' | 'checkbox';
 
 export interface FieldConfig {
   label: string;
