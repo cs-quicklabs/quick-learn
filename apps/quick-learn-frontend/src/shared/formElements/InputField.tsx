@@ -20,10 +20,10 @@ const InputField: FC<Props> = ({
   if (type === 'checkbox') {
     return (
       <div className="flex items-center space-x-2">
-        <button
+        <input
           id={name}
-          aria-describedby="remember"
-          className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+          type={type}
+          className="form-checkbox h-5 w-5 text-blue-600 rounded-full border-gray-300 focus:ring-blue-500"
           {...register(name)}
         />
         <div className="ml-3 text-sm">
