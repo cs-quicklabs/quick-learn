@@ -4,7 +4,7 @@ import AuthTemplate from '../shared/pageTemplates/AuthTemplate';
 import Login from './login/Login';
 
 export const metadata: Metadata = {
-  title: 'Quick Learn :: Login',
+  title: 'Quick Learn',
   description: 'Quick Learn from Crownstack',
 };
 const LoginPage = () => {

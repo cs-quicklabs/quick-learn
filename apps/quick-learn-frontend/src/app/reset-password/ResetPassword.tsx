@@ -23,7 +23,7 @@ const ResetPassword = () => {
   type ResetPasswordFormData = z.infer<typeof resetPasswordFormSchema>;
 
   const handleResetPassword = async (data: ResetPasswordFormData) => {
-    console.log('forgotPassword data:', data);
+    console.log('ResetPassword data:', data);
   };
   return (
     <FormFieldsMapper
