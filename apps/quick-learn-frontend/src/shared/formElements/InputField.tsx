@@ -55,7 +55,7 @@ const InputField: FC<Props> = ({
           type={showPassword ? 'text' : 'password'}
           className={`${className} pr-10 ${errorMsg ? 'border-red-500' : ''}`}
           placeholder={placeholder}
-          autoComplete={true}
+          autoComplete="true"
           {...register(name)}
         />
         {isFieldPassword && (
