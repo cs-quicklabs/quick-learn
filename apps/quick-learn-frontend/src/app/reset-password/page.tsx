@@ -1,11 +1,11 @@
 import React from 'react';
 import AuthTemplate from '../../shared/pageTemplates/AuthTemplate';
-import Resetpasswordcomp from './ResetPasswordComponent';
+import ResetPassword from './ResetPassword';
 
 const ResetPasswordPage = () => {
   return (
-    <AuthTemplate>
-      <Resetpasswordcomp />
+    <AuthTemplate title="Set your Password">
+      <ResetPassword />
     </AuthTemplate>
   );
 };

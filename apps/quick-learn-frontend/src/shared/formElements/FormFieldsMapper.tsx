@@ -28,7 +28,7 @@ function FormFieldsMapper<T extends z.ZodType<any, any>>({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       {fields.map((field) => (
         <InputField
           key={field.name}

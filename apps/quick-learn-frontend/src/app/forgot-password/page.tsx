@@ -4,7 +4,7 @@ import ForgotPassword from './ForgotPassword';
 
 const ForgotPasswordPage = () => {
   return (
-    <AuthTemplate>
+    <AuthTemplate title="Forgot your password?">
       <ForgotPassword />
     </AuthTemplate>
   );
