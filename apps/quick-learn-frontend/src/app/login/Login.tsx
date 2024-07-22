@@ -6,6 +6,7 @@ import React from 'react';
 import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
 import { z } from 'zod';
+import { RouteEnums } from '../../constants/route.enums';
 
 const Login = () => {
   const loginFields: FieldConfig[] = [
@@ -38,7 +39,7 @@ const Login = () => {
         buttonText="Sign In"
       />
       <Link
-        href="/forgot-password"
+        href={RouteEnums.FORGOT_PASSWORD}
         className="block text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
       >
         Forgot password?

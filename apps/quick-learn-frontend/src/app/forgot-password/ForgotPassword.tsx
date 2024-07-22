@@ -5,6 +5,7 @@ import { FieldConfig } from '../../shared/types/formTypes';
 import { z } from 'zod';
 import { forgotPasswordSchema } from './forgotPasswordSchema';
 import FormFieldsMapper from '../../shared/formElements/FormFieldsMapper';
+import { RouteEnums } from '../../constants/route.enums';
 
 const ForgotPassword = () => {
   const forgotPasswordFields: FieldConfig[] = [
@@ -31,7 +32,7 @@ const ForgotPassword = () => {
       <p className="text-sm font-light text-gray-500 dark:text-gray-400">
         Login to your account &nbsp;
         <Link
-          href="/login"
+          href={RouteEnums.LOGIN}
           className="font-medium text-primary-600 hover:underline dark:text-primary-500"
         >
           Sign in
