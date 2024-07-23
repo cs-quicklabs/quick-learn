@@ -5,7 +5,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigModule } from '@nestjs/config';
 import databaseConfig from './database/config/database.config';
 import appConfig from './config/app.config';
-import { HealthCheckModule } from './routes';
+import { HealthCheckModule, UsersModule } from './routes';
 
 @Module({
   imports: [
@@ -20,6 +20,7 @@ import { HealthCheckModule } from './routes';
       },
     }),
     HealthCheckModule,
+    UsersModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
