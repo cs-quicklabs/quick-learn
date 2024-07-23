@@ -33,25 +33,36 @@ export class UserEntity {
   @Column({ type: 'varchar' })
   password: string;
 
+<<<<<<< HEAD
   @Column({ type: 'varchar', length: 500, nullable: true })
   accessToken: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   refreshToken: string;
 
+=======
+>>>>>>> 71ee2d5 (seting entities and defining endpoints)
   @Column({ default: true })
   active: boolean;
 
   @Column({ default: true })
   alert_enabled: boolean;
 
+<<<<<<< HEAD
   @Column({ nullable: true })
+=======
+  @Column()
+>>>>>>> 71ee2d5 (seting entities and defining endpoints)
   team_id: number;
   @ManyToOne(() => TeamEntity, (team) => team.users)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 
+<<<<<<< HEAD
   @Column({ nullable: true })
+=======
+  @Column()
+>>>>>>> 71ee2d5 (seting entities and defining endpoints)
   user_type_id: number;
   @ManyToOne(() => UserTypeEntity, (user) => user.users)
   @JoinColumn({ name: 'user_type_id' })
