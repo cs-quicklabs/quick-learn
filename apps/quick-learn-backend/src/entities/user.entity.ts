@@ -39,13 +39,13 @@ export class UserEntity {
   @Column({ default: true })
   alert_enabled: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   team_id: number;
   @ManyToOne(() => TeamEntity, (team) => team.users)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 
-  @Column()
+  @Column({ nullable: true })
   user_type_id: number;
   @ManyToOne(() => UserTypeEntity, (user) => user.users)
   @JoinColumn({ name: 'user_type_id' })
