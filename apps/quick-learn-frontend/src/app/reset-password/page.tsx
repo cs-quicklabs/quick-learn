@@ -1,12 +1,19 @@
 import React from 'react';
-import Resetpasswordcomp from './Resetpasswordcomp';
+import AuthTemplate from '../../shared/pageTemplates/AuthTemplate';
+import ResetPassword from './ResetPassword';
+import { Metadata } from 'next';
 
-const resetpassword = () => {
+export const metadata: Metadata = {
+  title: 'Reset Password • Quick Learn',
+  description: 'Reset your password in Quick Learn from Crownstack',
+};
+
+const ResetPasswordPage = () => {
   return (
-    <>
-      <Resetpasswordcomp />
-    </>
+    <AuthTemplate title="Set your Password">
+      <ResetPassword />
+    </AuthTemplate>
   );
 };
 
-export default resetpassword;
+export default ResetPasswordPage;
