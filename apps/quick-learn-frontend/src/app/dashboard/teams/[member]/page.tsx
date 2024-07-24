@@ -6,7 +6,11 @@ export const metadata = {
 };
 
 const MemberPage = () => {
-  return <AddUpdateMemberPage />;
+  return (
+    <main className="mx-auto max-w-7xl p-4 sm:px-6 lg:px-8 lg:py-6">
+      <AddUpdateMemberPage />
+    </main>
+  );
 };
 
 export default MemberPage;

@@ -73,7 +73,9 @@ const Navbar = () => {
                   href={item.link}
                   className={
                     'inline-flex items-center rounded-md px-3 py-2 text-sm font-medium ' +
-                    (pathname == item.link
+                    ((item.link != RouteEnum.DASHBOARD &&
+                      pathname.includes(item.link)) ||
+                    item.link == pathname
                       ? 'bg-gray-500'
                       : 'hover:bg-gray-600 text-gray-200')
                   }
