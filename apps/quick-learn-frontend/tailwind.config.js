@@ -10,6 +10,7 @@ module.exports = {
       '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}',
     ),
     ...createGlobPatternsForDependencies(__dirname),
+    "../../node_modules/flowbite-react/lib/**/*.js"
   ],
   theme: {
     extend: {
@@ -22,5 +23,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('flowbite/plugin')
+  ],
 };
