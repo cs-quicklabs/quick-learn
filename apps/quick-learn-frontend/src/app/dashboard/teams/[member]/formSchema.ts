@@ -52,3 +52,37 @@ export const addMemberFormSchema = z.object({
   message: "Passwords don't match",
   path: ['confirm_password'],
 });
+
+
+export const editMemberFormSchema = z.object({
+  first_name: z
+    .string({
+      required_error: 'This field is required'
+    })
+    .min(1, { message: 'This field is required' })
+    .max(30, { message: 'This field should be less than or equal to 30' }),
+  last_name: z
+    .string({
+      required_error: 'This field is required'
+    })
+    .min(1, { message: 'This field is required' })
+    .max(30, { message: 'This field should be less than or equal to 30' }),
+  user_type_id: z
+    .string({
+      required_error: 'This field is required'
+    })
+    .min(1, { message: 'This field is required' }),
+  email: z
+    .string({
+      required_error: 'This field is required'
+    })
+    .min(1, { message: 'This field is required' })
+    .email({ message: 'Invalid email address' }),
+  skill_id: z
+    .string({
+      required_error: 'This field is required'
+    })
+    .min(1, { message: 'This field is required' }),
+  active: z
+    .string({ message: 'Invalid value' })
+});
