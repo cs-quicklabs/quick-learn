@@ -1,14 +1,16 @@
 'use client';
-import FormFieldsMapper from 'apps/quick-learn-frontend/src/shared/formElements/FormFieldsMapper';
-import { FieldConfig } from 'apps/quick-learn-frontend/src/shared/types/formTypes';
 
 import React from 'react';
+import FormFieldsMapper from 'apps/quick-learn-frontend/src/shared/formElements/FormFieldsMapper';
+import { FieldConfig } from 'apps/quick-learn-frontend/src/shared/types/formTypes';
 import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
-import { z } from 'zod';
 import { RouteEnum } from '../../constants/route.enum';
+import { LoginCredentials } from '../../shared/types/authTypes';
+import { useLogin } from '../../hooks/useAuth';
 
 const Login = () => {
+  const { loginUser, isLoading, error } = useLogin();
   const loginFields: FieldConfig[] = [
     {
       label: 'Email',
@@ -24,10 +26,14 @@ const Login = () => {
     },
     { label: 'Remember me', name: 'rememberMe', type: 'checkbox' },
   ];
-  type LoginFormData = z.infer<typeof loginFormSchema>;
 
-  const handleLogin = async (data: LoginFormData) => {
-    console.log('Login data:', data);
+  const handleLogin = async (data: LoginCredentials) => {
+    console.log(data);
+    try {
+      await loginUser(data);
+    } catch (err: any) {
+      console.error('Login failed:', err.message);
+    }
   };
 
   return (
@@ -36,6 +42,7 @@ const Login = () => {
         fields={loginFields}
         schema={loginFormSchema}
         onSubmit={handleLogin}
+        buttonDisabled={isLoading}
         buttonText="Sign In"
       />
       <Link
