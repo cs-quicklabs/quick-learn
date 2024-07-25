@@ -91,12 +91,20 @@
         ]
       }
     },
+    "format:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "prettier --check \"apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}\""
+        ]
+      }
+    },
     "lint-and-format:check": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "nx run quick-learn-backend:lint",
-          "prettier --check \"apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}\""
+          "nx run quick-learn-backend:format:check"
         ]
       }
     },

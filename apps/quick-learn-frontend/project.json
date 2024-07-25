@@ -17,12 +17,20 @@
         ]
       }
     },
+    "format:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "prettier --check \"apps/quick-learn-frontend/src/**/*.{ts,tsx,js,jsx}\""
+        ]
+      }
+    },
     "lint-and-format:check": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "nx run quick-learn-frontend:lint",
-          "prettier --check \"apps/quick-learn-frontend/src/**/*.{ts,tsx,js,jsx}\""
+          "nx run quick-learn-frontend:format:check"
         ]
       }
     },
