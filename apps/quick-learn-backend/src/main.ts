@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { setupSwagger } from './swagger';
 import { EnvironmentEnum } from './common/constants/constants';
 import { AppModule } from './app.module';
-import { ExceptionResponseFilter } from './common/filters/exception-response.filter';
+import { ExceptionResponseFilter } from './common/filters';
 import validationOptions from './common/utils/validation-options';
 import morgan from 'morgan';
 import helmet from 'helmet';
