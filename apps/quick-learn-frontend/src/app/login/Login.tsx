@@ -2,12 +2,14 @@
 import React from 'react';
 import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
-import { z } from 'zod';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { RouteEnum } from '@src/constants/route.enum';
+import { useLogin } from '../../hooks/useAuth';
+import { LoginCredentials } from '@src/shared/types/authTypes';
 
 const Login = () => {
+  const { loginUser, isLoading, error } = useLogin();
   const loginFields: FieldConfig[] = [
     {
       label: 'Email',
@@ -23,10 +25,14 @@ const Login = () => {
     },
     { label: 'Remember me', name: 'rememberMe', type: 'checkbox' },
   ];
-  type LoginFormData = z.infer<typeof loginFormSchema>;
 
-  const handleLogin = async (data: LoginFormData) => {
-    console.log('Login data:', data);
+  const handleLogin = async (data: LoginCredentials) => {
+    console.log(data);
+    try {
+      await loginUser(data);
+    } catch (err: any) {
+      console.error('Login failed:', err.message);
+    }
   };
 
   return (
@@ -35,6 +41,7 @@ const Login = () => {
         fields={loginFields}
         schema={loginFormSchema}
         onSubmit={handleLogin}
+        buttonDisabled={isLoading}
         buttonText="Sign In"
       />
       <Link

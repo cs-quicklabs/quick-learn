@@ -18,5 +18,5 @@ export const loginFormSchema = z.object({
     .regex(/[^A-Za-z0-9]/, {
       message: 'Password must contain at least one special character',
     }),
-  rememberMe: z.boolean().optional(),
+  rememberMe: z.boolean(),
 });

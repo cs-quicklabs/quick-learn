@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { FieldType } from '../types/formTypes';
+import { OpenEyeIcon, ClosedEyeIcon } from '../uiElements/formUIElements';
 
 interface Props {
   label?: string;
@@ -65,13 +65,7 @@ const InputField: FC<Props> = ({
             className="absolute inset-y-0 right-0 pr-3 flex items-center"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? (
-              //open eye icon
-              <EyeIcon aria-hidden="true" className="h-6 w-6" />
-            ) : (
-              //closed eye icon
-              <EyeSlashIcon aria-hidden="true" className="h-6 w-6" />
-            )}
+            {showPassword ? <OpenEyeIcon /> : <ClosedEyeIcon />}
           </button>
         )}
       </div>

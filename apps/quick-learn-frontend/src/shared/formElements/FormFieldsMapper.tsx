@@ -9,6 +9,7 @@ interface Props<T extends z.ZodType<any, any>> {
   fields: FieldConfig[];
   schema: T;
   onSubmit: (data: z.infer<T>) => void;
+  buttonDisabled?: boolean;
   buttonText?: string;
 }
 
@@ -18,6 +19,7 @@ function FormFieldsMapper<T extends z.ZodType<any, any>>({
   schema,
   onSubmit,
   buttonText = 'Submit',
+  buttonDisabled = false,
 }: Props<T>) {
   const {
     register,
@@ -42,6 +44,7 @@ function FormFieldsMapper<T extends z.ZodType<any, any>>({
       ))}
       <button
         type="submit"
+        disabled={buttonDisabled}
         className="w-full mt-4 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
       >
         {buttonText}
