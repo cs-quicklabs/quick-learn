@@ -1,10 +1,9 @@
-import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Health Check')
 @Controller()
 export class HealthCheckController {
-
   /** API endpoint to server health.
    * @returns a response body containing status.
    */

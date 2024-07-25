@@ -22,4 +22,4 @@ import { HealthCheckModule } from './routes';
     HealthCheckModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
