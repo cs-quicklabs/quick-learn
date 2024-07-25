@@ -24,7 +24,7 @@ jobs:
         run: npx nx lint quick-learn-backend
 
       - name: Check formatting
-        run: npx nx format:check quick-learn-backend
+        run: npx nx run quick-learn-backend:format:check
 
   lint-frontend:
     runs-on: ubuntu-22.04
@@ -43,4 +43,4 @@ jobs:
         run: npx nx lint quick-learn-frontend
 
       - name: Check formatting
-        run: npx nx format:check quick-learn-frontend
+        run: npx nx run quick-learn-frontend:format:check
