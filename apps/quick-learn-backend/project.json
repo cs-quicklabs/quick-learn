@@ -79,6 +79,42 @@
         "cwd": "apps/quick-learn-backend",
         "envFile": "apps/quick-learn-backend/.env.dev"
       }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "format:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "prettier --check \"apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}\""
+        ]
+      }
+    },
+    "lint-and-format:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run quick-learn-backend:lint",
+          "nx run quick-learn-backend:format:check"
+        ]
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "prettier --write \"apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}\""
+        ]
+      }
     }
   }
 }

@@ -1,7 +1,14 @@
-import { registerAs } from "@nestjs/config";
-import { IsBoolean, IsInt, IsOptional, IsString, Max, Min } from "class-validator";
-import { DatabaseConfig } from "./database-config.type";
-import validateConfig from "@src/common/utils/validate-config";
+import { registerAs } from '@nestjs/config';
+import {
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
+import { DatabaseConfig } from './database-config.type';
+import validateConfig from '@src/common/utils/validate-config';
 
 class EnvironmentVariablesValidator {
   @IsString()
