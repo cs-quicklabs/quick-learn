@@ -21,10 +21,10 @@ jobs:
         run: npm ci
 
       - name: Run lint
-        run: npx nx lint quick-learn-backend
+        run: npx nx lint quick-learn-backend --max-warnings=0
 
       - name: Check formatting
-        run: npx nx run quick-learn-backend:format:check
+        run: npx nx run quick-learn-backend:format:check --max-warnings=0
 
   lint-frontend:
     runs-on: ubuntu-22.04
@@ -40,7 +40,7 @@ jobs:
         run: npm ci
 
       - name: Run lint
-        run: npx nx lint quick-learn-frontend
+        run: npx nx lint quick-learn-frontend --max-warnings=0
 
       - name: Check formatting
-        run: npx nx run quick-learn-frontend:format:check
+        run: npx nx run quick-learn-frontend:format:check --max-warnings=0
