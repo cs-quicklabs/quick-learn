@@ -43,7 +43,7 @@ const Login = () => {
     } catch (error) {
       console.error('Login failed:', error);
       // TBD: Need to fix error messages
-      // toast.error('Login Failed: ',error.);
+      // toast.error(`Login Failed: ${error}`);
       toast.error('Unauthorized Creds!');
     }
   };
