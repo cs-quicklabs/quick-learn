@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
-import { FieldConfig } from '../../shared/types/formTypes';
-import { resetPasswordFormSchema } from './resetPasswordSchema';
 import { z } from 'zod';
-import FormFieldsMapper from '../../shared/formElements/FormFieldsMapper';
+import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
+import { FieldConfig } from '@src/shared/types/formTypes';
+import { resetPasswordFormSchema } from './resetPasswordSchema';
 
 const ResetPassword = () => {
   const resetPasswordFields: FieldConfig[] = [

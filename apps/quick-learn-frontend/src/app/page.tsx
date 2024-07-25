@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-import AuthTemplate from '../shared/pageTemplates/AuthTemplate';
+import AuthTemplate from '@src/shared/pageTemplates/AuthTemplate';
 import Login from './login/Login';
 
 export const metadata: Metadata = {

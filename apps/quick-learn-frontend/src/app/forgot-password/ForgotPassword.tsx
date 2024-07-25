@@ -1,11 +1,11 @@
 'use client';
+import { z } from 'zod';
 import Link from 'next/link';
 import React from 'react';
-import { FieldConfig } from '../../shared/types/formTypes';
-import { z } from 'zod';
 import { forgotPasswordSchema } from './forgotPasswordSchema';
-import FormFieldsMapper from '../../shared/formElements/FormFieldsMapper';
-import { RouteEnum } from '../../constants/route.enum';
+import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
+import { RouteEnum } from '@src/constants/route.enum';
+import { FieldConfig } from '@src/shared/types/formTypes';
 
 const ForgotPassword = () => {
   const forgotPasswordFields: FieldConfig[] = [

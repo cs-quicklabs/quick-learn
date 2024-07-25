@@ -16,7 +16,10 @@
         "name": "next"
       }
     ],
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "paths": {
+      "@src/*": ["apps/quick-learn-frontend/src/*"]
+    }
   },
   "include": [
     "**/*.ts",

@@ -4,6 +4,8 @@ import { ErrorMessage, Formik, FormikProps } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { RouteEnum } from '@src/constants/route.enum';
 
 //IMemberFieldConfig interface
 export interface IMemberFieldConfig<T> {
@@ -141,12 +143,13 @@ function MemberForm<T extends z.ZodTypeAny>({
             >
               {isAddForm ? 'Add' : 'Edit'} Member
             </button>
-            <button
+            <Link
               type="button"
-              className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ml-2"
+              className="rounded-md bg-white px-3.5 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ml-2"
+              href={RouteEnum.TEAM}
             >
               Cancel
-            </button>
+            </Link>
           </form>
         )}
       </Formik>

@@ -1,4 +1,4 @@
-import { RouteEnum } from '../../../constants/route.enum';
+import { RouteEnum } from '@src/constants/route.enum';
 import Link from 'next/link';
 
 export const metadata = {
@@ -99,7 +99,7 @@ const TeamMemberListing = () => {
       <div className="flow-root">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <table className="min-w-full divide-y divide-gray-300">
+            <table className="min-w-full divide-y divide-gray-300 text-sm text-left text-gray-500">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 text-left">
                 <tr>
                   <th scope="col" className="px-4 py-3">
@@ -131,27 +131,45 @@ const TeamMemberListing = () => {
                     key={index}
                     className="border-b border-gray-400 hover:bg-gray-100"
                   >
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                      {user.name}
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
+                      <Link href={`${RouteEnum.TEAM}/${user.name}`}>
+                        {user.name}
+                      </Link>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {user.role}
+                    <td className="px-4 py-2">
+                      <div className="inline-flex items-center bg-slate-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded">
+                        <svg
+                          className="text-gray-800 h-3.5 w-3.5 mr-1"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1h2a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2Zm6 1h-4v2H9a1 1 0 0 0 0 2h6a1 1 0 1 0 0-2h-1V4Zm-6 8a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm1 3a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <span>{user.role}</span>
+                      </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {user.email}
+                    <td className="px-4 py-2">{user.email}</td>
+                    <td className="px-4 py-2">{user.skill}</td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
+                      <div className="inline-flex items-center">
+                        <div
+                          className={`w-3 h-3 mr-2 border border-gray-200 rounded-full ${
+                            user.status == true ? 'bg-green-500' : 'bg-red-500'
+                          }`}
+                        ></div>
+                        {user.status == true ? 'Active' : 'Inactive'}
+                      </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {user.skill}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {user.status == true ? 'Active' : 'Inactive'}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {user.last_login}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {user.created_at}
-                    </td>
+                    <td className="px-4 py-2">{user.last_login}</td>
+                    <td className="px-4 py-2">{user.created_at}</td>
                   </tr>
                 ))}
               </tbody>

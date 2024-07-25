@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
-import { FieldType } from '../types/formTypes';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { FieldType } from '../types/formTypes';
 
 interface Props {
   label?: string;

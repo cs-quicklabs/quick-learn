@@ -8,12 +8,12 @@ import {
   MenuItem,
   MenuItems,
 } from '@headlessui/react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { RouteEnum } from '../../constants/route.enum';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import Image from 'next/image';
+import { RouteEnum } from '@src/constants/route.enum';
 
 type TLink = { name: string; link: string };
 

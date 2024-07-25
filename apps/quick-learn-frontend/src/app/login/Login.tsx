@@ -1,12 +1,11 @@
 'use client';
-import FormFieldsMapper from 'apps/quick-learn-frontend/src/shared/formElements/FormFieldsMapper';
-import { FieldConfig } from 'apps/quick-learn-frontend/src/shared/types/formTypes';
-
 import React from 'react';
 import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
 import { z } from 'zod';
-import { RouteEnum } from '../../constants/route.enum';
+import { FieldConfig } from '@src/shared/types/formTypes';
+import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
+import { RouteEnum } from '@src/constants/route.enum';
 
 const Login = () => {
   const loginFields: FieldConfig[] = [
