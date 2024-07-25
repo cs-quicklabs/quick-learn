@@ -5,5 +5,42 @@
   "projectType": "application",
   "tags": [],
   "// targets": "to see all targets run: nx show project quick-learn-frontend --web",
-  "targets": {}
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/quick-learn-frontend/src/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "format:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "prettier --check \"apps/quick-learn-frontend/src/**/*.{ts,tsx,js,jsx}\""
+        ]
+      }
+    },
+    "lint-and-format:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run quick-learn-frontend:lint",
+          "nx run quick-learn-frontend:format:check"
+        ]
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "prettier --write \"apps/quick-learn-frontend/src/**/*.{ts,tsx,js,jsx}\""
+        ]
+      }
+    }
+  }
 }
