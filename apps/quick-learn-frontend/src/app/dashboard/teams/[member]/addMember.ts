@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { addMemberFormSchema } from "./formSchema";
-import { IMemberFieldConfig } from "./MemberForm";
+import { z } from 'zod';
+import { addMemberFormSchema } from './formSchema';
+import { IMemberFieldConfig } from './MemberForm';
 
 export type AddMemberFormData = z.infer<typeof addMemberFormSchema>;
 
@@ -12,7 +12,7 @@ export const addMemberFormInitialValues: AddMemberFormData = {
   password: '',
   confirm_password: '',
   skill_id: '',
-}
+};
 
 export const addMemberFields: IMemberFieldConfig<AddMemberFormData>[] = [
   {
@@ -37,8 +37,7 @@ export const addMemberFields: IMemberFieldConfig<AddMemberFormData>[] = [
     label: 'User Role',
     name: 'user_type_id',
     type: 'select',
-    tooltip:
-      'A team member can be either Super Admin, Admin, Editor or Member',
+    tooltip: 'A team member can be either Super Admin, Admin, Editor or Member',
   },
   {
     label: 'New Password',

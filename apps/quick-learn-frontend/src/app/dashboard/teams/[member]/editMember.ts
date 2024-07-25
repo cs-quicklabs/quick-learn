@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { editMemberFormSchema } from "./formSchema";
-import { IMemberFieldConfig } from "./MemberForm";
+import { z } from 'zod';
+import { editMemberFormSchema } from './formSchema';
+import { IMemberFieldConfig } from './MemberForm';
 
 export type EditMemberFormData = z.infer<typeof editMemberFormSchema>;
 export const editMemberFormInitialValues: EditMemberFormData = {
@@ -9,8 +9,8 @@ export const editMemberFormInitialValues: EditMemberFormData = {
   email: '',
   user_type_id: '',
   skill_id: '',
-  active: ''
-}
+  active: '',
+};
 
 export const editMemberFields: IMemberFieldConfig<EditMemberFormData>[] = [
   {
@@ -35,19 +35,17 @@ export const editMemberFields: IMemberFieldConfig<EditMemberFormData>[] = [
     label: 'User Role',
     name: 'user_type_id',
     type: 'select',
-    tooltip:
-      'A team member can be either Super Admin, Admin, Editor or Member',
+    tooltip: 'A team member can be either Super Admin, Admin, Editor or Member',
   },
   {
     label: 'Active',
     name: 'active',
     type: 'select',
-    tooltip:
-      'Mark member as active or inactive',
+    tooltip: 'Mark member as active or inactive',
     options: [
       { name: 'Active', value: 'true' },
-      { name: 'Inactive', value: 'false' }
-    ]
+      { name: 'Inactive', value: 'false' },
+    ],
   },
   {
     label: 'Primary Skill',
