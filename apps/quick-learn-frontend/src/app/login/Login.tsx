@@ -1,6 +1,6 @@
 'use client';
-import FormFieldsMapper from 'apps/quick-learn-frontend/src/shared/formElements/FormFieldsMapper';
-import { FieldConfig } from 'apps/quick-learn-frontend/src/shared/types/formTypes';
+import FormFieldsMapper from '../../shared/formElements/FormFieldsMapper';
+import { FieldConfig } from '../..//shared/types/formTypes';
 
 import React from 'react';
 import { loginFormSchema } from './loginFormSchema';
