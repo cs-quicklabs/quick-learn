@@ -1,10 +1,14 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 =======
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+=======
+import { Injectable } from '@nestjs/common';
+>>>>>>> 1699416 (PR #7 review resolve & updated api endpoints)
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 >>>>>>> 6db7f4c (authhentication module with jwt implemented, password hashing is pending)

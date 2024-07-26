@@ -1,24 +1,19 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn,
-  PrimaryColumn,
+  Generated,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { UserTypeEntity } from './user_type.entity';
+import { BaseEntity } from './BaseEntity';
 
-@Entity()
-export class UserEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @PrimaryColumn()
-  @Column({ type: 'varchar', length: 50 })
+@Entity({ name: 'user' })
+export class UserEntity extends BaseEntity {
+  @Generated('uuid')
+  @Column({ type: 'varchar', unique: true })
   uuid: string;
 
   @Column({ type: 'varchar', length: 50 })
@@ -27,7 +22,7 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 50 })
   last_name: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', unique: true, length: 255 })
   email: string;
 
   @Column({ type: 'varchar' })
@@ -75,12 +70,6 @@ export class UserEntity {
   @ManyToOne(() => UserTypeEntity, (user) => user.users)
   @JoinColumn({ name: 'user_type_id' })
   user_type: UserTypeEntity;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 
   @DeleteDateColumn()
   deleted_at: Date;

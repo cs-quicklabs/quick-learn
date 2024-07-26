@@ -15,6 +15,7 @@ export class TeamEntity {
   id: number;
   @OneToMany(() => UserEntity, (user) => user.team)
   users: UserEntity[];
+
   @OneToMany(() => SkillEntity, (skill) => skill.team)
   skills: SkillEntity[];
 
