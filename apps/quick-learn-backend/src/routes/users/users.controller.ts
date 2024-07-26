@@ -12,16 +12,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-<<<<<<< HEAD
-@Controller('users')
-=======
-@ApiTags('Users')
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
+@ApiTags('Users')
 @Controller({
   version: '1',
   path: 'users',
 })
->>>>>>> 1699416 (PR #7 review resolve & updated api endpoints)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
