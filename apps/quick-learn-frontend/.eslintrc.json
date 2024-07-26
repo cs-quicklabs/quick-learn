@@ -12,7 +12,7 @@
       "rules": {
         "@next/next/no-html-link-for-pages": [
           "error",
-          "apps/quick-learn-frontend/pages"
+          "apps/quick-learn-frontend/src"
         ]
       }
     },

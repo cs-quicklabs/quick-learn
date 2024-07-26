@@ -1,5 +1,4 @@
 'use client';
-
 import React from 'react';
 import FormFieldsMapper from 'apps/quick-learn-frontend/src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from 'apps/quick-learn-frontend/src/shared/types/formTypes';
