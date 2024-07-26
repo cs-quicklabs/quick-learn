@@ -1,16 +1,10 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { SkillEntity } from './skill.entity';
+import { BaseEntity } from './BaseEntity';
 
-@Entity()
-export class TeamEntity {
+@Entity({ name: 'team' })
+export class TeamEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @OneToMany(() => UserEntity, (user) => user.team)
@@ -21,10 +15,4 @@ export class TeamEntity {
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   name: string;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 }

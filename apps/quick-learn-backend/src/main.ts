@@ -64,11 +64,7 @@ async function bootstrap() {
     methods: ['GET', 'POST'],
     credentials: true,
   });
-
-  // enabling global prefix for endpoints e.g: /api/version/users
-  app.setGlobalPrefix('api');
-
-  // enabling API versioning
+  // enanbling API versioning
   app.enableVersioning({
     type: VersioningType.URI,
   });
