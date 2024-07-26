@@ -9,6 +9,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super({ usernameField: 'email' });
   }
 
+<<<<<<< HEAD
   async validate(
     email: string,
     password: string,
@@ -19,6 +20,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       password,
       rememberMe,
     );
+=======
+  async validate(email: string, password: string): Promise<any> {
+    const user = await this.authService.validateUser(email, password);
+>>>>>>> 6db7f4c (authhentication module with jwt implemented, password hashing is pending)
     if (!user) {
       throw new UnauthorizedException();
     }

@@ -5,16 +5,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigModule } from '@nestjs/config';
 import databaseConfig from './database/config/database.config';
 import appConfig from './config/app.config';
-<<<<<<< HEAD
-import {
-  AuthModule,
-  HealthCheckModule,
-  ProfileModule,
-  UsersModule,
-} from './routes';
-=======
 import { HealthCheckModule, UsersModule } from './routes';
->>>>>>> 71ee2d5 (seting entities and defining endpoints)
 
 @Module({
   imports: [
@@ -30,11 +21,6 @@ import { HealthCheckModule, UsersModule } from './routes';
     }),
     HealthCheckModule,
     UsersModule,
-<<<<<<< HEAD
-    AuthModule,
-    ProfileModule,
-=======
->>>>>>> 71ee2d5 (seting entities and defining endpoints)
   ],
 })
 export class AppModule {}

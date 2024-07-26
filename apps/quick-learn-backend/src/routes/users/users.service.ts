@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Repository } from 'typeorm';
 import { UserEntity } from '@src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -36,27 +37,46 @@ export class UsersService {
   async findbyEmail(email: string): Promise<UserEntity | undefined> {
     return this.userRepository.findOneBy({ email });
 =======
+=======
+import { Repository } from 'typeorm';
+import { UserEntity } from '@src/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+>>>>>>> 6db7f4c (authhentication module with jwt implemented, password hashing is pending)
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+  ) {}
+
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    return this.userRepository.save(createUserDto);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  findAll(): Promise<UserEntity[]> {
+    return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: number): Promise<UserEntity | null> {
+    return this.userRepository.findOneBy({ id });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return this.userRepository.update(id, updateUserDto);
   }
 
+<<<<<<< HEAD
   remove(id: number) {
     return `This action removes a #${id} user`;
 >>>>>>> 71ee2d5 (seting entities and defining endpoints)
+=======
+  async remove(id: number): Promise<void> {
+    await this.userRepository.delete(id);
+  }
+
+  async findbyEmail(email: string): Promise<UserEntity | undefined> {
+    return this.userRepository.findOneBy({ email });
+>>>>>>> 6db7f4c (authhentication module with jwt implemented, password hashing is pending)
   }
 }
