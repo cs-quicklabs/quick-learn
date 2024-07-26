@@ -8,6 +8,7 @@ import validationOptions from './common/utils/validation-options';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import { useContainer } from 'class-validator';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -47,6 +48,9 @@ async function bootstrap() {
       ':remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms',
     ),
   );
+
+  //@ts-ignore
+  app.use(cookieParser());
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 

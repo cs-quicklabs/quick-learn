@@ -7,9 +7,11 @@ import Link from 'next/link';
 import { RouteEnum } from '../../constants/route.enum';
 import { LoginCredentials } from '../../shared/types/authTypes';
 import { useLogin } from '../../hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
   const { loginUser, isLoading, error } = useLogin();
+  const router = useRouter();
   const loginFields: FieldConfig[] = [
     {
       label: 'Email',
@@ -27,11 +29,12 @@ const Login = () => {
   ];
 
   const handleLogin = async (data: LoginCredentials) => {
-    console.log(data);
     try {
-      await loginUser(data);
+      const res = await loginUser(data);
+      if (!res.accessToken) throw new Error();
+      router.push('/dashboard');
     } catch (err: any) {
-      console.error('Login failed:', err.message);
+      console.error('Login failed:', error?.message);
     }
   };
 

@@ -33,6 +33,12 @@ export class UserEntity {
   @Column({ type: 'varchar' })
   password: string;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  accessToken: string;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  refreshToken: string;
+
   @Column({ default: true })
   active: boolean;
 
