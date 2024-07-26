@@ -28,45 +28,28 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'varchar' })
   password: string;
 
-<<<<<<< HEAD
   @Column({ type: 'varchar', length: 500, nullable: true })
   accessToken: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   refreshToken: string;
 
-=======
->>>>>>> 71ee2d5 (seting entities and defining endpoints)
   @Column({ default: true })
   active: boolean;
 
   @Column({ default: true })
   alert_enabled: boolean;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   @Column({ nullable: true })
-=======
-  @Column()
->>>>>>> 71ee2d5 (seting entities and defining endpoints)
-=======
-  @Column({ nullable: true })
->>>>>>> 6db7f4c (authhentication module with jwt implemented, password hashing is pending)
   team_id: number;
+
   @ManyToOne(() => TeamEntity, (team) => team.users)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   @Column({ nullable: true })
-=======
-  @Column()
->>>>>>> 71ee2d5 (seting entities and defining endpoints)
-=======
-  @Column({ nullable: true })
->>>>>>> 6db7f4c (authhentication module with jwt implemented, password hashing is pending)
   user_type_id: number;
+
   @ManyToOne(() => UserTypeEntity, (user) => user.users)
   @JoinColumn({ name: 'user_type_id' })
   user_type: UserTypeEntity;
