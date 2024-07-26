@@ -4,5 +4,10 @@ export interface LoginCredentials {
   rememberMe: boolean;
 }
 export interface LoginResponse {
-  accessToken: string;
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
 }

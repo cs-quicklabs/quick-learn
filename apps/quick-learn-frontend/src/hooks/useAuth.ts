@@ -12,7 +12,7 @@ export const useLogin = () => {
 
     try {
       const response = await loginApiCall(credentials);
-      localStorage.setItem('accessToken', response.accessToken);
+      localStorage.setItem('token', response.token);
       setIsLoading(false);
       return response;
     } catch (err) {

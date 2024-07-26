@@ -54,6 +54,19 @@ async function bootstrap() {
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'http://example.com',
+      'http://www.example.com',
+      'http://app.example.com',
+      'https://example.com',
+      'https://www.example.com',
+      'https://app.example.com',
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  });
   // enanbling API versioning
   app.enableVersioning({
     type: VersioningType.URI,
