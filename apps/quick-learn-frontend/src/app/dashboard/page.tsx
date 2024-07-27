@@ -1,10 +1,13 @@
-export const metadata = {
-  title: 'Dashboard • Quick Learn',
-  description: 'Dashboard page quick learn',
+'use client';
+import withAuth from '../../shared/pageTemplates/withAuth';
+
+const Dashboard = () => {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      {/* Your dashboard content here */}
+    </div>
+  );
 };
 
-const DashboardPage = () => {
-  return <h1>Hey</h1>;
-};
-
-export default DashboardPage;
+export default withAuth(Dashboard);

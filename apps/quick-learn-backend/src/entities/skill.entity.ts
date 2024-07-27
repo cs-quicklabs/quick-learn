@@ -7,9 +7,10 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
+import { BaseEntity } from './BaseEntity';
 
-@Entity()
-export class SkillEntity {
+@Entity({ name: 'skill' })
+export class SkillEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,7 +22,4 @@ export class SkillEntity {
   @ManyToOne(() => TeamEntity, (team) => team.skills)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 }

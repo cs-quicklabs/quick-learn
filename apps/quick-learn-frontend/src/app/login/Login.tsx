@@ -7,9 +7,11 @@ import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useLogin } from '../../hooks/useAuth';
 import { LoginCredentials } from '@src/shared/types/authTypes';
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
   const { loginUser, isLoading, error } = useLogin();
+  const router = useRouter();
   const loginFields: FieldConfig[] = [
     {
       label: 'Email',
@@ -27,11 +29,12 @@ const Login = () => {
   ];
 
   const handleLogin = async (data: LoginCredentials) => {
-    console.log(data);
     try {
-      await loginUser(data);
+      const res = (await loginUser(data)) as unknown as { accessToken: string };
+      if (!res['accessToken']) throw new Error();
+      router.push('/dashboard');
     } catch (err: any) {
-      console.error('Login failed:', err.message);
+      console.error('Login failed:', error?.message);
     }
   };
 

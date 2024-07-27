@@ -6,3 +6,7 @@ export enum RouteEnum {
   TEAM = '/dashboard/teams',
   MY_LEARNING_PATH = '/dashboard/learning-path',
 }
+export enum ProtectedRouteEnum {
+  DASHBOARD = '/dashboard',
+  SKILLS = '/skills',
+}
