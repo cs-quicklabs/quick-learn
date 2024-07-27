@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { PaginationDto } from './dto/pagination.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
@@ -27,10 +28,10 @@ export class UsersController {
     return await this.usersService.create(createUserDto);
   }
 
-  @Get()
+  @Post('list')
   @ApiOperation({ summary: 'Get all users' })
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Body() paginationDto: PaginationDto) {
+    return this.usersService.findAll(paginationDto);
   }
 
   @Get(':id')

@@ -11,10 +11,10 @@ import { Request } from 'express';
   path: 'auth',
 })
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @UseGuards(AuthGuard('local'))
-  @Post('/login')
+  @Post('login')
   @ApiOperation({ summary: 'User Login' })
   async login(@Req() req: Request) {
     return this.authService.login(req.user);
