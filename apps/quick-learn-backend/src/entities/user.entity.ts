@@ -9,6 +9,7 @@ import {
 import { TeamEntity } from './team.entity';
 import { UserTypeEntity } from './user_type.entity';
 import { BaseEntity } from './BaseEntity';
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -25,14 +26,17 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'varchar', unique: true, length: 255 })
   email: string;
 
+  @Column({ name: 'display_name', length: '150', nullable: true })
+  private _display_name: string;
+
+  @Expose()
+  get display_name(): string {
+    return this._display_name || `${this.first_name} ${this.last_name}`;
+  }
+
+  @Exclude()
   @Column({ type: 'varchar' })
   password: string;
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  accessToken: string;
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  refreshToken: string;
 
   @Column({ default: true })
   active: boolean;

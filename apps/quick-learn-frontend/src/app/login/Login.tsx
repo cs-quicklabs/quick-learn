@@ -30,8 +30,12 @@ const Login = () => {
 
   const handleLogin = async (data: LoginCredentials) => {
     try {
-      const res = (await loginUser(data)) as unknown as { accessToken: string };
-      if (!res['accessToken']) throw new Error();
+      const res = (await loginUser(data)) as unknown as {
+        success: boolean;
+        data: { accessToken: string };
+      };
+      console.log(res);
+      if (!res.success) throw new Error();
       router.push('/dashboard');
     } catch (err: any) {
       console.error('Login failed:', error?.message);

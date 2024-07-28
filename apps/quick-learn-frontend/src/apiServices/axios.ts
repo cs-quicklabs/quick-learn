@@ -1,22 +1,18 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:3001';
+const baseURL = 'http://localhost:3001/api/v1';
 
 const axiosInstance = axios.create({
   baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // You can modify the request config here (e.g., add auth tokens)
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
     return config;
   },
   (error) => {

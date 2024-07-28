@@ -10,7 +10,8 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { SuccessResponse } from '@src/common/dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
@@ -23,31 +24,54 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Create new user' })
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<SuccessResponse> {
+    const user = await this.usersService.create(createUserDto);
+    return new SuccessResponse('Successfully created user.', user);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(): Promise<SuccessResponse> {
+    const users = await this.usersService.findAll();
+    return new SuccessResponse('Successfully got users.', users);
   }
 
-  @Get(':id')
+  @Get(':uuid')
   @ApiOperation({ summary: 'Get specific user by user id' })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @ApiParam({
+    name: 'uuid',
+    type: 'string',
+    required: true,
+  })
+  async findOne(@Param('uuid') uuid: string): Promise<SuccessResponse> {
+    const user = await this.usersService.findOne({ uuid });
+    return new SuccessResponse('Successfully got users.', user);
   }
 
-  @Patch(':id')
+  @Patch(':uuid')
   @ApiOperation({ summary: 'Update specific user by user id' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @ApiParam({
+    name: 'uuid',
+    type: 'string',
+    required: true,
+  })
+  async update(
+    @Param('uuid') uuid: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<SuccessResponse> {
+    const user = await this.usersService.update(uuid, updateUserDto);
+    return new SuccessResponse('Successfully updated user.', user);
   }
 
-  @Delete(':id')
+  @Delete(':uuid')
   @ApiOperation({ summary: 'Delete specific user by user id' })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @ApiParam({
+    name: 'uuid',
+    type: 'string',
+    required: true,
+  })
+  async remove(@Param('uuid') uuid: string) {
+    await this.usersService.remove(uuid);
+    return new SuccessResponse('Successfully deleted user.');
   }
 }

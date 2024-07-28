@@ -1,20 +1,9 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { BaseEntity } from './BaseEntity';
 
 @Entity({ name: 'user_type' })
-export class UserTypeEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-  @OneToMany(() => UserEntity, (user) => user.user_type)
-  users: UserEntity[];
-
+export class UserTypeEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   code: string;
 
@@ -24,9 +13,6 @@ export class UserTypeEntity {
   @Column({ default: true })
   active: boolean;
 
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
+  @OneToMany(() => UserEntity, (user) => user.user_type)
+  users: UserEntity[];
 }

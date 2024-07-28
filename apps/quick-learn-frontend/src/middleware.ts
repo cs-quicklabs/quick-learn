@@ -1,38 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-export function middleware(request: NextRequest) {
-  console.log('middleware executed');
-  const authToken = request.cookies.get('authToken')?.value;
-  if (request.nextUrl.pathname === '/') {
-    return;
+import { ProtectedRouteEnum, RouteEnum } from './constants/route.enum';
+
+// Constants
+const PUBLIC_ROUTES = ['/', RouteEnum.LOGIN];
+const DASHBOARD_ROUTE = ProtectedRouteEnum.DASHBOARD;
+const LOGIN_ROUTE = RouteEnum.LOGIN;
+
+// Helper functions
+const isPublicRoute = (path: string) => PUBLIC_ROUTES.includes(path);
+const isDashboardRoute = (path: string) => path.startsWith(DASHBOARD_ROUTE);
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const authToken = request.cookies.get('access_token')?.value;
+
+  // Public routes
+  if (isPublicRoute(pathname)) {
+    return authToken
+      ? NextResponse.redirect(new URL(DASHBOARD_ROUTE, request.url))
+      : NextResponse.next();
   }
-  const loggedInUserNotAccessPaths = request.nextUrl.pathname === '/';
-  if (loggedInUserNotAccessPaths) {
-    // access not secured route
-    if (authToken) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
-  } else {
-    // accessing secured route
+
+  // Protected routes
+  if (isDashboardRoute(pathname)) {
     if (!authToken) {
-      return NextResponse.redirect(new URL('/', request.url));
-    } else {
-      // verify...
+      return NextResponse.redirect(new URL(LOGIN_ROUTE, request.url));
     }
+    return NextResponse.next();
   }
-  // console.log(authToken);
-  //   return NextResponse.redirect(new URL("/home", request.url));
+  return NextResponse.next();
 }
-// See "Matching Paths" below to learn more
+
 export const config = {
-  matcher: [
-    '/',
-    '/login',
-    '/dashboard',
-    '/call-logs/:path*',
-    '/expert-management/:path*',
-    '/wallet-management/:path*',
-    '/user-management/:path*',
-    '/profile/:path*',
-    '/api/:path*',
-  ],
+  matcher: ['/', '/login', '/dashboard/:path*'],
 };
