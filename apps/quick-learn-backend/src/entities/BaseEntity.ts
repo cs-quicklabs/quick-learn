@@ -4,6 +4,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+// these columns will be presented in all the entity
+// this will be extended.
 export class BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

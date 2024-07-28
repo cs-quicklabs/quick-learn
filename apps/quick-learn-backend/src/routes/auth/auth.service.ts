@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
+import { UserEntity } from '@src/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -10,22 +10,23 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.usersService.findbyEmail(email);
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<UserEntity | null> {
+    const user = await this.usersService.findOne({ email });
 
+    // TODO: remove this after implementation of verification
     if (user && user.password === password) {
-      const { password, ...result } = user;
-      return result;
+      return user;
     }
     return null;
   }
 
-  async login(user: any) {
-    console.log(user);
+  async login(user: Partial<UserEntity>): Promise<{ access_token: string }> {
     const payload = { email: user.email, password: user.password };
     return {
       access_token: this.jwtService.sign(payload),
-      rememberMe: user.rememberMe,
     };
   }
 }

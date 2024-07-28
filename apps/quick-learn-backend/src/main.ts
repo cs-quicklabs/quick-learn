@@ -1,13 +1,14 @@
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { setupSwagger } from './swagger';
+import { useContainer } from 'class-validator';
+import morgan from 'morgan';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { EnvironmentEnum } from './common/constants/constants';
 import { AppModule } from './app.module';
 import { ExceptionResponseFilter } from './common/filters';
 import validationOptions from './common/utils/validation-options';
-import { useContainer } from 'class-validator';
-import morgan from 'morgan';
-import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -36,10 +37,13 @@ async function bootstrap() {
   );
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
+  // adding cookie parser
+  app.use(cookieParser());
+
   // enabling CORS for frontend consumption
   app.enableCors({
     origin: ['http://localhost:3000'],
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
   });
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { UserEntity } from '@src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from './dto/pagination.dto';
@@ -31,19 +31,17 @@ export class UsersService extends PaginationService<UserEntity> {
     return await this.userRepository.find();
   }
 
-  findOne(id: number): Promise<UserEntity | null> {
-    return this.userRepository.findOneBy({ id });
+  async findOne(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
+    return await this.userRepository.findOne({
+      where: { ...options },
+    });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update(id, updateUserDto);
+  update(uuid: UserEntity['uuid'], updateUserDto: UpdateUserDto) {
+    return this.userRepository.update(uuid, updateUserDto);
   }
 
-  async remove(id: number): Promise<void> {
-    await this.userRepository.delete(id);
-  }
-
-  async findbyEmail(email: string): Promise<UserEntity | undefined> {
-    return this.userRepository.findOneBy({ email });
+  async remove(uuid: UserEntity['uuid']): Promise<void> {
+    await this.userRepository.delete(uuid);
   }
 }
