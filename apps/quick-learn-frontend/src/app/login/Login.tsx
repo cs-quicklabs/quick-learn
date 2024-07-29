@@ -8,6 +8,7 @@ import { RouteEnum } from '../../constants/route.enum';
 import { LoginCredentials } from '../../shared/types/authTypes';
 import { useLogin } from '../../hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const { loginUser, isLoading, error } = useLogin();
@@ -36,9 +37,14 @@ const Login = () => {
       };
       console.log(res);
       if (!res.success) throw new Error();
+      toast.success('Login Success!');
+      // if login is correct then redirect to Dashboard
       router.push('/dashboard');
-    } catch (err: any) {
-      console.error('Login failed:', error?.message);
+    } catch (error) {
+      console.error('Login failed:', error);
+      // TBD: Need to fix error messages
+      // toast.error('Login Failed: ',error.);
+      toast.error('Unauthorized Creds!');
     }
   };
 

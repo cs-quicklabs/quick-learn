@@ -1,7 +1,5 @@
 'use client';
 
-import withAuth from '../../shared/pageTemplates/withAuth';
-
 const Dashboard = () => {
   return (
     <div>
@@ -11,4 +9,4 @@ const Dashboard = () => {
   );
 };
 
-export default withAuth(Dashboard);
+export default Dashboard;

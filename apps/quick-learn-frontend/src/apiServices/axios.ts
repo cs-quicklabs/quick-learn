@@ -28,10 +28,11 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     // Handle errors (e.g., redirect to login if unauthorized)
-    if (error.response && error.response.status === 401) {
-      // Redirect to login or refresh token
-    }
-    return Promise.reject(error);
+    // if (error.response && error.response.status === 401) {
+    //   // Redirect to login or refresh token
+    // }
+    // return Promise.reject(error);
+    return error;
   },
 );
 
