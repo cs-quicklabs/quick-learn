@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ProtectedRouteEnum, RouteEnum } from './constants/route.enum';
 
 // Constants
-const PUBLIC_ROUTES = ['/', RouteEnum.LOGIN];
+const PUBLIC_ROUTES = [
+  '/',
+  RouteEnum.LOGIN,
+  RouteEnum.FORGOT_PASSWORD,
+  RouteEnum.RESET_PASSWORD,
+];
 const DASHBOARD_ROUTE = ProtectedRouteEnum.DASHBOARD;
 const LOGIN_ROUTE = RouteEnum.LOGIN;
 
@@ -13,7 +18,6 @@ const isDashboardRoute = (path: string) => path.startsWith(DASHBOARD_ROUTE);
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const authToken = request.cookies.get('access_token')?.value;
-
   // Public routes
   if (isPublicRoute(pathname)) {
     return authToken
@@ -32,5 +36,12 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/dashboard/:path*'],
+  matcher: [
+    '/',
+    '/login',
+    '/dashboard',
+    '/dashboard/:path*',
+    '/forgot-password',
+    '/reset-password',
+  ],
 };

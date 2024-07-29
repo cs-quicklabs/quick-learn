@@ -5,11 +5,13 @@ import {
   JoinColumn,
   DeleteDateColumn,
   Generated,
+  BeforeInsert,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { UserTypeEntity } from './user_type.entity';
 import { BaseEntity } from './BaseEntity';
 import { Exclude, Expose } from 'class-transformer';
+import * as bcrypt from 'bcryptjs';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -35,6 +37,12 @@ export class UserEntity extends BaseEntity {
   }
 
   @Exclude()
+  @BeforeInsert()
+  // Password hashing
+  async hashPassword() {
+    const hashedPassword = await bcrypt.hash(this.password, 10);
+    this.password = hashedPassword;
+  }
   @Column({ type: 'varchar' })
   password: string;
 

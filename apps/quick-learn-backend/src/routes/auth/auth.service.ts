@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '@src/entities/user.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -16,11 +17,13 @@ export class AuthService {
   ): Promise<UserEntity | null> {
     const user = await this.usersService.findOne({ email });
 
-    // TODO: remove this after implementation of verification
-    if (user && user.password === password) {
+    // Comparing password
+    const isVerified = await bcrypt.compare(password, user.password);
+    if (isVerified) {
       return user;
+    } else {
+      throw new ForbiddenException('Unauthorized Credentials!');
     }
-    return null;
   }
 
   async login(user: Partial<UserEntity>): Promise<{ access_token: string }> {
