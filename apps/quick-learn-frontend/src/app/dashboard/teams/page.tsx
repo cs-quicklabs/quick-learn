@@ -1,46 +1,52 @@
+'use client';
 import { RouteEnum } from '@src/constants/route.enum';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-export const metadata = {
-  title: 'Teams • Quick Learn',
-  description: 'Teams quick learn',
+// export const metadata = {
+//   title: 'Teams • Quick Learn',
+//   description: 'Teams quick learn',
+// };
+
+type TUser = {
+  uuid: string;
+  display_name: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+  email: string;
+  skill: string;
+  active: boolean;
+  last_login: string;
+  created_at: string;
 };
 
 const TeamMemberListing = () => {
+  const [data, setData] = useState<TUser[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          'http://localhost:3001/api/v1/users/list',
+          { method: 'post' },
+        );
+        const result = await response.json();
+        if (response.ok) {
+          const { data } = result;
+          setData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const userTypes: { name: string; code: string }[] = [
     { name: 'Admin', code: 'admin' },
     { name: 'Editors', code: 'editors' },
     { name: 'Members', code: 'members' },
-  ];
-
-  const users = [
-    {
-      name: 'Lindsay Walton',
-      role: 'Member',
-      email: 'lindsay.walton@example.com',
-      skill: 'iOS Developer',
-      status: true,
-      last_login: 'Nov 11, 2022',
-      created_at: 'Dec 11, 2024',
-    },
-    {
-      name: 'Lindsay Walton',
-      role: 'Member',
-      email: 'lindsay.walton@example.com',
-      skill: 'iOS Developer',
-      status: true,
-      last_login: 'Nov 11, 2022',
-      created_at: 'Dec 11, 2024',
-    },
-    {
-      name: 'Lindsay Walton',
-      role: 'Member',
-      email: 'lindsay.walton@example.com',
-      skill: 'iOS Developer',
-      status: false,
-      last_login: 'Nov 11, 2022',
-      created_at: 'Dec 11, 2024',
-    },
   ];
 
   return (
@@ -126,14 +132,14 @@ const TeamMemberListing = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user, index) => (
+                {data.map((user, index) => (
                   <tr
                     key={index}
                     className="border-b border-gray-400 hover:bg-gray-100"
                   >
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
-                      <Link href={`${RouteEnum.TEAM}/${user.name}`}>
-                        {user.name}
+                      <Link href={`${RouteEnum.TEAM}/${user.uuid}`}>
+                        {user.first_name} {user.last_name}
                       </Link>
                     </td>
                     <td className="px-4 py-2">
@@ -153,7 +159,7 @@ const TeamMemberListing = () => {
                             clipRule="evenodd"
                           />
                         </svg>
-                        <span>{user.role}</span>
+                        <span>{user.role || 'Role'}</span>
                       </div>
                     </td>
                     <td className="px-4 py-2">{user.email}</td>
@@ -162,10 +168,10 @@ const TeamMemberListing = () => {
                       <div className="inline-flex items-center">
                         <div
                           className={`w-3 h-3 mr-2 border border-gray-200 rounded-full ${
-                            user.status == true ? 'bg-green-500' : 'bg-red-500'
+                            user.active == true ? 'bg-green-500' : 'bg-red-500'
                           }`}
                         ></div>
-                        {user.status == true ? 'Active' : 'Inactive'}
+                        {user.active == true ? 'Active' : 'Inactive'}
                       </div>
                     </td>
                     <td className="px-4 py-2">{user.last_login}</td>

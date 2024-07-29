@@ -4,11 +4,14 @@ import { BaseEntity } from './BaseEntity';
 
 @Entity({ name: 'user_type' })
 export class UserTypeEntity extends BaseEntity {
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 50, nullable: false })
   code: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 50, nullable: false })
   name: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: false })
+  description: string;
 
   @Column({ default: true })
   active: boolean;

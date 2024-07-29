@@ -13,7 +13,7 @@ import { EnvironmentEnum } from '@src/common/constants/constants';
   path: 'auth',
 })
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @UseGuards(AuthGuard('local'))
   @Post('login')

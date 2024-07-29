@@ -21,7 +21,7 @@ import { SuccessResponse } from '@src/common/dto';
   path: 'users',
 })
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create new user' })
@@ -32,7 +32,9 @@ export class UsersController {
 
   @Post('list')
   @ApiOperation({ summary: 'Get all users' })
-  async findAll(@Body() paginationDto: PaginationDto): Promise<SuccessResponse> {
+  async findAll(
+    @Body() paginationDto: PaginationDto,
+  ): Promise<SuccessResponse> {
     const users = await this.usersService.findAll(paginationDto);
     return new SuccessResponse('Successfully got users.', users);
   }
