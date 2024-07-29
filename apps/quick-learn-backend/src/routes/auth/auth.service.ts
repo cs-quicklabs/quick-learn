@@ -32,4 +32,18 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async logout() {
+    return {
+      access_token: '',
+    };
+  }
+
+  forgotPassword() {
+    return 'forgot password';
+  }
+
+  resetPassword() {
+    return 'reset password';
+  }
 }
