@@ -1,6 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { BaseEntity } from './BaseEntity';
+import { UserEntity } from './user.entity';
 
 @Entity({ name: 'skill' })
 export class SkillEntity extends BaseEntity {
@@ -13,4 +14,7 @@ export class SkillEntity extends BaseEntity {
   @ManyToOne(() => TeamEntity, (team) => team.skills)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
+
+  @OneToMany(() => UserEntity, (user) => user.skill)
+  users: UserEntity[];
 }

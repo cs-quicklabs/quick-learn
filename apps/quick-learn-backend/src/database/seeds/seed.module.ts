@@ -12,7 +12,6 @@ import { TeamModule } from './team/team.module';
 @Module({
   imports: [
     TeamModule,
-
     UserModule,
     UserTypeModule,
     TeamModule,

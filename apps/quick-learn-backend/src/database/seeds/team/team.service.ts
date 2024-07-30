@@ -11,7 +11,7 @@ export class TeamService extends BasicCrudService<TeamEntity> {
   }
 
   async run() {
-    const countTeam = await this.repository.findAndCount();
+    const countTeam = await this.repository.count();
     if (!countTeam) {
       const team: Partial<TeamEntity> = {
         name: 'Crownstack Skilling Up',

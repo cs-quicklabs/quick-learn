@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 const Login = () => {
-  const { loginUser, isLoading, error } = useLogin();
+  const { loginUser, isLoading } = useLogin();
   const router = useRouter();
   const loginFields: FieldConfig[] = [
     {

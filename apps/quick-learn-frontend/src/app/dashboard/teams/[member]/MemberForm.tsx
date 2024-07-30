@@ -1,8 +1,7 @@
 import { z } from 'zod';
-import { addMemberFormSchema } from './formSchema';
 import { ErrorMessage, Formik, FormikProps } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { RouteEnum } from '@src/constants/route.enum';
@@ -23,6 +22,7 @@ export interface IMemberForm<T extends z.ZodTypeAny> {
   onSubmit: (data: z.infer<T>) => void;
   initialValues: z.infer<T>;
   isAddForm: boolean;
+  schema: T;
 }
 
 function MemberForm<T extends z.ZodTypeAny>({
@@ -30,12 +30,21 @@ function MemberForm<T extends z.ZodTypeAny>({
   onSubmit,
   initialValues,
   isAddForm,
+  schema,
 }: IMemberForm<T>) {
   const updatePasswordField = (index: number) => {
     const newFields = [...fields];
     newFields[index].showPassword = !newFields[index].showPassword;
     setFields(newFields);
   };
+
+  const [formInitialValues, setFormInitialValues] = useState(initialValues);
+
+  useEffect(() => {
+    if (initialValues) {
+      setFormInitialValues({ ...initialValues });
+    }
+  }, [initialValues]);
 
   const [fields, setFields] =
     useState<IMemberFieldConfig<z.infer<T>>[]>(formFields);
@@ -51,9 +60,10 @@ function MemberForm<T extends z.ZodTypeAny>({
           : 'Please update details to edit team member.'}
       </p>
       <Formik<z.infer<T>>
-        initialValues={initialValues}
+        initialValues={formInitialValues}
         onSubmit={onSubmit}
-        validationSchema={toFormikValidationSchema(addMemberFormSchema)}
+        validationSchema={toFormikValidationSchema(schema)}
+        enableReinitialize={true}
       >
         {({ handleChange, handleSubmit, values }: FormikProps<z.infer<T>>) => (
           <form onSubmit={handleSubmit}>
@@ -85,7 +95,10 @@ function MemberForm<T extends z.ZodTypeAny>({
                         {(options &&
                           options.length > 0 &&
                           options.map((option) => (
-                            <option key={option.value} value={option.value}>
+                            <option
+                              key={option.id || option.value}
+                              value={option.id || option.value}
+                            >
                               {option.name}
                             </option>
                           ))) ||
