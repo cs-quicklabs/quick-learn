@@ -14,11 +14,15 @@ const TeamMemberListing = () => {
   const [total, setTotal] = useState<number>(0);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
+  const [userTypeCode, setUserTypeCode] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = (await postAPICall(APIROUTES.GET_USER_LIST, {
+        const route = `${APIROUTES.GET_USER_LIST}${
+          userTypeCode ? '?user_type_code=' + userTypeCode : ''
+        }`;
+        const res = (await postAPICall(route, {
           mode: 'paginate',
           page: page,
         })) as unknown as {
@@ -41,13 +45,18 @@ const TeamMemberListing = () => {
       }
     };
     fetchData();
-  }, [page]);
+  }, [page, userTypeCode]);
 
   const userTypes: TUserType[] = [
     { name: 'Admin', code: 'admin' },
-    { name: 'Editors', code: 'editors' },
-    { name: 'Members', code: 'members' },
+    { name: 'Editors', code: 'editor' },
+    { name: 'Members', code: 'member' },
   ];
+
+  function filterByUserType(code: string) {
+    setUserTypeCode(code);
+    setPage(1);
+  }
 
   return (
     <>
@@ -85,6 +94,8 @@ const TeamMemberListing = () => {
                   id={userType.code}
                   name="user_type_id"
                   type="radio"
+                  onClick={() => filterByUserType(userType.code)}
+                  checked={userTypeCode === userType.code}
                   className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-2 cursor-pointer"
                 />
                 <label
@@ -98,6 +109,7 @@ const TeamMemberListing = () => {
             <button
               type="button"
               className="underline font-medium text-blue-600 dark:text-blue-500 hover:underline text-sm"
+              onClick={() => filterByUserType('')}
             >
               Show All
             </button>
@@ -200,7 +212,10 @@ const TeamMemberListing = () => {
             <span className="font-medium">
               {page > 1 ? (page - 1) * 10 + 1 : 1}
             </span>{' '}
-            to <span className="font-medium">{page > 1 ? page * 10 : 10}</span>{' '}
+            to{' '}
+            <span className="font-medium">
+              {page * 10 <= total ? page * 10 : total}
+            </span>{' '}
             of <span className="font-medium">{total}</span> results
           </p>
         </div>

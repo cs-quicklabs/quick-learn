@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { FindOptionsWhere, MoreThan, Repository } from 'typeorm';
 import { UserEntity } from '@src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationDto } from './dto/pagination.dto';
 import { PaginatedResult } from '@src/common/interfaces/paginate.interface';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { UserTypeEntity } from '@src/entities/user_type.entity';
 import { SkillEntity } from '@src/entities/skill.entity';
+import { CreateUserDto, ListFilterDto, PaginationDto } from './dto';
 
 const userRelations = ['user_type', 'skill'];
 @Injectable()
@@ -42,17 +41,27 @@ export class UsersService extends PaginationService<UserEntity> {
   async findAll(
     user: UserEntity,
     paginationDto: PaginationDto,
+    filter: ListFilterDto,
   ): Promise<UserEntity[] | PaginatedResult<UserEntity>> {
     const userTypeId = user.user_type_id;
+    let conditions: FindOptionsWhere<UserEntity> = {
+      user_type_id: MoreThan(userTypeId),
+    };
+    if (filter.user_type_code) {
+      conditions = {
+        ...conditions,
+        user_type: {
+          code: filter.user_type_code,
+        },
+      };
+    }
     if (paginationDto.mode == 'paginate') {
-      return await this.paginate(
-        paginationDto,
-        { user_type_id: MoreThan(userTypeId) },
-        [...userRelations],
-      );
+      return await this.paginate(paginationDto, { ...conditions }, [
+        ...userRelations,
+      ]);
     }
     return await this.userRepository.find({
-      where: { user_type_id: MoreThan(userTypeId) },
+      where: { ...conditions },
       relations: [...userRelations],
     });
   }

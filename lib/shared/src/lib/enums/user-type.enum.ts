@@ -2,7 +2,7 @@ export enum UserTypeCodeEnum {
   SUPERADMIN = 'super-admin',
   ADMIN = 'admin',
   EDITOR = 'editor',
-  MEMBER = 'MEMBER'
+  MEMBER = 'member'
 }
 
 export enum UserTypeIdEnum {

@@ -24,6 +24,7 @@ export class UserTypeService extends BasicCrudService<UserTypeEntity> {
         UserTypeCodeEnum.SUPERADMIN,
         'Super Admin',
         'for super admin user type',
+        false,
       );
     }
 

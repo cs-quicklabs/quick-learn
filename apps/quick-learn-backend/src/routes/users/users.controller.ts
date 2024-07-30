@@ -7,16 +7,20 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { PaginationDto } from './dto/pagination.dto';
 import { SuccessResponse } from '@src/common/dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import {
+  CreateUserDto,
+  ListFilterDto,
+  PaginationDto,
+  UpdateUserDto,
+} from './dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
@@ -48,8 +52,9 @@ export class UsersController {
   async findAll(
     @CurrentUser() user: UserEntity,
     @Body() paginationDto: PaginationDto,
+    @Query() filter: ListFilterDto,
   ): Promise<SuccessResponse> {
-    const users = await this.usersService.findAll(user, paginationDto);
+    const users = await this.usersService.findAll(user, paginationDto, filter);
     return new SuccessResponse('Successfully got users.', users);
   }
 
