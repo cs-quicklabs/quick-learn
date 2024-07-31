@@ -1,7 +1,7 @@
 import React from 'react';
-import AuthTemplate from '../../shared/pageTemplates/AuthTemplate';
-import ResetPassword from './ResetPassword';
 import { Metadata } from 'next';
+import ResetPassword from './ResetPassword';
+import AuthTemplate from '@src/shared/pageTemplates/AuthTemplate';
 
 export const metadata: Metadata = {
   title: 'Reset Password • Quick Learn',

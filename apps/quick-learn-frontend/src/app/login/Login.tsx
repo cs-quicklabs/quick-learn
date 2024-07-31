@@ -1,17 +1,17 @@
 'use client';
 import React from 'react';
-import FormFieldsMapper from 'apps/quick-learn-frontend/src/shared/formElements/FormFieldsMapper';
-import { FieldConfig } from 'apps/quick-learn-frontend/src/shared/types/formTypes';
 import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
-import { RouteEnum } from '../../constants/route.enum';
-import { LoginCredentials } from '../../shared/types/authTypes';
+import { FieldConfig } from '@src/shared/types/formTypes';
+import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
+import { RouteEnum } from '@src/constants/route.enum';
 import { useLogin } from '../../hooks/useAuth';
+import { LoginCredentials } from '@src/shared/types/authTypes';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 const Login = () => {
-  const { loginUser, isLoading, error } = useLogin();
+  const { loginUser, isLoading } = useLogin();
   const router = useRouter();
   const loginFields: FieldConfig[] = [
     {

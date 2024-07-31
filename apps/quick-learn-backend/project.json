@@ -7,14 +7,18 @@
   "targets": {
     // "build": {
     //   "executor": "@nx/webpack:webpack",
-    //   "outputs": ["{options.outputPath}"],
+    //   "outputs": [
+    //     "{options.outputPath}"
+    //   ],
     //   "options": {
     //     "target": "node",
     //     "compiler": "tsc",
     //     "outputPath": "dist/apps/quick-learn-backend",
     //     "main": "apps/quick-learn-backend/src/main.ts",
     //     "tsConfig": "apps/quick-learn-backend/tsconfig.app.json",
-    //     "assets": ["apps/quick-learn-backend/src/assets"],
+    //     "assets": [
+    //       "apps/quick-learn-backend/src/assets"
+    //     ],
     //     "isolatedConfig": true,
     //     "webpackConfig": "apps/quick-learn-backend/webpack.config.js"
     //   }
@@ -76,9 +80,19 @@
         "envFile": "apps/quick-learn-backend/.env.dev"
       }
     },
+    "seed:run": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ./src/database/seeds/run-seed.ts",
+        "cwd": "apps/quick-learn-backend"
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}"

@@ -12,6 +12,10 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  images: {
+    // TODO: Remove later with the bucket url
+    domains: ['images.unsplash.com'],
+  },
 };
 
 const plugins = [

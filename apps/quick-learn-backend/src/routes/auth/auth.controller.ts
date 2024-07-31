@@ -5,6 +5,9 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { SuccessResponse } from '@src/common/dto';
 import { EnvironmentEnum } from '@src/common/constants/constants';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { CurrentUser } from '@src/common/decorators/current-user.decorators';
+import { UserEntity } from '@src/entities/user.entity';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/auth/login
 @ApiTags('Authentication')
@@ -21,7 +24,7 @@ export class AuthController {
   async login(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<SuccessResponse | void> {
+  ): Promise<SuccessResponse> {
     const token = await this.authService.login(req.user);
 
     res.cookie('access_token', token.access_token, {
@@ -46,9 +49,9 @@ export class AuthController {
     return this.authService.resetPassword();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Req() req: Request): SuccessResponse {
-    const user = req.user;
+  getProfile(@CurrentUser() user: UserEntity): SuccessResponse {
     return new SuccessResponse('Successfully got the user.', user);
   }
 }

@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
+import React from 'react';
 import InputField from './InputField';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { FieldConfig } from '../types/formTypes';
 
-interface Props<T extends z.ZodType<any, any>> {
+interface Props<T extends z.ZodTypeAny> {
   fields: FieldConfig[];
   schema: T;
   onSubmit: (data: z.infer<T>) => void;
@@ -14,7 +14,7 @@ interface Props<T extends z.ZodType<any, any>> {
 }
 
 //helper component to map form fields as per fields object
-function FormFieldsMapper<T extends z.ZodType<any, any>>({
+function FormFieldsMapper<T extends z.ZodTypeAny>({
   fields,
   schema,
   onSubmit,
