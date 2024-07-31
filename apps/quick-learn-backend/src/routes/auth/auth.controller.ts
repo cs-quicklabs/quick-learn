@@ -54,22 +54,6 @@ export class AuthController {
     return this.authService.resetPassword();
   }
 
-  @Post('logout')
-  @ApiOperation({ summary: 'User Logout' })
-  async logout(
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<SuccessResponse | void> {
-    const token = await this.authService.logout();
-    res.cookie('access_token', token.access_token, {
-      httpOnly: true,
-      secure: process.env.ENV === EnvironmentEnum.Developemnt, // TODO: Update this to use config file
-      sameSite: 'lax',
-      // maxAge: 24 * 60 * 60 * 1000, // TODO: Need to update this base on  the env or remember me.
-      path: '/',
-    });
-    return new SuccessResponse('Successfully logged out.', token);
-  }
-
   @Get('profile')
   getProfile(@Req() req: Request): SuccessResponse {
     const user = req.user;
