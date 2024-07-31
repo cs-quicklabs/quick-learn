@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { FieldType } from '../types/formTypes';
-import { OpenEyeIcon, ClosedEyeIcon } from '../uiElements/formUIElements';
+import { OpenEyeIcon, ClosedEyeIcon } from '../components/formUIElements';
 
 interface Props {
   label?: string;

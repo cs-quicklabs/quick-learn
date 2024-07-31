@@ -36,6 +36,12 @@ export class AuthService {
     };
   }
 
+  async logout() {
+    return {
+      access_token: '',
+    };
+  }
+
   forgotPassword() {
     return 'forgot password';
   }

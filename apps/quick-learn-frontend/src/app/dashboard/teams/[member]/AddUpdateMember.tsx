@@ -4,8 +4,6 @@ import MemberForm from './MemberForm';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { TSkill, TUser, TUserType } from '@src/shared/types/userTypes';
-import { APIROUTES } from '@src/shared/constants';
-import { getAPICall, patchAPICall, postAPICall } from '@src/apiServices/common';
 import { RouteEnum } from '@src/constants/route.enum';
 import {
   addMemberFields,
@@ -18,6 +16,8 @@ import {
   EditMemberFormData,
   editMemberFormInitialValues,
 } from './editMember';
+import { userApiEnum } from '@src/constants/api.enum';
+import axiosInstance from '@src/apiServices/axios';
 
 type TUserMetadata = {
   user_types: TUserType[];
@@ -65,8 +65,8 @@ const AddUpdateMemberPage = () => {
   useEffect(() => {
     (async function () {
       try {
-        const res = (await getAPICall(
-          APIROUTES.GET_USER_METADATA,
+        const res = (await axiosInstance.get(
+          userApiEnum.GET_USER_METADATA,
         )) as unknown as {
           success: boolean;
           data: TUserMetadata;
@@ -93,8 +93,8 @@ const AddUpdateMemberPage = () => {
     if (!isAddMember) {
       (async function () {
         try {
-          const res = (await getAPICall(
-            APIROUTES.GET_USER.replace(':uuid', params.member),
+          const res = (await axiosInstance.get(
+            userApiEnum.GET_USER.replace(':uuid', params.member),
           )) as unknown as {
             success: boolean;
             data: TUser;
@@ -125,7 +125,7 @@ const AddUpdateMemberPage = () => {
   async function handleAddSubmit(data: AddMemberFormData) {
     try {
       setIsLoading(true);
-      const res = (await postAPICall(APIROUTES.CREATE_USER, {
+      const res = (await axiosInstance.post(userApiEnum.CREATE_USER, {
         ...data,
         team_id: metadata?.skills[0].team_id,
       })) as unknown as {
@@ -146,8 +146,8 @@ const AddUpdateMemberPage = () => {
   async function handleEditSubmit(data: EditMemberFormData) {
     try {
       setIsLoading(true);
-      const res = (await patchAPICall(
-        APIROUTES.UPDATE_USER.replace(':uuid', params.member),
+      const res = (await axiosInstance.patch(
+        userApiEnum.UPDATE_USER.replace(':uuid', params.member),
         {
           ...data,
         },

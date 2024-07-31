@@ -10,10 +10,11 @@ import {
 } from '@headlessui/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
+import { logoutApiCall } from '@src/apiServices/authService';
 
 type TLink = { name: string; link: string };
 
@@ -53,6 +54,17 @@ const menuItems: TLink[] = [
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  //User Logout
+  async function doLogout() {
+    try {
+      await logoutApiCall();
+      router.push('/');
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <Disclosure as="nav" className="bg-gray-800 text-white shadow">
       <div className="mx-auto px-2 sm:px-4 lg:px-8">
@@ -179,6 +191,7 @@ const Navbar = () => {
                   <MenuItem>
                     <Link
                       href="#"
+                      onClick={doLogout}
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 divide-y divide-gray-100"
                     >
                       Sign out
@@ -248,7 +261,7 @@ const Navbar = () => {
             ))}
             <DisclosureButton
               as="a"
-              href="#"
+              onClick={doLogout}
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
             >
               Sign out
