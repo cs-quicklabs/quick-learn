@@ -60,6 +60,8 @@ const AddUpdateMemberPage = () => {
     editMemberFormInitialValues,
   );
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   useEffect(() => {
     (async function () {
       try {
@@ -122,6 +124,7 @@ const AddUpdateMemberPage = () => {
 
   async function handleAddSubmit(data: AddMemberFormData) {
     try {
+      setIsLoading(true);
       const res = (await axiosInstance.post(userApiEnum.CREATE_USER, {
         ...data,
         team_id: metadata?.skills[0].team_id,
@@ -131,17 +134,20 @@ const AddUpdateMemberPage = () => {
       };
       if (!res.success) throw new Error();
       toast.success(res.message);
+      setIsLoading(false);
       router.push(RouteEnum.TEAM);
     } catch (error) {
       console.error('API call failed:', error);
       toast.error('Something went wrong!');
+      setIsLoading(false);
     }
   }
 
   async function handleEditSubmit(data: EditMemberFormData) {
     try {
+      setIsLoading(true);
       const res = (await axiosInstance.patch(
-        userApiEnum.UPDATE_USER.replace(':uuid', params.member),
+        userApiEnum.GET_USER.replace(':uuid', params.member),
         {
           ...data,
         },
@@ -152,9 +158,11 @@ const AddUpdateMemberPage = () => {
       if (!res.success) throw new Error();
       toast.success(res.message);
       router.push(RouteEnum.TEAM);
+      setIsLoading(false);
     } catch (error) {
       console.error('API call failed:', error);
       toast.error('Something went wrong!');
+      setIsLoading(false);
     }
   }
 
@@ -166,6 +174,7 @@ const AddUpdateMemberPage = () => {
         onSubmit={handleAddSubmit}
         isAddForm={true}
         schema={addMemberFormSchema}
+        loading={isLoading}
       />
     );
   } else {
@@ -176,6 +185,7 @@ const AddUpdateMemberPage = () => {
         onSubmit={handleEditSubmit}
         isAddForm={false}
         schema={editMemberFormSchema}
+        loading={isLoading}
       />
     );
   }

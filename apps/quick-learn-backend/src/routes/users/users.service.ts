@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { FindOptionsWhere, MoreThan, Repository } from 'typeorm';
 import { UserEntity } from '@src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -34,6 +34,12 @@ export class UsersService extends PaginationService<UserEntity> {
   }
 
   async create(createUserDto: CreateUserDto) {
+    const foundUser = await this.userRepository.count({
+      where: { email: createUserDto.email },
+    });
+    if (foundUser) {
+      throw new BadRequestException('Email already exists.');
+    }
     const user = await this.userRepository.create(createUserDto);
     return await this.userRepository.save(user);
   }
@@ -72,7 +78,16 @@ export class UsersService extends PaginationService<UserEntity> {
     });
   }
 
-  update(uuid: UserEntity['uuid'], payload: Partial<UserEntity>) {
+  async update(uuid: UserEntity['uuid'], payload: Partial<UserEntity>) {
+    const user = await this.findOne({ uuid });
+    if (payload.email) {
+      const userByEmail = await this.findOne({ email: payload.email });
+      if (userByEmail && user.id != userByEmail.id) {
+        throw new BadRequestException(
+          'User already associated with this email.',
+        );
+      }
+    }
     return this.userRepository.update({ uuid }, payload);
   }
 

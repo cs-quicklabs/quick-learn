@@ -95,7 +95,7 @@ const TeamMemberListing = () => {
                   id={userType.code}
                   name="user_type_id"
                   type="radio"
-                  onClick={() => filterByUserType(userType.code)}
+                  onChange={(e) => filterByUserType(userType.code)}
                   checked={userTypeCode === userType.code}
                   className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-2 cursor-pointer"
                 />

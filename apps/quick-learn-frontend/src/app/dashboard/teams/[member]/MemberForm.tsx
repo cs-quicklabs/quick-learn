@@ -3,8 +3,9 @@ import { ErrorMessage, Formik, FormikProps } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { useEffect, useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 import { RouteEnum } from '@src/constants/route.enum';
+import { useRouter } from 'next/navigation';
+import { Loader } from '@src/shared/uiElements/formUIElements';
 
 //IMemberFieldConfig interface
 export interface IMemberFieldConfig<T> {
@@ -23,6 +24,7 @@ export interface IMemberForm<T extends z.ZodTypeAny> {
   initialValues: z.infer<T>;
   isAddForm: boolean;
   schema: T;
+  loading: boolean;
 }
 
 function MemberForm<T extends z.ZodTypeAny>({
@@ -31,7 +33,9 @@ function MemberForm<T extends z.ZodTypeAny>({
   initialValues,
   isAddForm,
   schema,
+  loading,
 }: IMemberForm<T>) {
+  const router = useRouter();
   const updatePasswordField = (index: number) => {
     const newFields = [...fields];
     newFields[index].showPassword = !newFields[index].showPassword;
@@ -48,6 +52,10 @@ function MemberForm<T extends z.ZodTypeAny>({
 
   const [fields, setFields] =
     useState<IMemberFieldConfig<z.infer<T>>[]>(formFields);
+
+  function cancel() {
+    router.push(RouteEnum.TEAM);
+  }
 
   return (
     <section className="mt-2 lg:mt-6 mx-auto max-w-2xl">
@@ -152,17 +160,23 @@ function MemberForm<T extends z.ZodTypeAny>({
             </div>
             <button
               type="submit"
-              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-6"
+              className={`rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-6 inline-flex items-center gap-x-2 ${
+                loading ? ' bg-indigo-500 cursor-not-allowed' : ' bg-indigo-600'
+              }`}
+              disabled={loading}
             >
-              {isAddForm ? 'Add' : 'Edit'} Member
+              {isAddForm ? 'Add' : 'Edit'} Member {loading ? <Loader /> : ''}
             </button>
-            <Link
+            <button
               type="button"
-              className="rounded-md bg-white px-3.5 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ml-2"
-              href={RouteEnum.TEAM}
+              className={`rounded-md bg-white px-3.5 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ml-2 ${
+                loading ? ' cursor-not-allowed' : ''
+              }`}
+              disabled={loading}
+              onClick={cancel}
             >
               Cancel
-            </Link>
+            </button>
           </form>
         )}
       </Formik>
