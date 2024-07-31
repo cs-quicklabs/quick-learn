@@ -147,7 +147,7 @@ const AddUpdateMemberPage = () => {
     try {
       setIsLoading(true);
       const res = (await axiosInstance.patch(
-        userApiEnum.UPDATE_USER.replace(':uuid', params.member),
+        userApiEnum.GET_USER.replace(':uuid', params.member),
         {
           ...data,
         },
