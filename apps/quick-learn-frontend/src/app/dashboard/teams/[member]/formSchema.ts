@@ -6,12 +6,14 @@ export const addMemberFormSchema = z
       .string({
         required_error: 'This field is required',
       })
+      .trim()
       .min(1, { message: 'This field is required' })
       .max(30, { message: 'This field should be less than or equal to 30' }),
     last_name: z
       .string({
         required_error: 'This field is required',
       })
+      .trim()
       .min(1, { message: 'This field is required' })
       .max(30, { message: 'This field should be less than or equal to 30' }),
     user_type_id: z
@@ -23,12 +25,14 @@ export const addMemberFormSchema = z
       .string({
         required_error: 'This field is required',
       })
+      .trim()
       .min(1, { message: 'This field is required' })
       .email({ message: 'Invalid email address' }),
     password: z
       .string({
         required_error: 'This field is required',
       })
+      .trim()
       .min(8, { message: 'Password must be at least 8 characters long' })
       .regex(/[A-Z]/, {
         message: 'Password must contain at least one uppercase letter',
@@ -59,12 +63,14 @@ export const editMemberFormSchema = z.object({
     .string({
       required_error: 'This field is required',
     })
+    .trim()
     .min(1, { message: 'This field is required' })
     .max(30, { message: 'This field should be less than or equal to 30' }),
   last_name: z
     .string({
       required_error: 'This field is required',
     })
+    .trim()
     .min(1, { message: 'This field is required' })
     .max(30, { message: 'This field should be less than or equal to 30' }),
   user_type_id: z
@@ -76,6 +82,7 @@ export const editMemberFormSchema = z.object({
     .string({
       required_error: 'This field is required',
     })
+    .trim()
     .min(1, { message: 'This field is required' })
     .email({ message: 'Invalid email address' }),
   skill_id: z
