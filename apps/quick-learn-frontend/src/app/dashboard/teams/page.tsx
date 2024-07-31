@@ -1,13 +1,14 @@
 'use client';
-import { postAPICall } from '@src/apiServices/common';
 import { RouteEnum } from '@src/constants/route.enum';
-import { APIROUTES, DateFormats } from '@src/shared/constants';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUser, TUserType } from '@src/shared/types/userTypes';
+import { userApiEnum } from '@src/constants/api.enum';
+import axiosInstance from '@src/apiServices/axios';
+import { DateFormats } from '@src/constants/dateFormats';
 
 const TeamMemberListing = () => {
   const [data, setData] = useState<TUser[]>([]);
@@ -19,10 +20,10 @@ const TeamMemberListing = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const route = `${APIROUTES.GET_USER_LIST}${
+        const route = `${userApiEnum.GET_USER_LIST}${
           userTypeCode ? '?user_type_code=' + userTypeCode : ''
         }`;
-        const res = (await postAPICall(route, {
+        const res = (await axiosInstance.post(route, {
           mode: 'paginate',
           page: page,
         })) as unknown as {

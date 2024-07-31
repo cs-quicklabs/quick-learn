@@ -14,7 +14,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
-import axiosInstance from '@src/apiServices/axios';
+import { logoutApiCall } from '@src/apiServices/authService';
 
 type TLink = { name: string; link: string };
 
@@ -59,7 +59,7 @@ const Navbar = () => {
   //User Logout
   async function doLogout() {
     try {
-      await axiosInstance.post('/auth/logout');
+      await logoutApiCall();
       router.push('/');
     } catch (error) {
       console.log(error);

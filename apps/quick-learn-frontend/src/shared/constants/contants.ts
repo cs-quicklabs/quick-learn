@@ -1,7 +1,0 @@
-export const APIROUTES = {
-  GET_USER_LIST: '/users/list',
-  GET_USER_METADATA: '/users/metadata',
-  CREATE_USER: '/users',
-  GET_USER: '/users/:uuid',
-  UPDATE_USER: '/users/:uuid',
-};

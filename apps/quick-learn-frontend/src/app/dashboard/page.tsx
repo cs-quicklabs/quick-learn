@@ -3,8 +3,7 @@ const Dashboard = () => {
     <>
       <div>
         <h1>Dashboard</h1>
-        {/* Your dashboard content here */}
-      </div>{' '}
+      </div>
     </>
   );
 };
