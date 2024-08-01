@@ -1,13 +1,14 @@
 import React, { FC, useState } from 'react';
 import { FieldType } from '../types/formTypes';
 import { OpenEyeIcon, ClosedEyeIcon } from '../components/formUIElements';
+import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 interface Props {
   label?: string;
   name: string;
   type?: FieldType;
   className?: string;
-  register: any;
+  register: UseFormRegister<FieldValues>;
   errorMsg: string;
   placeholder: string;
 }

@@ -24,7 +24,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => {
     // You can modify the response data here
-    return response;
+    return response.data;
   },
   (error) => {
     // Handle errors (e.g., redirect to login if unauthorized)
