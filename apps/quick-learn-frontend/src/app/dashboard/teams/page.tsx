@@ -6,9 +6,8 @@ import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUser, TUserType } from '@src/shared/types/userTypes';
-import { userApiEnum } from '@src/constants/api.enum';
-import axiosInstance from '@src/apiServices/axios';
 import { DateFormats } from '@src/constants/dateFormats';
+import { teamListApiCall } from '@src/apiServices/teamService';
 
 const TeamMemberListing = () => {
   const [data, setData] = useState<TUser[]>([]);
@@ -20,26 +19,11 @@ const TeamMemberListing = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const route = `${userApiEnum.GET_USER_LIST}${
-          userTypeCode ? '?user_type_code=' + userTypeCode : ''
-        }`;
-        const res = (await axiosInstance.post(route, {
-          mode: 'paginate',
-          page: page,
-        })) as unknown as {
-          success: boolean;
-          data: {
-            items: TUser[];
-            limit: number;
-            page: number;
-            total: number;
-            total_pages: number;
-          };
-        };
+        const res = await teamListApiCall(page, userTypeCode);
+        if (!res.success) throw new Error();
         setData(res.data.items);
         setTotal(res.data.total);
         setTotalPage(res.data.total_pages);
-        if (!res.success) throw new Error();
       } catch (error) {
         console.error('API call failed:', error);
         toast.error('Something went wrong!');

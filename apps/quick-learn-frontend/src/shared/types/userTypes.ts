@@ -25,3 +25,8 @@ export type TUser = {
   last_login_timestamp: string;
   created_at: string;
 };
+
+export type TUserMetadata = {
+  user_types: TUserType[];
+  skills: TSkill[];
+};

@@ -3,7 +3,12 @@ import { useRouter, useParams } from 'next/navigation';
 import MemberForm from './MemberForm';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { TSkill, TUser, TUserType } from '@src/shared/types/userTypes';
+import {
+  TSkill,
+  TUser,
+  TUserMetadata,
+  TUserType,
+} from '@src/shared/types/userTypes';
 import { RouteEnum } from '@src/constants/route.enum';
 import {
   addMemberFields,
@@ -16,13 +21,12 @@ import {
   EditMemberFormData,
   editMemberFormInitialValues,
 } from './editMember';
-import { userApiEnum } from '@src/constants/api.enum';
-import axiosInstance from '@src/apiServices/axios';
-
-type TUserMetadata = {
-  user_types: TUserType[];
-  skills: TSkill[];
-};
+import {
+  createUser,
+  getUserDetails,
+  getUserMetadataCall,
+  updateUser,
+} from '@src/apiServices/teamService';
 
 function setAddFormOptions<T>(field: string, options: T[]) {
   const idx = addMemberFields.findIndex(
@@ -65,12 +69,7 @@ const AddUpdateMemberPage = () => {
   useEffect(() => {
     (async function () {
       try {
-        const res = (await axiosInstance.get(
-          userApiEnum.GET_USER_METADATA,
-        )) as unknown as {
-          success: boolean;
-          data: TUserMetadata;
-        };
+        const res = await getUserMetadataCall();
         if (!res.success) throw new Error();
         setMetadata(res.data);
       } catch (error) {
@@ -93,12 +92,7 @@ const AddUpdateMemberPage = () => {
     if (!isAddMember) {
       (async function () {
         try {
-          const res = (await axiosInstance.get(
-            userApiEnum.GET_USER.replace(':uuid', params.member),
-          )) as unknown as {
-            success: boolean;
-            data: TUser;
-          };
+          const res = await getUserDetails(params.member);
           if (!res.success) throw new Error();
           setEditUserData(res.data);
         } catch (error) {
@@ -125,13 +119,10 @@ const AddUpdateMemberPage = () => {
   async function handleAddSubmit(data: AddMemberFormData) {
     try {
       setIsLoading(true);
-      const res = (await axiosInstance.post(userApiEnum.CREATE_USER, {
+      const res = await createUser({
         ...data,
-        team_id: metadata?.skills[0].team_id,
-      })) as unknown as {
-        success: boolean;
-        message: string;
-      };
+        team_id: metadata && metadata.skills[0].team_id,
+      });
       if (!res.success) throw new Error();
       toast.success(res.message);
       setIsLoading(false);
@@ -146,15 +137,7 @@ const AddUpdateMemberPage = () => {
   async function handleEditSubmit(data: EditMemberFormData) {
     try {
       setIsLoading(true);
-      const res = (await axiosInstance.patch(
-        userApiEnum.GET_USER.replace(':uuid', params.member),
-        {
-          ...data,
-        },
-      )) as unknown as {
-        success: boolean;
-        message: string;
-      };
+      const res = await updateUser(params.member, data);
       if (!res.success) throw new Error();
       toast.success(res.message);
       router.push(RouteEnum.TEAM);

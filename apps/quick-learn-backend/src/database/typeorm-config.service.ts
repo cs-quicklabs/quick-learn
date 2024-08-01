@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { EnvironmentEnum } from '@src/common/constants/constants';
 import { AllConfigType } from '@src/config/config.type';
 import { Entities } from 'src/entities';
 
@@ -22,9 +21,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       }),
       dropSchema: false,
       keepConnectionAlive: true,
-      logging:
-        this.configService.get('app.env', { infer: true }) !==
-        EnvironmentEnum.Production,
+      logging: this.configService.get('database.logging', { infer: true }),
       entities: [...Entities],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {
