@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -8,6 +16,7 @@ import { EnvironmentEnum } from '@src/common/constants/constants';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
+import { ForgotPasswordDto } from './dto/forgotpassword.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/auth/login
 @ApiTags('Authentication')
@@ -56,8 +65,8 @@ export class AuthController {
 
   @Post('forgot/password')
   @ApiOperation({ summary: 'Forgot Password' })
-  forgotPassword() {
-    return this.authService.forgotPassword();
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(forgotPasswordDto.email);
   }
 
   @Post('reset/password')

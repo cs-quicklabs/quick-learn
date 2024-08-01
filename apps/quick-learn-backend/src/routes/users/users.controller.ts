@@ -48,7 +48,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Post('list')
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({ summary: 'Filter users' })
   async findAll(
     @CurrentUser() user: UserEntity,
     @Body() paginationDto: PaginationDto,
@@ -60,7 +60,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':uuid')
-  @ApiOperation({ summary: 'Get specific user by user id' })
+  @ApiOperation({ summary: 'Get specific user by uuid' })
   @ApiParam({
     name: 'uuid',
     type: 'string',
@@ -73,7 +73,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':uuid')
-  @ApiOperation({ summary: 'Update specific user by user id' })
+  @ApiOperation({ summary: 'Update specific user by  uuid' })
   @ApiParam({
     name: 'uuid',
     type: 'string',
@@ -89,7 +89,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':uuid')
-  @ApiOperation({ summary: 'Delete specific user by user id' })
+  @ApiOperation({ summary: 'Delete specific user by uuid' })
   @ApiParam({
     name: 'uuid',
     type: 'string',

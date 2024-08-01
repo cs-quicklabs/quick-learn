@@ -16,6 +16,9 @@ export class AuthService {
     password: string,
   ): Promise<UserEntity | null> {
     const user = await this.usersService.findOne({ email, active: true });
+    if (!user) {
+      throw new ForbiddenException('No User Found!');
+    }
 
     // Comparing password
     const isVerified = await bcrypt.compare(password, user.password);
@@ -25,7 +28,7 @@ export class AuthService {
       });
       return user;
     } else {
-      throw new ForbiddenException('Unauthorized Credentials!');
+      throw new ForbiddenException('Wrong Credentials!');
     }
   }
 
@@ -42,10 +45,22 @@ export class AuthService {
     };
   }
 
-  forgotPassword() {
-    return 'forgot password';
+  async forgotPassword(email: string) {
+    // TODO: Check that user exists
+
+    const user = await this.usersService.findOne({ email, active: true });
+
+    if (user) {
+      // TODO: If user exists, generate password reset link
+    }
+
+    // TODO: send the link to the user by email with token
+    // FIXME: send email using sendgrid > as of now generate token and show in console
+
+    return { message: 'If this user exists, they will recieve an email' };
   }
 
+  // TODO: reset password > get token from email, decode token, update password
   resetPassword() {
     return 'reset password';
   }
