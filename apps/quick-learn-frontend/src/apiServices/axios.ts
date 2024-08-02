@@ -2,6 +2,17 @@ import axios from 'axios';
 
 const baseURL = 'http://localhost:3001/api/v1';
 
+export type AxiosErrorObject = {
+  response: {
+    data: {
+      error: null | string;
+      errorCode: number;
+      success: boolean;
+      message: string;
+    };
+  };
+};
+
 const axiosInstance = axios.create({
   baseURL,
   headers: {
@@ -15,7 +26,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     return config;
   },
-  (error) => {
+  (error: AxiosErrorObject) => {
     return Promise.reject(error);
   },
 );
@@ -26,9 +37,13 @@ axiosInstance.interceptors.response.use(
     // You can modify the response data here
     return response;
   },
-  (error) => {
+  (error: AxiosErrorObject) => {
+    console.error('Api error:', error);
     // Handle errors (e.g., redirect to login if unauthorized)
-    return error;
+    if (error.response && error.response.data.errorCode === 401) {
+      // Redirect to login or refresh token
+    }
+    return Promise.reject(error);
   },
 );
 

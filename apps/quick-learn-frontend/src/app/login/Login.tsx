@@ -4,11 +4,13 @@ import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
-import { RouteEnum } from '@src/constants/route.enum';
+import { ProtectedRouteEnum, RouteEnum } from '@src/constants/route.enum';
 import { useLogin } from '../../hooks/useAuth';
 import { LoginCredentials } from '@src/shared/types/authTypes';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
+import { AxiosErrorObject } from '@src/apiServices/axios';
 
 const Login = () => {
   const { loginUser, isLoading } = useLogin();
@@ -31,22 +33,12 @@ const Login = () => {
 
   const handleLogin = async (data: LoginCredentials) => {
     try {
-      const res = (await loginUser(data)) as unknown as {
-        success: boolean;
-        data: { accessToken: string };
-      };
-      console.log(res.success);
-
-      if (!res.success) throw new Error();
-      console.log(res);
+      await loginUser(data);
       toast.success('Login Success!');
       // if login is correct then redirect to Dashboard
-      router.push('/dashboard');
+      router.push(ProtectedRouteEnum.DASHBOARD);
     } catch (error) {
-      console.error('Login failed:', error);
-      // TODO: Need to fix error messages
-      // toast.error(`Login Failed: ${error}`);
-      toast.error('Unauthorized Credentails!');
+      showApiErrorInToast(error as AxiosErrorObject);
     }
   };
 
