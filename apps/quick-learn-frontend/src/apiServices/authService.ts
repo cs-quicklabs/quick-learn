@@ -3,6 +3,7 @@ import {
   ForgotPasswordPayload,
   LoginCredentials,
   LoginResponse,
+  ResetPasswordPayload,
 } from '../shared/types/authTypes';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 
@@ -28,6 +29,16 @@ export const forgotPasswordApiCall = async (
   const response = await axiosInstance.post<
     AxiosSuccessResponse<ForgotPasswordResData>
   >(authApiEnum.FORGOT_PASSWORD, payload);
+  return response.data;
+};
+
+export const resetPasswordApiCall = async (
+  payload: ResetPasswordPayload,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    authApiEnum.RESET_PASSWORD,
+    payload,
+  );
   return response.data;
 };
 

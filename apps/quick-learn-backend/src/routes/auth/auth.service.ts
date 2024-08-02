@@ -122,6 +122,6 @@ export class AuthService {
       password: user.password,
     });
     await this.userRepository.save(user);
-    return { message: 'Password updated successfully' };
+    return new SuccessResponse('Password updated successfully');
   }
 }

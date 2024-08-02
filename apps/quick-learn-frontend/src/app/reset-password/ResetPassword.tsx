@@ -4,8 +4,14 @@ import { z } from 'zod';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { resetPasswordFormSchema } from './resetPasswordSchema';
+import { resetPasswordApiCall } from '@src/apiServices/authService';
+import { toast } from 'react-toastify';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
+import { useSearchParams } from 'next/navigation';
 
 const ResetPassword = () => {
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
   const resetPasswordFields: FieldConfig[] = [
     {
       label: 'New Password',
@@ -23,7 +29,13 @@ const ResetPassword = () => {
   type ResetPasswordFormData = z.infer<typeof resetPasswordFormSchema>;
 
   const handleResetPassword = async (data: ResetPasswordFormData) => {
-    console.log('ResetPassword data:', data);
+    const payload = {
+      resetToken: token as string,
+      newPassword: data.confirmPassword,
+    };
+    resetPasswordApiCall(payload)
+      .then((res) => toast.success(res.message))
+      .catch((err) => showApiErrorInToast(err));
   };
   return (
     <FormFieldsMapper

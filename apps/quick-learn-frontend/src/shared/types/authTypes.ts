@@ -6,6 +6,10 @@ export interface LoginCredentials {
 export interface ForgotPasswordPayload {
   email: string;
 }
+export interface ResetPasswordPayload {
+  resetToken: string;
+  newPassword: string;
+}
 export interface LoginResponse {
   token: string;
   user: {
