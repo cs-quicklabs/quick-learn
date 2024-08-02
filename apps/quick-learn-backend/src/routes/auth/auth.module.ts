@@ -7,6 +7,9 @@ import { LocalStrategy } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth.constant';
 import { JwtStrategy } from './jwt.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ResetTokenEntity } from '@src/entities/reset_token.entity';
+import { UserEntity } from '@src/entities/user.entity';
 
 @Module({
   controllers: [AuthController],
@@ -17,6 +20,7 @@ import { JwtStrategy } from './jwt.strategy';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '30d' },
     }),
+    TypeOrmModule.forFeature([ResetTokenEntity, UserEntity]),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
 })

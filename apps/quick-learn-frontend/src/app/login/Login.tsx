@@ -35,8 +35,10 @@ const Login = () => {
         success: boolean;
         data: { accessToken: string };
       };
-      console.log(res);
+      console.log(res.success);
+
       if (!res.success) throw new Error();
+      console.log(res);
       toast.success('Login Success!');
       // if login is correct then redirect to Dashboard
       router.push('/dashboard');

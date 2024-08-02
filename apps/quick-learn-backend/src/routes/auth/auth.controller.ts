@@ -17,6 +17,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
 import { ForgotPasswordDto } from './dto/forgotpassword.dto';
+import { ResetPasswordDto } from './dto/resetpassword.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/auth/login
 @ApiTags('Authentication')
@@ -71,8 +72,11 @@ export class AuthController {
 
   @Post('reset/password')
   @ApiOperation({ summary: 'Reset Password' })
-  resetPassword() {
-    return this.authService.resetPassword();
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(
+      resetPasswordDto.resetToken,
+      resetPasswordDto.newPassword,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

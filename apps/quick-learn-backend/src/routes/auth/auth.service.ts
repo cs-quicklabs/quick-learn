@@ -1,14 +1,27 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '@src/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import { nanoid } from 'nanoid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ResetTokenEntity } from '@src/entities/reset_token.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    @InjectRepository(ResetTokenEntity)
+    private resetTokenRepository: Repository<ResetTokenEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async validateUser(
@@ -46,22 +59,55 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    // TODO: Check that user exists
-
+    //Check that user exists
     const user = await this.usersService.findOne({ email, active: true });
 
     if (user) {
-      // TODO: If user exists, generate password reset link
-    }
+      // If user exists, generate password reset link (with token) and save token in the db
 
-    // TODO: send the link to the user by email with token
-    // FIXME: send email using sendgrid > as of now generate token and show in console
+      const resetToken = nanoid(64);
+
+      const savedToken = await this.resetTokenRepository.save({
+        token: resetToken,
+        user_id: user.uuid,
+      });
+
+      // TODO: send the link to the user by email with token
+
+      // FIXME: send email using sendgrid > as of now generate token and show in response
+
+      const resetURL = resetToken;
+
+      return resetURL;
+    }
 
     return { message: 'If this user exists, they will recieve an email' };
   }
 
-  // TODO: reset password > get token from email, decode token, update password
-  resetPassword() {
-    return 'reset password';
+  // TODO: reset password > get token from email, decode token, update password & delete token from db
+  async resetPassword(resetToken: string, newPassword: string) {
+    // find a valid reset token
+    const token = await this.resetTokenRepository.findOne({
+      where: { token: resetToken, active: true },
+    });
+    const deleteEntry = await this.resetTokenRepository.delete({
+      token: resetToken,
+      active: true,
+    });
+    if (!token) {
+      throw new UnauthorizedException('Invalid Link');
+    }
+    // change user password
+    const user = await this.usersService.findOne({ uuid: token.user_id });
+
+    if (!user) {
+      throw new InternalServerErrorException();
+    }
+    user.password = await bcrypt.hash(newPassword, 10);
+    const updatedPassword = await this.userRepository.create({
+      password: user.password,
+    });
+    await this.userRepository.save(user);
+    return { message: 'Password updated successfully' };
   }
 }
