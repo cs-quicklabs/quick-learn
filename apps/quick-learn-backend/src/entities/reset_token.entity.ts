@@ -1,4 +1,4 @@
-import { Column, Entity } from 'typeorm';
+import { Column, CreateDateColumn, Entity } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 
 @Entity({ name: 'reset_token' })
@@ -11,4 +11,7 @@ export class ResetTokenEntity extends BaseEntity {
 
   @Column({ default: true })
   active: boolean;
+
+  @CreateDateColumn()
+  expiry_date: Date;
 }

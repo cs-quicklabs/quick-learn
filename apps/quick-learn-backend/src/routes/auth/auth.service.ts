@@ -11,7 +11,7 @@ import * as bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResetTokenEntity } from '@src/entities/reset_token.entity';
-import { Repository } from 'typeorm';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { SuccessResponse } from '@src/common/dto';
 
 @Injectable()
@@ -66,6 +66,8 @@ export class AuthService {
     if (user) {
       // If user exists, generate password reset link (with token) and save token in the db
 
+      const expiryDate = new Date();
+      expiryDate.setMinutes(expiryDate.getMinutes() + 15);
       const resetToken = nanoid(64);
 
       await this.resetTokenRepository.save({
@@ -92,12 +94,20 @@ export class AuthService {
   async resetPassword(resetToken: string, newPassword: string) {
     // find a valid reset token
     const token = await this.resetTokenRepository.findOne({
-      where: { token: resetToken, active: true },
+      where: {
+        token: resetToken,
+        active: true,
+        expiry_date: MoreThan(new Date()),
+      },
     });
     await this.resetTokenRepository.delete({
       token: resetToken,
       active: true,
     });
+    await this.resetTokenRepository.delete({
+      expiry_date: LessThan(new Date()),
+    });
+
     if (!token) {
       throw new UnauthorizedException('Invalid Link');
     }
