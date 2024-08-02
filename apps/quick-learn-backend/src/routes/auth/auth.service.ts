@@ -67,7 +67,7 @@ export class AuthService {
 
       const resetToken = nanoid(64);
 
-      const savedToken = await this.resetTokenRepository.save({
+      await this.resetTokenRepository.save({
         token: resetToken,
         user_id: user.uuid,
       });
@@ -90,7 +90,7 @@ export class AuthService {
     const token = await this.resetTokenRepository.findOne({
       where: { token: resetToken, active: true },
     });
-    const deleteEntry = await this.resetTokenRepository.delete({
+    await this.resetTokenRepository.delete({
       token: resetToken,
       active: true,
     });
@@ -104,7 +104,7 @@ export class AuthService {
       throw new InternalServerErrorException();
     }
     user.password = await bcrypt.hash(newPassword, 10);
-    const updatedPassword = await this.userRepository.create({
+    await this.userRepository.create({
       password: user.password,
     });
     await this.userRepository.save(user);
