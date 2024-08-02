@@ -37,11 +37,14 @@ const ResetPassword = () => {
     };
     resetPasswordApiCall(payload)
       .then((res) => {
-        toast.success(res.message), router.push(RouteEnum.LOGIN);
+        toast.success(res.message);
+        router.push(RouteEnum.LOGIN);
       })
-      .catch((err) => showApiErrorInToast(err));
-    // router.push(RouteEnum.LOGIN);
+      .catch((err) => {
+        showApiErrorInToast(err);
+      });
   };
+
   return (
     <FormFieldsMapper
       fields={resetPasswordFields}
