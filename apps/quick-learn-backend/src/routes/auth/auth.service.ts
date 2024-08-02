@@ -73,6 +73,7 @@ export class AuthService {
       await this.resetTokenRepository.save({
         token: resetToken,
         user_id: user.uuid,
+        expiry_date: expiryDate,
       });
 
       // TODO: send the link to the user by email with token
