@@ -12,6 +12,7 @@ import { nanoid } from 'nanoid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResetTokenEntity } from '@src/entities/reset_token.entity';
 import { Repository } from 'typeorm';
+import { SuccessResponse } from '@src/common/dto';
 
 @Injectable()
 export class AuthService {
@@ -76,12 +77,15 @@ export class AuthService {
 
       // FIXME: send email using sendgrid > as of now generate token and show in response
 
-      const resetURL = resetToken;
-
-      return resetURL;
+      const resetURL = `http://localhost:3000/reset-password?token=${resetToken}`;
+      return new SuccessResponse(
+        'If this user exists, they will recieve an email',
+        { resetURL },
+      );
     }
-
-    return { message: 'If this user exists, they will recieve an email' };
+    return new SuccessResponse(
+      'If this user exists, they will recieve an email',
+    );
   }
 
   // TODO: reset password > get token from email, decode token, update password & delete token from db

@@ -1,5 +1,6 @@
 export enum authApiEnum {
   LOGIN = '/auth/login',
+  FORGOT_PASSWORD = '/auth/forgot/password',
   LOGOUT = '/auth/logout',
 }
 

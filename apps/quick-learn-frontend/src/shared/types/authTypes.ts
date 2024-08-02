@@ -3,6 +3,9 @@ export interface LoginCredentials {
   password: string;
   rememberMe: boolean;
 }
+export interface ForgotPasswordPayload {
+  email: string;
+}
 export interface LoginResponse {
   token: string;
   user: {

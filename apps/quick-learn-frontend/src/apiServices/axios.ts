@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const baseURL = 'http://localhost:3001/api/v1';
 
@@ -11,6 +11,12 @@ export type AxiosErrorObject = {
       message: string;
     };
   };
+};
+
+export type AxiosSuccessResponse<T = unknown> = {
+  success: boolean;
+  message: string;
+  data: T;
 };
 
 const axiosInstance = axios.create({
@@ -33,7 +39,7 @@ axiosInstance.interceptors.request.use(
 
 // Response interceptor
 axiosInstance.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse<AxiosSuccessResponse>) => {
     // You can modify the response data here
     return response;
   },

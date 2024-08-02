@@ -6,6 +6,9 @@ import { forgotPasswordSchema } from './forgotPasswordSchema';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { RouteEnum } from '@src/constants/route.enum';
 import { FieldConfig } from '@src/shared/types/formTypes';
+import { forgotPasswordApiCall } from '@src/apiServices/authService';
+import { toast } from 'react-toastify';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 
 const ForgotPassword = () => {
   const forgotPasswordFields: FieldConfig[] = [
@@ -19,7 +22,12 @@ const ForgotPassword = () => {
   type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
   const handleForgotPassword = async (data: ForgotPasswordFormData) => {
-    console.log('forgotPassword data:', data);
+    forgotPasswordApiCall(data)
+      .then((res) => {
+        toast.success(res.message);
+        console.log(res.data.resetURL);
+      })
+      .catch((err) => showApiErrorInToast(err));
   };
   return (
     <>
