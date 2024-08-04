@@ -27,26 +27,20 @@ import {
   getUserMetadataCall,
   updateUser,
 } from '@src/apiServices/teamService';
+import { showErrorMessage } from '@src/utils/helpers';
 
-function setAddFormOptions<T>(field: string, options: T[]) {
-  const idx = addMemberFields.findIndex(
+type TOption = { name: string; value: string | number; id?: string | number };
+
+function setFormOptions<T>(
+  formFields: Array<{ name: string; type: string; options?: TOption[] }>,
+  field: string,
+  options: T[],
+) {
+  const idx = formFields.findIndex(
     (ele) => ele.name === field && ele.type === 'select',
   );
   if (idx > -1) {
-    addMemberFields[idx].options = options as {
-      name: string;
-      value: string | number;
-      id?: string | number | undefined;
-    }[];
-  }
-}
-
-function setEditFormOptions<T>(field: string, options: T[]) {
-  const idx = editMemberFields.findIndex(
-    (ele) => ele.name === field && ele.type === 'select',
-  );
-  if (idx > -1) {
-    editMemberFields[idx].options = options as {
+    formFields[idx].options = options as {
       name: string;
       value: string | number;
       id?: string | number | undefined;
@@ -73,18 +67,25 @@ const AddUpdateMemberPage = () => {
         if (!res.success) throw new Error();
         setMetadata(res.data);
       } catch (error) {
-        console.error('API call failed:', error);
-        toast.error('Something went wrong!');
+        showErrorMessage(error);
       }
     })();
   }, []);
 
   useEffect(() => {
     if (metadata) {
-      setAddFormOptions<TUserType>('user_type_id', metadata.user_types);
-      setAddFormOptions<TSkill>('skill_id', metadata.skills);
-      setEditFormOptions<TUserType>('user_type_id', metadata.user_types);
-      setEditFormOptions<TSkill>('skill_id', metadata.skills);
+      setFormOptions<TUserType>(
+        addMemberFields,
+        'user_type_id',
+        metadata.user_types,
+      );
+      setFormOptions<TSkill>(addMemberFields, 'skill_id', metadata.skills);
+      setFormOptions<TUserType>(
+        editMemberFields,
+        'user_type_id',
+        metadata.user_types,
+      );
+      setFormOptions<TSkill>(editMemberFields, 'skill_id', metadata.skills);
     }
   }, [metadata]);
 
@@ -96,8 +97,7 @@ const AddUpdateMemberPage = () => {
           if (!res.success) throw new Error();
           setEditUserData(res.data);
         } catch (error) {
-          console.error('API call failed:', error);
-          toast.error('Something went wrong!');
+          showErrorMessage(error);
         }
       })();
     }
@@ -128,8 +128,7 @@ const AddUpdateMemberPage = () => {
       setIsLoading(false);
       router.push(RouteEnum.TEAM);
     } catch (error) {
-      console.error('API call failed:', error);
-      toast.error('Something went wrong!');
+      showErrorMessage(error);
       setIsLoading(false);
     }
   }
@@ -143,8 +142,7 @@ const AddUpdateMemberPage = () => {
       router.push(RouteEnum.TEAM);
       setIsLoading(false);
     } catch (error) {
-      console.error('API call failed:', error);
-      toast.error('Something went wrong!');
+      showErrorMessage(error);
       setIsLoading(false);
     }
   }
