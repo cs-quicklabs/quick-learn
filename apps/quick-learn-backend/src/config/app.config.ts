@@ -42,6 +42,14 @@ class EnvironmentVariablesValidator {
   @IsString()
   @IsOptional()
   APP_HEADER_LANGUAGE: string;
+
+  @IsString()
+  @IsOptional()
+  SEND_GRID_API_KEY: string;
+
+  @IsString()
+  @IsOptional()
+  SEND_GRID_EMAIL: string;
 }
 
 export default registerAs<AppConfig>('app', () => {
@@ -59,5 +67,7 @@ export default registerAs<AppConfig>('app', () => {
       ? parseInt(process.env.PORT, 10)
       : 3000,
     apiPrefix: process.env.API_PREFIX || 'api',
+    sendGridAPIKey: process.env.SEND_GRID_API_KEY || '',
+    sendGridEmail: process.env.SEND_GRID_EMAIL || '',
   };
 });

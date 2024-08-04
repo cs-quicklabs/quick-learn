@@ -6,4 +6,6 @@ export type AppConfig = {
   backendDomain: string;
   port: number;
   apiPrefix: string;
+  sendGridAPIKey?: string;
+  sendGridEmail?: string;
 };

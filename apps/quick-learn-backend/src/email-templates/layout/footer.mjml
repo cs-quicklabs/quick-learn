@@ -1,0 +1,14 @@
+<mj-section background-color="#fff" padding="0px">
+  <mj-column padding="0 20px 20px">
+    <mj-divider padding-top="0px" border-color="#999" border-width="1px" />
+    <mj-text color="#999" align="center" font-size="12px">
+      NOTICE: This email message may contain confidential or privileged information. If you have received it in error, please delete the message immediately and contact the sender. You are requested not to copy or forward this message to anyone to protect the confidentiality of the intended recipient. Thank you.
+    </mj-text>
+    <mj-text color="#999" align="center" font-size="12px">
+      © {{currentYear}} Quick Labs
+    </mj-text>
+    <mj-text color="#10182a" align="center" padding-bottom="20px" font-size="40px">
+      Quick Labs
+    </mj-text>
+  </mj-column>
+</mj-section>

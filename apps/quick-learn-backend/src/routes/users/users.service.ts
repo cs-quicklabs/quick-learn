@@ -2,11 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { FindOptionsWhere, MoreThan, Repository } from 'typeorm';
 import { UserEntity } from '@src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginatedResult } from '@src/common/interfaces/paginate.interface';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { UserTypeEntity } from '@src/entities/user_type.entity';
 import { SkillEntity } from '@src/entities/skill.entity';
 import { CreateUserDto, ListFilterDto, PaginationDto } from './dto';
+import { PaginatedResult } from '@src/common/interfaces';
 
 const userRelations = ['user_type', 'skill'];
 @Injectable()

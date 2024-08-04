@@ -1,0 +1,19 @@
+{
+  "name": "sendgrid",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/sendgrid/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/lib/sendgrid",
+        "main": "lib/sendgrid/src/index.ts",
+        "tsConfig": "lib/sendgrid/tsconfig.lib.json",
+        "assets": ["lib/sendgrid/*.md"]
+      }
+    }
+  }
+}
