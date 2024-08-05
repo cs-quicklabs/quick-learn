@@ -1,4 +1,6 @@
 import './global.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata = {
   title: 'Welcome to quick-learn-frontend',
@@ -12,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ToastContainer />
+        {children}
+      </body>
     </html>
   );
 }

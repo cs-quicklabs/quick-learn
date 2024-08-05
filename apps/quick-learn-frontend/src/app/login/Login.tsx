@@ -1,14 +1,20 @@
 'use client';
-import FormFieldsMapper from '../../shared/formElements/FormFieldsMapper';
-import { FieldConfig } from '../..//shared/types/formTypes';
-
-import React from 'react';
+import React, { useState } from 'react';
 import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
-import { z } from 'zod';
-import { RouteEnum } from '../../constants/route.enum';
+import { FieldConfig } from '@src/shared/types/formTypes';
+import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
+import { ProtectedRouteEnum, RouteEnum } from '@src/constants/route.enum';
+import { LoginCredentials } from '@src/shared/types/authTypes';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
+import { AxiosErrorObject } from '@src/apiServices/axios';
+import { loginApiCall } from '@src/apiServices/authService';
 
 const Login = () => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const loginFields: FieldConfig[] = [
     {
       label: 'Email',
@@ -24,10 +30,19 @@ const Login = () => {
     },
     { label: 'Remember me', name: 'rememberMe', type: 'checkbox' },
   ];
-  type LoginFormData = z.infer<typeof loginFormSchema>;
 
-  const handleLogin = async (data: LoginFormData) => {
-    console.log('Login data:', data);
+  const handleLogin = async (data: LoginCredentials) => {
+    try {
+      setIsLoading(true);
+      await loginApiCall(data);
+      // if login is correct then redirect to Dashboard
+      router.push(ProtectedRouteEnum.DASHBOARD);
+      toast.success('Login Success!');
+    } catch (error) {
+      showApiErrorInToast(error as AxiosErrorObject);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -36,6 +51,7 @@ const Login = () => {
         fields={loginFields}
         schema={loginFormSchema}
         onSubmit={handleLogin}
+        buttonDisabled={isLoading}
         buttonText="Sign In"
       />
       <Link
