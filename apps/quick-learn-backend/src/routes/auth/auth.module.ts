@@ -10,6 +10,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResetTokenEntity } from '@src/entities/reset_token.entity';
 import { UserEntity } from '@src/entities/user.entity';
+import { EmailModule } from '@src/common/modules';
 
 @Module({
   controllers: [AuthController],
@@ -21,7 +22,8 @@ import { UserEntity } from '@src/entities/user.entity';
       signOptions: { expiresIn: '30d' },
     }),
     TypeOrmModule.forFeature([ResetTokenEntity, UserEntity]),
+    EmailModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
 })
-export class AuthModule {}
+export class AuthModule { }

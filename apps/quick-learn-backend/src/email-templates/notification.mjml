@@ -10,7 +10,7 @@
       <mj-column padding="20px" background-color="#fff">
         <mj-text>
 
-          {{body}}
+          {{{body}}}
         </mj-text>
         <mj-text>
           Thank you,<br /> The Quick Lab team<br />

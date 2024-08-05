@@ -15,7 +15,7 @@
     "paths": {
       "@src/*": ["src/*"],
       "@quick-learn/shared": ["../../lib/shared/src/index.ts"],
-      "@quick-learn/sendgrid": ["../../lib/sendgrid/src/index.ts"]
+      "@quick-learn/email": ["../../lib/email/src/index.ts"]
     }
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],

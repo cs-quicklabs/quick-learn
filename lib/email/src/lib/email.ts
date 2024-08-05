@@ -1,4 +1,4 @@
-import * as sendgrid from '@sendgrid/mail';
+import * as nodemailer from 'nodemailer';
 
 export type Message = {
   body: string;
@@ -10,12 +10,14 @@ export type Message = {
 
 export class EmailNotification {
   private accountEmail: string;
+  private emailTransporter: nodemailer.Transporter;
   /**
-   * @param apiKey Send Grid API Key
+   * @param data Send Grid API Key
    * @param emai verified sender email
    */
-  constructor(apiKey: string, emai: string) {
-    sendgrid.setApiKey(apiKey);
+  constructor(data: { host: string, port: number, auth: { user: string, pass: string } }, emai: string) {
+    console.log(data)
+    this.emailTransporter = nodemailer.createTransport({ ...data, secure: false });
     this.accountEmail = emai;
   }
 
@@ -40,7 +42,7 @@ export class EmailNotification {
     };
 
     try {
-      const info = await sendgrid.send(mailOptions);
+      const info = await this.emailTransporter.sendMail(mailOptions);
       console.log("Email sent successfully:", info);
     } catch (error) {
       console.error("Error sending email:", error);

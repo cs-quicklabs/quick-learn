@@ -7,7 +7,7 @@
     <mj-text color="#999" align="center" font-size="12px">
       © {{currentYear}} Quick Labs
     </mj-text>
-    <mj-text color="#10182a" align="center" padding-bottom="20px" font-size="40px">
+    <mj-text color="#10182a" align="center" padding-bottom="20px" font-size="32px">
       Quick Labs
     </mj-text>
   </mj-column>

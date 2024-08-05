@@ -13,6 +13,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ResetTokenEntity } from '@src/entities/reset_token.entity';
 import { LessThan, MoreThan, Repository } from 'typeorm';
 import { SuccessResponse } from '@src/common/dto';
+import { ConfigService } from '@nestjs/config';
+import { EmailService } from '@src/common/modules/email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +25,9 @@ export class AuthService {
     private resetTokenRepository: Repository<ResetTokenEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-  ) {}
+    private configService: ConfigService,
+    private emailService: EmailService,
+  ) { }
 
   async validateUser(
     email: string,
@@ -76,15 +80,21 @@ export class AuthService {
         expiry_date: expiryDate,
       });
 
-      // TODO: send the link to the user by email with token
+      const frontendURL = this.configService.get('app.frontendDomain', { infer: true });
+      const resetURL = `${frontendURL}/reset-password?token=${resetToken}`;
 
-      // FIXME: send email using sendgrid > as of now generate token and show in response
+      const html = `<div>
+        <p>Please click on the link below to reset your password.</p><br/>
+        <a style="padding: 8px 16px;text-decoration: none;background-color: #10182a;border-radius: 4px;color: white;" target="_blank" href="${resetURL}">Reset Password</a><br/>
+      <div>`;
 
-      const resetURL = `http://localhost:3000/reset-password?token=${resetToken}`;
-      return new SuccessResponse(
-        'If this user exists, they will recieve an email',
-        { resetURL },
-      );
+      this.emailService.email({
+        body: html,
+        recipients: [email],
+        subject: 'Quick Learn | Reset Password',
+      });
+
+      return new SuccessResponse('Reset password link has been shared.');
     }
     return new SuccessResponse(
       'If this user exists, they will recieve an email',

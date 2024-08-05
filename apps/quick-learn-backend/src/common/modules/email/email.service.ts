@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { EmailNotification, Message } from '@quick-learn/sendgrid';
+import { EmailNotification, Message } from '@quick-learn/email';
 import mjml2html from 'mjml';
 import path from 'path';
 import * as fs from 'fs/promises';
@@ -17,14 +17,23 @@ Handlebars.registerHelper('currentYear', function () {
 
 @Injectable()
 export class EmailService {
-  private sendGrid: EmailNotification;
+  private emailService: EmailNotification;
   private readonly logger = new Logger('Email Service');
   constructor(private configService: ConfigService) {
-    const apiKey = this.configService.get('app.sendGridAPIKey', {
-      infer: true,
-    });
-    const email = this.configService.get('app.sendGridEmail', { infer: true });
-    this.sendGrid = new EmailNotification(apiKey, email);
+    // const apiKey = this.configService.get('app.sendGridAPIKey', {
+    //   infer: true,
+    // });
+    const email = this.configService.get('app.smtpEmail', { infer: true });
+
+    const options = {
+      host: this.configService.get('app.smtpHost'),
+      port: this.configService.get('app.smtpPort'),
+      auth: {
+        user: this.configService.get('app.smtpUser'),
+        pass: this.configService.get('app.smtpPass'),
+      },
+    };
+    this.emailService = new EmailNotification(options, email);
   }
 
   /**
@@ -36,7 +45,7 @@ export class EmailService {
     const emailText = data.body;
     const emailBody = await this.compileMjmlTemplate(emailText);
     try {
-      await this.sendGrid.send({ ...data, body: emailBody });
+      await this.emailService.send({ ...data, body: emailBody });
       return true;
     } catch (err) {
       this.logger.error('Something went wrong./n', JSON.stringify(err));
