@@ -15,6 +15,7 @@ import { LessThan, MoreThan, Repository } from 'typeorm';
 import { SuccessResponse } from '@src/common/dto';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from '@src/common/modules/email/email.service';
+import { emailSubjects } from '@src/common/constants/email-subject';
 
 @Injectable()
 export class AuthService {
@@ -91,7 +92,7 @@ export class AuthService {
       this.emailService.email({
         body: html,
         recipients: [email],
-        subject: 'Quick Learn | Reset Password',
+        subject: emailSubjects.resetPassword,
       });
 
       return new SuccessResponse('Reset password link has been shared.');
