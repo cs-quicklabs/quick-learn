@@ -20,17 +20,15 @@ export class EmailService {
   private emailService: EmailNotification;
   private readonly logger = new Logger('Email Service');
   constructor(private configService: ConfigService) {
-    // const apiKey = this.configService.get('app.sendGridAPIKey', {
-    //   infer: true,
-    // });
-    const email = this.configService.get('app.smtpEmail', { infer: true });
-
+    const email = this.configService.getOrThrow('app.smtpEmail', {
+      infer: true,
+    });
     const options = {
-      host: this.configService.get('app.smtpHost'),
-      port: this.configService.get('app.smtpPort'),
+      host: this.configService.getOrThrow('app.smtpHost', { infer: true }),
+      port: this.configService.getOrThrow('app.smtpPort', { infer: true }),
       auth: {
-        user: this.configService.get('app.smtpUser'),
-        pass: this.configService.get('app.smtpPass'),
+        user: this.configService.getOrThrow('app.smtpUser', { infer: true }),
+        pass: this.configService.getOrThrow('app.smtpPass', { infer: true }),
       },
     };
     this.emailService = new EmailNotification(options, email);

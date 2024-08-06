@@ -26,4 +26,4 @@ import { EmailModule } from '@src/common/modules';
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
 })
-export class AuthModule { }
+export class AuthModule {}

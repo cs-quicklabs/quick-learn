@@ -7,6 +7,8 @@ import { UserTypeEntity } from '@src/entities/user_type.entity';
 import { SkillEntity } from '@src/entities/skill.entity';
 import { CreateUserDto, ListFilterDto, PaginationDto } from './dto';
 import { PaginatedResult } from '@src/common/interfaces';
+import { EmailService } from '@src/common/modules/email/email.service';
+import { emailSubjects } from '@src/common/constants/email-subject';
 
 const userRelations = ['user_type', 'skill'];
 @Injectable()
@@ -18,6 +20,7 @@ export class UsersService extends PaginationService<UserEntity> {
     private userTypeRepository: Repository<UserTypeEntity>,
     @InjectRepository(SkillEntity)
     private skillRepository: Repository<SkillEntity>,
+    private emailService: EmailService,
   ) {
     super(userRepository);
   }
@@ -41,6 +44,15 @@ export class UsersService extends PaginationService<UserEntity> {
       throw new BadRequestException('Email already exists.');
     }
     const user = await this.userRepository.create(createUserDto);
+
+    // send email to the user
+    const emailData = {
+      body: '<p>Welcome to Quick Learn!</p><br/><p>You can now login to quick learn.</p>',
+      recipients: [user.email],
+      subject: emailSubjects.welcome,
+    };
+    this.emailService.email(emailData);
+
     return await this.userRepository.save(user);
   }
 

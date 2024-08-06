@@ -28,7 +28,7 @@ export class AuthService {
     private userRepository: Repository<UserEntity>,
     private configService: ConfigService,
     private emailService: EmailService,
-  ) { }
+  ) {}
 
   async validateUser(
     email: string,
@@ -81,7 +81,9 @@ export class AuthService {
         expiry_date: expiryDate,
       });
 
-      const frontendURL = this.configService.get('app.frontendDomain', { infer: true });
+      const frontendURL = this.configService.get('app.frontendDomain', {
+        infer: true,
+      });
       const resetURL = `${frontendURL}/reset-password?token=${resetToken}`;
 
       const html = `<div>
@@ -112,10 +114,14 @@ export class AuthService {
         expiry_date: MoreThan(new Date()),
       },
     });
+
+    // TODO: delete expired tokens using cronjobs
     await this.resetTokenRepository.delete({
       token: resetToken,
       active: true,
     });
+
+    // TODO: delete expired tokens using cronjobs
     await this.resetTokenRepository.delete({
       expiry_date: LessThan(new Date()),
     });
@@ -123,17 +129,30 @@ export class AuthService {
     if (!token) {
       throw new UnauthorizedException('Invalid Link');
     }
+
     // change user password
+    // Todo: uuid should be used as a foreign key. uuid is generated column not primary key
     const user = await this.usersService.findOne({ uuid: token.user_id });
 
     if (!user) {
       throw new InternalServerErrorException();
     }
+
     user.password = await bcrypt.hash(newPassword, 10);
+    // Todo: update the below to use update function rather than save method
     await this.userRepository.create({
       password: user.password,
     });
     await this.userRepository.save(user);
+
+    const emailData = {
+      body: '<p>Your password has been reset successfully.</p>',
+      recipients: [user.email],
+      subject: emailSubjects.resetPasswordSuccess,
+    };
+
+    this.emailService.email(emailData);
+
     return new SuccessResponse('Password updated successfully');
   }
 }
