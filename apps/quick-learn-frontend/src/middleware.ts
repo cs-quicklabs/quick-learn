@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ProtectedRouteEnum, RouteEnum } from './constants/route.enum';
+import { RouteEnum } from './constants/route.enum';
 
 // Constants
 const PUBLIC_ROUTES = [
@@ -8,7 +8,7 @@ const PUBLIC_ROUTES = [
   RouteEnum.FORGOT_PASSWORD,
   RouteEnum.RESET_PASSWORD,
 ];
-const DASHBOARD_ROUTE = ProtectedRouteEnum.DASHBOARD;
+const DASHBOARD_ROUTE = RouteEnum.DASHBOARD;
 const LOGIN_ROUTE = RouteEnum.LOGIN;
 
 // Helper functions

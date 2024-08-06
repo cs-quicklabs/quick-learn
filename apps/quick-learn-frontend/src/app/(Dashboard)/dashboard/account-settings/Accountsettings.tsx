@@ -1,14 +1,14 @@
 import Image from 'next/image';
 import React from 'react';
 
-const AccountSettingsPage = () => {
+const AccountSettings = () => {
   return (
     <>
       <div>
         <h1 className="text-lg font-semibold dark:text-white">Team Settings</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           Change settings of your team.
-        </p>{' '}
+        </p>
         <form className="w-full mt-6">
           <div className="sm:col-span-2">
             <label
@@ -54,4 +54,4 @@ const AccountSettingsPage = () => {
   );
 };
 
-export default AccountSettingsPage;
+export default AccountSettings;
