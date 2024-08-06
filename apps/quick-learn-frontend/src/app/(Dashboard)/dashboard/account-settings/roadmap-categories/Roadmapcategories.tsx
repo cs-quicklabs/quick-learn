@@ -10,8 +10,8 @@ const Roadmapcategories = () => {
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           Roadmaps can belong to a category. A category could be a way to group
           learning roadmaps. For example, a department can have a category
-          called "Engineering" and all the roadmaps related to engineering can
-          be added to this category.
+          called &quot;Engineering&quot; and all the roadmaps related to
+          engineering can be added to this category.
         </p>
         <form className="w-full mt-6">
           <div className="mb-5 mt-6">
