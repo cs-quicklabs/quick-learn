@@ -1,13 +1,29 @@
-import { getGreeting } from '../support/app.po';
+import LoginPage = require("../test/Login");
 
-describe('quick-learn-frontend-e2e', () => {
-  beforeEach(() => cy.visit('/'));
+describe('Login Test', () => {
+  const loginPage = new LoginPage();
 
-  it('should display welcome message', () => {
-    // Custom command example, see `../support/commands.ts` file
-    cy.login('my-email@something.com', 'myPassword');
+  beforeEach(() => {
+    loginPage.visit();
+  });
 
-    // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains(/Welcome/);
+  it('should display the login page', () => {
+
+    cy.get('.text-xl').contains("Sign in to your account")
+  });
+
+  it('should display an error for invalid credentials', () => {
+
+    loginPage.login('super.admin@yopmail.com', 'password@123');
+
+    loginPage.getErrorMessage().should('contain', 'Wrong Credentials!');
+  });
+
+  it('should log in with valid credentials', () => {
+
+    loginPage.login('super.admin@yopmail.com', 'Password@123');
+
+    cy.url().should('include', '/dashboard'); 
+    loginPage.getWelcomeMessage().should('contain', 'Login Success!'); // Adjust selector and text as needed
   });
 });
