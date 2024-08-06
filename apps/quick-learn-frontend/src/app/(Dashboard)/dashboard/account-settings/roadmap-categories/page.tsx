@@ -1,7 +1,12 @@
 import React from 'react';
+import Roadmapcategories from './Roadmapcategories';
 
 const page = () => {
-  return <div>Roadmap categories</div>;
+  return (
+    <div>
+      <Roadmapcategories />
+    </div>
+  );
 };
 
 export default page;
