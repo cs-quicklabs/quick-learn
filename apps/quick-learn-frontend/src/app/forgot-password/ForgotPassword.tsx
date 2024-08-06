@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import Link from 'next/link';
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { forgotPasswordSchema } from './forgotPasswordSchema';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { RouteEnum } from '@src/constants/route.enum';
@@ -11,6 +12,7 @@ import { toast } from 'react-toastify';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 
 const ForgotPassword = () => {
+  const router = useRouter();
   const forgotPasswordFields: FieldConfig[] = [
     {
       label: 'Email',
@@ -25,7 +27,7 @@ const ForgotPassword = () => {
     forgotPasswordApiCall(data)
       .then((res) => {
         toast.success(res.message);
-        console.log(res.data.resetURL);
+        router.push(RouteEnum.LOGIN);
       })
       .catch((err) => showApiErrorInToast(err));
   };
