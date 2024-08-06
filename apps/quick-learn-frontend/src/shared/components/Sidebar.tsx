@@ -25,7 +25,7 @@ const Sidebar: FC<Props> = ({ navLinks }) => {
             href={linkTo}
             className={`${
               pathname === linkTo && 'bg-gray-200'
-            } text-gray-900 hover:bg-gray-200 px-3 py-2 flex items-center text-sm font-medium`}
+            } text-gray-900 hover:bg-gray-200 rounded-md px-3 py-2 flex items-center text-sm font-medium`}
           >
             {icon}
             <span className="truncate ml-2">{title}</span>

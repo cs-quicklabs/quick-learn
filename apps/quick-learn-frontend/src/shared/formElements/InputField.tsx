@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { FieldType } from '../types/formTypes';
-import { OpenEyeIcon, ClosedEyeIcon } from '../components/formUIElements';
+import { OpenEyeIcon, ClosedEyeIcon } from '../components/UIElements';
 import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 interface Props {
