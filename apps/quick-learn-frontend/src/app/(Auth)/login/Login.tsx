@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { ProtectedRouteEnum, RouteEnum } from '@src/constants/route.enum';
-import { useLogin } from '../../hooks/useAuth';
+import { useLogin } from '../../../hooks/useAuth';
 import { LoginCredentials } from '@src/shared/types/authTypes';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';

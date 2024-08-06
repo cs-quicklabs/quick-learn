@@ -36,7 +36,7 @@ const links: TLink[] = [
 const menuItems: TLink[] = [
   {
     name: 'Account Settings',
-    link: '',
+    link: RouteEnum.ACCOUNT_SETTINGS,
   },
   {
     name: 'My Profile',
