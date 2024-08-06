@@ -4,7 +4,7 @@ import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
-import { ProtectedRouteEnum, RouteEnum } from '@src/constants/route.enum';
+import { RouteEnum } from '@src/constants/route.enum';
 import { useLogin } from '../../../hooks/useAuth';
 import { LoginCredentials } from '@src/shared/types/authTypes';
 import { useRouter } from 'next/navigation';
@@ -36,7 +36,7 @@ const Login = () => {
       await loginUser(data);
       toast.success('Login Success!');
       // if login is correct then redirect to Dashboard
-      router.push(ProtectedRouteEnum.DASHBOARD);
+      router.push(RouteEnum.DASHBOARD);
     } catch (error) {
       showApiErrorInToast(error as AxiosErrorObject);
     }
@@ -49,6 +49,7 @@ const Login = () => {
         schema={loginFormSchema}
         onSubmit={handleLogin}
         buttonDisabled={isLoading}
+        bigButton
         buttonText="Sign In"
       />
       <Link

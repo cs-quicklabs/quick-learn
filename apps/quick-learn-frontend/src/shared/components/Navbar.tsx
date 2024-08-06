@@ -40,7 +40,7 @@ const menuItems: TLink[] = [
   },
   {
     name: 'My Profile',
-    link: '',
+    link: RouteEnum.PROFILE_SETTINGS,
   },
   {
     name: 'Archive',
