@@ -8,10 +8,11 @@ import { SkillEntity } from '@src/entities/skill.entity';
 import { EmailModule } from '@src/common/modules';
 
 @Module({
-  controllers: [UsersController, EmailModule],
+  controllers: [UsersController],
   providers: [UsersService],
   imports: [
     TypeOrmModule.forFeature([UserEntity, UserTypeEntity, SkillEntity]),
+    EmailModule,
   ],
   exports: [UsersService],
 })
