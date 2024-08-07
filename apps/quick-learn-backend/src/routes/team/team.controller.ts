@@ -1,0 +1,32 @@
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CreateTeamDto } from './dto/create-team.dto';
+import { SuccessResponse } from '@src/common/dto';
+import { TeamService } from './team.service';
+
+@ApiTags('Team')
+// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/team
+@Controller({
+  version: '1',
+  path: 'team',
+})
+export class TeamController {
+  constructor(private readonly teamService: TeamService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  @ApiOperation({ summary: 'adding team name' })
+  async create(@Body() createTeamDto: CreateTeamDto): Promise<SuccessResponse> {
+    const team = await this.teamService.create(createTeamDto);
+
+    return new SuccessResponse('Successfully added Team', team);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  @ApiOperation({ summary: 'get all team names' })
+  findAll() {
+    return this.teamService.findAll();
+  }
+}

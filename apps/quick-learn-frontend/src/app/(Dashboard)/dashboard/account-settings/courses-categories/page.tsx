@@ -2,8 +2,8 @@ import React from 'react';
 import Coursecategories from './Coursecategories';
 
 export const metadata = {
-  title: 'Priimary Skills • Quick Learn',
-  description: 'Priimary Skills quick learn',
+  title: 'Course Categories • Quick Learn',
+  description: 'Course Categories quick learn',
 };
 
 const page = () => {
