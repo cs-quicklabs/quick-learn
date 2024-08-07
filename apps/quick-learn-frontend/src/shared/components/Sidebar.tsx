@@ -21,6 +21,7 @@ const Sidebar: FC<Props> = ({ navLinks }) => {
       <nav className="space-y-1">
         {navLinks.map(({ title, linkTo, icon }) => (
           <Link
+            key={linkTo}
             href={linkTo}
             className={`${
               pathname === linkTo && 'bg-gray-200'
