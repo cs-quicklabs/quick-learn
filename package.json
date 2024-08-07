@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "typeorm": "ts-node node_modules/typeorm/cli.js",
-    "dev": "docker-compose up -d && npx nx run-many --target=dev --all=true"
+    "dev": "docker-compose up -d && npx nx run-many --target=dev --all=true",
+    "quick-learn-backend:build": "npx nx run quick-learn-backend:build",
+    "quick-learn-backend:serve:dev": "npx nx run quick-learn-backend:serve --configuration=development",
+    "quick-learn-backend:serve:prod": "npx nx run quick-learn-backend:serve --configuration=production"
   },
   "private": true,
   "dependencies": {
