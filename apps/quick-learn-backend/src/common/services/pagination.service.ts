@@ -1,6 +1,6 @@
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { BasePaginationDto } from '../dto';
-import { PaginatedResult } from '../interfaces/paginate.interface';
+import { PaginatedResult } from '../interfaces';
 
 export class PaginationService<T> {
   constructor(private repository: Repository<T>) {}
