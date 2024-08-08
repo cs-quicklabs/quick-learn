@@ -9,7 +9,10 @@ import { useLogin } from '../../../hooks/useAuth';
 import { LoginCredentials } from '@src/shared/types/authTypes';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 
 const Login = () => {
@@ -33,9 +36,8 @@ const Login = () => {
 
   const handleLogin = async (data: LoginCredentials) => {
     try {
-      await loginUser(data);
-      toast.success('Login Success!');
-      // if login is correct then redirect to Dashboard
+      const res = await loginUser(data);
+      showApiMessageInToast(res);
       router.push(RouteEnum.DASHBOARD);
     } catch (error) {
       showApiErrorInToast(error as AxiosErrorObject);

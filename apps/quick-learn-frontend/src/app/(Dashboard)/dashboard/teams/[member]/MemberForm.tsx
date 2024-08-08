@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useRouter } from 'next/navigation';
-import { Loader } from '@src/shared/components/formUIElements';
+import { Loader } from '@src/shared/components/UIElements';
 
 export interface IMemberFieldConfig<T> {
   label: string;
