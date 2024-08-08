@@ -1,27 +1,29 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getUserProfile } from '@src/apiServices/profileService';
+import {
+  getUserProfile,
+  updateUserProfile,
+} from '@src/apiServices/profileService';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { TUserProfileType } from '@src/shared/types/profileTypes';
-import React, { useEffect, useState } from 'react';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
+import React, { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
-  profileImage: z.union([z.instanceof(File), z.string()]).optional(),
+  profileImage: z.union([z.instanceof(File), z.string()]),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfileSettings = () => {
-  const [user, setUser] = useState<TUserProfileType>({
-    firstName: '',
-    lastName: '',
-    profileImage: '',
-  });
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
   });
@@ -48,14 +50,14 @@ const ProfileSettings = () => {
     },
   ];
 
-  const onSubmit = (data: ProfileFormData) => {
-    console.log(data);
-    // Handle form submission
+  const onSubmit = (data: TUserProfileType) => {
+    updateUserProfile(data)
+      .then((res) => showApiMessageInToast(res))
+      .catch((err) => showApiErrorInToast(err));
   };
 
   useEffect(() => {
     getUserProfile().then((res) => {
-      setUser(res.data);
       setValue('firstName', res.data.firstName);
       setValue('lastName', res.data.lastName);
       setValue('profileImage', res.data.profileImage);

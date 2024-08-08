@@ -11,3 +11,13 @@ export const getUserProfile = async (): Promise<
   >(userApiEnum.GET_USER_PROFILE);
   return response.data;
 };
+
+export const updateUserProfile = async (
+  data: TUserProfileType,
+): Promise<AxiosSuccessResponse<{}>> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse<{}>>(
+    userApiEnum.GET_USER_PROFILE,
+    data,
+  );
+  return response.data;
+};
