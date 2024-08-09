@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EmailNotification, Message } from '@quick-learn/email';
 import mjml2html from 'mjml';
 import path from 'path';
