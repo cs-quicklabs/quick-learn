@@ -24,7 +24,6 @@ class EnvironmentVariablesValidator {
   APP_PORT: number;
 
   @IsUrl({ require_tld: false })
-  @IsOptional()
   FRONTEND_DOMAIN: string;
 
   @IsUrl({ require_tld: false })
@@ -42,6 +41,26 @@ class EnvironmentVariablesValidator {
   @IsString()
   @IsOptional()
   APP_HEADER_LANGUAGE: string;
+
+  @IsString()
+  @IsOptional()
+  SMTP_EMAIL: string;
+
+  @IsString()
+  @IsOptional()
+  SMTP_HOST: string;
+
+  @IsString()
+  @IsOptional()
+  SMTP_PORT: string;
+
+  @IsString()
+  @IsOptional()
+  SMTP_USER: string;
+
+  @IsString()
+  @IsOptional()
+  SMTP_PASS: string;
 }
 
 export default registerAs<AppConfig>('app', () => {
@@ -51,7 +70,7 @@ export default registerAs<AppConfig>('app', () => {
     env: process.env.NODE_ENV || EnvironmentEnum.Developemnt,
     name: process.env.APP_NAME || 'Quick Learn',
     workingDirectory: process.env.PWD || process.cwd(),
-    frontendDomain: process.env.FRONTEND_DOMAIN,
+    frontendDomain: process.env.FRONTEND_DOMAIN ?? 'http://localhost:3000',
     backendDomain: process.env.BACKEND_DOMAIN ?? 'http://localhost',
     port: process.env.APP_PORT
       ? parseInt(process.env.APP_PORT, 10)
@@ -59,5 +78,10 @@ export default registerAs<AppConfig>('app', () => {
       ? parseInt(process.env.PORT, 10)
       : 3000,
     apiPrefix: process.env.API_PREFIX || 'api',
+    smtpEmail: process.env.SMTP_EMAIL,
+    smtpHost: process.env.SMTP_HOST,
+    smtpPort: process.env.SMTP_PORT,
+    smtpUser: process.env.SMTP_USER,
+    smtpPass: process.env.SMTP_PASS,
   };
 });

@@ -1,20 +1,22 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { RouteEnum } from '@src/constants/route.enum';
-import { useLogin } from '../../../hooks/useAuth';
 import { LoginCredentials } from '@src/shared/types/authTypes';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import { loginApiCall } from '@src/apiServices/authService';
 
 const Login = () => {
-  const { loginUser, isLoading } = useLogin();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const loginFields: FieldConfig[] = [
     {
       label: 'Email',
@@ -33,12 +35,13 @@ const Login = () => {
 
   const handleLogin = async (data: LoginCredentials) => {
     try {
-      await loginUser(data);
-      toast.success('Login Success!');
-      // if login is correct then redirect to Dashboard
+      const res = await loginApiCall(data);
+      showApiMessageInToast(res);
       router.push(RouteEnum.DASHBOARD);
     } catch (error) {
       showApiErrorInToast(error as AxiosErrorObject);
+    } finally {
+      setIsLoading(false);
     }
   };
 

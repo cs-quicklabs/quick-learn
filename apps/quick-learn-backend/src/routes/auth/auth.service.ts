@@ -13,6 +13,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ResetTokenEntity } from '@src/entities/reset_token.entity';
 import { LessThan, MoreThan, Repository } from 'typeorm';
 import { SuccessResponse } from '@src/common/dto';
+import { ConfigService } from '@nestjs/config';
+import { EmailService } from '@src/common/modules/email/email.service';
+import { emailSubjects } from '@src/common/constants/email-subject';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +26,8 @@ export class AuthService {
     private resetTokenRepository: Repository<ResetTokenEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    private configService: ConfigService,
+    private emailService: EmailService,
   ) {}
 
   async validateUser(
@@ -76,15 +81,23 @@ export class AuthService {
         expiry_date: expiryDate,
       });
 
-      // TODO: send the link to the user by email with token
+      const frontendURL = this.configService.get('app.frontendDomain', {
+        infer: true,
+      });
+      const resetURL = `${frontendURL}/reset-password?token=${resetToken}`;
 
-      // FIXME: send email using sendgrid > as of now generate token and show in response
+      const html = `<div>
+        <p>Please click on the link below to reset your password.</p><br/>
+        <a style="padding: 8px 16px;text-decoration: none;background-color: #10182a;border-radius: 4px;color: white;" target="_blank" href="${resetURL}">Reset Password</a><br/>
+      <div>`;
 
-      const resetURL = `http://localhost:3000/reset-password?token=${resetToken}`;
-      return new SuccessResponse(
-        'If this user exists, they will recieve an email',
-        { resetURL },
-      );
+      this.emailService.email({
+        body: html,
+        recipients: [email],
+        subject: emailSubjects.resetPassword,
+      });
+
+      return new SuccessResponse('Reset password link has been shared.');
     }
     return new SuccessResponse(
       'If this user exists, they will recieve an email',
@@ -101,10 +114,14 @@ export class AuthService {
         expiry_date: MoreThan(new Date()),
       },
     });
+
+    // TODO: delete expired tokens using cronjobs
     await this.resetTokenRepository.delete({
       token: resetToken,
       active: true,
     });
+
+    // TODO: delete expired tokens using cronjobs
     await this.resetTokenRepository.delete({
       expiry_date: LessThan(new Date()),
     });
@@ -112,17 +129,30 @@ export class AuthService {
     if (!token) {
       throw new UnauthorizedException('Invalid Link');
     }
+
     // change user password
+    // Todo: uuid should be used as a foreign key. uuid is generated column not primary key
     const user = await this.usersService.findOne({ uuid: token.user_id });
 
     if (!user) {
       throw new InternalServerErrorException();
     }
+
     user.password = await bcrypt.hash(newPassword, 10);
+    // Todo: update the below to use update function rather than save method
     await this.userRepository.create({
       password: user.password,
     });
     await this.userRepository.save(user);
+
+    const emailData = {
+      body: '<p>Your password has been reset successfully.</p>',
+      recipients: [user.email],
+      subject: emailSubjects.resetPasswordSuccess,
+    };
+
+    this.emailService.email(emailData);
+
     return new SuccessResponse('Password updated successfully');
   }
 }

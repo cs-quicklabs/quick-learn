@@ -1,8 +1,8 @@
 import React from 'react';
 import InputField from './InputField';
-import { useForm } from 'react-hook-form';
+import { FormProvider, Path, useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { TypeOf, z } from 'zod';
 import { FieldConfig } from '../types/formTypes';
 import ImageInput from './ImageInput';
 
@@ -13,6 +13,7 @@ interface Props<T extends z.ZodTypeAny> {
   buttonDisabled?: boolean;
   buttonText?: string;
   bigButton?: boolean;
+  methods?: UseFormReturn<z.TypeOf<T>>;
 }
 
 //helper component to map form fields as per fields object
@@ -23,14 +24,17 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   buttonText = 'Submit',
   buttonDisabled = false,
   bigButton = false,
+  methods,
 }: Props<T>) {
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    getValues,
     formState: { errors },
-  } = useForm<z.infer<T>>({
+  } = methods ||
+  useForm<z.infer<T>>({
     resolver: zodResolver(schema),
   });
 
@@ -40,9 +44,15 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
         if (field.type === 'image')
           return (
             <ImageInput
+              key={field.label}
               watch={watch}
               setValue={setValue}
               name={field.name}
+              src={
+                getValues(
+                  field.name as unknown as readonly Path<TypeOf<T>>[],
+                ) as unknown as string
+              }
               label={field.label}
             />
           );

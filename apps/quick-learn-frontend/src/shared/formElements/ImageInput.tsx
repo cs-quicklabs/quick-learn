@@ -1,3 +1,4 @@
+'use client';
 import { CameraIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -7,12 +8,19 @@ import { z } from 'zod';
 interface Props {
   watch: UseFormWatch<z.TypeOf<z.ZodTypeAny>>;
   setValue: UseFormSetValue<z.TypeOf<z.ZodTypeAny>>;
+  src?: string;
   name: string;
   label: string;
 }
 
-const ImageInput: FC<Props> = ({ watch, setValue, name, label }) => {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+const ImageInput: FC<Props> = ({
+  watch,
+  setValue,
+  name,
+  label,
+  src = null,
+}) => {
+  const [imagePreview, setImagePreview] = useState<string | null>(src);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const watchProfileImage = watch(name);
@@ -35,6 +43,9 @@ const ImageInput: FC<Props> = ({ watch, setValue, name, label }) => {
       return () => URL.revokeObjectURL(objectUrl);
     }
   }, [watchProfileImage]);
+  useEffect(() => {
+    typeof src === 'string' && setImagePreview(src);
+  }, [src]);
 
   return (
     <div>
@@ -51,10 +62,7 @@ const ImageInput: FC<Props> = ({ watch, setValue, name, label }) => {
           onClick={handleImageClick}
         >
           <Image
-            src={
-              imagePreview ||
-              'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-            }
+            src={imagePreview || ''}
             alt="Image"
             layout="fill"
             objectFit="cover"
