@@ -35,7 +35,10 @@ export class CourseCategoriesController {
     const courseCategory = await this.courseCategoriesService.create(
       createCourseCategoryDto,
     );
-    return new SuccessResponse('Successfully added Course', courseCategory);
+    return new SuccessResponse(
+      'Successfully added course category',
+      courseCategory,
+    );
   }
   @UseGuards(JwtAuthGuard)
   @Get()

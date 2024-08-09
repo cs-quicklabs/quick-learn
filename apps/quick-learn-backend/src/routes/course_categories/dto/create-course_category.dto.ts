@@ -6,9 +6,4 @@ export class CreateCourseCategoryDto {
   @IsNotEmpty()
   @ApiProperty({ example: 'Production Deployment' })
   name: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty({ example: 1 })
-  roadmap_id: number;
 }
