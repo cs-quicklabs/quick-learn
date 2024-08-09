@@ -26,4 +26,9 @@ export class BasePaginationDto {
   @IsOptional()
   @IsIn(['ASC', 'DESC'])
   sortOrder?: 'ASC' | 'DESC';
+
+  @ApiProperty({ example: 'paginate' })
+  @IsOptional()
+  @IsString()
+  q?: string;
 }

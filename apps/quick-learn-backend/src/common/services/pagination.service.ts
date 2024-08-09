@@ -7,7 +7,7 @@ export class PaginationService<T> {
 
   async paginate(
     paginationDto: BasePaginationDto,
-    searchOptions: FindOptionsWhere<T> = {},
+    searchOptions: FindOptionsWhere<T>[] | FindOptionsWhere<T> = {},
     relations: string[] = [],
   ): Promise<PaginatedResult<T>> {
     const { page = 1, limit = 10 } = paginationDto;
