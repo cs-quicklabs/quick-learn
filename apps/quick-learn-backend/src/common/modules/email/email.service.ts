@@ -39,15 +39,13 @@ export class EmailService {
    * @param data of type Message { body: string; recipients: string[]; cc?: string[]; bcc?: string[]; subject: string; }
    * @returns true or throws error
    */
-  async email(data: Message): Promise<boolean | string> {
+  async email(data: Message): Promise<void> {
     const emailText = data.body;
     const emailBody = await this.compileMjmlTemplate(emailText);
     try {
       await this.emailService.send({ ...data, body: emailBody });
-      return true;
     } catch (err) {
       this.logger.error('Something went wrong./n', JSON.stringify(err));
-      throw new InternalServerErrorException('Something went wrong.');
     }
   }
 
