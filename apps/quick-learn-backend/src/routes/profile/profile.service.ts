@@ -5,6 +5,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { SuccessResponse } from '@src/common/dto';
 import { ChangePasswordDTO } from './dto/change-password.dto';
 import * as bcrypt from 'bcryptjs';
+import { profilePreferencesDTO } from './dto/profile-preferences.dto';
 
 @Injectable()
 export class ProfileService {
@@ -32,8 +33,10 @@ export class ProfileService {
     await this.usersService.update(user.uuid, {
       password: await bcrypt.hash(changePasswordDTO.newPassword, 10),
     });
-    return new SuccessResponse('Password updated successfully', {
-      arePasswordsSame,
-    });
+    return new SuccessResponse('Password updated successfully');
+  }
+
+  async getPreferencesService(user: UserEntity) {
+    return new SuccessResponse('Fetched preferences successfully', user);
   }
 }

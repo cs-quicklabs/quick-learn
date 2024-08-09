@@ -39,11 +39,17 @@ export class ProfileController {
   }
 
   @Post('/change-password')
-  @ApiOperation({ summary: 'Set the profile values for the current user' })
+  @ApiOperation({ summary: 'Change the password for the current user' })
   async changePassword(
     @Body() changePasswordDTO: ChangePasswordDTO,
     @CurrentUser() user: UserEntity,
   ) {
     return this.profileService.changePasswordService(user, changePasswordDTO);
+  }
+
+  @Get('/user-preferences')
+  @ApiOperation({ summary: 'Get the profile preferences for the current user' })
+  async getPreferences(@CurrentUser() user: UserEntity) {
+    return this.profileService.getPreferencesService(user);
   }
 }
