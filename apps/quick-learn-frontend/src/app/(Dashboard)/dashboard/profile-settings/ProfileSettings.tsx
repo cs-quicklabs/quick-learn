@@ -1,9 +1,10 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  getUserProfile,
-  updateUserProfile,
+  getUserProfileService,
+  updateUserProfileService,
 } from '@src/apiServices/profileService';
+
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { TUserProfileType } from '@src/shared/types/profileTypes';
@@ -11,7 +12,7 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -24,6 +25,7 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfileSettings = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
   });
@@ -51,17 +53,23 @@ const ProfileSettings = () => {
   ];
 
   const onSubmit = (data: TUserProfileType) => {
-    updateUserProfile(data)
+    setIsLoading(true);
+    updateUserProfileService(data)
       .then((res) => showApiMessageInToast(res))
-      .catch((err) => showApiErrorInToast(err));
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
   };
 
   useEffect(() => {
-    getUserProfile().then((res) => {
-      setValue('firstName', res.data.firstName);
-      setValue('lastName', res.data.lastName);
-      setValue('profileImage', res.data.profileImage);
-    });
+    setIsLoading(true);
+    getUserProfileService()
+      .then((res) => {
+        setValue('firstName', res.data.firstName);
+        setValue('lastName', res.data.lastName);
+        setValue('profileImage', res.data.profileImage);
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (
@@ -79,6 +87,7 @@ const ProfileSettings = () => {
             schema={profileSchema}
             onSubmit={onSubmit}
             methods={methods}
+            isLoading={isLoading}
           />
         </FormProvider>
       </div>

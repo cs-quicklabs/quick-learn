@@ -1,7 +1,12 @@
 'use client';
+import { changePasswordService } from '@src/apiServices/profileService';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
-import React from 'react';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
+import React, { useState } from 'react';
 import { z } from 'zod';
 
 const changePasswordFormSchema = z
@@ -30,6 +35,7 @@ const changePasswordFormSchema = z
 type ChangePasswordData = z.infer<typeof changePasswordFormSchema>;
 
 const page = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const changePasswordFields: FieldConfig[] = [
     {
       label: 'Old Password',
@@ -52,8 +58,15 @@ const page = () => {
   ];
 
   const onSubmit = (data: ChangePasswordData) => {
-    console.log(data);
-    // Handle form submission
+    setIsLoading(true);
+    const payload = {
+      newPassword: data.newPassword,
+      oldPassword: data.oldPassword,
+    };
+    changePasswordService(payload)
+      .then((res) => showApiMessageInToast(res))
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
   };
 
   return (

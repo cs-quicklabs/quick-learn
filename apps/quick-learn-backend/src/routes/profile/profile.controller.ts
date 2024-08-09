@@ -6,9 +6,11 @@ import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
 import { SuccessResponse } from '@src/common/dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ChangePasswordDTO } from './dto/change-password.dto';
 
 @ApiTags('Profile')
-// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/profile
+@UseGuards(JwtAuthGuard)
 @Controller({
   version: '1',
   path: 'profile',
@@ -16,7 +18,6 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 export class ProfileController {
   constructor(private profileService: ProfileService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   @ApiOperation({ summary: 'checking the profile protected route.' })
   getProfile(@CurrentUser() user: UserEntity) {
@@ -28,7 +29,6 @@ export class ProfileController {
     });
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post()
   @ApiOperation({ summary: 'Set the profile values for the current user' })
   async updateProfile(
@@ -36,5 +36,14 @@ export class ProfileController {
     @CurrentUser() user: UserEntity,
   ) {
     return this.profileService.updateUserProfile(user, updateProfileDto);
+  }
+
+  @Post('/change-password')
+  @ApiOperation({ summary: 'Set the profile values for the current user' })
+  async changePassword(
+    @Body() changePasswordDTO: ChangePasswordDTO,
+    @CurrentUser() user: UserEntity,
+  ) {
+    return this.profileService.changePasswordService(user, changePasswordDTO);
   }
 }

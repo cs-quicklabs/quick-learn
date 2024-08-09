@@ -11,4 +11,5 @@ export enum userApiEnum {
   CREATE_USER = '/users',
   GET_USER = '/users/:uuid',
   GET_USER_PROFILE = '/profile',
+  CHANGE_PASSWORD = '/profile/change-password',
 }

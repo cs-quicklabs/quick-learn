@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { UserEntity } from '@src/entities/user.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { SuccessResponse } from '@src/common/dto';
+import { ChangePasswordDTO } from './dto/change-password.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class ProfileService {
@@ -14,5 +16,24 @@ export class ProfileService {
       last_name: newDetails.lastName,
     });
     return new SuccessResponse('Profile updated successfully', {});
+  }
+
+  async changePasswordService(
+    user: UserEntity,
+    changePasswordDTO: ChangePasswordDTO,
+  ) {
+    const arePasswordsSame = await bcrypt.compare(
+      changePasswordDTO.oldPassword,
+      user.password,
+    );
+    if (!arePasswordsSame) {
+      throw new UnauthorizedException('Invalid Old Password');
+    }
+    await this.usersService.update(user.uuid, {
+      password: await bcrypt.hash(changePasswordDTO.newPassword, 10),
+    });
+    return new SuccessResponse('Password updated successfully', {
+      arePasswordsSame,
+    });
   }
 }

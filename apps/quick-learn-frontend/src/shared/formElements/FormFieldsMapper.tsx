@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from 'zod';
 import { FieldConfig } from '../types/formTypes';
 import ImageInput from './ImageInput';
+import { Loader } from '../components/UIElements';
 
 interface Props<T extends z.ZodTypeAny> {
   fields: FieldConfig[];
@@ -14,6 +15,7 @@ interface Props<T extends z.ZodTypeAny> {
   buttonText?: string;
   bigButton?: boolean;
   methods?: UseFormReturn<z.TypeOf<T>>;
+  isLoading?: boolean;
 }
 
 //helper component to map form fields as per fields object
@@ -24,6 +26,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   buttonText = 'Submit',
   buttonDisabled = false,
   bigButton = false,
+  isLoading = false,
   methods,
 }: Props<T>) {
   const {
@@ -32,12 +35,12 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     setValue,
     watch,
     getValues,
-    formState: { errors },
+    formState: { errors, isValid },
   } = methods ||
   useForm<z.infer<T>>({
     resolver: zodResolver(schema),
+    mode: 'onBlur',
   });
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       {fields.map((field) => {
@@ -64,18 +67,19 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             type={field.type}
             placeholder={field.placeholder || ''}
             register={register}
+            disabled={isLoading}
             errorMsg={errors[field.name]?.message as string}
           />
         );
       })}
       <button
         type="submit"
-        disabled={buttonDisabled}
+        disabled={buttonDisabled || isLoading || !isValid}
         className={`${
           bigButton && 'w-full'
-        } mt-4 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
+        } mt-4 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center align-middle disabled:bg-gray-500`}
       >
-        {buttonText}
+        {isLoading ? <Loader /> : buttonText}
       </button>
     </form>
   );

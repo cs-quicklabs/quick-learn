@@ -1,9 +1,12 @@
 import { userApiEnum } from '@src/constants/api.enum';
 import axiosInstance from './axios';
 import { AxiosSuccessResponse } from './axios';
-import { TUserProfileType } from '@src/shared/types/profileTypes';
+import {
+  TChangePasswordType,
+  TUserProfileType,
+} from '@src/shared/types/profileTypes';
 
-export const getUserProfile = async (): Promise<
+export const getUserProfileService = async (): Promise<
   AxiosSuccessResponse<TUserProfileType>
 > => {
   const response = await axiosInstance.get<
@@ -12,11 +15,21 @@ export const getUserProfile = async (): Promise<
   return response.data;
 };
 
-export const updateUserProfile = async (
+export const updateUserProfileService = async (
   data: TUserProfileType,
-): Promise<AxiosSuccessResponse<{}>> => {
+): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse<{}>>(
     userApiEnum.GET_USER_PROFILE,
+    data,
+  );
+  return response.data;
+};
+
+export const changePasswordService = async (
+  data: TChangePasswordType,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse<{}>>(
+    userApiEnum.CHANGE_PASSWORD,
     data,
   );
   return response.data;
