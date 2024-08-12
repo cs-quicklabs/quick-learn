@@ -1,23 +1,26 @@
-FROM node:alpine AS builder
+FROM quick-learn:nx-base AS builder
 
-WORKDIR /usr/src/app
+WORKDIR /app/builder
+
+# Copy package.json and package-lock.json (if available)
 COPY package*.json ./
 
-RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
+# Install dependencies, including Nx
+RUN npm ci
 
-RUN npm install --only=development --silent
-
+# Copy the rest of the application code
 COPY . .
-RUN npx nx build quick-learn-backend --prod
 
-FROM node:alpine
-WORKDIR /usr/src/app
+# Install Nx globally
+RUN npm install -g nx
 
-COPY package*.json ./
-RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
+# Build the application without using cache
+RUN nx build quick-learn-backend --configuration=production --skip-nx-cache
 
-RUN npm install -g pm2@latest
-RUN npm install --only=production --silent
-RUN npm install express
-COPY --from=builder /usr/src/app/dist/apps/api ./build
-ENTRYPOINT ["pm2-runtime","build/main.js"]
+FROM quick-learn:nx-base
+
+WORKDIR /app
+COPY --from=builder /app/builder/dist/apps/quick-learn-backend ./dist
+COPY --from=builder /app/builder/node_modules ./node_modules
+
+CMD ["node", "dist/main.js"]

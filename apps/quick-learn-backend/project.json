@@ -105,12 +105,6 @@
           "prettier --write \"apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}\""
         ]
       }
-    },
-    "docker-build": {
-      "dependsOn": [
-        "build"
-      ],
-      "command": "docker build -f apps/quick-learn-backend/Dockerfile . -t quick-learn-backend"
     }
   }
 }

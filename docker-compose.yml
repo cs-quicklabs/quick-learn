@@ -1,21 +1,46 @@
 services:
-  backend:
+  frontend:
+    container_name: frontend
     build:
-      context: .
-      dockerfile: ./apps/quick-learn-backend/Dockerfile
+      context: ./
+      cache_from:
+        - nginx:1.19.2
+      dockerfile: ./apps/quick-learn-frontend/Dockerfile
+    image: quick-learn-frontend:nx-dev
     ports:
-      - "3001:3001"
+      - 3000:80
     env_file:
-      - path: ./apps/quick-learn-backend/.env.dev
-    depends_on:
-      - db
+      - path: ./apps/quick-learn-frontend/.env
     networks:
       - quick-learn
+    depends_on:
+      - backend
+      - db
+    restart: on-failure
+
+  backend:
+    container_name: backend
+    build:
+      context: ./
+      cache_from:
+        - quick-learn:nx-base
+      dockerfile: ./apps/quick-learn-backend/Dockerfile
+    image: backend:nx-dev
+    ports:
+      - 3001:3001
+    env_file:
+      - path: ./apps/quick-learn-backend/.env.production
+    networks:
+      - quick-learn
+    depends_on:
+      - db
+    restart: on-failure
 
   db:
+    container_name: db
     image: postgres:16
     ports:
-      - 5500:5432
+      - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root@123
