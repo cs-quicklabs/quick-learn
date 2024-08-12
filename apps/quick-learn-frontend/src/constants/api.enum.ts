@@ -14,3 +14,9 @@ export enum userApiEnum {
   CHANGE_PASSWORD = '/profile/change-password',
   USER_PREFERENCES = '/profile/user-preferences',
 }
+
+export enum accountApiEnum {
+  SKILLS = '/skills',
+  COURSE_CATEGORIES = '/course-categories',
+  ROADMAP_CATEGORIES = '/roadmap-categories',
+}

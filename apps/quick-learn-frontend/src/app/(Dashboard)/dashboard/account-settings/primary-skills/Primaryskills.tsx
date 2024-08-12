@@ -1,6 +1,10 @@
+'use client';
 import React from 'react';
 
 const Primaryskills = () => {
+  const handleSkill = async (e) => {
+    e.preventDefault();
+  };
   return (
     <>
       <div>
@@ -11,7 +15,7 @@ const Primaryskills = () => {
           Primary skill can be assigned to a person which tells the main trade
           of a candidate.
         </p>
-        <form className="w-full mt-6">
+        <form className="w-full mt-6" onSubmit={handleSkill}>
           <div className="mb-5 mt-6">
             <label
               htmlFor="email"
@@ -20,7 +24,7 @@ const Primaryskills = () => {
               Add new Skill
             </label>
             <input
-              type="email"
+              type="text"
               id="email"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="iOS Developer"
