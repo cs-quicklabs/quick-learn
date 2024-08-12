@@ -1,13 +1,14 @@
 'use client';
 import { RouteEnum } from '@src/constants/route.enum';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUser, TUserType } from '@src/shared/types/userTypes';
 import { DateFormats } from '@src/constants/dateFormats';
 import { teamListApiCall } from '@src/apiServices/teamService';
+import { debounce } from '@src/utils/helpers';
 
 const TeamMemberListing = () => {
   const [data, setData] = useState<TUser[]>([]);
@@ -15,11 +16,12 @@ const TeamMemberListing = () => {
   const [totalPage, setTotalPage] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [userTypeCode, setUserTypeCode] = useState<string>('');
+  const [query, setQuery] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await teamListApiCall(page, userTypeCode);
+        const res = await teamListApiCall(page, userTypeCode, query);
         if (!res.success) throw new Error();
         setData(res.data.items);
         setTotal(res.data.total);
@@ -30,7 +32,7 @@ const TeamMemberListing = () => {
       }
     };
     fetchData();
-  }, [page, userTypeCode]);
+  }, [page, userTypeCode, query]);
 
   const userTypes: TUserType[] = [
     { name: 'Admin', code: 'admin' },
@@ -42,6 +44,20 @@ const TeamMemberListing = () => {
     setUserTypeCode(code);
     setPage(1);
   }
+
+  const handleQueryChange = useMemo(
+    () =>
+      debounce(async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const _value = (e.target as HTMLInputElement).value || '';
+        try {
+          setQuery(_value);
+          setPage(1);
+        } catch (err) {
+          console.log('Something went wrong!', err);
+        }
+      }, 300),
+    [],
+  );
 
   return (
     <>
@@ -59,6 +75,7 @@ const TeamMemberListing = () => {
               type="text"
               className="bg-gray-50 w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
               placeholder="Search Members"
+              onChange={handleQueryChange}
             />
             <Link
               href={`${RouteEnum.TEAM}/add`}
