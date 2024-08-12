@@ -14,16 +14,17 @@ describe('Login Test', () => {
 
   it('should display an error for invalid credentials', () => {
 
-    loginPage.login('super.admin@yopmail.com', 'password@123');
+    loginPage.loginWithInvalidCredential("super.admin@yopmail.com","Password@123");
 
     loginPage.getErrorMessage().should('contain', 'Wrong Credentials!');
   });
 
   it('should log in with valid credentials', () => {
 
-    loginPage.login('super.admin@yopmail.com', 'Password@123');
+    loginPage.login();
 
     cy.url().should('include', '/dashboard'); 
     loginPage.getWelcomeMessage().should('contain', 'Login Success!'); // Adjust selector and text as needed
   });
+  
 });

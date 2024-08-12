@@ -28,7 +28,14 @@ class AddTeam {
     {
        return cy.get('#user_type_id').select("Admin")
        
+
     }
+
+    generateRandomEmail() {
+        const numeric = Math.floor(10000 + Math.random() * 90000).toString();
+        return `user${numeric}@yopmail.com`;
+      }
+    
     getUserTypeMember()
     {
        return cy.get('#user_type_id').select("Admin")
@@ -54,15 +61,17 @@ class AddTeam {
     
     submitAddTeamButton()
     {
-        return cy.get('.py-2\.5').click()
+        return cy.get('#submit').click()
     }
+   
 
     addTeam(){
+        const mail = this.generateRandomEmail()
         this.visitTeamPage().click();
         this.getAddTeamButton().click()
         this.getFirstName().type("Raj")
         this.getLastName().type("Gupta")
-        this.getEmail().type("Raj@yopmail.com")
+        this.getEmail().type(mail)
         this.getUserTypeAdmin()
         this.getPassword().type("Password@123")
         this.getConfirmPassword().type("Password@123")
@@ -72,6 +81,29 @@ class AddTeam {
        
     
       }
+
+      fieldNameRequired(){
+        const mail = this.generateRandomEmail()
+        this.visitTeamPage().click();
+        this.getAddTeamButton().click()
+        this.submitAddTeamButton()
+      }
+      validateFieldWithEmptySpaces(){
+        const mail = this.generateRandomEmail()
+        this.visitTeamPage().click();
+        this.getAddTeamButton().click()
+        this.getFirstName().type("    ")
+        this.getLastName().type("   ")
+        this.getEmail().type("   ")
+        this.getUserTypeAdmin()
+        this.getPassword().type("   ")
+        this.getConfirmPassword().type("   ")
+        this.getSkillID("   ")
+        this.submitAddTeamButton()
+      }
+
+
+
     
 }
 

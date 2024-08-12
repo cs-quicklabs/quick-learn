@@ -24,11 +24,20 @@ class LoginPage {
       return cy.get('.Toastify');
     }
   
-    login(username, password) {
+    login() {
+      let username="super.admin@yopmail.com"
+      let password="Password@1234"
       this.getUsernameInput().type(username);
       this.getPasswordInput().type(password);
       this.getSubmitButton().click();
     }
+
+    loginWithInvalidCredential(username,password) {
+      this.getUsernameInput().type(username);
+      this.getPasswordInput().type(password);
+      this.getSubmitButton().click();
+    }
+
   }
   
   module.exports = LoginPage;
