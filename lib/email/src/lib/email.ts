@@ -16,7 +16,6 @@ export class EmailNotification {
    * @param emai verified sender email
    */
   constructor(data: { host: string, port: number, auth: { user: string, pass: string } }, emai: string) {
-    console.log(data)
     this.emailTransporter = nodemailer.createTransport({ ...data, secure: false });
     this.accountEmail = emai;
   }
@@ -43,7 +42,7 @@ export class EmailNotification {
 
     try {
       const info = await this.emailTransporter.sendMail(mailOptions);
-      console.log("Email sent successfully:", info);
+      console.log("Email sent successfully to", info.accepted.join(', '));
     } catch (error) {
       console.error("Error sending email:", error);
       throw error;
