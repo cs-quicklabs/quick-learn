@@ -1,5 +1,18 @@
 services:
-  quick-learn:
+  backend:
+    build:
+      context: .
+      dockerfile: ./apps/quick-learn-backend/Dockerfile
+    ports:
+      - "3001:3001"
+    env_file:
+      - path: ./apps/quick-learn-backend/.env.dev
+    depends_on:
+      - db
+    networks:
+      - quick-learn
+
+  db:
     image: postgres:16
     ports:
       - 5500:5432
