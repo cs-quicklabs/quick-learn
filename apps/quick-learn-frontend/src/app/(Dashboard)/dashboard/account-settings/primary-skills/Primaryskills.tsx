@@ -1,9 +1,48 @@
 'use client';
-import React from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { addSkill } from '@src/apiServices/accountService';
+import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
+import { FieldConfig } from '@src/shared/types/formTypes';
+import { TSkill } from '@src/shared/types/userTypes';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const addSkillSchema = z.object({
+  newSkill: z.string().min(1, 'This field is mandatory'),
+});
+
+type AddSkillData = z.infer<typeof addSkillSchema>;
 
 const Primaryskills = () => {
-  const handleSkill = async (e) => {
-    e.preventDefault();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const addSkillFields: FieldConfig[] = [
+    {
+      label: 'Add new Skill',
+      name: 'newSkill',
+      type: 'text',
+      placeholder: 'iOS Developer',
+    },
+  ];
+  const methods = useForm<AddSkillData>({
+    resolver: zodResolver(addSkillSchema),
+  });
+  const { reset } = methods;
+  //  {newSkill:"fwhvjhasdv"}
+  const onSubmit = (data: AddSkillData) => {
+    setIsLoading(true);
+    const payload = { name: data.newSkill, team_id: 1 };
+    addSkill(payload)
+      .then((res) => {
+        showApiMessageInToast(res);
+        reset();
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
   };
   return (
     <>
@@ -11,33 +50,18 @@ const Primaryskills = () => {
         <h1 className="text-lg font-semibold dark:text-white">
           Primary Skills
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
           Primary skill can be assigned to a person which tells the main trade
           of a candidate.
         </p>
-        <form className="w-full mt-6" onSubmit={handleSkill}>
-          <div className="mb-5 mt-6">
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Add new Skill
-            </label>
-            <input
-              type="text"
-              id="email"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="iOS Developer"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Save
-          </button>
-        </form>
+        <FormFieldsMapper
+          fields={addSkillFields}
+          schema={addSkillSchema}
+          onSubmit={onSubmit}
+          isLoading={isLoading}
+          methods={methods}
+          buttonText="Save"
+        />
         <div className="relative overflow-x-auto mt-8">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
