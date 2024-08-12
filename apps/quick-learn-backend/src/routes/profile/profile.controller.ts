@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ProfileService } from './profile.service';
@@ -8,6 +8,7 @@ import { SuccessResponse } from '@src/common/dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ChangePasswordDTO } from './dto/change-password.dto';
+import { profilePreferencesDTO } from './dto/profile-preferences.dto';
 
 @ApiTags('Profile')
 @UseGuards(JwtAuthGuard)
@@ -51,5 +52,19 @@ export class ProfileController {
   @ApiOperation({ summary: 'Get the profile preferences for the current user' })
   async getPreferences(@CurrentUser() user: UserEntity) {
     return this.profileService.getPreferencesService(user);
+  }
+
+  @Patch('/user-preferences')
+  @ApiOperation({
+    summary: 'Update the profile preferences for the current user',
+  })
+  async changePreferences(
+    @CurrentUser() user: UserEntity,
+    @Body() profilePreferencesDTO: profilePreferencesDTO,
+  ) {
+    return this.profileService.changePreferencesService(
+      user,
+      profilePreferencesDTO.preference,
+    );
   }
 }

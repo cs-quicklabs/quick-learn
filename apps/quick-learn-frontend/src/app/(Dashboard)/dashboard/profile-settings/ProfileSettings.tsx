@@ -4,7 +4,6 @@ import {
   getUserProfileService,
   updateUserProfileService,
 } from '@src/apiServices/profileService';
-
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { TUserProfileType } from '@src/shared/types/profileTypes';

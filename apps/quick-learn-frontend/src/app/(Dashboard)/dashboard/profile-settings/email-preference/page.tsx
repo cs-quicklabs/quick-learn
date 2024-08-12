@@ -1,8 +1,35 @@
-import React from 'react';
+'use client';
+import {
+  getUserPreferencesService,
+  updateUserPreferencesService,
+} from '@src/apiServices/profileService';
+import { FullPageLoader } from '@src/shared/components/UIElements';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
+import React, { useEffect, useState } from 'react';
 
 const page = () => {
+  const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoading(true);
+    updateUserPreferencesService(e.target.checked)
+      .then((res) => setIsEmailChecked(res.data.preference))
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    getUserPreferencesService()
+      .then((res) => setIsEmailChecked(res.data.preference))
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
+  }, [isEmailChecked]);
+
   return (
     <>
+      {isLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold dark:text-white">Preference</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
@@ -15,8 +42,9 @@ const page = () => {
               id="helper-checkbox"
               aria-describedby="helper-checkbox-text"
               type="checkbox"
-              value=""
-              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              checked={isEmailChecked}
+              onChange={handleChange}
+              className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-none transition duration-100"
             />
           </div>
           <div className="ms-2 text-sm">

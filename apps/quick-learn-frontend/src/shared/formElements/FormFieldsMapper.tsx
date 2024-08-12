@@ -1,6 +1,6 @@
 import React from 'react';
 import InputField from './InputField';
-import { FormProvider, Path, useForm, UseFormReturn } from 'react-hook-form';
+import { Path, useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from 'zod';
 import { FieldConfig } from '../types/formTypes';

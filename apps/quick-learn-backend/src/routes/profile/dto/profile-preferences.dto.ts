@@ -4,5 +4,5 @@ import { IsBoolean } from 'class-validator';
 export class profilePreferencesDTO {
   @ApiProperty({ example: true })
   @IsBoolean()
-  enableAllAlerts: boolean;
+  preference: boolean;
 }

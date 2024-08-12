@@ -36,7 +36,17 @@ export class ProfileService {
     return new SuccessResponse('Password updated successfully');
   }
 
-  async getPreferencesService(user: UserEntity) {
-    return new SuccessResponse('Fetched preferences successfully', user);
+  getPreferencesService(user: UserEntity) {
+    return new SuccessResponse('Fetched preferences successfully', {
+      preference: user.email_alert_preference,
+    });
+  }
+  async changePreferencesService(user: UserEntity, preference: boolean) {
+    await this.usersService.update(user.uuid, {
+      email_alert_preference: preference,
+    });
+    return new SuccessResponse('Email preference updated successfully', {
+      prefernce: user.email_alert_preference,
+    });
   }
 }

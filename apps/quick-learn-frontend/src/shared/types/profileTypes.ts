@@ -7,3 +7,6 @@ export type TChangePasswordType = {
   oldPassword: string;
   newPassword: string;
 };
+export type TChangePreferenceType = {
+  preference: boolean;
+};
