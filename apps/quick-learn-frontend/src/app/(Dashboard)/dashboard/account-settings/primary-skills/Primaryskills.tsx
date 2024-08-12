@@ -8,7 +8,6 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const addSkillSchema = z.object({
@@ -27,19 +26,12 @@ const Primaryskills = () => {
       placeholder: 'iOS Developer',
     },
   ];
-  const methods = useForm<AddSkillData>({
-    resolver: zodResolver(addSkillSchema),
-  });
-  const { reset } = methods;
   //  {newSkill:"fwhvjhasdv"}
   const onSubmit = (data: AddSkillData) => {
     setIsLoading(true);
     const payload = { name: data.newSkill, team_id: 1 };
     addSkill(payload)
-      .then((res) => {
-        showApiMessageInToast(res);
-        reset();
-      })
+      .then((res) => showApiMessageInToast(res))
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };
@@ -58,8 +50,8 @@ const Primaryskills = () => {
           schema={addSkillSchema}
           onSubmit={onSubmit}
           isLoading={isLoading}
-          methods={methods}
           buttonText="Save"
+          resetFormOnSubmit
         />
         <div className="relative overflow-x-auto mt-8">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

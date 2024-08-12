@@ -1,6 +1,6 @@
 import React from 'react';
 import InputField from './InputField';
-import { Path, useForm, UseFormReturn } from 'react-hook-form';
+import { Path, useForm, UseFormReset, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from 'zod';
 import { FieldConfig } from '../types/formTypes';
@@ -10,12 +10,13 @@ import { Loader } from '../components/UIElements';
 interface Props<T extends z.ZodTypeAny> {
   fields: FieldConfig[];
   schema: T;
-  onSubmit: (data: z.infer<T>) => void;
+  onSubmit: (data: z.infer<T>, reset?: UseFormReset<TypeOf<T>>) => void;
   buttonDisabled?: boolean;
   buttonText?: string;
   bigButton?: boolean;
   methods?: UseFormReturn<z.TypeOf<T>>;
   isLoading?: boolean;
+  resetFormOnSubmit?: boolean;
 }
 
 //helper component to map form fields as per fields object
@@ -28,6 +29,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   bigButton = false,
   isLoading = false,
   methods,
+  resetFormOnSubmit = false,
 }: Props<T>) {
   const {
     register,
@@ -35,14 +37,25 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     setValue,
     watch,
     getValues,
+    reset,
     formState: { errors, isValid },
   } = methods ||
   useForm<z.infer<T>>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
   });
+  const handleFormSubmit = (data: z.infer<T>) => {
+    onSubmit(data, reset);
+    if (resetFormOnSubmit) {
+      reset();
+    }
+  };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="space-y-4"
+      noValidate
+    >
       {fields.map((field) => {
         if (field.type === 'image')
           return (

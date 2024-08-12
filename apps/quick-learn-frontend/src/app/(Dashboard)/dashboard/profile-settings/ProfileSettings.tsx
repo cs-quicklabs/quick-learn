@@ -87,6 +87,7 @@ const ProfileSettings = () => {
             onSubmit={onSubmit}
             methods={methods}
             isLoading={isLoading}
+            buttonText="Save"
           />
         </FormProvider>
       </div>

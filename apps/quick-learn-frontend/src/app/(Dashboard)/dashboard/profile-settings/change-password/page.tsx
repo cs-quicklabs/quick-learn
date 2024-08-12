@@ -1,5 +1,6 @@
 'use client';
 import { changePasswordService } from '@src/apiServices/profileService';
+import { FullPageLoader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import {
@@ -71,6 +72,7 @@ const page = () => {
 
   return (
     <>
+      {isLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold dark:text-white">
           Change Password
@@ -82,6 +84,8 @@ const page = () => {
           fields={changePasswordFields}
           schema={changePasswordFormSchema}
           onSubmit={onSubmit}
+          resetFormOnSubmit
+          buttonText="Save"
         />
       </div>
     </>
