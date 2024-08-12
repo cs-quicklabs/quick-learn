@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { addSkill } from '@src/apiServices/accountService';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
-import { TSkill } from '@src/shared/types/userTypes';
 import {
   showApiErrorInToast,
   showApiMessageInToast,

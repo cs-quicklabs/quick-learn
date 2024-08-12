@@ -25,3 +25,23 @@ export const addSkill = async (
   );
   return response.data;
 };
+
+export const addRoadmapCategory = async (
+  data: TRoadmapCategories,
+): Promise<AxiosSuccessResponse<{}>> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse<{}>>(
+    accountApiEnum.ROADMAP_CATEGORIES,
+    data,
+  );
+  return response.data;
+};
+
+export const addCourseCategory = async (
+  data: TCourseCategories,
+): Promise<AxiosSuccessResponse<{}>> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse<{}>>(
+    accountApiEnum.COURSE_CATEGORIES,
+    data,
+  );
+  return response.data;
+};
