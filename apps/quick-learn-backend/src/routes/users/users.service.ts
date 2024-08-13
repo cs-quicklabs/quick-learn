@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FindOptionsWhere, MoreThan, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, MoreThan, Repository } from 'typeorm';
 import { UserEntity } from '@src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
@@ -43,7 +43,7 @@ export class UsersService extends PaginationService<UserEntity> {
     if (foundUser) {
       throw new BadRequestException('Email already exists.');
     }
-    const user = await this.userRepository.create(createUserDto);
+    const user = this.userRepository.create(createUserDto);
 
     // send email to the user
     const emailData = {
@@ -62,9 +62,13 @@ export class UsersService extends PaginationService<UserEntity> {
     filter: ListFilterDto,
   ): Promise<UserEntity[] | PaginatedResult<UserEntity>> {
     const userTypeId = user.user_type_id;
-    let conditions: FindOptionsWhere<UserEntity> = {
+    let conditions:
+      | FindOptionsWhere<UserEntity>
+      | FindOptionsWhere<UserEntity>[] = {
       user_type_id: MoreThan(userTypeId),
     };
+
+    // For getting data base on the user type
     if (filter.user_type_code) {
       conditions = {
         ...conditions,
@@ -73,13 +77,27 @@ export class UsersService extends PaginationService<UserEntity> {
         },
       };
     }
+
+    if (paginationDto.q) {
+      const queryConditions = [
+        { email: ILike(`%${paginationDto.q}%`), ...conditions },
+        { first_name: ILike(`%${paginationDto.q}%`), ...conditions },
+        { last_name: ILike(`%${paginationDto.q}%`), ...conditions },
+        {
+          ...conditions,
+          user_type: {
+            name: ILike(`%${paginationDto.q}%`),
+          },
+        },
+      ];
+      conditions = queryConditions;
+    }
+
     if (paginationDto.mode == 'paginate') {
-      return await this.paginate(paginationDto, { ...conditions }, [
-        ...userRelations,
-      ]);
+      return await this.paginate(paginationDto, conditions, [...userRelations]);
     }
     return await this.userRepository.find({
-      where: { ...conditions },
+      where: conditions,
       relations: [...userRelations],
     });
   }

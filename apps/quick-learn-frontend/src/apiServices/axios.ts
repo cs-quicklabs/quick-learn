@@ -13,7 +13,7 @@ export type AxiosErrorObject = {
   };
 };
 
-export type AxiosSuccessResponse<T = unknown> = {
+export type AxiosSuccessResponse<T = Record<string, never>> = {
   success: boolean;
   message: string;
   data: T;
