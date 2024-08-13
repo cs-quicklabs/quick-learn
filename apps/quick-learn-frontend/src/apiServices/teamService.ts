@@ -11,10 +11,12 @@ import { userApiEnum } from '@src/constants/api.enum';
 export const teamListApiCall = async (
   page: number,
   filterByUserType = '',
+  q = '',
 ): Promise<TTeamListingReponse> => {
   const body = {
     mode: 'paginate',
     page,
+    q,
   };
   const route = `${userApiEnum.GET_USER_LIST}${
     filterByUserType ? '?user_type_code=' + filterByUserType : ''
