@@ -2,6 +2,7 @@ import { Entity, Column, OneToMany } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { SkillEntity } from './skill.entity';
 import { BaseEntity } from './BaseEntity';
+import { RoadmapCategoryEntity } from './roadmap_category.entity';
 
 @Entity({ name: 'team' })
 export class TeamEntity extends BaseEntity {
@@ -13,4 +14,10 @@ export class TeamEntity extends BaseEntity {
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   name: string;
+
+  @OneToMany(
+    () => RoadmapCategoryEntity,
+    (roadmap_category) => roadmap_category.team,
+  )
+  roadmap_categories: RoadmapCategoryEntity[];
 }

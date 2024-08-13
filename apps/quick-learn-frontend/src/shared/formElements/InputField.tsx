@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { FieldType } from '../types/formTypes';
-import { OpenEyeIcon, ClosedEyeIcon } from '../components/formUIElements';
+import { OpenEyeIcon, ClosedEyeIcon } from '../components/UIElements';
 import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
   register: UseFormRegister<FieldValues>;
   errorMsg: string;
   placeholder: string;
+  disabled?: boolean;
 }
 const InputField: FC<Props> = ({
   label,
@@ -19,6 +20,7 @@ const InputField: FC<Props> = ({
   register,
   placeholder,
   errorMsg,
+  disabled = false,
   className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
 }) => {
   const isFieldPassword = type === 'password';
@@ -55,9 +57,12 @@ const InputField: FC<Props> = ({
         <input
           id={name}
           type={showPassword ? 'text' : 'password'}
-          className={`${className} pr-10 ${errorMsg ? 'border-red-500' : ''}`}
+          className={`${className} pr-10 ${
+            errorMsg ? 'border-red-500' : ''
+          } disabled:bg-gray-200`}
           placeholder={placeholder}
           autoComplete="true"
+          disabled={disabled}
           {...register(name)}
         />
         {isFieldPassword && (

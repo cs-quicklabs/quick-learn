@@ -4,11 +4,13 @@ import { loginFormSchema } from './loginFormSchema';
 import Link from 'next/link';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
-import { ProtectedRouteEnum, RouteEnum } from '@src/constants/route.enum';
+import { RouteEnum } from '@src/constants/route.enum';
 import { LoginCredentials } from '@src/shared/types/authTypes';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 import { loginApiCall } from '@src/apiServices/authService';
 
@@ -33,11 +35,9 @@ const Login = () => {
 
   const handleLogin = async (data: LoginCredentials) => {
     try {
-      setIsLoading(true);
-      await loginApiCall(data);
-      // if login is correct then redirect to Dashboard
-      router.push(ProtectedRouteEnum.DASHBOARD);
-      toast.success('Login Success!');
+      const res = await loginApiCall(data);
+      showApiMessageInToast(res);
+      router.push(RouteEnum.DASHBOARD);
     } catch (error) {
       showApiErrorInToast(error as AxiosErrorObject);
     } finally {
@@ -52,6 +52,7 @@ const Login = () => {
         schema={loginFormSchema}
         onSubmit={handleLogin}
         buttonDisabled={isLoading}
+        bigButton
         buttonText="Sign In"
       />
       <Link

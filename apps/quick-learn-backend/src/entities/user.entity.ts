@@ -43,9 +43,6 @@ export class UserEntity extends BaseEntity {
   @Column({ default: true })
   active: boolean;
 
-  @Column({ default: true })
-  alert_enabled: boolean;
-
   @Column({ nullable: false })
   team_id: number;
 
@@ -62,6 +59,9 @@ export class UserEntity extends BaseEntity {
 
   @Column({ nullable: true })
   user_type_id: number;
+
+  @Column({ default: true })
+  email_alert_preference: boolean;
 
   @ManyToOne(() => UserTypeEntity, (user) => user.users)
   @JoinColumn({ name: 'user_type_id' })
