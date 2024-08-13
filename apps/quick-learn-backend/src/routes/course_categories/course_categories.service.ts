@@ -34,6 +34,7 @@ export class CourseCategoriesService {
   }
 
   update(id: number, updateCourseCategoryDto: UpdateCourseCategoryDto) {
+    console.log(updateCourseCategoryDto); // TODO: Remove this after implementation.
     return `This action updates a #${id} courseCategory`;
   }
 

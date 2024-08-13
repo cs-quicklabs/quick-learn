@@ -34,6 +34,7 @@ export class SkillsService {
   }
 
   update(id: number, updateSkillDto: UpdateSkillDto) {
+    console.log(updateSkillDto); // TODO: Remove this after implementation.
     return `This action updates a #${id} skill`;
   }
 

@@ -1,12 +1,7 @@
 import React, { FC } from 'react';
 import Sidebar, { TNavLink } from '@src/shared/components/Sidebar';
 import { RouteEnum } from '@src/constants/route.enum';
-import {
-  ClipboardDocumentListIcon,
-  LockClosedIcon,
-  TagIcon,
-  AcademicCapIcon,
-} from '@heroicons/react/20/solid';
+import { LockClosedIcon } from '@heroicons/react/20/solid';
 import { ChildrenProp } from '@src/shared/interfaces/propInterface';
 import {
   ClipboardWithTick,

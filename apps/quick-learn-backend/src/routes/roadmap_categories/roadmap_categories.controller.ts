@@ -32,9 +32,7 @@ export class RoadmapCategoriesController {
   async create(
     @Body() createRoadmapCategoryDto: CreateRoadmapCategoryDto,
   ): Promise<SuccessResponse> {
-    const roadmapCategory = await this.roadmapCategoriesService.create(
-      createRoadmapCategoryDto,
-    );
+    await this.roadmapCategoriesService.create(createRoadmapCategoryDto);
     const roadmapCategories = await this.roadmapCategoriesService.findAll();
     return new SuccessResponse('Successfully added Roadmap Category', {
       categories: roadmapCategories,

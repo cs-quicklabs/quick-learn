@@ -36,6 +36,7 @@ export class RoadmapCategoriesService {
   }
 
   update(id: number, updateRoadmapCategoryDto: UpdateRoadmapCategoryDto) {
+    console.log(updateRoadmapCategoryDto); // TODO: Remove this after implementation.
     return `This action updates a #${id} roadmapCategory`;
   }
 

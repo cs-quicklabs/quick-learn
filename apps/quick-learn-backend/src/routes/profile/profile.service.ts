@@ -5,7 +5,6 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { SuccessResponse } from '@src/common/dto';
 import { ChangePasswordDTO } from './dto/change-password.dto';
 import * as bcrypt from 'bcryptjs';
-import { profilePreferencesDTO } from './dto/profile-preferences.dto';
 
 @Injectable()
 export class ProfileService {
