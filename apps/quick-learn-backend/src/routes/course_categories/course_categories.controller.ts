@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SuccessResponse } from '@src/common/dto';
 
 @ApiTags('Course Categories')
+@UseGuards(JwtAuthGuard)
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/course-categories
 @Controller({
   version: '1',
@@ -26,7 +27,6 @@ export class CourseCategoriesController {
     private readonly courseCategoriesService: CourseCategoriesService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({ summary: 'adding course category' })
   async create(
@@ -40,7 +40,7 @@ export class CourseCategoriesController {
       categories: courseCategories,
     });
   }
-  @UseGuards(JwtAuthGuard)
+
   @Get()
   @ApiOperation({ summary: 'get all course categories' })
   async findAll() {

@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SuccessResponse } from '@src/common/dto';
 
 @ApiTags('Skills')
+@UseGuards(JwtAuthGuard)
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/skills
 @Controller({
   version: '1',
@@ -23,7 +24,7 @@ import { SuccessResponse } from '@src/common/dto';
 })
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
-  @UseGuards(JwtAuthGuard)
+
   @Post()
   @ApiOperation({ summary: 'adding skill name' })
   async create(
@@ -34,7 +35,6 @@ export class SkillsController {
     return new SuccessResponse('Successfully added Skill', { skills });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'get all skills' })
   async findAll() {

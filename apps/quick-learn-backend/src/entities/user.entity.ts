@@ -43,9 +43,6 @@ export class UserEntity extends BaseEntity {
   @Column({ default: true })
   active: boolean;
 
-  @Column({ default: true })
-  alert_enabled: boolean;
-
   @Column({ nullable: false })
   team_id: number;
 

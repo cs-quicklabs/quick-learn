@@ -16,7 +16,7 @@ export class ProfileService {
       first_name: newDetails.firstName,
       last_name: newDetails.lastName,
     });
-    return new SuccessResponse('Profile updated successfully', {});
+    return new SuccessResponse('Profile updated successfully');
   }
 
   async changePasswordService(

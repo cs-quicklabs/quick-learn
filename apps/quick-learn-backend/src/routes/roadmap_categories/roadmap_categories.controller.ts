@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SuccessResponse } from '@src/common/dto';
 
 @ApiTags('Roadmap Categories')
+@UseGuards(JwtAuthGuard)
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/roadmap-categories
 @Controller({
   version: '1',
@@ -26,7 +27,6 @@ export class RoadmapCategoriesController {
     private readonly roadmapCategoriesService: RoadmapCategoriesService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({ summary: 'adding roadmap category' })
   async create(
@@ -41,7 +41,6 @@ export class RoadmapCategoriesController {
     });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'get all roadmap categories' })
   async findAll() {
