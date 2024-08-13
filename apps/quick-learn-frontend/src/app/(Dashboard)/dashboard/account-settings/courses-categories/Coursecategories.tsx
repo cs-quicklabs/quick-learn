@@ -44,6 +44,7 @@ const Coursecategories = () => {
     addCourseCategory(payload)
       .then((res) => {
         showApiMessageInToast(res);
+        setCourseCategories(res.data.categories);
         reset();
       })
       .catch((err) => showApiErrorInToast(err))

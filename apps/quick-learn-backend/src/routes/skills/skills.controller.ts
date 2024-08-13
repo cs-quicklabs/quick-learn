@@ -29,16 +29,17 @@ export class SkillsController {
   async create(
     @Body() createSkillDto: CreateSkillDto,
   ): Promise<SuccessResponse> {
-    const skill = await this.skillsService.create(createSkillDto);
-    return new SuccessResponse('Successfully added Skill', { skills: skill });
+    await this.skillsService.create(createSkillDto);
+    const skills = await this.skillsService.findAll();
+    return new SuccessResponse('Successfully added Skill', { skills });
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'get all skills' })
   async findAll() {
-    const skill = await this.skillsService.findAll();
-    return new SuccessResponse('Skills Listed', { skills: skill });
+    const skills = await this.skillsService.findAll();
+    return new SuccessResponse('Skills Listed', { skills });
   }
 
   @Get(':id')

@@ -35,18 +35,18 @@ export class CourseCategoriesController {
     const courseCategory = await this.courseCategoriesService.create(
       createCourseCategoryDto,
     );
-    return new SuccessResponse(
-      'Successfully added course category',
-      courseCategory,
-    );
+    const courseCategories = await this.courseCategoriesService.findAll();
+    return new SuccessResponse('Successfully added course category', {
+      categories: courseCategories,
+    });
   }
   @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'get all course categories' })
   async findAll() {
-    const courseCategory = await this.courseCategoriesService.findAll();
+    const courseCategories = await this.courseCategoriesService.findAll();
     return new SuccessResponse('Course Categories', {
-      categories: courseCategory,
+      categories: courseCategories,
     });
   }
 

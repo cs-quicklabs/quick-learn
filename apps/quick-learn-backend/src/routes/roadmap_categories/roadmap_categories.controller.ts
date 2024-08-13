@@ -35,11 +35,10 @@ export class RoadmapCategoriesController {
     const roadmapCategory = await this.roadmapCategoriesService.create(
       createRoadmapCategoryDto,
     );
-
-    return new SuccessResponse(
-      'Successfully added Roadmap Category',
-      roadmapCategory,
-    );
+    const roadmapCategories = await this.roadmapCategoriesService.findAll();
+    return new SuccessResponse('Successfully added Roadmap Category', {
+      categories: roadmapCategories,
+    });
   }
 
   @UseGuards(JwtAuthGuard)

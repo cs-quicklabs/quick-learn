@@ -8,6 +8,7 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -20,6 +21,7 @@ type AddSkillData = z.infer<typeof addSkillSchema>;
 
 const Primaryskills = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
   const [primaryskills, setPrimarySkills] = useState<TSkill[]>([]);
   const addSkillFields: FieldConfig[] = [
     {
@@ -32,12 +34,15 @@ const Primaryskills = () => {
   const methods = useForm<AddSkillData>({
     resolver: zodResolver(addSkillSchema),
   });
-  const { reset } = methods;
+  // const { reset } = methods;
   const onSubmit = (data: AddSkillData) => {
     setIsLoading(true);
     const payload = { name: data.newSkill, team_id: 1 };
     addSkill(payload)
-      .then((res) => showApiMessageInToast(res))
+      .then((res) => {
+        showApiMessageInToast(res);
+        setPrimarySkills(res.data.skills);
+      })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };

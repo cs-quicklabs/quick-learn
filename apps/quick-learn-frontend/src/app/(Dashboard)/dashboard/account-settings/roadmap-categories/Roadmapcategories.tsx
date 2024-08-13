@@ -44,6 +44,8 @@ const Roadmapcategories = () => {
     addRoadmapCategory(payload)
       .then((res) => {
         showApiMessageInToast(res);
+        setRoadmapCategories(res.data.categories);
+        console.log(res.data);
         reset();
       })
       .catch((err) => showApiErrorInToast(err))
