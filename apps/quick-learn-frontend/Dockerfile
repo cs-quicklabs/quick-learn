@@ -15,6 +15,6 @@ COPY . .
 RUN npm install -g nx
 
 # Build the application without using cache
-RUN nx build quick-learn-frontend --skip-nx-cache
+RUN nx reset && nx build quick-learn-frontend --skip-nx-cache
 
 CMD ["nx", "start", "quick-learn-frontend"]

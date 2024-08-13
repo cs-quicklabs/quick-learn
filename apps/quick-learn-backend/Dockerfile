@@ -15,7 +15,7 @@ COPY . .
 RUN npm install -g nx
 
 # Build the application without using cache
-RUN nx build quick-learn-backend --configuration=production --skip-nx-cache
+RUN nx reset && nx build quick-learn-backend --configuration=production --skip-nx-cache
 
 FROM quick-learn:nx-base
 
