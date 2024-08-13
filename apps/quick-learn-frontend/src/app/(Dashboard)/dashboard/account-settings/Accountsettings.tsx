@@ -6,17 +6,14 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 const AccountSettings = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [teamName, setTeamName] = useState<TTeams[]>([]);
 
   useEffect(() => {
-    setIsLoading(true);
     getTeamDetails()
       .then((res) => {
         setTeamName(res.data.teams);
       })
-      .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .catch((err) => showApiErrorInToast(err));
   }, []);
 
   return (

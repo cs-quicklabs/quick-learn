@@ -8,7 +8,6 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -21,7 +20,6 @@ type AddSkillData = z.infer<typeof addSkillSchema>;
 
 const Primaryskills = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const router = useRouter();
   const [primaryskills, setPrimarySkills] = useState<TSkill[]>([]);
   const addSkillFields: FieldConfig[] = [
     {
@@ -34,7 +32,7 @@ const Primaryskills = () => {
   const methods = useForm<AddSkillData>({
     resolver: zodResolver(addSkillSchema),
   });
-  // const { reset } = methods;
+  const { reset } = methods;
   const onSubmit = (data: AddSkillData) => {
     setIsLoading(true);
     const payload = { name: data.newSkill, team_id: 1 };
@@ -42,6 +40,7 @@ const Primaryskills = () => {
       .then((res) => {
         showApiMessageInToast(res);
         setPrimarySkills(res.data.skills);
+        reset();
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
@@ -89,7 +88,10 @@ const Primaryskills = () => {
             </thead>
             <tbody>
               {primaryskills.map((skill) => (
-                <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <tr
+                  className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
+                  key={skill?.name}
+                >
                   <th
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"

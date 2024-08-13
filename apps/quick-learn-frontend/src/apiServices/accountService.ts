@@ -19,12 +19,9 @@ import {
 //   >(userApiEnum.GET_USER_PROFILE);
 //   return response.data;
 // };
-{
-  [];
-}
 
 export const addSkill = async (data: TSkill): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.post<AxiosSuccessResponse<{}>>(
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
     accountApiEnum.SKILLS,
     data,
   );
@@ -41,7 +38,7 @@ export const getSkills = async (): Promise<AxiosSuccessResponse<TSkills>> => {
 export const addRoadmapCategory = async (
   data: TRoadmapCategories,
 ): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.post<AxiosSuccessResponse<{}>>(
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
     accountApiEnum.ROADMAP_CATEGORIES,
     data,
   );
@@ -60,7 +57,7 @@ export const getRoadmapCategories = async (): Promise<
 export const addCourseCategory = async (
   data: TCourseCategories,
 ): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.post<AxiosSuccessResponse<{}>>(
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
     accountApiEnum.COURSE_CATEGORIES,
     data,
   );
