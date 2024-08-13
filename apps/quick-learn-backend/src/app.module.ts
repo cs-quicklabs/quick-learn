@@ -8,8 +8,12 @@ import appConfig from './config/app.config';
 import {
   AuthModule,
   HealthCheckModule,
-  ProfileModule,
+  TeamModule,
   UsersModule,
+  ProfileModule,
+  SkillsModule,
+  CourseCategoriesModule,
+  RoadmapCategoriesModule,
 } from './routes';
 
 @Module({
@@ -27,7 +31,11 @@ import {
     HealthCheckModule,
     UsersModule,
     AuthModule,
+    TeamModule,
     ProfileModule,
+    SkillsModule,
+    CourseCategoriesModule,
+    RoadmapCategoriesModule,
   ],
 })
 export class AppModule {}
