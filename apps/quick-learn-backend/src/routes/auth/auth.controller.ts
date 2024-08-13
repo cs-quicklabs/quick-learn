@@ -26,7 +26,7 @@ import { ResetPasswordDto } from './dto/resetpassword.dto';
   path: 'auth',
 })
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
@@ -56,9 +56,9 @@ export class AuthController {
     const token = await this.authService.logout();
     res.cookie('access_token', token.access_token, {
       httpOnly: true,
-      secure: process.env.ENV === EnvironmentEnum.Developemnt, // TODO: Update this to use config file
+      secure: process.env.ENV !== EnvironmentEnum.Developemnt, // TODO: Update this to use config file
       sameSite: 'lax',
-      // maxAge: 24 * 60 * 60 * 1000, // TODO: Need to update this base on  the env or remember me.
+      maxAge: 24 * 60 * 60 * 1000, // TODO: Need to update this base on  the env or remember me.
       path: '/',
     });
     return new SuccessResponse('Successfully logged out.', token);
