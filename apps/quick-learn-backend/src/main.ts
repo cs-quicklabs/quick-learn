@@ -44,7 +44,9 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService<AllConfigType>);
 
-  const frontendURL = configService.getOrThrow('app.frontendDomain', { infer: true });
+  const frontendURL = configService.getOrThrow('app.frontendDomain', {
+    infer: true,
+  });
 
   // enabling CORS for frontend consumption
   app.enableCors({

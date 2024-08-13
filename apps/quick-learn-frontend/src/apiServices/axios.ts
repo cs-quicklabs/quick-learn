@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${process.env.NEXT_PUBLIC_API_VERSION}`
+const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${process.env.NEXT_PUBLIC_API_VERSION}`;
 
 export type AxiosErrorObject = {
   response: {
