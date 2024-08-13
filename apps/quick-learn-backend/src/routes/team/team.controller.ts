@@ -26,7 +26,10 @@ export class TeamController {
   @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'get all team names' })
-  findAll() {
-    return this.teamService.findAll();
+  async findAll() {
+    const team = await this.teamService.findAll();
+    return new SuccessResponse('Teams', {
+      teams: team,
+    });
   }
 }

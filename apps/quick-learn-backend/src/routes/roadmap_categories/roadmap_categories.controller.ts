@@ -44,9 +44,12 @@ export class RoadmapCategoriesController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiOperation({ summary: 'get all roadmap categories' })
   async findAll() {
     const roadmapCategories = await this.roadmapCategoriesService.findAll();
-    return new SuccessResponse('Roadmap Categories', roadmapCategories);
+    return new SuccessResponse('Roadmap Categories', {
+      categories: roadmapCategories,
+    });
   }
 
   @Get(':id')

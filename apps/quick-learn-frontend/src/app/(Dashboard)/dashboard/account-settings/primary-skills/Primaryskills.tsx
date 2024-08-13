@@ -1,13 +1,15 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addSkill } from '@src/apiServices/accountService';
+import { addSkill, getSkills } from '@src/apiServices/accountService';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
+import { TSkill } from '@src/shared/types/accountTypes';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const addSkillSchema = z.object({
@@ -18,6 +20,7 @@ type AddSkillData = z.infer<typeof addSkillSchema>;
 
 const Primaryskills = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [primaryskills, setPrimarySkills] = useState<TSkill[]>([]);
   const addSkillFields: FieldConfig[] = [
     {
       label: 'Add new Skill',
@@ -26,7 +29,10 @@ const Primaryskills = () => {
       placeholder: 'iOS Developer',
     },
   ];
-  //  {newSkill:"fwhvjhasdv"}
+  const methods = useForm<AddSkillData>({
+    resolver: zodResolver(addSkillSchema),
+  });
+  const { reset } = methods;
   const onSubmit = (data: AddSkillData) => {
     setIsLoading(true);
     const payload = { name: data.newSkill, team_id: 1 };
@@ -35,6 +41,17 @@ const Primaryskills = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };
+
+  useEffect(() => {
+    setIsLoading(true);
+    getSkills()
+      .then((res) => {
+        setPrimarySkills(res.data.skills);
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
+  }, []);
+
   return (
     <>
       <div>
@@ -66,29 +83,31 @@ const Primaryskills = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  Mobile Developer
-                </th>
-                <td className="px-6 py-4 inline-flex">
-                  <a
-                    href="#"
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              {primaryskills.map((skill) => (
+                <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
-                    Edit
-                  </a>
-                  <a
-                    href="#"
-                    className="ml-2 font-medium text-red-600 dark:text-red-500 hover:underline"
-                  >
-                    Delete
-                  </a>
-                </td>
-              </tr>
-              <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                    {skill?.name}
+                  </th>
+                  <td className="px-6 py-4 inline-flex">
+                    <a
+                      href="#"
+                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    >
+                      Edit
+                    </a>
+                    <a
+                      href="#"
+                      className="ml-2 font-medium text-red-600 dark:text-red-500 hover:underline"
+                    >
+                      Delete
+                    </a>
+                  </td>
+                </tr>
+              ))}
+              {/* <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -151,7 +170,7 @@ const Primaryskills = () => {
                     Delete
                   </a>
                 </td>
-              </tr>
+              </tr> */}
             </tbody>
           </table>
         </div>

@@ -17,6 +17,7 @@ export enum userApiEnum {
 
 export enum accountApiEnum {
   SKILLS = '/skills',
+  TEAM = '/team',
   COURSE_CATEGORIES = '/course-categories',
   ROADMAP_CATEGORIES = '/roadmap-categories',
 }

@@ -45,7 +45,9 @@ export class CourseCategoriesController {
   @ApiOperation({ summary: 'get all course categories' })
   async findAll() {
     const courseCategory = await this.courseCategoriesService.findAll();
-    return new SuccessResponse('Course Categories', courseCategory);
+    return new SuccessResponse('Course Categories', {
+      categories: courseCategory,
+    });
   }
 
   @Get(':id')

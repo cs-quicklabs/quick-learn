@@ -30,7 +30,7 @@ export class SkillsController {
     @Body() createSkillDto: CreateSkillDto,
   ): Promise<SuccessResponse> {
     const skill = await this.skillsService.create(createSkillDto);
-    return new SuccessResponse('Successfully added Skill', skill);
+    return new SuccessResponse('Successfully added Skill', { skills: skill });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -38,7 +38,7 @@ export class SkillsController {
   @ApiOperation({ summary: 'get all skills' })
   async findAll() {
     const skill = await this.skillsService.findAll();
-    return new SuccessResponse('Skills Listed', skill);
+    return new SuccessResponse('Skills Listed', { skills: skill });
   }
 
   @Get(':id')

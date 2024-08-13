@@ -1,7 +1,24 @@
+'use client';
+import { getTeamDetails } from '@src/apiServices/accountService';
+import { TTeams } from '@src/shared/types/accountTypes';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const AccountSettings = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [teamName, setTeamName] = useState<TTeams[]>([]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    getTeamDetails()
+      .then((res) => {
+        setTeamName(res.data.teams);
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
+  }, []);
+
   return (
     <>
       <div>
@@ -35,10 +52,11 @@ const AccountSettings = () => {
               Team Name
             </label>
             <input
-              type="email"
-              id="email"
+              type="text"
+              id="text"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Quick Connect"
+              value={teamName[0]?.name}
               required
             />
           </div>
