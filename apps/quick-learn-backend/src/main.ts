@@ -9,6 +9,8 @@ import { EnvironmentEnum } from './common/constants/constants';
 import { AppModule } from './app.module';
 import { ExceptionResponseFilter } from './common/filters';
 import validationOptions from './common/utils/validation-options';
+import { ConfigService } from '@nestjs/config';
+import { AllConfigType } from './config/config.type';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -40,9 +42,13 @@ async function bootstrap() {
   // adding cookie parser
   app.use(cookieParser());
 
+  const configService = app.get(ConfigService<AllConfigType>);
+
+  const frontendURL = configService.getOrThrow('app.frontendDomain', { infer: true });
+
   // enabling CORS for frontend consumption
   app.enableCors({
-    origin: ['http://localhost:3000'],
+    origin: [frontendURL],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
   });
