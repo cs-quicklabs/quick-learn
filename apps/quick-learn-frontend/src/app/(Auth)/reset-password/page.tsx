@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Metadata } from 'next';
 import ResetPassword from './ResetPassword';
 import AuthTemplate from '@src/shared/pageTemplates/AuthTemplate';
@@ -10,9 +10,11 @@ export const metadata: Metadata = {
 
 const ResetPasswordPage = () => {
   return (
-    <AuthTemplate title="Set your Password">
-      <ResetPassword />
-    </AuthTemplate>
+    <Suspense fallback={<h1>Loading...</h1>}>
+      <AuthTemplate title="Set your Password">
+        <ResetPassword />
+      </AuthTemplate>
+    </Suspense>
   );
 };
 

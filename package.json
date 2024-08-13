@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "typeorm": "ts-node node_modules/typeorm/cli.js",
     "dev": "docker-compose up -d && npx nx run-many --target=dev --all=true"
   },
   "private": true,
