@@ -7,19 +7,20 @@ import {
 } from '../shared/types/authTypes';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 
-type LoginSuccessResData = {
-  access_token: string;
-};
+// type LoginSuccessResData = {
+//   access_token: string;
+// };
 type ForgotPasswordResData = {
   resetURL: string;
 };
 
 export const loginApiCall = async (
   credentials: LoginCredentials,
-): Promise<AxiosSuccessResponse<LoginSuccessResData>> => {
-  const response = await axiosInstance.post<
-    AxiosSuccessResponse<LoginSuccessResData>
-  >(authApiEnum.LOGIN, credentials);
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    authApiEnum.LOGIN,
+    credentials,
+  );
   return response.data;
 };
 
