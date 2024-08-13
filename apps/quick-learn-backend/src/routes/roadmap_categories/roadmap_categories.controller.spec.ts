@@ -11,7 +11,9 @@ describe('RoadmapCategoriesController', () => {
       providers: [RoadmapCategoriesService],
     }).compile();
 
-    controller = module.get<RoadmapCategoriesController>(RoadmapCategoriesController);
+    controller = module.get<RoadmapCategoriesController>(
+      RoadmapCategoriesController,
+    );
   });
 
   it('should be defined', () => {
