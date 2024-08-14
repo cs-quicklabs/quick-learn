@@ -13,7 +13,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const addSkillSchema = z.object({
-  newSkill: z.string().min(1, 'This field is mandatory'),
+  newSkill: z
+    .string()
+    .min(1, 'This field is mandatory')
+    .refine((value) => value.trim().length > 0, {
+      message: 'This field is mandatory and cannot contain only whitespace',
+    }),
 });
 
 type AddSkillData = z.infer<typeof addSkillSchema>;

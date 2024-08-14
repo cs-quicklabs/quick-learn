@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRoadmapCategoryDto } from './dto/create-roadmap_category.dto';
-import { UpdateRoadmapCategoryDto } from './dto/update-roadmap_category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoadmapCategoryEntity } from '@src/entities/roadmap_category.entity';
 import { Repository } from 'typeorm';
@@ -35,8 +34,7 @@ export class RoadmapCategoriesService {
     return `This action returns a #${id} roadmapCategory`;
   }
 
-  update(id: number, updateRoadmapCategoryDto: UpdateRoadmapCategoryDto) {
-    console.log(updateRoadmapCategoryDto); // TODO: Remove this after implementation.
+  update(id: number) {
     return `This action updates a #${id} roadmapCategory`;
   }
 
