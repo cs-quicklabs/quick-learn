@@ -1,5 +1,4 @@
 'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
   addCourseCategory,
   getCourseCategories,
@@ -12,7 +11,6 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const addCourseCategorySchema = z.object({
