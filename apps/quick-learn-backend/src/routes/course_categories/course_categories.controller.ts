@@ -32,9 +32,7 @@ export class CourseCategoriesController {
   async create(
     @Body() createCourseCategoryDto: CreateCourseCategoryDto,
   ): Promise<SuccessResponse> {
-    const courseCategory = await this.courseCategoriesService.create(
-      createCourseCategoryDto,
-    );
+    await this.courseCategoriesService.create(createCourseCategoryDto);
     const courseCategories = await this.courseCategoriesService.findAll();
     return new SuccessResponse('Successfully added course category', {
       categories: courseCategories,
