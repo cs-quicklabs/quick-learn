@@ -54,11 +54,8 @@ export class CourseCategoriesController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCourseCategoryDto: UpdateCourseCategoryDto,
-  ) {
-    return this.courseCategoriesService.update(+id, updateCourseCategoryDto);
+  update(@Param('id') id: string) {
+    return this.courseCategoriesService.update(+id);
   }
 
   @Delete(':id')

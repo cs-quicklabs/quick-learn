@@ -54,11 +54,8 @@ export class RoadmapCategoriesController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateRoadmapCategoryDto: UpdateRoadmapCategoryDto,
-  ) {
-    return this.roadmapCategoriesService.update(+id, updateRoadmapCategoryDto);
+  update(@Param('id') id: string) {
+    return this.roadmapCategoriesService.update(+id);
   }
 
   @Delete(':id')
