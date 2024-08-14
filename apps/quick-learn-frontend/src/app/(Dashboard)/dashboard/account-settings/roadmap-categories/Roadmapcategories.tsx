@@ -16,7 +16,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const addRoadmapCategorySchema = z.object({
-  newRoadmapCategory: z.string().min(1, 'This field is mandatory'),
+  newRoadmapCategory: z
+    .string()
+    .min(1, 'This field is mandatory')
+    .refine((value) => value.trim().length > 0, {
+      message: 'This field is mandatory and cannot contain only whitespace',
+    }),
 });
 
 type AddRoadmapCategoryData = z.infer<typeof addRoadmapCategorySchema>;
@@ -34,10 +39,7 @@ const Roadmapcategories = () => {
       placeholder: 'Engineering',
     },
   ];
-  const methods = useForm<AddRoadmapCategoryData>({
-    resolver: zodResolver(addRoadmapCategorySchema),
-  });
-  const { reset } = methods;
+
   const onSubmit = (data: AddRoadmapCategoryData) => {
     setIsLoading(true);
     const payload = { name: data.newRoadmapCategory, team_id: 1 };
@@ -46,7 +48,6 @@ const Roadmapcategories = () => {
         showApiMessageInToast(res);
         setRoadmapCategories(res.data.categories);
         console.log(res.data);
-        reset();
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
@@ -79,7 +80,7 @@ const Roadmapcategories = () => {
           schema={addRoadmapCategorySchema}
           onSubmit={onSubmit}
           isLoading={isLoading}
-          methods={methods}
+          resetFormOnSubmit
           buttonText="Save"
         />
         <div className="relative overflow-x-auto mt-8">

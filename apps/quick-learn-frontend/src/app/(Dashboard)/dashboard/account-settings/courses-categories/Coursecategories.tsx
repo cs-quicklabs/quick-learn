@@ -16,7 +16,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const addCourseCategorySchema = z.object({
-  newCourseCategory: z.string().min(1, 'This field is mandatory'),
+  newCourseCategory: z
+    .string()
+    .min(1, 'This field is mandatory')
+    .refine((value) => value.trim().length > 0, {
+      message: 'This field is mandatory and cannot contain only whitespace',
+    }),
 });
 
 type AddCourseCategoryData = z.infer<typeof addCourseCategorySchema>;
@@ -34,10 +39,7 @@ const Coursecategories = () => {
       placeholder: 'Software Application',
     },
   ];
-  const methods = useForm<AddCourseCategoryData>({
-    resolver: zodResolver(addCourseCategorySchema),
-  });
-  const { reset } = methods;
+
   const onSubmit = (data: AddCourseCategoryData) => {
     setIsLoading(true);
     const payload = { name: data.newCourseCategory };
@@ -45,7 +47,6 @@ const Coursecategories = () => {
       .then((res) => {
         showApiMessageInToast(res);
         setCourseCategories(res.data.categories);
-        reset();
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
@@ -78,7 +79,7 @@ const Coursecategories = () => {
           schema={addCourseCategorySchema}
           onSubmit={onSubmit}
           isLoading={isLoading}
-          methods={methods}
+          resetFormOnSubmit
           buttonText="Save"
         />
         <div className="relative overflow-x-auto mt-8">
