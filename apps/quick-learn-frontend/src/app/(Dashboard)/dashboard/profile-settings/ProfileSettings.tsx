@@ -69,7 +69,7 @@ const ProfileSettings = () => {
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [setValue]); // Add setValue as a dependency
 
   return (
     <>
