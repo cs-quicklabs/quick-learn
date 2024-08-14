@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCourseCategoryDto } from './dto/create-course_category.dto';
-import { UpdateCourseCategoryDto } from './dto/update-course_category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CourseCategoryEntity } from '@src/entities/course_category.entity';
 import { Repository } from 'typeorm';
@@ -33,8 +32,7 @@ export class CourseCategoriesService {
     return `This action returns a #${id} courseCategory`;
   }
 
-  update(id: number, updateCourseCategoryDto: UpdateCourseCategoryDto) {
-    console.log(updateCourseCategoryDto); // TODO: Remove this after implementation.
+  update(id: number) {
     return `This action updates a #${id} courseCategory`;
   }
 

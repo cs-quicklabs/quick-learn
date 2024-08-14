@@ -19,7 +19,6 @@ interface Props<T extends z.ZodTypeAny> {
   resetFormOnSubmit?: boolean;
 }
 
-//helper component to map form fields as per fields object
 function FormFieldsMapper<T extends z.ZodTypeAny>({
   fields,
   schema,
@@ -31,6 +30,13 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   methods,
   resetFormOnSubmit = false,
 }: Props<T>) {
+  // Call useForm unconditionally
+  const defaultMethods = useForm<z.infer<T>>({
+    resolver: zodResolver(schema),
+    mode: 'onBlur',
+  });
+
+  // Use methods if provided, otherwise fall back to defaultMethods
   const {
     register,
     handleSubmit,
@@ -39,17 +45,15 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     getValues,
     reset,
     formState: { errors, isValid },
-  } = methods ||
-  useForm<z.infer<T>>({
-    resolver: zodResolver(schema),
-    mode: 'onBlur',
-  });
+  } = methods || defaultMethods;
+
   const handleFormSubmit = (data: z.infer<T>) => {
     onSubmit(data, reset);
     if (resetFormOnSubmit) {
       reset();
     }
   };
+
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}

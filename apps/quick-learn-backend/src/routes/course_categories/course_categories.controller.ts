@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { CourseCategoriesService } from './course_categories.service';
 import { CreateCourseCategoryDto } from './dto/create-course_category.dto';
-import { UpdateCourseCategoryDto } from './dto/update-course_category.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SuccessResponse } from '@src/common/dto';
@@ -54,11 +53,8 @@ export class CourseCategoriesController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCourseCategoryDto: UpdateCourseCategoryDto,
-  ) {
-    return this.courseCategoriesService.update(+id, updateCourseCategoryDto);
+  update(@Param('id') id: string) {
+    return this.courseCategoriesService.update(+id);
   }
 
   @Delete(':id')
