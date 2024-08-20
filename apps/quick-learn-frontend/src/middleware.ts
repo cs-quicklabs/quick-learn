@@ -39,7 +39,6 @@ export const config = {
   matcher: [
     '/',
     '/login',
-    '/dashboard',
     '/dashboard/:path*',
     '/forgot-password',
     '/reset-password',
