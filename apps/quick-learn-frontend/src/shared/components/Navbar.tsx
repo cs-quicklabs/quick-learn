@@ -15,6 +15,8 @@ import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { logoutApiCall } from '@src/apiServices/authService';
+import { useContext } from 'react';
+import { UserContext } from '@src/context/userContext';
 
 type TLink = { name: string; link: string };
 
@@ -53,6 +55,7 @@ const menuItems: TLink[] = [
 ];
 
 const Navbar = () => {
+  const { user } = useContext(UserContext);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -169,16 +172,12 @@ const Navbar = () => {
                   className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in divide-y divide-gray-100"
                 >
                   <div className="px-4 py-3">
-                    <p className="text-sm text-black">
-                      aashishdhawan@gmail.com
-                    </p>
-                    <p className="text-xs text-gray-700">
-                      Crownstack Technologies
-                    </p>
+                    <p className="text-sm text-black">{user?.email}</p>
+                    <p className="text-xs text-gray-700">{user?.team?.name}</p>
                   </div>
                   <div>
                     {menuItems.map((item) => (
-                      <MenuItem key={item.link}>
+                      <MenuItem key={item.link + item.name}>
                         <Link
                           href={item.link}
                           className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
@@ -252,7 +251,7 @@ const Navbar = () => {
             {menuItems.map((item) => (
               <DisclosureButton
                 as="a"
-                key={item.link}
+                key={item.link + item.name}
                 href={item.link}
                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
               >

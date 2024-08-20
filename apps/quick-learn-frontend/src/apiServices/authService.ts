@@ -6,6 +6,7 @@ import {
   ResetPasswordPayload,
 } from '../shared/types/authTypes';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
+import { TUser } from '@src/shared/types/userTypes';
 
 // type LoginSuccessResData = {
 //   access_token: string;
@@ -45,5 +46,12 @@ export const resetPasswordApiCall = async (
 
 export const logoutApiCall = async (): Promise<LoginResponse> => {
   const response = await axiosInstance.post(authApiEnum.LOGOUT);
+  return response.data;
+};
+
+export const getUser = async (): Promise<AxiosSuccessResponse<TUser>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<TUser>>(
+    authApiEnum.GET_USER,
+  );
   return response.data;
 };

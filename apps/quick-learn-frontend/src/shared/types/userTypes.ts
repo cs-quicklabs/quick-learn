@@ -8,6 +8,7 @@ export type TUserType = {
 export type TSkill = {
   name: string;
   team_id: number;
+  id: number;
 };
 
 export type TUser = {
@@ -22,6 +23,10 @@ export type TUser = {
   user_type: TUserType;
   skill_id: number;
   skill: TSkill;
+  team: {
+    id: number;
+    name: string;
+  };
   last_login_timestamp: string;
   created_at: string;
 };

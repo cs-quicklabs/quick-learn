@@ -3,6 +3,7 @@ export enum authApiEnum {
   FORGOT_PASSWORD = '/auth/forgot/password',
   RESET_PASSWORD = '/auth/reset/password',
   LOGOUT = '/auth/logout',
+  GET_USER = '/auth/profile',
 }
 
 export enum userApiEnum {

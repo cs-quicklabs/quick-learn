@@ -13,7 +13,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { SuccessResponse } from '@src/common/dto';
 import { EnvironmentEnum } from '@src/common/constants/constants';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
 import { ForgotPasswordDto } from './dto/forgotpassword.dto';
@@ -82,6 +82,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@CurrentUser() user: UserEntity): SuccessResponse {
+    delete user.password; // TODO: Need to update this to discard this fron the class validators
     return new SuccessResponse('Successfully got the user.', user);
   }
 }

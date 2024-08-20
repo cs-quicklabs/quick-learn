@@ -14,13 +14,13 @@ import { UsersService } from './users.service';
 import { SuccessResponse } from '@src/common/dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import {
   CreateUserDto,
   ListFilterDto,
   PaginationDto,
   UpdateUserDto,
 } from './dto';
+import { JwtAuthGuard } from '../auth/guards';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
