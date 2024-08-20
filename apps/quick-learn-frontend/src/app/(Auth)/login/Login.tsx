@@ -7,12 +7,10 @@ import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { RouteEnum } from '@src/constants/route.enum';
 import { LoginCredentials } from '@src/shared/types/authTypes';
 import { useRouter } from 'next/navigation';
-import {
-  showApiErrorInToast,
-  showApiMessageInToast,
-} from '@src/utils/toastUtils';
-import { AxiosErrorObject } from '@src/apiServices/axios';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { loginApiCall } from '@src/apiServices/authService';
+import { toast } from 'react-toastify';
+import { UserTypeIdEnum } from 'lib/shared/src';
 
 const Login = () => {
   const router = useRouter();
@@ -34,15 +32,25 @@ const Login = () => {
   ];
 
   const handleLogin = async (data: LoginCredentials) => {
-    try {
-      const res = await loginApiCall(data);
-      showApiMessageInToast(res);
-      router.push(RouteEnum.DASHBOARD);
-    } catch (error) {
-      showApiErrorInToast(error as AxiosErrorObject);
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    loginApiCall(data)
+      .then((res) => {
+        const userTypeId = res.data.user_type_id;
+        if (
+          userTypeId === UserTypeIdEnum.SUPERADMIN ||
+          userTypeId === UserTypeIdEnum.ADMIN
+        ) {
+          router.push(RouteEnum.TEAM);
+        } else {
+          router.push(RouteEnum.MY_LEARNING_PATH);
+        }
+        toast.success(res.message);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        showApiErrorInToast(err);
+        setIsLoading(false);
+      });
   };
 
   return (

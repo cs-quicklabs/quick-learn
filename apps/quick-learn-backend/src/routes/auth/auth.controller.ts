@@ -32,10 +32,10 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'User Login' })
   async login(
-    @Req() req: Request,
+    @CurrentUser() user: UserEntity,
     @Res({ passthrough: true }) res: Response,
   ): Promise<SuccessResponse> {
-    const token = await this.authService.login(req.user);
+    const token = await this.authService.login(user);
 
     res.cookie('access_token', token.access_token, {
       httpOnly: true,
@@ -44,7 +44,7 @@ export class AuthController {
       maxAge: 24 * 60 * 60 * 1000, // TODO: Need to update this base on  the env or remember me.
       path: '/',
     });
-    return new SuccessResponse('Successfully logged in.', token);
+    return new SuccessResponse('Successfully logged in.', { token, ...user });
   }
 
   // Logout

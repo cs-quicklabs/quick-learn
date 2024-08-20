@@ -8,20 +8,19 @@ import {
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { TUser } from '@src/shared/types/userTypes';
 
-// type LoginSuccessResData = {
-//   access_token: string;
-// };
+type LoginSuccessResData = TUser & {
+  access_token: string;
+};
 type ForgotPasswordResData = {
   resetURL: string;
 };
 
 export const loginApiCall = async (
   credentials: LoginCredentials,
-): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.post<AxiosSuccessResponse>(
-    authApiEnum.LOGIN,
-    credentials,
-  );
+): Promise<AxiosSuccessResponse<LoginSuccessResData>> => {
+  const response = await axiosInstance.post<
+    AxiosSuccessResponse<LoginSuccessResData>
+  >(authApiEnum.LOGIN, credentials);
   return response.data;
 };
 
