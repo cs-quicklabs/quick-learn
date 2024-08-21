@@ -1,16 +1,8 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { SuccessResponse } from '@src/common/dto';
 import { EnvironmentEnum } from '@src/common/constants/constants';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
