@@ -15,23 +15,31 @@ import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { logoutApiCall } from '@src/apiServices/authService';
+import { useContext, useEffect, useState } from 'react';
+import { UserContext } from '@src/context/userContext';
+import { UserTypeIdEnum } from 'lib/shared/src';
 
 type TLink = { name: string; link: string };
 
-const links: TLink[] = [
-  {
-    name: 'Dashboard',
-    link: RouteEnum.DASHBOARD,
-  },
-  {
-    name: 'Team',
-    link: RouteEnum.TEAM,
-  },
-  {
-    name: 'My Learning Path',
-    link: RouteEnum.MY_LEARNING_PATH,
-  },
+const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
+const myLearningPath: TLink = {
+  name: 'My Learning Path',
+  link: RouteEnum.MY_LEARNING_PATH,
+};
+const content: TLink = { name: 'Content', link: RouteEnum.CONTENT };
+const approvals: TLink = { name: 'Approvals', link: RouteEnum.APPROVALS };
+const community: TLink = { name: 'Community', link: RouteEnum.COMMUNITY };
+
+const superAdminUserLinks: TLink[] = [
+  team,
+  myLearningPath,
+  content,
+  approvals,
+  community,
 ];
+const adminUserLinks: TLink[] = [team, myLearningPath, content, approvals];
+const editorUserLinks: TLink[] = [myLearningPath, content];
+const memberUserLinks: TLink[] = [myLearningPath];
 
 const menuItems: TLink[] = [
   {
@@ -44,15 +52,26 @@ const menuItems: TLink[] = [
   },
   {
     name: 'Archive',
-    link: '',
-  },
-  {
-    name: 'Admin Land',
-    link: '',
+    link: RouteEnum.ARCHIVE,
   },
 ];
 
 const Navbar = () => {
+  const [links, setLinks] = useState<TLink[]>([]);
+  const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
+      setLinks(superAdminUserLinks);
+    } else if (user?.user_type_id === UserTypeIdEnum.ADMIN) {
+      setLinks(adminUserLinks);
+    } else if (user?.user_type_id === UserTypeIdEnum.EDITOR) {
+      setLinks(editorUserLinks);
+    } else if (user?.user_type_id === UserTypeIdEnum.MEMBER) {
+      setLinks(memberUserLinks);
+    }
+  }, [user]);
+
   const pathname = usePathname();
   const router = useRouter();
 
@@ -169,24 +188,33 @@ const Navbar = () => {
                   className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in divide-y divide-gray-100"
                 >
                   <div className="px-4 py-3">
-                    <p className="text-sm text-black">
-                      aashishdhawan@gmail.com
-                    </p>
-                    <p className="text-xs text-gray-700">
-                      Crownstack Technologies
-                    </p>
+                    <p className="text-sm text-black">{user?.email}</p>
+                    <p className="text-xs text-gray-700">{user?.team?.name}</p>
                   </div>
                   <div>
-                    {menuItems.map((item) => (
-                      <MenuItem key={item.link}>
+                    {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
+                      menuItems.map((item) => (
+                        <MenuItem key={item.link + item.name}>
+                          <Link
+                            href={item.link}
+                            className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                          >
+                            {item.name}
+                          </Link>
+                        </MenuItem>
+                      ))}
+                    {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
+                      <MenuItem>
                         <Link
-                          href={item.link}
+                          href={RouteEnum.PROFILE_SETTINGS}
                           className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                         >
-                          {item.name}
+                          My Profile
                         </Link>
                       </MenuItem>
-                    ))}
+                    ) : (
+                      ''
+                    )}
                   </div>
                   <MenuItem>
                     <Link
@@ -234,9 +262,11 @@ const Navbar = () => {
               />
             </div>
             <div className="ml-3">
-              <div className="text-base font-medium text-white">Tom Cook</div>
+              <div className="text-base font-medium text-white">
+                {user?.first_name} {user?.last_name}
+              </div>
               <div className="text-sm font-medium text-gray-400">
-                tom@example.com
+                {user?.email}
               </div>
             </div>
             <button
@@ -249,16 +279,28 @@ const Navbar = () => {
             </button>
           </div>
           <div className="mt-3 space-y-1 px-2">
-            {menuItems.map((item) => (
+            {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
+              menuItems.map((item) => (
+                <DisclosureButton
+                  as="a"
+                  key={item.link + item.name}
+                  href={item.link}
+                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  {item.name}
+                </DisclosureButton>
+              ))}
+            {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
               <DisclosureButton
                 as="a"
-                key={item.link}
-                href={item.link}
+                href={RouteEnum.PROFILE_SETTINGS}
                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
               >
-                {item.name}
+                My Profile
               </DisclosureButton>
-            ))}
+            ) : (
+              ''
+            )}
             <DisclosureButton
               as="a"
               onClick={doLogout}

@@ -10,7 +10,7 @@ import { PaginatedResult } from '@src/common/interfaces';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { emailSubjects } from '@src/common/constants/email-subject';
 
-const userRelations = ['user_type', 'skill'];
+const userRelations = ['user_type', 'skill', 'team'];
 @Injectable()
 export class UsersService extends PaginationService<UserEntity> {
   constructor(
@@ -128,6 +128,7 @@ export class UsersService extends PaginationService<UserEntity> {
   async findByEmailOrUUID(email: string, uuid: string): Promise<UserEntity[]> {
     return await this.userRepository.find({
       where: [{ email }, { uuid }],
+      relations: [...userRelations],
     });
   }
 

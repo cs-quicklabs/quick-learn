@@ -11,12 +11,12 @@ import {
 import { RoadmapCategoriesService } from './roadmap_categories.service';
 import { CreateRoadmapCategoryDto } from './dto/create-roadmap_category.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SuccessResponse } from '@src/common/dto';
+import { JwtAuthGuard } from '../auth/guards';
 
+// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/roadmap-categories
 @ApiTags('Roadmap Categories')
 @UseGuards(JwtAuthGuard)
-// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/roadmap-categories
 @Controller({
   version: '1',
   path: 'roadmap-categories',

@@ -11,12 +11,12 @@ import {
 import { SkillsService } from './skills.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SuccessResponse } from '@src/common/dto';
+import { JwtAuthGuard } from '../auth/guards';
 
+// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/skills
 @ApiTags('Skills')
 @UseGuards(JwtAuthGuard)
-// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/skills
 @Controller({
   version: '1',
   path: 'skills',

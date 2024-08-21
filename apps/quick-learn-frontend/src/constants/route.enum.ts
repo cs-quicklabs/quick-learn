@@ -12,4 +12,8 @@ export enum RouteEnum {
   PRIMARY_SKILLS = '/dashboard/account-settings/primary-skills',
   ROADMAP_CATEGORIES = '/dashboard/account-settings/roadmap-categories',
   COURSES_CATEGORIES = '/dashboard/account-settings/courses-categories',
+  CONTENT = '/dashboard/content',
+  APPROVALS = '/dashboard/approvals',
+  COMMUNITY = '/dashboard/community',
+  ARCHIVE = '/dashboard/archive',
 }

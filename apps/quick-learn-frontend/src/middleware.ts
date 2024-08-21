@@ -8,7 +8,7 @@ const PUBLIC_ROUTES = [
   RouteEnum.FORGOT_PASSWORD,
   RouteEnum.RESET_PASSWORD,
 ];
-const DASHBOARD_ROUTE = RouteEnum.DASHBOARD;
+const DASHBOARD_ROUTE = RouteEnum.MY_LEARNING_PATH;
 const LOGIN_ROUTE = RouteEnum.LOGIN;
 
 // Helper functions
@@ -39,7 +39,6 @@ export const config = {
   matcher: [
     '/',
     '/login',
-    '/dashboard',
     '/dashboard/:path*',
     '/forgot-password',
     '/reset-password',

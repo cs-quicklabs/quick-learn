@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { SuccessResponse } from '@src/common/dto';
 import { TeamService } from './team.service';
+import { JwtAuthGuard } from '../auth/guards';
 
+// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/team
 @ApiTags('Team')
 @UseGuards(JwtAuthGuard)
-// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/team
 @Controller({
   version: '1',
   path: 'team',

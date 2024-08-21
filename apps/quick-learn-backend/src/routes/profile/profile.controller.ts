@@ -5,9 +5,9 @@ import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
 import { SuccessResponse } from '@src/common/dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ChangePasswordDTO } from './dto/change-password.dto';
 import { profilePreferencesDTO } from './dto/profile-preferences.dto';
+import { JwtAuthGuard } from '../auth/guards';
 
 @ApiTags('Profile')
 @UseGuards(JwtAuthGuard)
