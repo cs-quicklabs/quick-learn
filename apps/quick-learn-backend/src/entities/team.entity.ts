@@ -6,14 +6,17 @@ import { RoadmapCategoryEntity } from './roadmap_category.entity';
 
 @Entity({ name: 'team' })
 export class TeamEntity extends BaseEntity {
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  name: string;
+
+  @Column({ type: 'varchar', length: 2048, nullable: true })
+  logo: string;
+
   @OneToMany(() => UserEntity, (user) => user.team)
   users: UserEntity[];
 
   @OneToMany(() => SkillEntity, (skill) => skill.team)
   skills: SkillEntity[];
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  name: string;
 
   @OneToMany(
     () => RoadmapCategoryEntity,

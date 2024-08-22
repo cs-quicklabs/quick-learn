@@ -1,28 +1,30 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateTeamDto } from './dto/create-team.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TeamEntity } from '@src/entities/team.entity';
 import { Repository } from 'typeorm';
+import { BasicCrudService } from '@src/common/services';
+import { UserEntity } from '@src/entities/user.entity';
+import { UpdateTeamDto } from './dto/update-team.dto';
 
 @Injectable()
-export class TeamService {
-  constructor(
-    @InjectRepository(TeamEntity)
-    private teamRepository: Repository<TeamEntity>,
-  ) {}
-
-  async create(createTeamDto: CreateTeamDto) {
-    const foundTeam = await this.teamRepository.count({
-      where: { name: createTeamDto.name },
-    });
-    if (foundTeam) {
-      throw new BadRequestException('Team already exists');
-    }
-    const team = await this.teamRepository.create(createTeamDto);
-    return await this.teamRepository.save(team);
+export class TeamService extends BasicCrudService<TeamEntity> {
+  constructor(@InjectRepository(TeamEntity) repo: Repository<TeamEntity>) {
+    super(repo);
   }
 
-  async findAll() {
-    return await this.teamRepository.find();
+  async getTeamDetails(user: UserEntity) {
+    const teamId = user.team_id;
+    if (!teamId) {
+      throw new BadRequestException('No team has assigned to the user.');
+    }
+    return await this.get({ id: teamId });
+  }
+
+  async updateTeam(user: UserEntity, payload: UpdateTeamDto) {
+    const teamId = user.team_id;
+    if (!teamId) {
+      throw new BadRequestException('No team has assigned to the user.');
+    }
+    await this.update({ id: teamId }, payload);
   }
 }

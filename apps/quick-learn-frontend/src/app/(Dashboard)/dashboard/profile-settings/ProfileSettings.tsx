@@ -101,10 +101,8 @@ const ProfileSettings = () => {
   return (
     <>
       <div>
-        <h1 className="text-lg font-semibold dark:text-white">
-          Profile Settings
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+        <h1 className="text-lg font-semibold">Profile Settings</h1>
+        <p className="text-gray-500 text-sm mb-6">
           Change your personal profile settings.
         </p>
         <FormProvider {...methods}>
