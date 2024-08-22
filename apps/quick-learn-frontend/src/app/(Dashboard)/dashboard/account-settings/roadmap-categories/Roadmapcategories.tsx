@@ -6,7 +6,7 @@ import {
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { TRoadmapCategories } from '@src/shared/types/accountTypes';
 import { FieldConfig } from '@src/shared/types/formTypes';
-import { onlyAlphabeticAndSpaceValidation } from '@src/utils/helpers';
+import { noSpecialCharValidation } from '@src/utils/helpers';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -22,10 +22,7 @@ const addRoadmapCategorySchema = z.object({
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     })
-    .refine(
-      onlyAlphabeticAndSpaceValidation,
-      'Only alphabets and space are allowed',
-    ),
+    .refine(noSpecialCharValidation, 'Only alphabets and space are allowed'),
 });
 
 type AddRoadmapCategoryData = z.infer<typeof addRoadmapCategorySchema>;

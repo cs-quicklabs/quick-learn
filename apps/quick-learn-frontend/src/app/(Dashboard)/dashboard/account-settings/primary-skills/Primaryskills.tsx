@@ -4,7 +4,7 @@ import { addSkill, getSkills } from '@src/apiServices/accountService';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { TSkill } from '@src/shared/types/accountTypes';
 import { FieldConfig } from '@src/shared/types/formTypes';
-import { onlyAlphabeticAndSpaceValidation } from '@src/utils/helpers';
+import { noSpecialCharValidation } from '@src/utils/helpers';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -21,10 +21,7 @@ const addSkillSchema = z.object({
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     })
-    .refine(
-      onlyAlphabeticAndSpaceValidation,
-      'Only alphabets and space are allowed',
-    ),
+    .refine(noSpecialCharValidation, 'Only alphabets and space are allowed'),
 });
 
 type AddSkillData = z.infer<typeof addSkillSchema>;

@@ -34,6 +34,6 @@ export function onlyAlphabeticValidation(value: string) {
   return /^[A-Za-z]+$/.test(value);
 }
 
-export function onlyAlphabeticAndSpaceValidation(value: string) {
-  return /^[A-Za-z\s]+$/.test(value);
+export function noSpecialCharValidation(value: string) {
+  return /^[a-zA-Z0-9 ]+$/.test(value);
 }
