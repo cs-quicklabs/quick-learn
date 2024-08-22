@@ -1,8 +1,9 @@
 export type TUserProfileType = {
-  firstName: string;
-  lastName: string;
-  profileImage: string | File;
+  first_name: string;
+  last_name: string;
+  profile_image: string | File;
 };
+
 export type TChangePasswordType = {
   oldPassword: string;
   newPassword: string;

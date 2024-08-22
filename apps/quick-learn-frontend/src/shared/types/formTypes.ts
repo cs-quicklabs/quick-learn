@@ -1,3 +1,5 @@
+import { FilePathType } from 'lib/shared/src';
+
 export type FieldType = 'text' | 'email' | 'password' | 'checkbox' | 'image';
 
 export interface FieldConfig {
@@ -5,4 +7,5 @@ export interface FieldConfig {
   name: string;
   type: FieldType;
   placeholder?: string;
+  image_type?: FilePathType;
 }

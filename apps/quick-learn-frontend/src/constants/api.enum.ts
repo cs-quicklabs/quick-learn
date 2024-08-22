@@ -22,3 +22,7 @@ export enum accountApiEnum {
   COURSE_CATEGORIES = '/course-categories',
   ROADMAP_CATEGORIES = '/roadmap-categories',
 }
+
+export enum FileApiEnum {
+  UPLOAD = '/file/upload',
+}

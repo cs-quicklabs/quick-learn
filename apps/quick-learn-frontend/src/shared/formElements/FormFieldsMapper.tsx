@@ -73,6 +73,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
                   field.name as unknown as readonly Path<TypeOf<T>>[],
                 ) as unknown as string
               }
+              imageType={field?.image_type || 'misc'}
               label={field.label}
             />
           );

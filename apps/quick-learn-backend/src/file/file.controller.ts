@@ -22,8 +22,6 @@ import { FileQueryDto } from './dto/file-query.dto';
 })
 @UseGuards(JwtAuthGuard)
 export class FileController {
-  constructor() {}
-
   @Post('upload')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
