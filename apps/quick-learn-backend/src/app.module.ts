@@ -15,11 +15,13 @@ import {
   CourseCategoriesModule,
   RoadmapCategoriesModule,
 } from './routes';
+import { FileModule } from './file/file.module';
+import fileConfig from './file/config/file.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig, appConfig],
+      load: [databaseConfig, appConfig, fileConfig],
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
@@ -29,6 +31,7 @@ import {
       },
     }),
     HealthCheckModule,
+    FileModule,
     UsersModule,
     AuthModule,
     TeamModule,
