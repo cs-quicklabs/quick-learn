@@ -1,3 +1,4 @@
+import { onlyAlphabeticValidation } from '@src/utils/helpers';
 import { z } from 'zod';
 
 const baseSchema = {
@@ -7,14 +8,20 @@ const baseSchema = {
     })
     .trim()
     .min(1, { message: 'This field is required' })
-    .max(30, { message: 'This field should be less than or equal to 30' }),
+    .max(30, { message: 'This field should be less than or equal to 30' })
+    .refine(onlyAlphabeticValidation, {
+      message: 'First name should only contain alphabetic characters',
+    }),
   last_name: z
     .string({
       required_error: 'This field is required',
     })
     .trim()
     .min(1, { message: 'This field is required' })
-    .max(30, { message: 'This field should be less than or equal to 30' }),
+    .max(30, { message: 'This field should be less than or equal to 30' })
+    .refine(onlyAlphabeticValidation, {
+      message: 'Last name should only contain alphabetic characters',
+    }),
   user_type_id: z
     .string({
       required_error: 'This field is required',

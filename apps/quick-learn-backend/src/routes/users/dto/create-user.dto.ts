@@ -22,11 +22,13 @@ export class CreateUserDto {
   @ApiProperty({ example: 'Doe' })
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50)
   last_name: string;
 
   @ApiProperty({ example: 'johndoe@company.com' })
   @IsNotEmpty()
   @IsEmail()
+  @MaxLength(255)
   email: string;
 
   @ApiProperty({ example: 'password' })
