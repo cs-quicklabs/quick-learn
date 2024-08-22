@@ -87,8 +87,9 @@ const ImageInput: FC<Props> = ({
           <Image
             src={imagePreview || '/placeholder.png'}
             alt="Image"
-            layout="fill"
-            objectFit="cover"
+            fill={true}
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 5rem) 5rem, 5rem"
           />
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
             <CameraIcon className="text-white" width="50px" />
