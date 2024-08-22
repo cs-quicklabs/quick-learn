@@ -29,3 +29,11 @@ export function debounce<T>(fn: DebounceFunction<T>, wait: number) {
     }, wait);
   };
 }
+
+export function onlyAlphabeticValidation(value: string) {
+  return /^[A-Za-z]+$/.test(value);
+}
+
+export function onlyAlphabeticAndSpaceValidation(value: string) {
+  return /^[A-Za-z\s]+$/.test(value);
+}

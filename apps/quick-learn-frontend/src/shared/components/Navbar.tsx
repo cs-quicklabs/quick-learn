@@ -23,7 +23,7 @@ type TLink = { name: string; link: string };
 
 const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
 const myLearningPath: TLink = {
-  name: 'My Learning Path',
+  name: 'My Learning Paths',
   link: RouteEnum.MY_LEARNING_PATH,
 };
 const content: TLink = { name: 'Content', link: RouteEnum.CONTENT };
@@ -103,12 +103,12 @@ const Navbar = () => {
                   key={item.link}
                   href={item.link}
                   className={
-                    'inline-flex items-center rounded-md px-3 py-2 text-sm font-medium ' +
+                    'rounded-md px-3 py-2 text-sm font-medium text-gray-300 ' +
                     ((item.link != RouteEnum.DASHBOARD &&
                       pathname.includes(item.link)) ||
                     item.link == pathname
-                      ? 'bg-gray-500'
-                      : 'hover:bg-gray-600 text-gray-200')
+                      ? 'bg-gray-500 text-white'
+                      : 'hover:bg-gray-700 hover:text-white')
                   }
                 >
                   {item.name}
@@ -121,7 +121,7 @@ const Navbar = () => {
           <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
             <div className="w-full max-w-lg lg:max-w-xs">
               <label htmlFor="search" className="sr-only">
-                Search
+                Search Roadmaps, Courses or Lessons
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -134,7 +134,7 @@ const Navbar = () => {
                   id="search"
                   name="search"
                   type="search"
-                  placeholder="Search"
+                  placeholder="Search Roadmaps, Courses or Lessons"
                   className="block w-full rounded-md border-0 bg-gray-700 py-1.5 pl-10 pr-3 text-gray-300 placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:ring-0 sm:text-sm sm:leading-6 outline-0"
                 />
               </div>

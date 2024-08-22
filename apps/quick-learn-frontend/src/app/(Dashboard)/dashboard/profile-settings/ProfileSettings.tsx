@@ -7,6 +7,7 @@ import {
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { TUserProfileType } from '@src/shared/types/profileTypes';
+import { onlyAlphabeticValidation } from '@src/utils/helpers';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -16,8 +17,22 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const profileSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
+  firstName: z
+    .string()
+    .min(1, 'First name is required')
+    .max(50, 'First name should be less than or equal to 50')
+    .refine(
+      onlyAlphabeticValidation,
+      'First name should only contain alphabetic characters',
+    ),
+  lastName: z
+    .string()
+    .min(1, 'Last name is required')
+    .max(50, 'Last name should be less than or equal to 50')
+    .refine(
+      onlyAlphabeticValidation,
+      'Last name should only contain alphabetic characters',
+    ),
   profileImage: z.union([z.instanceof(File), z.string()]),
 });
 
@@ -27,6 +42,7 @@ const ProfileSettings = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
+    mode: 'onChange',
   });
   const { setValue } = methods;
   const profileSettingsFields: FieldConfig[] = [
