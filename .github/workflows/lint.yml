@@ -47,6 +47,10 @@ jobs:
 
   build-frontend:
     runs-on: ubuntu-22.04
+
+    env:
+      BUCKET_URL: your-bucket-url.com
+
     steps:
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
