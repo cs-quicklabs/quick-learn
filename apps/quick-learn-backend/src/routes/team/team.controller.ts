@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateTeamDto } from './dto/create-team.dto';
 import { SuccessResponse } from '@src/common/dto';
 import { TeamService } from './team.service';
 import { JwtAuthGuard } from '../auth/guards';
+import { CurrentUser } from '@src/common/decorators/current-user.decorators';
+import { UserEntity } from '@src/entities/user.entity';
+import { UpdateTeamDto } from './dto/update-team.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/team
 @ApiTags('Team')
@@ -12,23 +14,24 @@ import { JwtAuthGuard } from '../auth/guards';
   version: '1',
   path: 'team',
 })
+@UseGuards(JwtAuthGuard)
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'adding team name' })
-  async create(@Body() createTeamDto: CreateTeamDto): Promise<SuccessResponse> {
-    const team = await this.teamService.create(createTeamDto);
-
-    return new SuccessResponse('Successfully added Team', team);
+  @Get()
+  @ApiOperation({ summary: 'Get team details' })
+  async find(@CurrentUser() user: UserEntity) {
+    const team = await this.teamService.getTeamDetails(user);
+    return new SuccessResponse('Successfully retrieved team details.', team);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'get all team names' })
-  async findAll() {
-    const team = await this.teamService.findAll();
-    return new SuccessResponse('Teams', {
-      teams: team,
-    });
+  @Patch()
+  @ApiOperation({ summary: 'Update team details' })
+  async update(
+    @CurrentUser() user: UserEntity,
+    @Body() updateTeamDto: UpdateTeamDto,
+  ) {
+    await this.teamService.updateTeam(user, updateTeamDto);
+    return new SuccessResponse('Successfully updated team details.');
   }
 }

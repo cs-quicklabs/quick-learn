@@ -27,6 +27,8 @@ export type TCourseCategory = {
 export type TTeams = {
   name: string;
 };
+
 export type TTeam = {
-  teams: TTeams[];
+  name: string;
+  logo: string | File;
 };

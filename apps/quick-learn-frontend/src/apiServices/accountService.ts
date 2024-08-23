@@ -72,3 +72,13 @@ export const getTeamDetails = async (): Promise<
   );
   return response.data;
 };
+
+export const updateTeamDetails = async (
+  data: TTeam,
+): Promise<AxiosSuccessResponse<TTeam>> => {
+  const response = await axiosInstance.patch<AxiosSuccessResponse<TTeam>>(
+    accountApiEnum.TEAM,
+    data,
+  );
+  return response.data;
+};

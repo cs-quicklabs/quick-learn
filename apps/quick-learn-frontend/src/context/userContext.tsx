@@ -20,7 +20,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     getUser()
       .then((res) => {
-        console.log(res.data);
         setUser(res.data);
       })
       .catch((err) => showApiErrorInToast(err));

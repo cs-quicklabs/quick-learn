@@ -70,6 +70,9 @@ export class UserEntity extends BaseEntity {
   @Column({ type: Date, nullable: true })
   last_login_timestamp: Date;
 
+  @Column({ type: 'varchar', nullable: true })
+  profile_image: string;
+
   @DeleteDateColumn()
   deleted_at: Date;
 }

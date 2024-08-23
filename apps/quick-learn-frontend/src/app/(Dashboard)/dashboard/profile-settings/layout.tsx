@@ -29,7 +29,7 @@ const layout: FC<ChildrenProp> = ({ children }) => {
     },
   ];
   return (
-    <main className="max-w-7xl mx-auto pb-10 lg:py-12 lg:px-8">
+    <main className="max-w-7xl mx-auto pb-10 lg:py-6 lg:px-8">
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
         {/* Sidebar */}
         <aside className="px-2 py-6 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">

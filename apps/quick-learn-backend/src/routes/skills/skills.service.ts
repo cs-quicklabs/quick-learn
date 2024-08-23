@@ -17,7 +17,7 @@ export class SkillsService {
     });
 
     if (foundSkill) {
-      throw new BadRequestException('Skill already exists');
+      throw new BadRequestException('Primary skill already exists.');
     }
 
     const skill = await this.skillRepository.create(createSkillDto);

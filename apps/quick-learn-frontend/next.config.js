@@ -13,8 +13,12 @@ const nextConfig = {
     svgr: false,
   },
   images: {
-    // TODO: Remove later with the bucket url
-    domains: ['images.unsplash.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: process.env.BUCKET_URL || '',
+      }
+    ]
   },
 };
 

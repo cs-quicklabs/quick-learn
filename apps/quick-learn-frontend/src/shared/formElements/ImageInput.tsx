@@ -1,5 +1,11 @@
 'use client';
 import { CameraIcon } from '@heroicons/react/24/outline';
+import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
+import { FilePathType } from 'lib/shared/src';
 import Image from 'next/image';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
@@ -11,6 +17,7 @@ interface Props {
   src?: string;
   name: string;
   label: string;
+  imageType: FilePathType;
 }
 
 const ImageInput: FC<Props> = ({
@@ -19,8 +26,10 @@ const ImageInput: FC<Props> = ({
   name,
   label,
   src = null,
+  imageType,
 }) => {
   const [imagePreview, setImagePreview] = useState<string | null>(src);
+  const [error, setError] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const watchProfileImage = watch(name);
@@ -31,8 +40,21 @@ const ImageInput: FC<Props> = ({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+
     if (file) {
-      setValue(name, file);
+      if (file.size > 1024 * 1024) {
+        setError(true);
+        return;
+      }
+      setError(false);
+      const formData = new FormData();
+      formData.append('file', file);
+      fileUploadApiCall(formData, imageType)
+        .then((res) => {
+          setValue(name, res.data.file, { shouldValidate: true });
+          showApiMessageInToast(res);
+        })
+        .catch((err) => showApiErrorInToast(err));
     }
   };
 
@@ -43,6 +65,7 @@ const ImageInput: FC<Props> = ({
       return () => URL.revokeObjectURL(objectUrl);
     }
   }, [watchProfileImage]);
+
   useEffect(() => {
     typeof src === 'string' && setImagePreview(src);
   }, [src]);
@@ -58,14 +81,15 @@ const ImageInput: FC<Props> = ({
 
       <div className="mt-2 flex justify-left">
         <div
-          className="relative w-24 h-24 rounded-full overflow-hidden cursor-pointer"
+          className="relative w-20 h-20 rounded-full overflow-hidden cursor-pointer"
           onClick={handleImageClick}
         >
           <Image
-            src={imagePreview || ''}
+            src={imagePreview || '/placeholder.png'}
             alt="Image"
-            layout="fill"
-            objectFit="cover"
+            fill={true}
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 5rem) 5rem, 5rem"
           />
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
             <CameraIcon className="text-white" width="50px" />
@@ -79,6 +103,11 @@ const ImageInput: FC<Props> = ({
           accept="image/*"
         />
       </div>
+      {error && (
+        <p className="mt-1 text-red-500 text-sm">
+          File should be less than 1MB.
+        </p>
+      )}
     </div>
   );
 };

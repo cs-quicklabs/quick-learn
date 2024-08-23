@@ -4,6 +4,7 @@ import {
   getUserProfileService,
   updateUserProfileService,
 } from '@src/apiServices/profileService';
+import { UserContext } from '@src/context/userContext';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { TUserProfileType } from '@src/shared/types/profileTypes';
@@ -12,12 +13,12 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const profileSchema = z.object({
-  firstName: z
+  first_name: z
     .string()
     .min(1, 'First name is required')
     .max(50, 'First name should be less than or equal to 50')
@@ -25,7 +26,7 @@ const profileSchema = z.object({
       onlyAlphabeticValidation,
       'First name should only contain alphabetic characters',
     ),
-  lastName: z
+  last_name: z
     .string()
     .min(1, 'Last name is required')
     .max(50, 'Last name should be less than or equal to 50')
@@ -33,12 +34,13 @@ const profileSchema = z.object({
       onlyAlphabeticValidation,
       'Last name should only contain alphabetic characters',
     ),
-  profileImage: z.union([z.instanceof(File), z.string()]),
+  profile_image: z.union([z.instanceof(File), z.string()]),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfileSettings = () => {
+  const { user, setUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -47,21 +49,21 @@ const ProfileSettings = () => {
   const { setValue } = methods;
   const profileSettingsFields: FieldConfig[] = [
     {
-      label: 'Upload',
-      name: 'profileImage',
+      label: 'Upload avatar',
+      name: 'profile_image',
       type: 'image',
-      placeholder:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+      placeholder: '',
+      image_type: 'profile',
     },
     {
       label: 'First Name',
-      name: 'firstName',
+      name: 'first_name',
       type: 'text',
       placeholder: 'Ashish',
     },
     {
       label: 'Last Name',
-      name: 'lastName',
+      name: 'last_name',
       type: 'text',
       placeholder: 'Dhawan',
     },
@@ -70,7 +72,16 @@ const ProfileSettings = () => {
   const onSubmit = (data: TUserProfileType) => {
     setIsLoading(true);
     updateUserProfileService(data)
-      .then((res) => showApiMessageInToast(res))
+      .then((res) => {
+        if (user) {
+          setUser({
+            ...user,
+            ...data,
+            profile_image: data.profile_image as string,
+          });
+        }
+        showApiMessageInToast(res);
+      })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };
@@ -79,9 +90,9 @@ const ProfileSettings = () => {
     setIsLoading(true);
     getUserProfileService()
       .then((res) => {
-        setValue('firstName', res.data.firstName);
-        setValue('lastName', res.data.lastName);
-        setValue('profileImage', res.data.profileImage);
+        setValue('first_name', res.data.first_name);
+        setValue('last_name', res.data.last_name);
+        setValue('profile_image', res.data.profile_image);
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
@@ -90,10 +101,8 @@ const ProfileSettings = () => {
   return (
     <>
       <div>
-        <h1 className="text-lg font-semibold dark:text-white">
-          Profile Settings
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+        <h1 className="text-lg font-semibold">Profile Settings</h1>
+        <p className="text-gray-500 text-sm mb-6">
           Change your personal profile settings.
         </p>
         <FormProvider {...methods}>
