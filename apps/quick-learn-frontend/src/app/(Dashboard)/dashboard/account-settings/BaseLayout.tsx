@@ -25,8 +25,8 @@ type Props = {
   isEditLoading: boolean;
   data: BaseType[];
   onAdd: (data: AddSchemaType) => void;
-  onDelete?: (id: number) => void;
-  onEdit?: (id: number, data: EditSchemaType) => void;
+  onDelete: (id: number) => void;
+  onEdit: (id: number, data: EditSchemaType) => void;
 };
 
 const addSchema = z.object({
