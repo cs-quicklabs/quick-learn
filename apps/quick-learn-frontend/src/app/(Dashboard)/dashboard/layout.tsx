@@ -8,7 +8,7 @@ export default function Layout({
 }) {
   return (
     <UserProvider>
-      <div className="min-h-screen max-w-screen-2xl">
+      <div className="min-h-screen max-w-screen">
         <Navbar />
         <main className="mx-auto py-3 px-4 sm:py-5 lg:px-8">{children}</main>
       </div>

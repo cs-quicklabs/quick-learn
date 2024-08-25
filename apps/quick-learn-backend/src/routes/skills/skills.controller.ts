@@ -10,9 +10,10 @@ import {
 } from '@nestjs/common';
 import { SkillsService } from './skills.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
+import { UpdateSkillDto } from './dto/update-skill.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/skills
 @ApiTags('Skills')
@@ -30,29 +31,37 @@ export class SkillsController {
     @Body() createSkillDto: CreateSkillDto,
   ): Promise<SuccessResponse> {
     await this.skillsService.create(createSkillDto);
-    const skills = await this.skillsService.findAll();
-    return new SuccessResponse('Successfully added Skill', { skills });
+    const skills = await this.skillsService.getMany({}, { updated_at: 'DESC' });
+    return new SuccessResponse('Primary skill has been added successfully.', {
+      skills,
+    });
   }
 
   @Get()
   @ApiOperation({ summary: 'get all skills' })
   async findAll() {
-    const skills = await this.skillsService.findAll();
-    return new SuccessResponse('Skills Listed', { skills });
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.skillsService.findOne(+id);
+    const skills = await this.skillsService.getMany({}, { updated_at: 'DESC' });
+    return new SuccessResponse('Successfully retrieved primary skills.', {
+      skills,
+    });
   }
 
   @Patch(':id')
-  update(@Param('id') id: string) {
-    return this.skillsService.update(+id);
+  @ApiParam({ name: 'id', type: 'string' })
+  @ApiOperation({ summary: 'Edit skill by id' })
+  async update(
+    @Param('id') id: string,
+    @Body() updateSkillDto: UpdateSkillDto,
+  ) {
+    await this.skillsService.updateSkill(+id, updateSkillDto);
+    return new SuccessResponse('Succesfully updated primary skill.');
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.skillsService.remove(+id);
+  @ApiParam({ name: 'id', type: 'string' })
+  @ApiOperation({ summary: 'Delete skill by id' })
+  async remove(@Param('id') id: string) {
+    await this.skillsService.deleteSkill(+id);
+    return new SuccessResponse('Successfully deleted primary skill.');
   }
 }

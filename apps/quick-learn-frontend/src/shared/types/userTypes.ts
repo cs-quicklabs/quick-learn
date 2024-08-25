@@ -23,6 +23,7 @@ export type TUser = {
   user_type: TUserType;
   skill_id: number;
   skill: TSkill;
+  team_id: number;
   team: {
     id: number;
     name: string;

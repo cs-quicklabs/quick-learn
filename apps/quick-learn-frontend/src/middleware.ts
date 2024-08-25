@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
   // Public routes
   if (isPublicRoute(pathname)) {
     return authToken
-      ? NextResponse.redirect(new URL(DASHBOARD_ROUTE, request.url))
+      ? NextResponse.redirect(new URL(RouteEnum.MY_LEARNING_PATH, request.url))
       : NextResponse.next();
   }
 

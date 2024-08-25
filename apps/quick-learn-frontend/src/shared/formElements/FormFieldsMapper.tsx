@@ -8,15 +8,19 @@ import ImageInput from './ImageInput';
 import { Loader } from '../components/UIElements';
 
 interface Props<T extends z.ZodTypeAny> {
-  fields: FieldConfig[];
-  schema: T;
-  onSubmit: (data: z.infer<T>, reset?: UseFormReset<TypeOf<T>>) => void;
-  buttonDisabled?: boolean;
-  buttonText?: string;
-  bigButton?: boolean;
-  methods?: UseFormReturn<z.TypeOf<T>>;
-  isLoading?: boolean;
-  resetFormOnSubmit?: boolean;
+  readonly fields: FieldConfig[];
+  readonly schema: T;
+  readonly onSubmit: (
+    data: z.infer<T>,
+    reset?: UseFormReset<TypeOf<T>>,
+  ) => void;
+  readonly buttonDisabled?: boolean;
+  readonly buttonText?: string;
+  readonly bigButton?: boolean;
+  readonly methods?: UseFormReturn<z.TypeOf<T>>;
+  readonly isLoading?: boolean;
+  readonly resetFormOnSubmit?: boolean;
+  readonly mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
 }
 
 function FormFieldsMapper<T extends z.ZodTypeAny>({
@@ -29,11 +33,12 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   isLoading = false,
   methods,
   resetFormOnSubmit = false,
+  mode = 'onBlur',
 }: Props<T>) {
   // Call useForm unconditionally
   const defaultMethods = useForm<z.infer<T>>({
     resolver: zodResolver(schema),
-    mode: 'onBlur',
+    mode,
   });
 
   // Use methods if provided, otherwise fall back to defaultMethods
@@ -73,7 +78,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
                   field.name as unknown as readonly Path<TypeOf<T>>[],
                 ) as unknown as string
               }
-              imageType={field?.image_type || 'misc'}
+              imageType={field?.image_type ?? 'misc'}
               label={field.label}
             />
           );
@@ -83,7 +88,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             label={field.label}
             name={field.name}
             type={field.type}
-            placeholder={field.placeholder || ''}
+            placeholder={field.placeholder ?? ''}
             register={register}
             disabled={isLoading}
             errorMsg={errors[field.name]?.message as string}
