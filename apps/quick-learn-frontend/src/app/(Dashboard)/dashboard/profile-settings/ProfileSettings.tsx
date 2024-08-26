@@ -35,6 +35,7 @@ const profileSchema = z.object({
       'Last name should only contain alphabetic characters',
     ),
   profile_image: z.union([z.instanceof(File), z.string()]),
+  email: z.string().email('Invalid email address').optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -67,11 +68,19 @@ const ProfileSettings = () => {
       type: 'text',
       placeholder: 'Dhawan',
     },
+    {
+      label: 'Email',
+      name: 'email',
+      type: 'email',
+      placeholder: 'john.doe@example.com',
+      disabled: true,
+    },
   ];
 
-  const onSubmit = (data: TUserProfileType) => {
+  const onSubmit = (data: ProfileFormData) => {
     setIsLoading(true);
-    updateUserProfileService(data)
+    const { first_name, last_name, profile_image } = data;
+    updateUserProfileService({ first_name, last_name, profile_image })
       .then((res) => {
         if (user) {
           setUser({
@@ -93,30 +102,29 @@ const ProfileSettings = () => {
         setValue('first_name', res.data.first_name);
         setValue('last_name', res.data.last_name);
         setValue('profile_image', res.data.profile_image);
+        setValue('email', res.data.email);
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   }, [setValue]); // Add setValue as a dependency
 
   return (
-    <>
-      <div>
-        <h1 className="text-lg font-semibold">Profile Settings</h1>
-        <p className="text-gray-500 text-sm mb-6">
-          Change your personal profile settings.
-        </p>
-        <FormProvider {...methods}>
-          <FormFieldsMapper
-            fields={profileSettingsFields}
-            schema={profileSchema}
-            onSubmit={onSubmit}
-            methods={methods}
-            isLoading={isLoading}
-            buttonText="Save"
-          />
-        </FormProvider>
-      </div>
-    </>
+    <div>
+      <h1 className="text-lg font-semibold">Profile Settings</h1>
+      <p className="text-gray-500 text-sm mb-6">
+        Change your personal profile settings.
+      </p>
+      <FormProvider {...methods}>
+        <FormFieldsMapper
+          fields={profileSettingsFields}
+          schema={profileSchema}
+          onSubmit={onSubmit}
+          methods={methods}
+          isLoading={isLoading}
+          buttonText="Save"
+        />
+      </FormProvider>
+    </div>
   );
 };
 

@@ -90,7 +90,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             type={field.type}
             placeholder={field.placeholder ?? ''}
             register={register}
-            disabled={isLoading}
+            disabled={isLoading || field.disabled}
             errorMsg={errors[field.name]?.message as string}
           />
         );
