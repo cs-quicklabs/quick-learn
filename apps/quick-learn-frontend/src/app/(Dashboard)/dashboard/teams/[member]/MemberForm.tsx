@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useRouter } from 'next/navigation';
-import { Loader } from '@src/shared/components/UIElements';
+import { Loader, ShowInfoIcon } from '@src/shared/components/UIElements';
+import { Tooltip } from 'flowbite-react';
 
 export interface IMemberFieldConfig<T> {
   label: string;
@@ -18,12 +19,12 @@ export interface IMemberFieldConfig<T> {
 }
 
 export interface IMemberForm<T extends z.ZodTypeAny> {
-  formFields: IMemberFieldConfig<z.infer<T>>[];
-  onSubmit: (data: z.infer<T>) => void;
-  initialValues: z.infer<T>;
-  isAddForm: boolean;
-  schema: T;
-  loading: boolean;
+  readonly formFields: IMemberFieldConfig<z.infer<T>>[];
+  readonly onSubmit: (data: z.infer<T>) => void;
+  readonly initialValues: z.infer<T>;
+  readonly isAddForm: boolean;
+  readonly schema: T;
+  readonly loading: boolean;
 }
 
 function MemberForm<T extends z.ZodTypeAny>({
@@ -77,7 +78,15 @@ function MemberForm<T extends z.ZodTypeAny>({
         <div className="mt-3 grid gap-4 sm:grid-cols-2 sm:gap-6">
           {fields.map(
             (
-              { name, placeholder, type, label, showPassword, options },
+              {
+                name,
+                placeholder,
+                type,
+                label,
+                showPassword,
+                options,
+                tooltip,
+              },
               index,
             ) => (
               <div key={String(name)}>
@@ -86,7 +95,16 @@ function MemberForm<T extends z.ZodTypeAny>({
                   htmlFor={String(name)}
                 >
                   {label}
-                  {/* TODO: Need to add tooltip */}
+                  {tooltip && (
+                    <div className="flex items-center ml-1">
+                      <Tooltip
+                        content={tooltip}
+                        className="py-1 px-2 max-w-sm text-xs font-normal text-white bg-gray-900 rounded-sm shadow-sm tooltip"
+                      >
+                        <ShowInfoIcon />
+                      </Tooltip>
+                    </div>
+                  )}
                 </label>
                 <Controller
                   name={name as Path<TypeOf<T>>}
@@ -104,8 +122,8 @@ function MemberForm<T extends z.ZodTypeAny>({
                           </option>
                           {options?.map((option) => (
                             <option
-                              key={option.id || option.value}
-                              value={option.id || option.value}
+                              key={option.id ?? option.value}
+                              value={option.id ?? option.value}
                             >
                               {option.name}
                             </option>
