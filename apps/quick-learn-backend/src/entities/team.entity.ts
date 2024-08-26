@@ -2,7 +2,7 @@ import { Entity, Column, OneToMany } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { SkillEntity } from './skill.entity';
 import { BaseEntity } from './BaseEntity';
-import { RoadmapCategoryEntity } from './roadmap_category.entity';
+import { RoadmapCategoryEntity } from './roadmap-category.entity';
 
 @Entity({ name: 'team' })
 export class TeamEntity extends BaseEntity {

@@ -10,7 +10,7 @@ import { UserEntity } from '@src/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ResetTokenEntity } from '@src/entities/reset_token.entity';
+import { ResetTokenEntity } from '@src/entities/reset-token.entity';
 import { LessThan, MoreThan, Repository } from 'typeorm';
 import { SuccessResponse } from '@src/common/dto';
 import { ConfigService } from '@nestjs/config';

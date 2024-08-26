@@ -1,6 +1,7 @@
 import {
   DeepPartial,
   DeleteResult,
+  FindOptionsOrder,
   FindOptionsWhere,
   Repository,
   UpdateResult,
@@ -36,8 +37,9 @@ export class BasicCrudService<T> {
    */
   async getMany(
     options?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
+    orderOptions?: FindOptionsOrder<T>,
   ): Promise<T[]> {
-    return await this.repository.find({ where: options });
+    return await this.repository.find({ where: options, order: orderOptions });
   }
 
   /**

@@ -8,7 +8,7 @@ import {
   BeforeInsert,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
-import { UserTypeEntity } from './user_type.entity';
+import { UserTypeEntity } from './user-type.entity';
 import { BaseEntity } from './BaseEntity';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';

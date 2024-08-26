@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { CreateSkillDto } from './create-skill.dto';
+import { OmitType } from '@nestjs/swagger';
 
-export class UpdateSkillDto extends PartialType(CreateSkillDto) {}
+export class UpdateSkillDto extends OmitType(CreateSkillDto, ['team_id']) {}

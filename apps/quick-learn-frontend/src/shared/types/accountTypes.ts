@@ -1,15 +1,19 @@
 export type TSkill = {
+  id: number;
   name: string;
   team_id: number;
 };
 
 export type TRoadmapCategories = {
+  id: number;
   name: string;
   team_id: number;
 };
 
 export type TCourseCategories = {
+  id: number;
   name: string;
+  team_id: number;
 };
 
 export type TSkills = {

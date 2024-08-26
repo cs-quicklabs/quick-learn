@@ -6,7 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth.constant';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ResetTokenEntity } from '@src/entities/reset_token.entity';
+import { ResetTokenEntity } from '@src/entities/reset-token.entity';
 import { UserEntity } from '@src/entities/user.entity';
 import { EmailModule } from '@src/common/modules';
 import { JwtStrategy, LocalStrategy } from './strategies';

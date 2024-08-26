@@ -3,16 +3,17 @@ import { CreateSkillDto } from './dto/create-skill.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SkillEntity } from '@src/entities/skill.entity';
 import { Repository } from 'typeorm';
+import { BasicCrudService } from '@src/common/services';
+import { UpdateSkillDto } from './dto/update-skill.dto';
 
 @Injectable()
-export class SkillsService {
-  constructor(
-    @InjectRepository(SkillEntity)
-    private skillRepository: Repository<SkillEntity>,
-  ) {}
+export class SkillsService extends BasicCrudService<SkillEntity> {
+  constructor(@InjectRepository(SkillEntity) repo: Repository<SkillEntity>) {
+    super(repo);
+  }
 
   async create(createSkillDto: CreateSkillDto) {
-    const foundSkill = await this.skillRepository.count({
+    const foundSkill = await this.repository.count({
       where: { name: createSkillDto.name },
     });
 
@@ -20,23 +21,24 @@ export class SkillsService {
       throw new BadRequestException('Primary skill already exists.');
     }
 
-    const skill = await this.skillRepository.create(createSkillDto);
-    return await this.skillRepository.save(skill);
+    const skill = this.repository.create(createSkillDto);
+    return await this.repository.save(skill);
   }
 
-  async findAll() {
-    return await this.skillRepository.find();
+  async updateSkill(id: number, updateSkillDto: UpdateSkillDto) {
+    const skill = await this.get({ id });
+    const skillByName = await this.get({ name: updateSkillDto.name });
+    if (skillByName && skillByName.id !== skill.id) {
+      throw new BadRequestException('Skill already exists.');
+    }
+    await this.update({ id }, updateSkillDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} skill`;
-  }
-
-  update(id: number) {
-    return `This action updates a #${id} skill`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} skill`;
+  async deleteSkill(id: number) {
+    const skill = await this.get({ id }, ['users']);
+    if (skill.users.length) {
+      throw new BadRequestException('Skill is assigned to user.');
+    }
+    return await this.delete({ id });
   }
 }

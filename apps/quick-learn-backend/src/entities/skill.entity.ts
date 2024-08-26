@@ -8,7 +8,7 @@ export class SkillEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 250, nullable: true })
   name: string;
 
-  @Column()
+  @Column({ type: 'int', nullable: false })
   team_id: number;
 
   @ManyToOne(() => TeamEntity, (team) => team.skills)
