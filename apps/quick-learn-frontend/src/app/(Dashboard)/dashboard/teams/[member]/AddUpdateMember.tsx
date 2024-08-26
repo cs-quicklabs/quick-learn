@@ -66,28 +66,23 @@ const AddUpdateMemberPage = () => {
         const res = await getUserMetadataCall();
         if (!res.success) throw new Error();
         setMetadata(res.data);
+        setFormOptions<TUserType>(
+          addMemberFields,
+          'user_type_id',
+          res.data.user_types,
+        );
+        setFormOptions<TSkill>(addMemberFields, 'skill_id', res.data.skills);
+        setFormOptions<TUserType>(
+          editMemberFields,
+          'user_type_id',
+          res.data.user_types,
+        );
+        setFormOptions<TSkill>(editMemberFields, 'skill_id', res.data.skills);
       } catch (error) {
         showErrorMessage(error);
       }
     })();
   }, []);
-
-  useEffect(() => {
-    if (metadata) {
-      setFormOptions<TUserType>(
-        addMemberFields,
-        'user_type_id',
-        metadata.user_types,
-      );
-      setFormOptions<TSkill>(addMemberFields, 'skill_id', metadata.skills);
-      setFormOptions<TUserType>(
-        editMemberFields,
-        'user_type_id',
-        metadata.user_types,
-      );
-      setFormOptions<TSkill>(editMemberFields, 'skill_id', metadata.skills);
-    }
-  }, [metadata]);
 
   useEffect(() => {
     if (!isAddMember) {
