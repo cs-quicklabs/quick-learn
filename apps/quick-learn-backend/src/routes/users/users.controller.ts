@@ -14,16 +14,17 @@ import { UsersService } from './users.service';
 import { SuccessResponse } from '@src/common/dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import {
   CreateUserDto,
   ListFilterDto,
   PaginationDto,
   UpdateUserDto,
 } from './dto';
+import { JwtAuthGuard } from '../auth/guards';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
+@UseGuards(JwtAuthGuard)
 @Controller({
   version: '1',
   path: 'users',
@@ -31,7 +32,6 @@ import {
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get('metadata')
   @ApiOperation({ summary: 'Metadata for the add/update user(s).' })
   async metadata(@CurrentUser() user: UserEntity): Promise<SuccessResponse> {
@@ -46,7 +46,6 @@ export class UsersController {
     return new SuccessResponse('Successfully created user.', user);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('list')
   @ApiOperation({ summary: 'Filter users' })
   async findAll(
@@ -58,7 +57,6 @@ export class UsersController {
     return new SuccessResponse('Successfully got users.', users);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':uuid')
   @ApiOperation({ summary: 'Get specific user by uuid' })
   @ApiParam({
@@ -71,7 +69,6 @@ export class UsersController {
     return new SuccessResponse('Successfully got users.', user);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':uuid')
   @ApiOperation({ summary: 'Update specific user by  uuid' })
   @ApiParam({
@@ -87,7 +84,6 @@ export class UsersController {
     return new SuccessResponse('Successfully updated user.', user);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':uuid')
   @ApiOperation({ summary: 'Delete specific user by uuid' })
   @ApiParam({

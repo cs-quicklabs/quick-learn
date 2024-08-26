@@ -1,5 +1,5 @@
+import { AxiosSuccessResponse } from '@src/apiServices/axios';
 import { TUser, TUserMetadata } from './userTypes';
-import { IResponse } from '../interfaces/responseInterface';
 
 type TList = {
   items: TUser[];
@@ -20,7 +20,7 @@ export type TAddUserPayload = {
   team_id: number | undefined;
 };
 
-export type TTeamListingReponse = IResponse<TList>;
-export type TUserMetadataResponse = IResponse<TUserMetadata>;
-export type TUserDetailsResponse = IResponse<TUser>;
-export type TAddUserResponse = IResponse<unknown>;
+export type TTeamListingReponse = AxiosSuccessResponse<TList>;
+export type TUserMetadataResponse = AxiosSuccessResponse<TUserMetadata>;
+export type TUserDetailsResponse = AxiosSuccessResponse<TUser>;
+export type TAddUserResponse = AxiosSuccessResponse<unknown>;

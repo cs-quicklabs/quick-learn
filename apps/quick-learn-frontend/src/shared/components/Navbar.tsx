@@ -15,44 +15,63 @@ import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { logoutApiCall } from '@src/apiServices/authService';
+import { useContext, useEffect, useState } from 'react';
+import { UserContext } from '@src/context/userContext';
+import { UserTypeIdEnum } from 'lib/shared/src';
 
 type TLink = { name: string; link: string };
 
-const links: TLink[] = [
-  {
-    name: 'Dashboard',
-    link: RouteEnum.DASHBOARD,
-  },
-  {
-    name: 'Team',
-    link: RouteEnum.TEAM,
-  },
-  {
-    name: 'My Learning Path',
-    link: RouteEnum.MY_LEARNING_PATH,
-  },
+const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
+const myLearningPath: TLink = {
+  name: 'My Learning Paths',
+  link: RouteEnum.MY_LEARNING_PATH,
+};
+const content: TLink = { name: 'Content', link: RouteEnum.CONTENT };
+const approvals: TLink = { name: 'Approvals', link: RouteEnum.APPROVALS };
+const community: TLink = { name: 'Community', link: RouteEnum.COMMUNITY };
+
+const superAdminUserLinks: TLink[] = [
+  team,
+  myLearningPath,
+  content,
+  approvals,
+  community,
 ];
+const adminUserLinks: TLink[] = [team, myLearningPath, content, approvals];
+const editorUserLinks: TLink[] = [myLearningPath, content];
+const memberUserLinks: TLink[] = [myLearningPath];
 
 const menuItems: TLink[] = [
   {
     name: 'Account Settings',
-    link: '',
+    link: RouteEnum.ACCOUNT_SETTINGS,
   },
   {
     name: 'My Profile',
-    link: '',
+    link: RouteEnum.PROFILE_SETTINGS,
   },
   {
     name: 'Archive',
-    link: '',
-  },
-  {
-    name: 'Admin Land',
-    link: '',
+    link: RouteEnum.ARCHIVE,
   },
 ];
 
 const Navbar = () => {
+  const [links, setLinks] = useState<TLink[]>([]);
+  const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
+      setLinks(superAdminUserLinks);
+    } else if (user?.user_type_id === UserTypeIdEnum.ADMIN) {
+      setLinks(adminUserLinks);
+    } else if (user?.user_type_id === UserTypeIdEnum.EDITOR) {
+      setLinks(editorUserLinks);
+    } else if (user?.user_type_id === UserTypeIdEnum.MEMBER) {
+      setLinks(memberUserLinks);
+    }
+  }, [user]);
+
   const pathname = usePathname();
   const router = useRouter();
 
@@ -84,12 +103,12 @@ const Navbar = () => {
                   key={item.link}
                   href={item.link}
                   className={
-                    'inline-flex items-center rounded-md px-3 py-2 text-sm font-medium ' +
+                    'rounded-md px-3 py-2 text-sm font-medium text-gray-300 ' +
                     ((item.link != RouteEnum.DASHBOARD &&
                       pathname.includes(item.link)) ||
                     item.link == pathname
-                      ? 'bg-gray-500'
-                      : 'hover:bg-gray-600 text-gray-200')
+                      ? 'bg-gray-500 text-white'
+                      : 'hover:bg-gray-700 hover:text-white')
                   }
                 >
                   {item.name}
@@ -102,7 +121,7 @@ const Navbar = () => {
           <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
             <div className="w-full max-w-lg lg:max-w-xs">
               <label htmlFor="search" className="sr-only">
-                Search
+                Search Roadmaps, Courses or Lessons
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -115,7 +134,7 @@ const Navbar = () => {
                   id="search"
                   name="search"
                   type="search"
-                  placeholder="Search"
+                  placeholder="Search Roadmaps, Courses or Lessons"
                   className="block w-full rounded-md border-0 bg-gray-700 py-1.5 pl-10 pr-3 text-gray-300 placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:ring-0 sm:text-sm sm:leading-6 outline-0"
                 />
               </div>
@@ -157,8 +176,8 @@ const Navbar = () => {
                     <span className="sr-only">Open user menu</span>
                     <Image
                       alt=""
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      className="h-8 w-8 rounded-full"
+                      src={user?.profile_image || '/placeholder.png'}
+                      className="h-8 w-8 rounded-full object-cover"
                       height={24}
                       width={24}
                     />
@@ -169,24 +188,33 @@ const Navbar = () => {
                   className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in divide-y divide-gray-100"
                 >
                   <div className="px-4 py-3">
-                    <p className="text-sm text-black">
-                      aashishdhawan@gmail.com
-                    </p>
-                    <p className="text-xs text-gray-700">
-                      Crownstack Technologies
-                    </p>
+                    <p className="text-sm text-black">{user?.email}</p>
+                    <p className="text-xs text-gray-700">{user?.team?.name}</p>
                   </div>
                   <div>
-                    {menuItems.map((item) => (
-                      <MenuItem key={item.link}>
+                    {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
+                      menuItems.map((item) => (
+                        <MenuItem key={item.link + item.name}>
+                          <Link
+                            href={item.link}
+                            className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                          >
+                            {item.name}
+                          </Link>
+                        </MenuItem>
+                      ))}
+                    {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
+                      <MenuItem>
                         <Link
-                          href={item.link}
+                          href={RouteEnum.PROFILE_SETTINGS}
                           className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                         >
-                          {item.name}
+                          My Profile
                         </Link>
                       </MenuItem>
-                    ))}
+                    ) : (
+                      ''
+                    )}
                   </div>
                   <MenuItem>
                     <Link
@@ -227,16 +255,18 @@ const Navbar = () => {
             <div className="flex-shrink-0">
               <Image
                 alt=""
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                className="h-10 w-10 rounded-full"
+                src={user?.profile_image || '/placeholder.png'}
+                className="h-10 w-10 rounded-full object-cover"
                 height={40}
                 width={40}
               />
             </div>
             <div className="ml-3">
-              <div className="text-base font-medium text-white">Tom Cook</div>
+              <div className="text-base font-medium text-white">
+                {user?.first_name} {user?.last_name}
+              </div>
               <div className="text-sm font-medium text-gray-400">
-                tom@example.com
+                {user?.email}
               </div>
             </div>
             <button
@@ -249,16 +279,28 @@ const Navbar = () => {
             </button>
           </div>
           <div className="mt-3 space-y-1 px-2">
-            {menuItems.map((item) => (
+            {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
+              menuItems.map((item) => (
+                <DisclosureButton
+                  as="a"
+                  key={item.link + item.name}
+                  href={item.link}
+                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  {item.name}
+                </DisclosureButton>
+              ))}
+            {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
               <DisclosureButton
                 as="a"
-                key={item.link}
-                href={item.link}
+                href={RouteEnum.PROFILE_SETTINGS}
                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
               >
-                {item.name}
+                My Profile
               </DisclosureButton>
-            ))}
+            ) : (
+              ''
+            )}
             <DisclosureButton
               as="a"
               onClick={doLogout}

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-const baseURL = 'http://localhost:3001/api/v1';
+const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${process.env.NEXT_PUBLIC_API_VERSION}`;
 
 export type AxiosErrorObject = {
   response: {
@@ -13,7 +13,7 @@ export type AxiosErrorObject = {
   };
 };
 
-export type AxiosSuccessResponse<T = unknown> = {
+export type AxiosSuccessResponse<T = Record<string, never>> = {
   success: boolean;
   message: string;
   data: T;

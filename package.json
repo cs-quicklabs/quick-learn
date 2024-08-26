@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "typeorm": "ts-node node_modules/typeorm/cli.js",
-    "dev": "docker-compose up -d && npx nx run-many --target=dev --all=true"
+    "dev": " docker-compose -f docker-compose.dev.yml up -d && npx nx run-many --target=dev --all=true"
   },
   "private": true,
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.635.0",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
@@ -30,6 +30,7 @@
     "helmet": "^7.1.0",
     "mjml": "^4.15.3",
     "morgan": "^1.10.0",
+    "multer-s3": "^3.0.1",
     "nanoid": "^3.3.7",
     "next": "14.2.3",
     "nodemailer": "^6.9.14",
@@ -69,6 +70,7 @@
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.4.0",
+    "@types/multer": "^1.4.11",
     "@types/node": "^18.16.9",
     "@types/nodemailer": "^6.4.15",
     "@types/passport-jwt": "^4.0.1",

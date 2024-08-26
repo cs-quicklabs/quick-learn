@@ -12,8 +12,9 @@ module.exports = {
       main: './src/main.ts',
       tsConfig: './tsconfig.app.json',
       assets: ['./src/assets', './src/email-templates'],
-      optimization: false,
+      optimization: process.env.NODE_ENV === 'production' ? true : false,
       outputHashing: 'none',
+      generatePackageJson: true,
     }),
   ],
 };

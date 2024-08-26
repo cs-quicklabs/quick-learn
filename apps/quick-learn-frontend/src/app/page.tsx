@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import AuthTemplate from '@src/shared/pageTemplates/AuthTemplate';
-import Login from './login/Login';
+import Login from './(Auth)/login/Login';
 
 export const metadata: Metadata = {
   title: 'Quick Learn',

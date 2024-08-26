@@ -1,16 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { FindOptionsWhere, ILike, MoreThan, Repository } from 'typeorm';
-import { UserEntity } from '@src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
-import { UserTypeEntity } from '@src/entities/user_type.entity';
 import { SkillEntity } from '@src/entities/skill.entity';
 import { CreateUserDto, ListFilterDto, PaginationDto } from './dto';
 import { PaginatedResult } from '@src/common/interfaces';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { emailSubjects } from '@src/common/constants/email-subject';
+import { UserEntity, UserTypeEntity } from '@src/entities';
 
-const userRelations = ['user_type', 'skill'];
+const userRelations = ['user_type', 'skill', 'team'];
 @Injectable()
 export class UsersService extends PaginationService<UserEntity> {
   constructor(
@@ -128,6 +127,7 @@ export class UsersService extends PaginationService<UserEntity> {
   async findByEmailOrUUID(email: string, uuid: string): Promise<UserEntity[]> {
     return await this.userRepository.find({
       where: [{ email }, { uuid }],
+      relations: [...userRelations],
     });
   }
 

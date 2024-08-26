@@ -5,8 +5,15 @@ export enum RouteEnum {
   DASHBOARD = '/dashboard',
   TEAM = '/dashboard/teams',
   MY_LEARNING_PATH = '/dashboard/learning-path',
-}
-export enum ProtectedRouteEnum {
-  DASHBOARD = '/dashboard',
-  SKILLS = '/skills',
+  PROFILE_SETTINGS = '/dashboard/profile-settings',
+  CHANGE_PASSWORD = '/dashboard/profile-settings/change-password',
+  EMAIL_PREFERENCE = '/dashboard/profile-settings/email-preference',
+  ACCOUNT_SETTINGS = '/dashboard/account-settings',
+  PRIMARY_SKILLS = '/dashboard/account-settings/primary-skills',
+  ROADMAP_CATEGORIES = '/dashboard/account-settings/roadmap-categories',
+  COURSES_CATEGORIES = '/dashboard/account-settings/courses-categories',
+  CONTENT = '/dashboard/content',
+  APPROVALS = '/dashboard/approvals',
+  COMMUNITY = '/dashboard/community',
+  ARCHIVE = '/dashboard/archive',
 }
