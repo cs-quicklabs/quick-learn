@@ -26,7 +26,7 @@ const AccountSettingSechema = z.object({
       message: 'This field is mandatory and cannot contain only whitespace',
     })
     .refine(noSpecialCharValidation, 'Only alphabets and space are allowed'),
-  logo: z.union([z.instanceof(File), z.string()]),
+  logo: z.union([z.instanceof(File), z.string()]).optional(),
 });
 
 type AccountSettingsData = z.infer<typeof AccountSettingSechema>;
@@ -66,8 +66,8 @@ const AccountSettings = () => {
       .finally(() => setIsLoading(false));
   }, [setValue]);
 
-  function onSubmit(data: TTeam) {
-    updateTeamDetails(data)
+  function onSubmit(data: AccountSettingsData) {
+    updateTeamDetails(data as TTeam)
       .then((res) => showApiMessageInToast(res))
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));

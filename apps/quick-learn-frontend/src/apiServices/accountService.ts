@@ -9,6 +9,7 @@ import {
   TSkills,
   TTeam,
 } from '@src/shared/types/accountTypes';
+import { removeEmptyValues } from '@src/utils/helpers';
 
 export const addSkill = async (
   data: Partial<TSkill>,
@@ -138,7 +139,7 @@ export const updateTeamDetails = async (
 ): Promise<AxiosSuccessResponse<TTeam>> => {
   const response = await axiosInstance.patch<AxiosSuccessResponse<TTeam>>(
     accountApiEnum.TEAM,
-    data,
+    removeEmptyValues(data),
   );
   return response.data;
 };

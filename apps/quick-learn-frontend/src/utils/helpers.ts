@@ -30,10 +30,31 @@ export function debounce<T>(fn: DebounceFunction<T>, wait: number) {
   };
 }
 
-export function onlyAlphabeticValidation(value: string) {
+/**
+ * a function to check if the value is a valid alphabet
+ * @param value string
+ * @returns boolean
+ */
+export function onlyAlphabeticValidation(value: string): boolean {
   return /^[A-Za-z]+$/.test(value);
 }
 
-export function noSpecialCharValidation(value: string) {
+/**
+ * a function to check if the value has no special characters or not
+ * @param value a string value
+ * @returns
+ */
+export function noSpecialCharValidation(value: string): boolean {
   return /^[a-zA-Z0-9 ]+$/.test(value);
+}
+
+/**
+ * a function to remove empty values from an object
+ * @param obj an object
+ * @returns an object with no empty values
+ */
+export function removeEmptyValues(
+  obj: Record<string, unknown>,
+): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(obj).filter(([, value]) => !!value));
 }
