@@ -116,7 +116,7 @@ const AddUpdateMemberPage = () => {
       setIsLoading(true);
       const res = await createUser({
         ...data,
-        team_id: metadata && metadata.skills[0].team_id,
+        team_id: metadata?.skills[0]?.team_id,
       });
       if (!res.success) throw new Error();
       toast.success(res.message);

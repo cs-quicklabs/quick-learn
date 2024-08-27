@@ -2,6 +2,7 @@ export type TUserProfileType = {
   first_name: string;
   last_name: string;
   profile_image: string | File;
+  email: string;
 };
 
 export type TChangePasswordType = {

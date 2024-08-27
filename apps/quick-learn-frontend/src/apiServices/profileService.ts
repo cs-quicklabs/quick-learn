@@ -17,7 +17,7 @@ export const getUserProfileService = async (): Promise<
 };
 
 export const updateUserProfileService = async (
-  data: TUserProfileType,
+  data: Partial<TUserProfileType>,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     userApiEnum.GET_USER_PROFILE,

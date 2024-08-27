@@ -91,7 +91,7 @@ const Navbar = () => {
           <div className="flex px-2 lg:px-0">
             <div className="flex flex-shrink-0 items-center">
               <Link
-                href={RouteEnum.DASHBOARD}
+                href={RouteEnum.MY_LEARNING_PATH}
                 className="font-mono px-3 hidden lg:block tracking-wider"
               >
                 Quick Learn
