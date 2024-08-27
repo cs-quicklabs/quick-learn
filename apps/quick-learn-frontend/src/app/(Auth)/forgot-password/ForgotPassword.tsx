@@ -38,6 +38,7 @@ const ForgotPassword = () => {
         schema={forgotPasswordSchema}
         onSubmit={handleForgotPassword}
         buttonText="Request Password Reset Instructions"
+        id="forgotPasswordForm"
       />
       <p className="text-sm font-light text-gray-500 dark:text-gray-400">
         Login to your account &nbsp;

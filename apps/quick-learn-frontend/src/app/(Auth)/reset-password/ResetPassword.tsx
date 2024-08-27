@@ -51,6 +51,7 @@ const ResetPassword = () => {
       schema={resetPasswordFormSchema}
       onSubmit={handleResetPassword}
       buttonText="Set password"
+      id="resetPasswordForm"
     />
   );
 };

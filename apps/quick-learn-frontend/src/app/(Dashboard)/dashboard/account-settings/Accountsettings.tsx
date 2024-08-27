@@ -89,6 +89,7 @@ const AccountSettings = () => {
             methods={methods}
             isLoading={isLoading}
             buttonText="Save"
+            id="accountSettingsForm"
           />
         </FormProvider>
       </div>

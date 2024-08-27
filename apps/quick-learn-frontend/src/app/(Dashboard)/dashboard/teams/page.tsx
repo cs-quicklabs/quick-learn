@@ -80,6 +80,7 @@ const TeamMemberListing = () => {
               id="search"
             />
             <Link
+              id="addNewMember"
               href={`${RouteEnum.TEAM}/add`}
               className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
             >
@@ -112,6 +113,7 @@ const TeamMemberListing = () => {
             ))}
             <button
               type="button"
+              id="showAll"
               className="underline font-medium text-blue-600 hover:underline text-sm"
               onClick={() => filterByUserType('')}
             >
@@ -151,6 +153,7 @@ const TeamMemberListing = () => {
                 <tbody>
                   {data.map((user, index) => (
                     <tr
+                      id={`row${index}`}
                       key={user.uuid}
                       className="border-b border-gray-200 hover:bg-gray-100"
                     >
@@ -213,6 +216,7 @@ const TeamMemberListing = () => {
           <div className="flex">
             {page > 1 && page <= totalPage && (
               <button
+                id="prev"
                 onClick={() => page > 1 && setPage(page - 1)}
                 className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
               >
@@ -222,6 +226,7 @@ const TeamMemberListing = () => {
             )}
             {page < totalPage && (
               <button
+                id="next"
                 onClick={() => page < totalPage && setPage(page + 1)}
                 className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
               >

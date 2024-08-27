@@ -101,6 +101,7 @@ const ImageInput: FC<Props> = ({
           style={{ display: 'none' }}
           onChange={handleFileChange}
           accept="image/*"
+          id={'file_' + name}
         />
       </div>
       {error && (

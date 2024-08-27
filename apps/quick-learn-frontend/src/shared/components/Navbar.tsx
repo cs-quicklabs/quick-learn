@@ -91,6 +91,7 @@ const Navbar = () => {
           <div className="flex px-2 lg:px-0">
             <div className="flex flex-shrink-0 items-center">
               <Link
+                id="homeLogo"
                 href={RouteEnum.MY_LEARNING_PATH}
                 className="font-mono px-3 hidden lg:block tracking-wider"
               >
@@ -98,10 +99,11 @@ const Navbar = () => {
               </Link>
             </div>
             <div className="hidden lg:ml-6 lg:flex lg:space-x-4">
-              {links.map((item) => (
+              {links.map((item, index) => (
                 <Link
                   key={item.link}
                   href={item.link}
+                  id={`navDesktop${index}`}
                   className={
                     'rounded-md px-3 py-2 text-sm font-medium text-gray-300 ' +
                     ((item.link != RouteEnum.DASHBOARD &&
@@ -193,10 +195,11 @@ const Navbar = () => {
                   </div>
                   <div>
                     {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
-                      menuItems.map((item) => (
+                      menuItems.map((item, index) => (
                         <MenuItem key={item.link + item.name}>
                           <Link
                             href={item.link}
+                            id={`profileMenu${index}`}
                             className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                           >
                             {item.name}
@@ -206,6 +209,7 @@ const Navbar = () => {
                     {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
                       <MenuItem>
                         <Link
+                          id="myProfile"
                           href={RouteEnum.PROFILE_SETTINGS}
                           className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                         >
@@ -219,6 +223,7 @@ const Navbar = () => {
                   <MenuItem>
                     <Link
                       href="#"
+                      id="signOut"
                       onClick={doLogout}
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 divide-y divide-gray-100"
                     >
@@ -234,10 +239,11 @@ const Navbar = () => {
 
       <DisclosurePanel className="lg:hidden">
         <div className="space-y-1 px-2 pb-3 pt-2">
-          {links.map((item) => (
+          {links.map((item, index) => (
             <DisclosureButton
               key={item.link}
               as="a"
+              id={`navMobile${index}`}
               href={item.link}
               className={
                 'block rounded-md px-3 py-2 text-base font-medium ' +
@@ -280,9 +286,10 @@ const Navbar = () => {
           </div>
           <div className="mt-3 space-y-1 px-2">
             {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
-              menuItems.map((item) => (
+              menuItems.map((item, index) => (
                 <DisclosureButton
                   as="a"
+                  id={`profileMenuMobile${index}`}
                   key={item.link + item.name}
                   href={item.link}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
@@ -294,6 +301,7 @@ const Navbar = () => {
               <DisclosureButton
                 as="a"
                 href={RouteEnum.PROFILE_SETTINGS}
+                id="myProfileMobile"
                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
               >
                 My Profile
@@ -303,6 +311,7 @@ const Navbar = () => {
             )}
             <DisclosureButton
               as="a"
+              id="signOutMobile"
               onClick={doLogout}
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
             >
