@@ -7,7 +7,6 @@ import {
 import { UserContext } from '@src/context/userContext';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
-import { TUserProfileType } from '@src/shared/types/profileTypes';
 import { onlyAlphabeticValidation } from '@src/utils/helpers';
 import {
   showApiErrorInToast,
