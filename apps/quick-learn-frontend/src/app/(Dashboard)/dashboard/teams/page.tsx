@@ -9,6 +9,7 @@ import { TUser, TUserType } from '@src/shared/types/userTypes';
 import { DateFormats } from '@src/constants/dateFormats';
 import { teamListApiCall } from '@src/apiServices/teamService';
 import { debounce } from '@src/utils/helpers';
+import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
 
 const TeamMemberListing = () => {
   const [data, setData] = useState<TUser[]>([]);
@@ -70,17 +71,17 @@ const TeamMemberListing = () => {
               members or add a new one.
             </p>
           </div>
-          <div className="flex space-x-4">
+          <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <input
               type="text"
-              className="bg-gray-50 w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+              className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
               placeholder="Search Members"
               onChange={handleQueryChange}
               id="search"
             />
             <Link
               href={`${RouteEnum.TEAM}/add`}
-              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300 focus:outline-none"
+              className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
             >
               Add new member
             </Link>
@@ -111,7 +112,7 @@ const TeamMemberListing = () => {
             ))}
             <button
               type="button"
-              className="underline font-medium text-blue-600 dark:text-blue-500 hover:underline text-sm"
+              className="underline font-medium text-blue-600 hover:underline text-sm"
               onClick={() => filterByUserType('')}
             >
               Show All
@@ -133,16 +134,16 @@ const TeamMemberListing = () => {
                     <th scope="col" className="px-4 py-3">
                       Email
                     </th>
-                    <th scope="col" className="px-4 py-3">
+                    <th scope="col" className="px-4 py-3 text-nowrap">
                       Primary Skill
                     </th>
                     <th scope="col" className="px-4 py-3">
                       Status
                     </th>
-                    <th scope="col" className="px-4 py-3">
+                    <th scope="col" className="px-4 py-3 text-nowrap">
                       Last Login
                     </th>
-                    <th scope="col" className="px-4 py-3">
+                    <th scope="col" className="px-4 py-3 text-nowrap">
                       Added On
                     </th>
                   </tr>
@@ -150,8 +151,8 @@ const TeamMemberListing = () => {
                 <tbody>
                   {data.map((user, index) => (
                     <tr
-                      key={index}
-                      className="border-b border-gray-400 hover:bg-gray-100"
+                      key={user.uuid}
+                      className="border-b border-gray-200 hover:bg-gray-100"
                     >
                       <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                         <Link href={`${RouteEnum.TEAM}/${user.uuid}`}>
@@ -159,22 +160,8 @@ const TeamMemberListing = () => {
                         </Link>
                       </td>
                       <td className="px-4 py-2">
-                        <div className="inline-flex items-center bg-slate-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded">
-                          <svg
-                            className="text-gray-800 h-3.5 w-3.5 mr-1"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M8 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1h2a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2Zm6 1h-4v2H9a1 1 0 0 0 0 2h6a1 1 0 1 0 0-2h-1V4Zm-6 8a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm1 3a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9Z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                        <div className="inline-flex items-center bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded">
+                          <CustomClipBoardIcon color="#1e40af" />
                           <span>{user.user_type.name || 'Role'}</span>
                         </div>
                       </td>
@@ -227,7 +214,7 @@ const TeamMemberListing = () => {
             {page > 1 && page <= totalPage && (
               <button
                 onClick={() => page > 1 && setPage(page - 1)}
-                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
               >
                 <ArrowLeftIcon height={20} width={32} />
                 Previous
@@ -236,7 +223,7 @@ const TeamMemberListing = () => {
             {page < totalPage && (
               <button
                 onClick={() => page < totalPage && setPage(page + 1)}
-                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
               >
                 Next
                 <ArrowRightIcon height={20} width={32} />
