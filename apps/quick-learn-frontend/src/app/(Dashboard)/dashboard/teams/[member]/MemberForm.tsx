@@ -124,6 +124,11 @@ function MemberForm<T extends z.ZodTypeAny>({
                             <option
                               key={option.id ?? option.value}
                               value={option.id ?? option.value}
+                              id={
+                                String(name) +
+                                '_' +
+                                String(option.id ?? option.value)
+                              }
                             >
                               {option.name}
                             </option>

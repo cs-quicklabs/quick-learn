@@ -134,6 +134,7 @@ const BaseLayout = ({
         buttonText="Save"
         mode="onChange"
         resetFormOnSubmit
+        id={heading.toLowerCase().replace(' ', '_')}
       />
 
       <form
@@ -159,7 +160,9 @@ const BaseLayout = ({
                     <td>
                       <input
                         type="text"
-                        id="name"
+                        id={
+                          heading.toLowerCase().replace(' ', '_') + '_name_edit'
+                        }
                         className="m-2 p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         {...register('name')}
                         disabled={isEditLoading}

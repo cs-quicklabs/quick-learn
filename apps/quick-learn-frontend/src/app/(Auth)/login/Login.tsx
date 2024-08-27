@@ -53,6 +53,7 @@ const Login = () => {
         buttonDisabled={isLoading}
         bigButton
         buttonText="Sign In"
+        id="loginForm"
       />
       <Link
         href={RouteEnum.FORGOT_PASSWORD}

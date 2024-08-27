@@ -21,6 +21,7 @@ interface Props<T extends z.ZodTypeAny> {
   readonly isLoading?: boolean;
   readonly resetFormOnSubmit?: boolean;
   readonly mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
+  readonly id?: string;
 }
 
 function FormFieldsMapper<T extends z.ZodTypeAny>({
@@ -34,6 +35,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   methods,
   resetFormOnSubmit = false,
   mode = 'onBlur',
+  id,
 }: Props<T>) {
   // Call useForm unconditionally
   const defaultMethods = useForm<z.infer<T>>({
@@ -92,6 +94,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             register={register}
             disabled={isLoading || field.disabled}
             errorMsg={errors[field.name]?.message as string}
+            id={id}
           />
         );
       })}

@@ -121,6 +121,7 @@ const ProfileSettings = () => {
           methods={methods}
           isLoading={isLoading}
           buttonText="Save"
+          id="profileSettingsForm"
         />
       </FormProvider>
     </div>
