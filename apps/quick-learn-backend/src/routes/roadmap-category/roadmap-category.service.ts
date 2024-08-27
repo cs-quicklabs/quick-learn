@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRoadmapCategoryDto } from './dto/create-roadmap-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { RoadmapCategoryEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { UpdateRoadmapCategoryDto } from './dto/update-roadmap-category.dto';
@@ -17,7 +17,7 @@ export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEnti
 
   async create(createRoadmapCategoryDto: CreateRoadmapCategoryDto) {
     const foundRoadmapCategory = await this.repository.count({
-      where: { name: createRoadmapCategoryDto.name },
+      where: { name: ILike(createRoadmapCategoryDto.name) },
     });
 
     if (foundRoadmapCategory) {
@@ -34,7 +34,7 @@ export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEnti
   ) {
     const roadmapCategory = await this.get({ id });
     const roadmapCategoryByName = await this.get({
-      name: updateRoadmapCategoryDto.name,
+      name: ILike(updateRoadmapCategoryDto.name),
     });
     if (
       roadmapCategoryByName &&
