@@ -55,8 +55,7 @@ class AddTeam {
 
     getSkillID()
     {
-        return cy.get('#skill_id').select("Testing 007");
-      
+        return cy.get('#skill_id').select(2)
     }
     
     submitAddTeamButton()

@@ -24,7 +24,7 @@ describe('Login Test', () => {
     loginPage.login();
 
     cy.url().should('include', '/dashboard'); 
-    loginPage.getWelcomeMessage().should('contain', 'Login Success!'); // Adjust selector and text as needed
+    loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.'); // Adjust selector and text as needed
   });
   
 });

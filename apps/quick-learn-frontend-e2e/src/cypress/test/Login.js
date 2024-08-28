@@ -5,11 +5,11 @@ class LoginPage {
     }
   
     getUsernameInput() {
-      return cy.get('#email')
+      return cy.get('#loginForm_input_text')
     }
   
     getPasswordInput() {
-      return cy.get('#password')
+      return cy.get('#loginForm_input_passwordpassword')
     }
   
     getSubmitButton() {
@@ -26,7 +26,7 @@ class LoginPage {
   
     login() {
       let username="super.admin@yopmail.com"
-      let password="Password@1234"
+      let password="password@123P"
       this.getUsernameInput().type(username);
       this.getPasswordInput().type(password);
       this.getSubmitButton().click();
