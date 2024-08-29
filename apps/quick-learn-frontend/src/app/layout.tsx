@@ -16,7 +16,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ToastContainer />
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={true}
+          pauseOnFocusLoss={false}
+        />
         {children}
       </body>
     </html>

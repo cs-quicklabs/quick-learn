@@ -33,7 +33,7 @@ const addSchema = z.object({
   name: z
     .string()
     .min(1, 'This field is mandatory')
-    .max(30, 'This field should be less than or equal to 30')
+    .max(30, 'The value should not exceed 30 character')
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     })
@@ -46,7 +46,7 @@ const editSchema = z.object({
   name: z
     .string()
     .min(1, 'This field is mandatory')
-    .max(30, 'This field should be less than or equal to 30')
+    .max(30, 'The value should not exceed 30 character')
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     })
