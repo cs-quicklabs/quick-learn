@@ -49,6 +49,7 @@ yarn.lock
 
 # Ignore all .env files in any directory
 **/.env
+**/.env.*
 
 # Exclude .env.example from being ignored in any directory
 !**/.env.example
