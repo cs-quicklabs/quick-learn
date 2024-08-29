@@ -67,8 +67,9 @@ const TeamMemberListing = () => {
           <div>
             <h1 className="mr-3 text-lg font-semibold">Team</h1>
             <p className="text-gray-500 text-sm">
-              Manage all your existing <span className="font-bond">4</span> team
-              members or add a new one.
+              Manage all your existing{' '}
+              <span className="font-bond">{total}</span> team members or add a
+              new one.
             </p>
           </div>
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
