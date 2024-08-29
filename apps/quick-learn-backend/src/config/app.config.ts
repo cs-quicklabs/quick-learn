@@ -61,6 +61,12 @@ class EnvironmentVariablesValidator {
   @IsString()
   @IsOptional()
   SMTP_PASS: string;
+
+  @IsString()
+  JWT_SECRET_KEY: string;
+
+  @IsInt()
+  JWT_EXPIRY_TIME_IN_DAYS: number;
 }
 
 export default registerAs<AppConfig>('app', () => {
@@ -83,5 +89,7 @@ export default registerAs<AppConfig>('app', () => {
     smtpPort: process.env.SMTP_PORT,
     smtpUser: process.env.SMTP_USER,
     smtpPass: process.env.SMTP_PASS,
+    jwtSecretkey: process.env.JWT_SECRET_KEY,
+    jwtExpiryTimeInDays: parseInt(process.env.JWT_EXPIRY_TIME_IN_DAYS, 10) || 7,
   };
 });
