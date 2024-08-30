@@ -49,7 +49,7 @@ const Coursecategories = () => {
   }, []);
 
   const onDelete = (id: number) => {
-    setIsLoading(true);
+    setIsEditLoading(true);
     deleteCourseCategory(id)
       .then((res) => {
         const data = courseCategories.filter((item) => item.id !== id);
@@ -57,7 +57,7 @@ const Coursecategories = () => {
         showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsEditLoading(false));
   };
 
   const onSubmitEditForm = (id: number, data: formOutput) => {
