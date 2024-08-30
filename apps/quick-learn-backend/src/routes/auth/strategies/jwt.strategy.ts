@@ -1,9 +1,15 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { SessionService } from '../session.service';
+import Helpers from '@src/common/utils/helper';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,18 +25,29 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ]),
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('auth.secret'),
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: { id: number; role: number; sessionId: number }) {
-    console.log('payload', payload);
+  async validate(
+    req: Request,
+    payload: { id: number; role: number; sessionId: number },
+  ) {
     const session = await this.sessionService.get({
       id: payload.sessionId,
       user: { id: payload.id, user_type_id: payload.role },
     });
+
     if (!session) {
       throw new UnauthorizedException();
     }
+
+    // Check if token is expired
+    if (Number(session.expires) < Date.now()) {
+      Helpers.clearCookies(req.res);
+      throw new UnauthorizedException('Refresh token expired');
+    }
+
     return session.user;
   }
 }

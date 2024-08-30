@@ -1,8 +1,11 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { getAccessToken } from './authService';
+import { RouteEnum } from '@src/constants/route.enum';
+import { authApiEnum } from '@src/constants/api.enum';
 
 const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${process.env.NEXT_PUBLIC_API_VERSION}`;
 
-export type AxiosErrorObject = {
+export type AxiosErrorObject = AxiosError & {
   response: {
     data: {
       error: null | string;
@@ -45,9 +48,21 @@ axiosInstance.interceptors.response.use(
   },
   (error: AxiosErrorObject) => {
     console.error('Api error:', error);
-    // Handle errors (e.g., redirect to login if unauthorized)
-    if (error.response && error.response.data.errorCode === 401) {
-      // Redirect to login or refresh token
+    // Handle expired refresh token
+    if (
+      error.response &&
+      error.response.data.errorCode === 401 &&
+      error.config?.url != authApiEnum.REFRESH_TOKEN
+    ) {
+      // create a new token
+      getAccessToken()
+        .then(() => {
+          // Do nothing;
+          window.location.reload();
+        })
+        .catch(() => {
+          window.location.replace(RouteEnum.LOGIN);
+        });
     }
     return Promise.reject(error);
   },

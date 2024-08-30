@@ -14,4 +14,7 @@ export class SessionEntity extends BaseEntity {
 
   @Column()
   hash: string;
+
+  @Column({ type: 'varchar' })
+  expires: string;
 }

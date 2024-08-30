@@ -63,9 +63,19 @@ export class AuthService {
       .update(randomStringGenerator())
       .digest('hex');
 
+    const refreshTokenExpiresIn = this.configService.getOrThrow(
+      'auth.refreshExpires',
+      {
+        infer: true,
+      },
+    );
+
+    const refreshTokenExpires = ms(refreshTokenExpiresIn);
+
     const session = await this.sessionService.create({
       user,
       hash,
+      expires: `${Date.now() + refreshTokenExpires}`,
     });
 
     return await this.getTokensData({
@@ -195,7 +205,7 @@ export class AuthService {
       },
       {
         secret: this.configService.getOrThrow('auth.secret', { infer: true }),
-        expiresIn: tokenExpiresIn,
+        expiresIn: Date.now() + tokenExpiresIn,
       },
     );
 
@@ -218,6 +228,15 @@ export class AuthService {
 
     const tokenExpires = ms(tokenExpiresIn);
 
+    const refreshTokenExpiresIn = this.configService.getOrThrow(
+      'auth.refreshExpires',
+      {
+        infer: true,
+      },
+    );
+
+    const refreshTokenExpires = ms(refreshTokenExpiresIn);
+
     const [token, refreshToken] = await Promise.all([
       await this.jwtService.signAsync(
         {
@@ -227,7 +246,7 @@ export class AuthService {
         },
         {
           secret: this.configService.getOrThrow('auth.secret', { infer: true }),
-          expiresIn: tokenExpiresIn,
+          expiresIn: Date.now() + tokenExpiresIn,
         },
       ),
       await this.jwtService.signAsync(
@@ -239,9 +258,7 @@ export class AuthService {
           secret: this.configService.getOrThrow('auth.refreshSecret', {
             infer: true,
           }),
-          expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
-            infer: true,
-          }),
+          expiresIn: Date.now() + refreshTokenExpiresIn,
         },
       ),
     ]);

@@ -1,10 +1,16 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from '@src/config/config.type';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { SessionService } from '../session.service';
+import Helpers from '@src/common/utils/helper';
 
 type JwtRefreshPayloadType = {
   sessionId: number;
@@ -29,17 +35,32 @@ export class JwtRefreshStrategy extends PassportStrategy(
         },
       ]),
       secretOrKey: configService.get('auth.refreshSecret', { infer: true }),
+      passReqToCallback: true,
     });
   }
 
-  public async validate(payload: JwtRefreshPayloadType) {
-    const session = await this.sessionService.get({
-      id: payload.sessionId,
-      hash: payload.hash,
-    });
-    if (!session) {
-      throw new UnauthorizedException();
+  public async validate(req: Request, payload: JwtRefreshPayloadType) {
+    try {
+      const session = await this.sessionService.get({
+        id: payload.sessionId,
+        hash: payload.hash,
+      });
+
+      if (!session) {
+        Helpers.clearCookies(req.res);
+        throw new UnauthorizedException('Invalid session');
+      }
+
+      // Check if token is expired
+      if (Number(session.expires) < Date.now()) {
+        Helpers.clearCookies(req.res);
+        throw new UnauthorizedException('Refresh token expired');
+      }
+
+      return session;
+    } catch (error) {
+      Helpers.clearCookies(req.res);
+      throw new UnauthorizedException('Authentication failed');
     }
-    return session;
   }
 }
