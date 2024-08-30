@@ -1,15 +1,16 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { UsersService } from '@src/routes/users/users.service';
 import { ConfigService } from '@nestjs/config';
+import { SessionService } from '../session.service';
+import Helpers from '@src/common/utils/helper';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private usersService: UsersService,
-    private readonly configService: ConfigService,
+    private sessionService: SessionService,
+    configService: ConfigService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -18,18 +19,30 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         },
       ]),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('app.jwtSecretkey'),
+      secretOrKey: configService.get<string>('auth.secret'),
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: { sub: string; email: string; uuid: string }) {
-    const users = await this.usersService.findByEmailOrUUID(
-      payload.email,
-      payload.uuid,
-    );
-    if (users.length === 1) {
-      return users[0];
+  async validate(
+    req: Request,
+    payload: { id: number; role: number; sessionId: number },
+  ) {
+    const session = await this.sessionService.get({
+      id: payload.sessionId,
+      user: { id: payload.id, user_type_id: payload.role, active: true },
+    });
+
+    if (!session) {
+      throw new UnauthorizedException();
     }
-    return null;
+
+    // Check if token is expired
+    if (Number(session.expires) < Date.now()) {
+      Helpers.clearCookies(req.res);
+      throw new UnauthorizedException('Refresh token expired');
+    }
+
+    return session.user;
   }
 }
