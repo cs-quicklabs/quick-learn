@@ -5,6 +5,7 @@ import { UserTypeEntity } from './user-type.entity';
 import { ResetTokenEntity } from './reset-token.entity';
 import { RoadmapCategoryEntity } from './roadmap-category.entity';
 import { CourseCategoryEntity } from './course-category.entity';
+import { SessionEntity } from './session.entity';
 
 export const Entities = [
   UserEntity,
@@ -14,6 +15,7 @@ export const Entities = [
   ResetTokenEntity,
   RoadmapCategoryEntity,
   CourseCategoryEntity,
+  SessionEntity,
 ];
 
 export {
@@ -24,4 +26,5 @@ export {
   ResetTokenEntity,
   RoadmapCategoryEntity,
   CourseCategoryEntity,
+  SessionEntity,
 };

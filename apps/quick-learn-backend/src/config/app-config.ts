@@ -11,6 +11,4 @@ export type AppConfig = {
   smtpPort?: string;
   smtpUser?: string;
   smtpPass?: string;
-  jwtSecretkey: string;
-  jwtExpiryTimeInDays: number;
 };

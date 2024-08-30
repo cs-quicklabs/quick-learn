@@ -17,11 +17,12 @@ import {
 } from './routes';
 import { FileModule } from './file/file.module';
 import fileConfig from './file/config/file.config';
+import authConfig from './routes/auth/config/auth.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig, appConfig, fileConfig],
+      load: [databaseConfig, appConfig, fileConfig, authConfig],
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({

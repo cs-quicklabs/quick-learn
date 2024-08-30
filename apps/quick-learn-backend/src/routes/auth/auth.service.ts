@@ -8,6 +8,8 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '@src/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import ms from 'ms';
 import { nanoid } from 'nanoid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResetTokenEntity } from '@src/entities/reset-token.entity';
@@ -16,7 +18,11 @@ import { SuccessResponse } from '@src/common/dto';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { emailSubjects } from '@src/common/constants/email-subject';
-
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { SessionService } from './session.service';
+import { SessionEntity } from '@src/entities';
+import { LoginDto } from './dto';
+import { ITokenData } from '@src/common/interfaces';
 @Injectable()
 export class AuthService {
   constructor(
@@ -28,12 +34,10 @@ export class AuthService {
     private userRepository: Repository<UserEntity>,
     private configService: ConfigService,
     private emailService: EmailService,
+    private sessionService: SessionService,
   ) {}
 
-  async validateUser(
-    email: string,
-    password: string,
-  ): Promise<UserEntity | null> {
+  async validateUser(email: string, password: string): Promise<UserEntity> {
     const user = await this.usersService.findOne({ email, active: true });
     if (!user) {
       throw new ForbiddenException('No User Found!');
@@ -51,17 +55,36 @@ export class AuthService {
     }
   }
 
-  async login(user: Partial<UserEntity>): Promise<{ access_token: string }> {
-    const payload = { email: user.email, uuid: user.uuid };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+  async login(loginDto: LoginDto): Promise<ITokenData> {
+    const user = await this.validateUser(loginDto.email, loginDto.password);
+
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+
+    const session = await this.sessionService.create({
+      user,
+      hash,
+    });
+
+    return await this.getTokensData({
+      id: user.id,
+      role: user.user_type_id,
+      sessionId: session.id,
+      hash,
+    });
   }
 
-  async logout() {
-    return {
-      access_token: '',
-    };
+  async logout(token: string): Promise<void> {
+    const session = await this.jwtService.decode(token);
+    if (session) {
+      const data = await this.sessionService.get({ id: session.sessionId });
+      if (data) {
+        await this.sessionService.delete({ id: data.id });
+      }
+    }
+    return;
   }
 
   async forgotPassword(email: string) {
@@ -154,5 +177,79 @@ export class AuthService {
     this.emailService.email(emailData);
 
     return new SuccessResponse('Password updated successfully');
+  }
+
+  async refreshToken(
+    session: SessionEntity,
+  ): Promise<{ token: string; expires: number }> {
+    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
+      infer: true,
+    });
+
+    const tokenExpires = ms(tokenExpiresIn);
+    const token = await this.jwtService.signAsync(
+      {
+        id: session.user.id,
+        role: session.user.user_type_id,
+        sessionId: session.id,
+      },
+      {
+        secret: this.configService.getOrThrow('auth.secret', { infer: true }),
+        expiresIn: tokenExpiresIn,
+      },
+    );
+
+    return {
+      token,
+      expires: tokenExpires,
+    };
+  }
+
+  private async getTokensData(data: {
+    id: UserEntity['id'];
+    role: UserEntity['user_type_id'];
+    sessionId: SessionEntity['id'];
+    hash: SessionEntity['hash'];
+    rememberMe?: boolean;
+  }): Promise<ITokenData> {
+    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
+      infer: true,
+    });
+
+    const tokenExpires = ms(tokenExpiresIn);
+
+    const [token, refreshToken] = await Promise.all([
+      await this.jwtService.signAsync(
+        {
+          id: data.id,
+          role: data.role,
+          sessionId: data.sessionId,
+        },
+        {
+          secret: this.configService.getOrThrow('auth.secret', { infer: true }),
+          expiresIn: tokenExpiresIn,
+        },
+      ),
+      await this.jwtService.signAsync(
+        {
+          sessionId: data.sessionId,
+          hash: data.hash,
+        },
+        {
+          secret: this.configService.getOrThrow('auth.refreshSecret', {
+            infer: true,
+          }),
+          expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
+            infer: true,
+          }),
+        },
+      ),
+    ]);
+
+    return {
+      token,
+      refreshToken,
+      tokenExpires,
+    };
   }
 }
