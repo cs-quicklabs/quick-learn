@@ -258,7 +258,7 @@ export class AuthService {
           secret: this.configService.getOrThrow('auth.refreshSecret', {
             infer: true,
           }),
-          expiresIn: Date.now() + refreshTokenExpiresIn,
+          expiresIn: Date.now() + refreshTokenExpires,
         },
       ),
     ]);

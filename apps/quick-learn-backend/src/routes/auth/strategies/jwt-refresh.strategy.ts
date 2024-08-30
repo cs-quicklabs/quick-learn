@@ -1,14 +1,9 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from '@src/config/config.type';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { SessionService } from '../session.service';
 import Helpers from '@src/common/utils/helper';
 
@@ -44,6 +39,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
       const session = await this.sessionService.get({
         id: payload.sessionId,
         hash: payload.hash,
+        user: { active: true },
       });
 
       if (!session) {
