@@ -4,6 +4,7 @@ import {
   getTeamDetails,
   updateTeamDetails,
 } from '@src/apiServices/accountService';
+import { UserContext } from '@src/context/userContext';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { TTeam } from '@src/shared/types/accountTypes';
@@ -13,7 +14,7 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -32,6 +33,7 @@ const AccountSettingSechema = z.object({
 type AccountSettingsData = z.infer<typeof AccountSettingSechema>;
 
 const AccountSettings = () => {
+  const { user, setUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const methods = useForm<AccountSettingsData>({
     resolver: zodResolver(AccountSettingSechema),
@@ -68,7 +70,15 @@ const AccountSettings = () => {
 
   function onSubmit(data: AccountSettingsData) {
     updateTeamDetails(data as TTeam)
-      .then((res) => showApiMessageInToast(res))
+      .then((res) => {
+        showApiMessageInToast(res);
+        if (user) {
+          setUser({
+            ...user,
+            team: { ...user.team, name: data.name },
+          });
+        }
+      })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   }

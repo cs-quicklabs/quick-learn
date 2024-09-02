@@ -115,6 +115,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@CurrentUser() user: UserEntity): SuccessResponse {
+    console.log('user', user);
     delete user.password; // TODO: Need to update this to discard this fron the class validators
     return new SuccessResponse('Successfully got the user.', user);
   }
