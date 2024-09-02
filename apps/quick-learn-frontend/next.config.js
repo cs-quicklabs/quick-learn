@@ -12,6 +12,15 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: process.env.BUCKET_URL || '',
+      }
+    ]
+  },
+  transpilePackages: ['flowbite-react']
 };
 
 const plugins = [

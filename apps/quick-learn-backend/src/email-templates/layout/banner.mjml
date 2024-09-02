@@ -1,0 +1,7 @@
+<mj-section background-color="#10182a" padding="0px">
+  <mj-column padding="20px">
+    <mj-text align="left" color="#fff" font-size="24px" font-family="Helvetica Neue">
+      Quick Learn Notification
+    </mj-text>
+  </mj-column>
+</mj-section>

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import Image from 'next/image';
-import { RouteEnum } from '../../constants/route.enum';
+import { RouteEnum } from '@src/constants/route.enum';
 
 interface Props {
   title: string;

@@ -1,14 +1,18 @@
 import React, { FC, useState } from 'react';
 import { FieldType } from '../types/formTypes';
+import { OpenEyeIcon, ClosedEyeIcon } from '../components/UIElements';
+import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 interface Props {
   label?: string;
   name: string;
   type?: FieldType;
   className?: string;
-  register: any;
+  register: UseFormRegister<FieldValues>;
   errorMsg: string;
   placeholder: string;
+  disabled?: boolean;
+  id?: string;
 }
 const InputField: FC<Props> = ({
   label,
@@ -17,7 +21,9 @@ const InputField: FC<Props> = ({
   register,
   placeholder,
   errorMsg,
+  disabled = false,
   className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+  id,
 }) => {
   const isFieldPassword = type === 'password';
   const [showPassword, setShowPassword] = useState<boolean>(!isFieldPassword);
@@ -25,13 +31,16 @@ const InputField: FC<Props> = ({
     return (
       <div className="flex items-center space-x-2">
         <input
-          id={name}
+          id={`${id ? id : ''}_checkbox_${name}`}
           type={type}
           className="form-checkbox h-5 w-5 text-blue-600 rounded-full border-gray-300 focus:ring-blue-500"
           {...register(name)}
         />
         <div className="ml-3 text-sm">
-          <label htmlFor={name} className="text-gray-500 dark:text-gray-300">
+          <label
+            htmlFor={`${id ? id : ''}_checkbox_${name}`}
+            className="text-gray-500 dark:text-gray-300"
+          >
             {label}
           </label>
         </div>
@@ -44,18 +53,25 @@ const InputField: FC<Props> = ({
       {label && (
         <label
           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          htmlFor={name}
+          htmlFor={`${id ? id : ''}_input_${
+            showPassword ? 'text' : 'password' + name
+          }`}
         >
           {label}
         </label>
       )}
       <div className="relative">
         <input
-          id={name}
+          id={`${id ? id : ''}_input_${
+            showPassword ? 'text' : 'password' + name
+          }`}
           type={showPassword ? 'text' : 'password'}
-          className={`${className} pr-10 ${errorMsg ? 'border-red-500' : ''}`}
+          className={`${className} pr-10 ${
+            errorMsg ? 'border-red-500' : ''
+          } disabled:bg-gray-200`}
           placeholder={placeholder}
           autoComplete="true"
+          disabled={disabled}
           {...register(name)}
         />
         {isFieldPassword && (
@@ -64,48 +80,7 @@ const InputField: FC<Props> = ({
             className="absolute inset-y-0 right-0 pr-3 flex items-center"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? (
-              //open eye icon
-              <svg
-                className="w-[24px] h-[24px] text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeWidth="0.9"
-                  d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"
-                />
-                <path
-                  stroke="currentColor"
-                  strokeWidth="0.9"
-                  d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-              </svg>
-            ) : (
-              //closed eye icon
-              <svg
-                className="w-[24px] h-[24px] text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="0.9"
-                  d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-              </svg>
-            )}
+            {showPassword ? <OpenEyeIcon /> : <ClosedEyeIcon />}
           </button>
         )}
       </div>

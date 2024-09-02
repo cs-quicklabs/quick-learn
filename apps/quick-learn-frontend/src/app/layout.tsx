@@ -1,4 +1,7 @@
+import 'flowbite/dist/flowbite.css';
 import './global.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata = {
   title: 'Welcome to quick-learn-frontend',
@@ -8,11 +11,19 @@ export const metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={true}
+          pauseOnFocusLoss={false}
+        />
+        {children}
+      </body>
     </html>
   );
 }

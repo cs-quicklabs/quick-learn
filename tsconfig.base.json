@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@quick-learn/email": ["lib/email/src/index.ts"],
       "@quick-learn/shared": ["lib/shared/src/index.ts"]
     }
   },
