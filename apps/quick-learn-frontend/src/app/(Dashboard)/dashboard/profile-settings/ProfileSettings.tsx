@@ -1,9 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  getUserProfileService,
-  updateUserProfileService,
-} from '@src/apiServices/profileService';
+import { updateUserProfileService } from '@src/apiServices/profileService';
 import { UserContext } from '@src/context/userContext';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
@@ -59,13 +56,13 @@ const ProfileSettings = () => {
       label: 'First Name',
       name: 'first_name',
       type: 'text',
-      placeholder: 'Ashish',
+      placeholder: 'John',
     },
     {
       label: 'Last Name',
       name: 'last_name',
       type: 'text',
-      placeholder: 'Dhawan',
+      placeholder: 'Doe',
     },
     {
       label: 'Email',
@@ -95,17 +92,13 @@ const ProfileSettings = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    getUserProfileService()
-      .then((res) => {
-        setValue('first_name', res.data.first_name);
-        setValue('last_name', res.data.last_name);
-        setValue('profile_image', res.data.profile_image);
-        setValue('email', res.data.email);
-      })
-      .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
-  }, [setValue]); // Add setValue as a dependency
+    if (user) {
+      setValue('first_name', user.first_name);
+      setValue('last_name', user.last_name);
+      setValue('profile_image', user.profile_image);
+      setValue('email', user.email);
+    }
+  }, [setValue, user]);
 
   return (
     <div>

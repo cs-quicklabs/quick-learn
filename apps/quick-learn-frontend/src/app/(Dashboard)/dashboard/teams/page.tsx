@@ -9,9 +9,13 @@ import { TUser, TUserType } from '@src/shared/types/userTypes';
 import { DateFormats } from '@src/constants/dateFormats';
 import { teamListApiCall } from '@src/apiServices/teamService';
 import { debounce } from '@src/utils/helpers';
-import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
+import {
+  CustomClipBoardIcon,
+  FullPageLoader,
+} from '@src/shared/components/UIElements';
 
 const TeamMemberListing = () => {
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [data, setData] = useState<TUser[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [totalPage, setTotalPage] = useState<number>(0);
@@ -21,13 +25,16 @@ const TeamMemberListing = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsPageLoading(true);
       try {
         const res = await teamListApiCall(page, userTypeCode, query);
         if (!res.success) throw new Error();
         setData(res.data.items);
         setTotal(res.data.total);
         setTotalPage(res.data.total_pages);
+        setIsPageLoading(false);
       } catch (error) {
+        setIsPageLoading(false);
         console.error('API call failed:', error);
         toast.error('Something went wrong!');
       }
@@ -62,6 +69,7 @@ const TeamMemberListing = () => {
 
   return (
     <>
+      {isPageLoading && <FullPageLoader />}
       <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
         <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
           <div>
@@ -158,7 +166,7 @@ const TeamMemberListing = () => {
                       key={user.uuid}
                       className="border-b border-gray-200 hover:bg-gray-100"
                     >
-                      <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
+                      <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap capitalize hover:underline">
                         <Link href={`${RouteEnum.TEAM}/${user.uuid}`}>
                           {user.first_name} {user.last_name}
                         </Link>
@@ -169,18 +177,16 @@ const TeamMemberListing = () => {
                           <span>{user.user_type.name || 'Role'}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-2">{user.email}</td>
+                      <td className="px-4 py-2 lowercase">{user.email}</td>
                       <td className="px-4 py-2">{user.skill.name}</td>
                       <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                         <div className="inline-flex items-center">
                           <div
                             className={`w-3 h-3 mr-2 border border-gray-200 rounded-full ${
-                              user.active == true
-                                ? 'bg-green-500'
-                                : 'bg-red-500'
+                              user.active ? 'bg-green-500' : 'bg-red-500'
                             }`}
                           ></div>
-                          {user.active == true ? 'Active' : 'Inactive'}
+                          {user.active ? 'Active' : 'Inactive'}
                         </div>
                       </td>
                       <td className="px-4 py-2">

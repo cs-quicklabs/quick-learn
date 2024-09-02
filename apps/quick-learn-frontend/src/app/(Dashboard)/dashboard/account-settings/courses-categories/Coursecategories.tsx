@@ -20,6 +20,7 @@ type formOutput = {
 
 const Coursecategories = () => {
   const { user } = useContext(UserContext);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
   const [courseCategories, setCourseCategories] = useState<TCourseCategories[]>(
@@ -39,13 +40,13 @@ const Coursecategories = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsPageLoading(true);
     getCourseCategories()
       .then((res) => {
         setCourseCategories(res.data.categories);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsPageLoading(false));
   }, []);
 
   const onDelete = (id: number) => {
@@ -100,6 +101,7 @@ const Coursecategories = () => {
       data={courseCategories.map((item) => {
         return { id: item.id, name: item.name };
       })}
+      isPageLoading={isPageLoading}
     />
   );
 };

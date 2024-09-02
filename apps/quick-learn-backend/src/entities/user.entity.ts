@@ -46,7 +46,7 @@ export class UserEntity extends BaseEntity {
   @Column({ nullable: false })
   team_id: number;
 
-  @ManyToOne(() => TeamEntity, (team) => team.users)
+  @ManyToOne(() => TeamEntity, (team) => team.users, { eager: true })
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 
@@ -63,7 +63,7 @@ export class UserEntity extends BaseEntity {
   @Column({ default: true })
   email_alert_preference: boolean;
 
-  @ManyToOne(() => UserTypeEntity, (user) => user.users)
+  @ManyToOne(() => UserTypeEntity, (user) => user.users, { eager: true })
   @JoinColumn({ name: 'user_type_id' })
   user_type: UserTypeEntity;
 
