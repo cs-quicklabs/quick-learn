@@ -48,7 +48,7 @@ const Roadmapcategories = () => {
   }, []);
 
   const onDelete = (id: number) => {
-    setIsLoading(true);
+    setIsEditLoading(true);
     deleteRoadmapCategory(id)
       .then((res) => {
         const data = roadmapCategories.filter((item) => item.id !== id);
@@ -56,7 +56,7 @@ const Roadmapcategories = () => {
         showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsEditLoading(false));
   };
 
   const onSubmitEditForm = (id: number, data: formOutput) => {

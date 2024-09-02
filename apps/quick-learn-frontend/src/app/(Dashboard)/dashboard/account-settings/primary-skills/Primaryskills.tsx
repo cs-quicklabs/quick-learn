@@ -63,7 +63,7 @@ const Primaryskills = () => {
   }, []);
 
   const onDelete = (id: number) => {
-    setIsLoading(true);
+    setIsEditLoading(true);
     deleteSkill(id)
       .then((res) => {
         const skill = primarySkills.filter((skill) => skill.id !== id);
@@ -71,7 +71,7 @@ const Primaryskills = () => {
         showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsEditLoading(false));
   };
 
   const inputPlaceHolder = {
