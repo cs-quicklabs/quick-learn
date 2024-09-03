@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getAccessToken } from './authService';
-import { RouteEnum } from '@src/constants/route.enum';
 import { authApiEnum } from '@src/constants/api.enum';
 
 const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${process.env.NEXT_PUBLIC_API_VERSION}`;
@@ -46,7 +45,7 @@ axiosInstance.interceptors.response.use(
     // You can modify the response data here
     return response;
   },
-  (error: AxiosErrorObject) => {
+  async (error: AxiosErrorObject) => {
     console.error('Api error:', error);
     // Handle expired refresh token
     if (
@@ -54,15 +53,16 @@ axiosInstance.interceptors.response.use(
       error.response.data.errorCode === 401 &&
       error.config?.url != authApiEnum.REFRESH_TOKEN
     ) {
-      // create a new token
-      getAccessToken()
-        .then(() => {
-          // Do nothing;
-          window.location.reload();
-        })
-        .catch(() => {
-          window.location.replace(RouteEnum.LOGIN);
-        });
+      try {
+        // create a new token
+        await getAccessToken();
+        const originalRequest = error.config;
+        if (originalRequest) {
+          return axios(originalRequest);
+        } else throw new Error('Original request is undefined');
+      } catch (err) {
+        return Promise.reject(error);
+      }
     }
     return Promise.reject(error);
   },
