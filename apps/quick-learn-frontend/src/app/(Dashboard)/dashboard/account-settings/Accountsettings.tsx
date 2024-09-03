@@ -34,12 +34,13 @@ type AccountSettingsData = z.infer<typeof AccountSettingSechema>;
 
 const AccountSettings = () => {
   const { user, setUser } = useContext(UserContext);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const methods = useForm<AccountSettingsData>({
     resolver: zodResolver(AccountSettingSechema),
     mode: 'onChange',
   });
-  const { setValue } = methods;
+  const { setValue, reset } = methods;
 
   const accountSettingsFields: FieldConfig[] = [
     {
@@ -58,20 +59,24 @@ const AccountSettings = () => {
   ];
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsPageLoading(true);
     getTeamDetails()
       .then((res) => {
         setValue('name', res.data.name);
         setValue('logo', res.data.logo);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsPageLoading(false));
   }, [setValue]);
 
   function onSubmit(data: AccountSettingsData) {
     updateTeamDetails(data as TTeam)
       .then((res) => {
         showApiMessageInToast(res);
+        reset({
+          name: data.name,
+          logo: data.logo,
+        });
         if (user) {
           setUser({
             ...user,
@@ -85,7 +90,7 @@ const AccountSettings = () => {
 
   return (
     <>
-      {isLoading && <FullPageLoader />}
+      {isPageLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold">Team Settings</h1>
         <p className="text-gray-500 text-sm mb-6">

@@ -172,13 +172,15 @@ const TeamMemberListing = () => {
                         </Link>
                       </td>
                       <td className="px-4 py-2">
-                        <div className="inline-flex items-center bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded">
+                        <div className="inline-flex items-center bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded capitalize">
                           <CustomClipBoardIcon color="#1e40af" />
                           <span>{user.user_type.name || 'Role'}</span>
                         </div>
                       </td>
                       <td className="px-4 py-2 lowercase">{user.email}</td>
-                      <td className="px-4 py-2">{user.skill.name}</td>
+                      <td className="px-4 py-2 capitalize">
+                        {user.skill.name}
+                      </td>
                       <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                         <div className="inline-flex items-center">
                           <div
