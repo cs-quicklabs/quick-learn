@@ -115,7 +115,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                         <select
                           {...field}
                           id={String(name)}
-                          className="appearance-none block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
+                          className="appearance-none block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 capitalize"
                         >
                           <option value="" disabled>
                             Select

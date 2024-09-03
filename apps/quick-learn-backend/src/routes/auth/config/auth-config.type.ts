@@ -3,4 +3,5 @@ export type AuthConfig = {
   expires: string;
   refreshSecret: string;
   refreshExpires: string;
+  refreshRememberMeExpires: string;
 };

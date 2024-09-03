@@ -16,6 +16,9 @@ class EnvironmentVariablesValidator {
 
   @IsString()
   JWT_REFRESH_EXPIRY_TIME: string;
+
+  @IsString()
+  JWT_REFRESH_REMEMBER_ME_EXPIRY_TIME: string;
 }
 
 export default registerAs<AuthConfig>('auth', () => {
@@ -26,5 +29,6 @@ export default registerAs<AuthConfig>('auth', () => {
     expires: process.env.JWT_EXPIRY_TIME,
     refreshSecret: process.env.JWT_REFRESH_SECRET_KEY,
     refreshExpires: process.env.JWT_REFRESH_EXPIRY_TIME,
+    refreshRememberMeExpires: process.env.JWT_REFRESH_REMEMBER_ME_EXPIRY_TIME,
   };
 });

@@ -28,6 +28,7 @@ import {
   updateUser,
 } from '@src/apiServices/teamService';
 import { showErrorMessage } from '@src/utils/helpers';
+import { FullPageLoader } from '@src/shared/components/UIElements';
 
 type TOption = { name: string; value: string | number; id?: string | number };
 
@@ -52,6 +53,7 @@ const AddUpdateMemberPage = () => {
   const router = useRouter();
   const params = useParams<{ member: string }>();
   const isAddMember = params.member === 'add';
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [metadata, setMetadata] = useState<TUserMetadata>();
   const [editUserData, setEditUserData] = useState<TUser>();
   const [editInitialValues, setEditInitialValues] = useState(
@@ -62,6 +64,7 @@ const AddUpdateMemberPage = () => {
 
   useEffect(() => {
     (async function () {
+      setIsPageLoading(true);
       try {
         const res = await getUserMetadataCall();
         if (!res.success) throw new Error();
@@ -78,8 +81,10 @@ const AddUpdateMemberPage = () => {
           res.data.user_types,
         );
         setFormOptions<TSkill>(editMemberFields, 'skill_id', res.data.skills);
+        setIsPageLoading(false);
       } catch (error) {
         showErrorMessage(error);
+        setIsPageLoading(false);
       }
     })();
   }, []);
@@ -88,11 +93,14 @@ const AddUpdateMemberPage = () => {
     if (!isAddMember) {
       (async function () {
         try {
+          setIsPageLoading(true);
           const res = await getUserDetails(params.member);
           if (!res.success) throw new Error();
           setEditUserData(res.data);
+          setIsPageLoading(false);
         } catch (error) {
           showErrorMessage(error);
+          setIsPageLoading(false);
         }
       })();
     }
@@ -142,29 +150,38 @@ const AddUpdateMemberPage = () => {
     }
   }
 
-  if (isAddMember) {
-    return (
-      <MemberForm<typeof addMemberFormSchema>
-        formFields={addMemberFields}
-        initialValues={addMemberFormInitialValues}
-        onSubmit={handleAddSubmit}
-        isAddForm={true}
-        schema={addMemberFormSchema}
-        loading={isLoading}
-      />
-    );
-  } else {
-    return (
-      <MemberForm<typeof editMemberFormSchema>
-        formFields={editMemberFields}
-        initialValues={editInitialValues}
-        onSubmit={handleEditSubmit}
-        isAddForm={false}
-        schema={editMemberFormSchema}
-        loading={isLoading}
-      />
-    );
+  function render() {
+    if (isAddMember) {
+      return (
+        <MemberForm<typeof addMemberFormSchema>
+          formFields={addMemberFields}
+          initialValues={addMemberFormInitialValues}
+          onSubmit={handleAddSubmit}
+          isAddForm={true}
+          schema={addMemberFormSchema}
+          loading={isLoading}
+        />
+      );
+    } else {
+      return (
+        <MemberForm<typeof editMemberFormSchema>
+          formFields={editMemberFields}
+          initialValues={editInitialValues}
+          onSubmit={handleEditSubmit}
+          isAddForm={false}
+          schema={editMemberFormSchema}
+          loading={isLoading}
+        />
+      );
+    }
   }
+
+  return (
+    <>
+      {isPageLoading && <FullPageLoader />}
+      {render()}
+    </>
+  );
 };
 
 export default AddUpdateMemberPage;

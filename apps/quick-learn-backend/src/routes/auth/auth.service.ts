@@ -70,7 +70,18 @@ export class AuthService {
       },
     );
 
-    const refreshTokenExpires = ms(refreshTokenExpiresIn);
+    const refreshTokenRememberMeExpiresIn = this.configService.getOrThrow(
+      'auth.refreshRememberMeExpires',
+      {
+        infer: true,
+      },
+    );
+
+    const refreshTokenExpires = ms(
+      loginDto.rememberMe
+        ? refreshTokenRememberMeExpiresIn
+        : refreshTokenExpiresIn,
+    );
 
     const session = await this.sessionService.create({
       user,
@@ -94,7 +105,6 @@ export class AuthService {
         await this.sessionService.delete({ id: data.id });
       }
     }
-    return;
   }
 
   async forgotPassword(email: string) {
