@@ -69,7 +69,7 @@ function MemberForm<T extends z.ZodTypeAny>({
   }
 
   return (
-    <section className="mt-2 lg:mt-6 mx-auto max-w-2xl">
+    <section className="mx-auto max-w-2xl">
       <h1 className="text-lg font-semibold">
         {isAddMember ? 'Add New' : 'Edit'} Team Member
       </h1>
@@ -121,7 +121,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                           id={String(name)}
                           className="appearance-none block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 capitalize"
                         >
-                          <option value="" disabled>
+                          <option value="" disabled hidden>
                             Select
                           </option>
                           {options?.map((option) => (
