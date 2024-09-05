@@ -38,9 +38,15 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
-    const user = await this.usersService.findOne({ email, active: true });
+    const user = await this.usersService.findOne({ email });
     if (!user) {
-      throw new ForbiddenException('No User Found!');
+      throw new ForbiddenException('No user is linked to the provided email.');
+    }
+
+    if (!user.active) {
+      throw new ForbiddenException(
+        'your account is deactivated, please connect with your admin.',
+      );
     }
 
     // Comparing password
