@@ -121,7 +121,7 @@ export class UsersService extends PaginationService<UserEntity> {
       }
     }
 
-    if (payload?.user_type_id != user.user_type_id) {
+    if (!!payload.user_type_id && payload.user_type_id != user.user_type_id) {
       await this.sessionService.delete({ user: { id: user.id } });
     }
 
