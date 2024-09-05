@@ -157,7 +157,6 @@ const AddUpdateMemberPage = () => {
           formFields={addMemberFields}
           initialValues={addMemberFormInitialValues}
           onSubmit={handleAddSubmit}
-          isAddForm={true}
           schema={addMemberFormSchema}
           loading={isLoading}
         />
@@ -168,7 +167,6 @@ const AddUpdateMemberPage = () => {
           formFields={editMemberFields}
           initialValues={editInitialValues}
           onSubmit={handleEditSubmit}
-          isAddForm={false}
           schema={editMemberFormSchema}
           loading={isLoading}
         />

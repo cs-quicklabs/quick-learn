@@ -90,7 +90,7 @@ const TeamMemberListing = () => {
             />
             <Link
               id="addNewMember"
-              href={`${RouteEnum.TEAM}/add`}
+              href={`${RouteEnum.TEAM_EDIT}/add`}
               className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
             >
               Add new member
