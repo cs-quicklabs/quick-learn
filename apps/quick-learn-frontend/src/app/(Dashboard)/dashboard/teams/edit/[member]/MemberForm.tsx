@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Loader, ShowInfoIcon } from '@src/shared/components/UIElements';
 import { Tooltip } from 'flowbite-react';
 
@@ -22,7 +22,6 @@ export interface IMemberForm<T extends z.ZodTypeAny> {
   readonly formFields: IMemberFieldConfig<z.infer<T>>[];
   readonly onSubmit: (data: z.infer<T>) => void;
   readonly initialValues: z.infer<T>;
-  readonly isAddForm: boolean;
   readonly schema: T;
   readonly loading: boolean;
 }
@@ -31,11 +30,12 @@ function MemberForm<T extends z.ZodTypeAny>({
   formFields,
   onSubmit,
   initialValues,
-  isAddForm,
   schema,
   loading,
 }: IMemberForm<T>) {
   const router = useRouter();
+  const params = useParams<{ member: string }>();
+  const isAddMember = params.member === 'add';
   const { control, handleSubmit, setValue } = useForm<z.infer<T>>({
     defaultValues: initialValues,
     resolver: zodResolver(schema),
@@ -61,16 +61,20 @@ function MemberForm<T extends z.ZodTypeAny>({
     useState<IMemberFieldConfig<z.infer<T>>[]>(formFields);
 
   function cancel() {
-    router.push(RouteEnum.TEAM);
+    if (isAddMember) {
+      router.push(RouteEnum.TEAM);
+    } else {
+      router.push(RouteEnum.TEAM + '/' + params.member);
+    }
   }
 
   return (
     <section className="mt-2 lg:mt-6 mx-auto max-w-2xl">
       <h1 className="text-lg font-semibold">
-        {isAddForm ? 'Add New' : 'Edit'} Team Member
+        {isAddMember ? 'Add New' : 'Edit'} Team Member
       </h1>
       <p className="text-gray-600 text-sm">
-        {isAddForm
+        {isAddMember
           ? 'Please fill in details of new team member.'
           : 'Please update details to edit team member.'}
       </p>
@@ -187,7 +191,7 @@ function MemberForm<T extends z.ZodTypeAny>({
           }`}
           disabled={loading}
         >
-          {isAddForm ? 'Add' : 'Edit'} Member {loading ? <Loader /> : ''}
+          {isAddMember ? 'Add' : 'Edit'} Member {loading ? <Loader /> : ''}
         </button>
         <button
           id="cancel"
