@@ -4,6 +4,7 @@ export enum RouteEnum {
   FORGOT_PASSWORD = '/forgot-password',
   DASHBOARD = '/dashboard',
   TEAM = '/dashboard/teams',
+  TEAM_EDIT = '/dashboard/teams/edit',
   MY_LEARNING_PATH = '/dashboard/learning-path',
   PROFILE_SETTINGS = '/dashboard/profile-settings',
   CHANGE_PASSWORD = '/dashboard/profile-settings/change-password',
