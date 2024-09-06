@@ -24,6 +24,19 @@ class addPrimarySkill{
         return cy.get('#primary_skills_input_text').type('ReactJs'+Numeric)
        }
 
+       addPrimarySkillWithOnlySpaces()
+       {
+        return cy.get('#primary_skills_input_text').type('   ')
+       }
+
+       addPrimarySkillWithMoreCharacters()
+       {
+        return cy.get('#primary_skills_input_text').type('Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.')
+       }
+       getErrorMessage() {
+        return cy.get('.mt-1')
+      }
+
        saveButton()
        {
         return cy.get('.space-y-4 > .false').click()

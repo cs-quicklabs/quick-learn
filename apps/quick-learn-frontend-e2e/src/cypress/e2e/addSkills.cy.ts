@@ -22,5 +22,27 @@ describe('Primary Skill Update', () => {
 
   });
 
+  it('Verify User should  not able to add Skill with only spaces', () => {
+    const addSkill = new addPrimarySkill()
+    addSkill.OpenAccountSettings()
+    addSkill.openPrimarySkill()
+    addSkill.clickSkillField()
+    addSkill.addPrimarySkillWithOnlySpaces()
+    addSkill.getErrorMessage().should('contain','This field is mandatory and cannot contain only whitespace')
+
+  });
+
+
+  it('Verify Primary skill field should not accept more than 30 Characters', () => {
+    const addSkill = new addPrimarySkill()
+    addSkill.OpenAccountSettings()
+    addSkill.openPrimarySkill()
+    addSkill.clickSkillField()
+    addSkill.addPrimarySkillWithMoreCharacters()
+    addSkill.getErrorMessage().should('contain','The value should not exceed 30 character')
+
+  });
+
+
 
 })
