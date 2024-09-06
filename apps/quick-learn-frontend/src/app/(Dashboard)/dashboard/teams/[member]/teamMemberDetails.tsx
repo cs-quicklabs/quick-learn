@@ -78,7 +78,7 @@ const TeamMemberDetails = () => {
       <div>
         <Breadcrumb links={links} />
         <div className="items-baseline">
-          <h1 className="flex justify-center text-5xl font-extrabold leading-tight">
+          <h1 className="flex justify-center text-5xl font-extrabold leading-tight capitalize">
             {member?.first_name} {member?.last_name}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate sm:flex sm:items-center sm:justify-center">
