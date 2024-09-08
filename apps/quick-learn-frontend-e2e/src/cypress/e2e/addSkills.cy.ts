@@ -43,6 +43,31 @@ describe('Primary Skill Update', () => {
 
   });
 
+  it('Verify Super admin able to edit Skill', () => {
+    const addSkill = new addPrimarySkill()
+    addSkill.OpenAccountSettings()
+    addSkill.openPrimarySkill()
+    addSkill.editPrimarySkill()
+
+  });
+
+  it('Verify Super admin should not able to edit Skill with empty spaces', () => {
+    const addSkill = new addPrimarySkill()
+    addSkill.OpenAccountSettings()
+    addSkill.openPrimarySkill()
+    addSkill.editPrimarySkillWithEmptySpaces()
+
+  });
+
+  it('Verify Super admin should able to Delete Skill', () => {
+    const addSkill = new addPrimarySkill()
+    addSkill.OpenAccountSettings()
+    addSkill.openPrimarySkill()
+    addSkill.deletePrimarySkill()
+
+  });
+
+
 
 
 })

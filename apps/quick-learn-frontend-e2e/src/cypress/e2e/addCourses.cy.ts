@@ -30,7 +30,7 @@ describe('Primary Skill Update', () => {
     addCourse.getErrorMessage().should('contain','This field is mandatory and cannot contain only whitespace')
 
   });
-  it('Verify User should not able to add empty courses', () => {
+  it('Verify Course field should not expect more than 30 characters', () => {
     const addCourse = new addCourses()
     addCourse.OpenAccountSettings()
     addCourse.openCourses()

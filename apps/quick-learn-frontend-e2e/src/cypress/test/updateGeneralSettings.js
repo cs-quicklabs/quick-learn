@@ -4,7 +4,6 @@ class updateGeneralSettings{
        }
 
        userMenu(){
-        cy.wait(10000)
        return cy.contains('Open user menu')
        }
        getAccountSettings(){
