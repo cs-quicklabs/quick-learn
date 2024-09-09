@@ -18,7 +18,6 @@ export class UpdateTeamDto {
   @ApiProperty({ example: 'https:www.example.com' })
   @IsOptional()
   @IsUrl()
-  @MinLength(1)
   @MaxLength(2048)
-  logo: string;
+  logo?: string;
 }

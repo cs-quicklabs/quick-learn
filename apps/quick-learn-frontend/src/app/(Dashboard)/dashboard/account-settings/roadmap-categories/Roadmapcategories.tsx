@@ -18,6 +18,7 @@ type formOutput = {
 };
 
 const Roadmapcategories = () => {
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
   const [roadmapCategories, setRoadmapCategories] = useState<
@@ -38,17 +39,17 @@ const Roadmapcategories = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsPageLoading(true);
     getRoadmapCategories()
       .then((res) => {
         setRoadmapCategories(res.data.categories);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsPageLoading(false));
   }, []);
 
   const onDelete = (id: number) => {
-    setIsLoading(true);
+    setIsEditLoading(true);
     deleteRoadmapCategory(id)
       .then((res) => {
         const data = roadmapCategories.filter((item) => item.id !== id);
@@ -56,7 +57,7 @@ const Roadmapcategories = () => {
         showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsEditLoading(false));
   };
 
   const onSubmitEditForm = (id: number, data: formOutput) => {
@@ -96,6 +97,7 @@ const Roadmapcategories = () => {
       data={roadmapCategories.map((item) => {
         return { id: item.id, name: item.name };
       })}
+      isPageLoading={isPageLoading}
     />
   );
 };

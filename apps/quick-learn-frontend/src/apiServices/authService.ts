@@ -54,3 +54,10 @@ export const getUser = async (): Promise<AxiosSuccessResponse<TUser>> => {
   );
   return response.data;
 };
+
+export const getAccessToken = async (): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    authApiEnum.REFRESH_TOKEN,
+  );
+  return response.data;
+};

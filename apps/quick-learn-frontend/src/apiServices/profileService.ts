@@ -6,6 +6,7 @@ import {
   TChangePreferenceType,
   TUserProfileType,
 } from '@src/shared/types/profileTypes';
+import { removeEmptyValues } from '@src/utils/helpers';
 
 export const getUserProfileService = async (): Promise<
   AxiosSuccessResponse<TUserProfileType>
@@ -17,11 +18,11 @@ export const getUserProfileService = async (): Promise<
 };
 
 export const updateUserProfileService = async (
-  data: TUserProfileType,
+  data: Partial<TUserProfileType>,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     userApiEnum.GET_USER_PROFILE,
-    data,
+    removeEmptyValues(data),
   );
   return response.data;
 };

@@ -8,6 +8,7 @@ import { PaginatedResult } from '@src/common/interfaces';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { emailSubjects } from '@src/common/constants/email-subject';
 import { UserEntity, UserTypeEntity } from '@src/entities';
+import { SessionService } from '../auth/session.service';
 
 const userRelations = ['user_type', 'skill', 'team'];
 @Injectable()
@@ -20,6 +21,7 @@ export class UsersService extends PaginationService<UserEntity> {
     @InjectRepository(SkillEntity)
     private skillRepository: Repository<SkillEntity>,
     private emailService: EmailService,
+    private sessionService: SessionService,
   ) {
     super(userRepository);
   }
@@ -109,6 +111,7 @@ export class UsersService extends PaginationService<UserEntity> {
 
   async update(uuid: UserEntity['uuid'], payload: Partial<UserEntity>) {
     const user = await this.findOne({ uuid });
+
     if (payload.email) {
       const userByEmail = await this.findOne({ email: payload.email });
       if (userByEmail && user.id != userByEmail.id) {
@@ -117,6 +120,11 @@ export class UsersService extends PaginationService<UserEntity> {
         );
       }
     }
+
+    if (!!payload.user_type_id && payload.user_type_id != user.user_type_id) {
+      await this.sessionService.delete({ user: { id: user.id } });
+    }
+
     return this.userRepository.update({ uuid }, payload);
   }
 

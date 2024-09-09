@@ -8,4 +8,5 @@ export interface FieldConfig {
   type: FieldType;
   placeholder?: string;
   image_type?: FilePathType;
+  disabled?: boolean;
 }

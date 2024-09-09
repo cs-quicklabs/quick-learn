@@ -85,6 +85,7 @@ const ChangePassword = () => {
           onSubmit={onSubmit}
           resetFormOnSubmit
           buttonText="Save"
+          id="changePasswordForm"
         />
       </div>
     </>

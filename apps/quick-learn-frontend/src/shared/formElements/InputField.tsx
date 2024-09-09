@@ -12,6 +12,7 @@ interface Props {
   errorMsg: string;
   placeholder: string;
   disabled?: boolean;
+  id?: string;
 }
 const InputField: FC<Props> = ({
   label,
@@ -22,6 +23,7 @@ const InputField: FC<Props> = ({
   errorMsg,
   disabled = false,
   className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+  id,
 }) => {
   const isFieldPassword = type === 'password';
   const [showPassword, setShowPassword] = useState<boolean>(!isFieldPassword);
@@ -29,13 +31,16 @@ const InputField: FC<Props> = ({
     return (
       <div className="flex items-center space-x-2">
         <input
-          id={name}
+          id={`${id ? id : ''}_checkbox_${name}`}
           type={type}
           className="form-checkbox h-5 w-5 text-blue-600 rounded-full border-gray-300 focus:ring-blue-500"
           {...register(name)}
         />
         <div className="ml-3 text-sm">
-          <label htmlFor={name} className="text-gray-500 dark:text-gray-300">
+          <label
+            htmlFor={`${id ? id : ''}_checkbox_${name}`}
+            className="text-gray-500 dark:text-gray-300"
+          >
             {label}
           </label>
         </div>
@@ -48,14 +53,18 @@ const InputField: FC<Props> = ({
       {label && (
         <label
           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          htmlFor={name}
+          htmlFor={`${id ? id : ''}_input_${
+            showPassword ? 'text' : 'password' + name
+          }`}
         >
           {label}
         </label>
       )}
       <div className="relative">
         <input
-          id={name}
+          id={`${id ? id : ''}_input_${
+            showPassword ? 'text' : 'password' + name
+          }`}
           type={showPassword ? 'text' : 'password'}
           className={`${className} pr-10 ${
             errorMsg ? 'border-red-500' : ''

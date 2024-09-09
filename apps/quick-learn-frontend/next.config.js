@@ -20,6 +20,7 @@ const nextConfig = {
       }
     ]
   },
+  transpilePackages: ['flowbite-react']
 };
 
 const plugins = [

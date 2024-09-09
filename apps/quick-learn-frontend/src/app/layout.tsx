@@ -1,3 +1,4 @@
+import 'flowbite/dist/flowbite.css';
 import './global.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,8 +15,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <ToastContainer />
+      <body className="bg-gray-50">
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={true}
+          pauseOnFocusLoss={false}
+        />
         {children}
       </body>
     </html>

@@ -17,7 +17,7 @@ const isDashboardRoute = (path: string) => path.startsWith(DASHBOARD_ROUTE);
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const authToken = request.cookies.get('access_token')?.value;
+  const authToken = request.cookies.get('refresh_token')?.value;
   // Public routes
   if (isPublicRoute(pathname)) {
     return authToken

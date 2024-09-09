@@ -18,6 +18,7 @@ type AddSkillType = {
 };
 
 const Primaryskills = () => {
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
   const [primarySkills, setPrimarySkills] = useState<TSkill[]>([]);
@@ -53,17 +54,17 @@ const Primaryskills = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsPageLoading(true);
     getSkills()
       .then((res) => {
         setPrimarySkills(res.data.skills);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsPageLoading(false));
   }, []);
 
   const onDelete = (id: number) => {
-    setIsLoading(true);
+    setIsEditLoading(true);
     deleteSkill(id)
       .then((res) => {
         const skill = primarySkills.filter((skill) => skill.id !== id);
@@ -71,7 +72,7 @@ const Primaryskills = () => {
         showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsEditLoading(false));
   };
 
   const inputPlaceHolder = {
@@ -93,6 +94,7 @@ const Primaryskills = () => {
       data={primarySkills.map((item) => {
         return { id: item.id, name: item.name };
       })}
+      isPageLoading={isPageLoading}
     />
   );
 };

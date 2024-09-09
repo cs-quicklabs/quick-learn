@@ -48,7 +48,10 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
                 this.configService.get('database.cert', { infer: true }) ??
                 undefined,
             }
-          : undefined,
+          : {
+              rejectUnauthorized:
+                process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
+            },
       },
     } as TypeOrmModuleOptions;
   }

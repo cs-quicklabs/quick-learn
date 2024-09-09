@@ -4,8 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
-import { useRouter } from 'next/navigation';
-import { Loader } from '@src/shared/components/UIElements';
+import { useParams, useRouter } from 'next/navigation';
+import { Loader, ShowInfoIcon } from '@src/shared/components/UIElements';
+import { Tooltip } from 'flowbite-react';
 
 export interface IMemberFieldConfig<T> {
   label: string;
@@ -18,23 +19,23 @@ export interface IMemberFieldConfig<T> {
 }
 
 export interface IMemberForm<T extends z.ZodTypeAny> {
-  formFields: IMemberFieldConfig<z.infer<T>>[];
-  onSubmit: (data: z.infer<T>) => void;
-  initialValues: z.infer<T>;
-  isAddForm: boolean;
-  schema: T;
-  loading: boolean;
+  readonly formFields: IMemberFieldConfig<z.infer<T>>[];
+  readonly onSubmit: (data: z.infer<T>) => void;
+  readonly initialValues: z.infer<T>;
+  readonly schema: T;
+  readonly loading: boolean;
 }
 
 function MemberForm<T extends z.ZodTypeAny>({
   formFields,
   onSubmit,
   initialValues,
-  isAddForm,
   schema,
   loading,
 }: IMemberForm<T>) {
   const router = useRouter();
+  const params = useParams<{ member: string }>();
+  const isAddMember = params.member === 'add';
   const { control, handleSubmit, setValue } = useForm<z.infer<T>>({
     defaultValues: initialValues,
     resolver: zodResolver(schema),
@@ -60,16 +61,20 @@ function MemberForm<T extends z.ZodTypeAny>({
     useState<IMemberFieldConfig<z.infer<T>>[]>(formFields);
 
   function cancel() {
-    router.push(RouteEnum.TEAM);
+    if (isAddMember) {
+      router.push(RouteEnum.TEAM);
+    } else {
+      router.push(RouteEnum.TEAM + '/' + params.member);
+    }
   }
 
   return (
-    <section className="mt-2 lg:mt-6 mx-auto max-w-2xl">
+    <section className="mx-auto max-w-2xl">
       <h1 className="text-lg font-semibold">
-        {isAddForm ? 'Add New' : 'Edit'} Team Member
+        {isAddMember ? 'Add New' : 'Edit'} Team Member
       </h1>
       <p className="text-gray-600 text-sm">
-        {isAddForm
+        {isAddMember
           ? 'Please fill in details of new team member.'
           : 'Please update details to edit team member.'}
       </p>
@@ -77,7 +82,15 @@ function MemberForm<T extends z.ZodTypeAny>({
         <div className="mt-3 grid gap-4 sm:grid-cols-2 sm:gap-6">
           {fields.map(
             (
-              { name, placeholder, type, label, showPassword, options },
+              {
+                name,
+                placeholder,
+                type,
+                label,
+                showPassword,
+                options,
+                tooltip,
+              },
               index,
             ) => (
               <div key={String(name)}>
@@ -86,7 +99,16 @@ function MemberForm<T extends z.ZodTypeAny>({
                   htmlFor={String(name)}
                 >
                   {label}
-                  {/* TODO: Need to add tooltip */}
+                  {tooltip && (
+                    <div className="flex items-center ml-1">
+                      <Tooltip
+                        content={tooltip}
+                        className="py-1 px-2 max-w-sm text-xs font-normal text-white bg-gray-900 rounded-sm shadow-sm tooltip"
+                      >
+                        <ShowInfoIcon />
+                      </Tooltip>
+                    </div>
+                  )}
                 </label>
                 <Controller
                   name={name as Path<TypeOf<T>>}
@@ -97,15 +119,20 @@ function MemberForm<T extends z.ZodTypeAny>({
                         <select
                           {...field}
                           id={String(name)}
-                          className="appearance-none block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
+                          className="appearance-none block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 capitalize"
                         >
-                          <option value="" disabled>
+                          <option value="" disabled hidden>
                             Select
                           </option>
                           {options?.map((option) => (
                             <option
-                              key={option.id || option.value}
-                              value={option.id || option.value}
+                              key={option.id ?? option.value}
+                              value={option.id ?? option.value}
+                              id={
+                                String(name) +
+                                '_' +
+                                String(option.id ?? option.value)
+                              }
                             >
                               {option.name}
                             </option>
@@ -159,17 +186,17 @@ function MemberForm<T extends z.ZodTypeAny>({
         <button
           id="submit"
           type="submit"
-          className={`rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-6 inline-flex items-center gap-x-2 ${
-            loading ? ' bg-indigo-500 cursor-not-allowed' : ' bg-indigo-600'
+          className={`rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 mt-6 inline-flex items-center gap-x-2 ${
+            loading ? ' bg-primary-800 cursor-not-allowed' : ' bg-primary-700'
           }`}
           disabled={loading}
         >
-          {isAddForm ? 'Add' : 'Edit'} Member {loading ? <Loader /> : ''}
+          {isAddMember ? 'Add' : 'Edit'} Member {loading ? <Loader /> : ''}
         </button>
         <button
           id="cancel"
           type="button"
-          className={`rounded-md bg-white px-3.5 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ml-2 ${
+          className={`rounded-md bg-white px-3.5 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100 hover:text-primary-700 ml-2 ${
             loading ? ' cursor-not-allowed' : ''
           }`}
           disabled={loading}

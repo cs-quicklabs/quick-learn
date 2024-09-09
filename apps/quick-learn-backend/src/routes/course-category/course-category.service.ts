@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCourseCategoryDto } from './dto/create-course-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CourseCategoryEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { UpdateCourseCategoryDto } from './dto/update-course-category.dto';
@@ -17,14 +17,12 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
 
   async create(createCourseCategoryDto: CreateCourseCategoryDto) {
     const foundCourseCategory = await this.repository.count({
-      where: { name: createCourseCategoryDto.name },
+      where: { name: ILike(createCourseCategoryDto.name) },
     });
     if (foundCourseCategory) {
       throw new BadRequestException('Course Category already exists');
     }
-    const courseCategory = await this.repository.create(
-      createCourseCategoryDto,
-    );
+    const courseCategory = this.repository.create(createCourseCategoryDto);
     return await this.repository.save(courseCategory);
   }
 
@@ -34,7 +32,7 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
   ) {
     const courseCategory = await this.get({ id });
     const foundCourseCategory = await this.get({
-      name: createCourseCategoryDto.name,
+      name: ILike(createCourseCategoryDto.name),
     });
     if (foundCourseCategory && foundCourseCategory.id !== courseCategory.id) {
       throw new BadRequestException('Course Category already exists');

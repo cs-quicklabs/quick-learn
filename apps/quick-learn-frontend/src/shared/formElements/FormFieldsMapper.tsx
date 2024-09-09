@@ -21,6 +21,7 @@ interface Props<T extends z.ZodTypeAny> {
   readonly isLoading?: boolean;
   readonly resetFormOnSubmit?: boolean;
   readonly mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
+  readonly id?: string;
 }
 
 function FormFieldsMapper<T extends z.ZodTypeAny>({
@@ -34,6 +35,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   methods,
   resetFormOnSubmit = false,
   mode = 'onBlur',
+  id,
 }: Props<T>) {
   // Call useForm unconditionally
   const defaultMethods = useForm<z.infer<T>>({
@@ -49,7 +51,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     watch,
     getValues,
     reset,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isDirty },
   } = methods || defaultMethods;
 
   const handleFormSubmit = (data: z.infer<T>) => {
@@ -90,14 +92,15 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             type={field.type}
             placeholder={field.placeholder ?? ''}
             register={register}
-            disabled={isLoading}
+            disabled={isLoading || field.disabled}
             errorMsg={errors[field.name]?.message as string}
+            id={id}
           />
         );
       })}
       <button
         type="submit"
-        disabled={buttonDisabled || isLoading || !isValid}
+        disabled={buttonDisabled || isLoading || !isValid || !isDirty}
         className={`${
           bigButton && 'w-full'
         } mt-4 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center align-middle disabled:bg-gray-500`}
