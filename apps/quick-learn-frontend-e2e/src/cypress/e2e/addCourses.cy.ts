@@ -40,6 +40,29 @@ describe('Primary Skill Update', () => {
 
   });
 
+  it('Verify Super admin able to edit Courses Categories', () => {
+    const addCourse = new addCourses()
+    addCourse.OpenAccountSettings()
+    addCourse.openCourses()
+    addCourse.editCourseCategories()
+
+  });
+
+  it('Verify Super admin should not able to edit Course categories with empty spaces', () => {
+    const addCourse = new addCourses()
+    addCourse.OpenAccountSettings()
+    addCourse.openCourses()
+    addCourse.editCourseCategoriesWithEmptySpaces()
+
+  });
+
+  it('Verify Super admin should able to Delete Course categories', () => {
+    const addCourse = new addCourses()
+    addCourse.OpenAccountSettings()
+    addCourse.openCourses()
+    addCourse.deleteCourseCategories()
+  });
+
   
 
 

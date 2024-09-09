@@ -34,11 +34,33 @@ describe('Primary Skill Update', () => {
   it('Verify Course field should not expect more than 30 characters', () => {
     const addRoadmaps = new addRoadmap()
     addRoadmaps.OpenAccountSettings()
-    addRoadmaps.OpenAccountSettings()
     addRoadmaps.openRoadMap()
     addRoadmaps.clickRoadmapField()
     addRoadmaps.addRoadmapCategoriesWithMoreLimit()
     addRoadmaps.getErrorMessage().should('contain','The value should not exceed 30 character')
+
+  });
+  it('Verify Super admin able to edit Roadmap Categories', () => {
+    const addRoadmaps = new addRoadmap()
+    addRoadmaps.OpenAccountSettings()
+    addRoadmaps.openRoadMap()
+    addRoadmaps.editRoadmapCategories()
+
+  });
+
+  it('Verify Super admin should not able to edit Roadmap categories with empty spaces', () => {
+    const addRoadmaps = new addRoadmap()
+    addRoadmaps.OpenAccountSettings()
+    addRoadmaps.openRoadMap()
+    addRoadmaps.editRoadmapCategoriesWithEmptySpaces()
+
+  });
+
+  it('Verify Super admin should able to Delete Roadmap', () => {
+    const addRoadmaps = new addRoadmap()
+    addRoadmaps.OpenAccountSettings()
+    addRoadmaps.openRoadMap()
+    addRoadmaps.deleteRoadMap()
 
   });
 

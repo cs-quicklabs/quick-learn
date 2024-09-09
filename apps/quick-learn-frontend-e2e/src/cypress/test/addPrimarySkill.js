@@ -40,7 +40,6 @@ class addPrimarySkill{
         cy.get('#primary_skills_name_edit').type('React'+Numeric)
         cy.get('.ml-5').click()
 
-
        }
        editPrimarySkillWithEmptySpaces()
        {

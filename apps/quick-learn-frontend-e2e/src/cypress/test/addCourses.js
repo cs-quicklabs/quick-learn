@@ -34,6 +34,7 @@ class addCourses{
 
 
 
+
        saveButton()
        {
         return cy.get('.space-y-4 > .false').click()
@@ -41,6 +42,35 @@ class addCourses{
        getErrorMessage() {
         return cy.get('.mt-1')
       }
+
+
+      editCourseCategories()
+      {
+       const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
+       cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click()
+       cy.get('#courses_categories_name_edit').clear()
+       cy.get('#courses_categories_name_edit').type('React'+Numeric)
+       cy.get('.ml-5').click()
+
+      }
+      editCourseCategoriesWithEmptySpaces()
+      {
+       cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click()
+       cy.get('#courses_categories_name_edit').clear()
+       cy.get('#courses_categories_name_edit').type('    ')
+       cy.get('.ml-5').click()
+       cy.get('td > .px-2').should('contain','This field is mandatory and cannot contain only whitespace')
+
+
+      }
+
+      deleteCourseCategories()
+      {
+       cy.get(':nth-child(3) > .inline-flex > .ml-2').click()
+      }
+      getErrorMessage() {
+       return cy.get('.mt-1')
+     }
 
        OpenAccountSettings()
        {
