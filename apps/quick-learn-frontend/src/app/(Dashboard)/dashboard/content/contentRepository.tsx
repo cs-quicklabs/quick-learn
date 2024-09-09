@@ -20,10 +20,16 @@ const ContentRepository = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isloading, setIsLoading] = useState(false);
   const [roadmaps, setRoadmaps] = useState<TRoadmap[]>([]);
+  // TODO: Need to change this with the actual course data;
+  const [courseCount, setCourseCount] = useState<number>(0);
 
   useEffect(() => {
     getRoadmaps()
       .then((res) => {
+        res.data.forEach((item: TRoadmap) => {
+          item?.courses_count &&
+            setCourseCount((prev) => prev + (item?.courses_count || 0));
+        });
         setRoadmaps(res.data);
       })
       .catch((err) => showApiErrorInToast(err));
@@ -55,7 +61,7 @@ const ContentRepository = () => {
             {en.contentRepository.contentRepository}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate sm:flex sm:items-center sm:justify-center capitalize text-center">
-            ({roadmaps.length} {en.contentRepository.roadmaps}, 20{' '}
+            ({roadmaps.length} {en.contentRepository.roadmaps}, {courseCount}{' '}
             {en.contentRepository.courses})
           </p>
         </div>
@@ -88,7 +94,11 @@ const ContentRepository = () => {
                   stats={
                     (item.courses_count || 0) +
                     ' ' +
-                    en.contentRepository.courses
+                    en.common.courses +
+                    ', ' +
+                    (item.lessons_count || 0) +
+                    ' ' +
+                    en.common.lessons
                   }
                 />
               </li>

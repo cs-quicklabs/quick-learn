@@ -17,5 +17,9 @@ export const en = {
   },
   common: {
     cancel: 'Cancel',
+    lessons: 'lessons',
+    roadmaps: 'roadmaps',
+    courses: 'courses',
+    participants: 'participants',
   },
 };
