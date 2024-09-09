@@ -13,6 +13,9 @@ interface Props {
   placeholder: string;
   disabled?: boolean;
   id?: string;
+  options?: { value: string | number; label: string }[];
+  height?: string;
+  width?: string;
 }
 const InputField: FC<Props> = ({
   label,
@@ -22,8 +25,11 @@ const InputField: FC<Props> = ({
   placeholder,
   errorMsg,
   disabled = false,
-  className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+  className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5',
   id,
+  options,
+  height,
+  width,
 }) => {
   const isFieldPassword = type === 'password';
   const [showPassword, setShowPassword] = useState<boolean>(!isFieldPassword);
@@ -45,6 +51,52 @@ const InputField: FC<Props> = ({
           </label>
         </div>
         {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+      </div>
+    );
+  } else if (type === 'select') {
+    return (
+      <div>
+        <label
+          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          htmlFor={`${id ? id : ''}_select_${name}`}
+        >
+          {label}
+        </label>
+        <select
+          id={`${id ? id : ''}_select_${name}`}
+          className={`${className} dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
+          {...register(name)}
+          defaultValue=""
+        >
+          <option value="" disabled hidden>
+            {placeholder}
+          </option>
+          {options?.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {errorMsg && <p className="mt-1 text-red-500 text-sm">{errorMsg}</p>}
+      </div>
+    );
+  } else if (type === 'textarea') {
+    return (
+      <div>
+        <label
+          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          htmlFor={`${id ? id : ''}_textarea_${name}`}
+        >
+          {label}
+        </label>
+        <textarea
+          id={`${id ? id : ''}_textarea_${name}`}
+          className={`${className} dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
+          placeholder={placeholder}
+          {...register(name)}
+          style={{ height: `${height ?? 'auto'}`, width: `${width ?? 'auto'}` }}
+        />
+        {errorMsg && <p className="mt-1 text-red-500 text-sm">{errorMsg}</p>}
       </div>
     );
   }

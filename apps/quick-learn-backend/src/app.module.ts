@@ -18,6 +18,8 @@ import {
 import { FileModule } from './file/file.module';
 import fileConfig from './file/config/file.config';
 import authConfig from './routes/auth/config/auth.config';
+import { RoadmapModule } from './routes/roadmap/roadmap.module';
+import { MetadataModule } from './routes/metadata/metadata.module';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import authConfig from './routes/auth/config/auth.config';
       },
     }),
     HealthCheckModule,
+    MetadataModule,
     FileModule,
     UsersModule,
     AuthModule,
@@ -40,6 +43,7 @@ import authConfig from './routes/auth/config/auth.config';
     SkillsModule,
     CourseCategoriesModule,
     RoadmapCategoriesModule,
+    RoadmapModule,
   ],
 })
 export class AppModule {}
