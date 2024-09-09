@@ -25,7 +25,7 @@ const Card: FC<CardProps> = ({ id, title, description, stats }) => {
         <p className="font-normal text-sm text-gray-500 line-clamp-2 mt-2">
           {description}
         </p>
-        <p className="font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2">
+        <p className="font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
           {stats}
         </p>
       </div>

@@ -18,6 +18,8 @@ export interface TRoadmap extends TCreateRoadmap {
   roadmap_category: TRoadmapCategories;
   courses: TCourseCategories[];
   courses_count?: number;
+  lessons_count?: number;
+  users_count?: number;
   created_by_user_id: number;
   created_by?: TUser;
   created_at: string;

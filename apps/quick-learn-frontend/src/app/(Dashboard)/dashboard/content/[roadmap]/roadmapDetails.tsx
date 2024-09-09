@@ -92,7 +92,9 @@ const RoadmapDetails = () => {
           </p>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
             ({roadmapData?.courses?.length ?? 0} {en.contentRepository.courses},
-            20 Lessons)
+            &nbsp;
+            {roadmapData?.lessons_count ?? 0} {en.common.lessons}, &nbsp;
+            {roadmapData?.users_count ?? 0} {en.common.participants})
           </p>
           <div className="flex items-center justify-center gap-2 mt-2">
             <Tooltip
