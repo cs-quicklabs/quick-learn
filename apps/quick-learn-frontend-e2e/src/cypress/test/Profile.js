@@ -15,6 +15,7 @@ class profile{
         this.getMyProfile().click()
 
        }
+      
        uploadPic()
        {
         cy.wait(5000)
@@ -22,7 +23,30 @@ class profile{
 
 cy.get('input[type="file"]').selectFile('cypress/fixtures/drdoom.jpg', { force: true });
 
-cy.get('.Toastify').should('contain','File upload successfully')
+cy.get('.Toastify').should('contain','File upload sucessfully')
        }
+
+       UpdateFirstName()
+       {
+          cy.get('#profileSettingsForm_input_text').clear()
+          cy.get('#profileSettingsForm_input_text').type('Divanshu')
+          cy.get('.space-y-4 > .false').click()
+       }
+       UpdateLastName()
+       {
+        cy.get(':nth-child(3) > .relative > #profileSettingsForm_input_text').clear()
+        cy.get(':nth-child(3) > .relative > #profileSettingsForm_input_text').type('Gupta')
+        cy.get('.space-y-4 > .false').click()
+        cy.get('.Toastify').should('contain','Profile updated successfully')
+       }
+       UpdateFirstNameWithEmptySpaces()
+       {
+        cy.wait(5000)
+        const numeric = Math.floor(10000 + Math.random() * 90000).toString();
+          cy.get('#profileSettingsForm_input_text').clear()
+          cy.get('#profileSettingsForm_input_text').type('    ')
+          cy.get('.mt-1').should('contain','First name should only contain alphabetic characters')
+       }
+
     }
     module.exports=profile

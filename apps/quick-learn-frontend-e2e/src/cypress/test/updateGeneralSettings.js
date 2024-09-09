@@ -46,5 +46,12 @@ class updateGeneralSettings{
         this.getError().contains("This field is mandatory and cannot contain only whitespace")
        }
 
+       uploadLogo()
+       {
+        this.userMenu().click()
+        this.getAccountSettings().click()
+        
+       }
+
 }
 module.exports = updateGeneralSettings

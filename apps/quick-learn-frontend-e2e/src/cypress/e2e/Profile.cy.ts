@@ -19,4 +19,25 @@ describe('Primary Skill Update', () => {
     myProfiles.uploadPic()
 
   });
+  it('Verify User should able to Update First name ', () => {
+    const myProfiles = new profile()
+    myProfiles.OpenProfile()
+    myProfiles.getMyProfile()
+    myProfiles.UpdateFirstName()
+
+  });
+  it('Verify User should not able to Update First name with empty spaces  ', () => {
+    const myProfiles = new profile()
+    myProfiles.OpenProfile()
+    myProfiles.getMyProfile()
+    myProfiles.UpdateFirstNameWithEmptySpaces()
+
+  });
+  it('Verify User should able to Update Last name', () => {
+    const myProfiles = new profile()
+    myProfiles.OpenProfile()
+    myProfiles.getMyProfile()
+    myProfiles.UpdateLastName()
+
+  });
 })
