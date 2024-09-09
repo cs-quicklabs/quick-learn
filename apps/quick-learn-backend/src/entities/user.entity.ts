@@ -6,6 +6,7 @@ import {
   DeleteDateColumn,
   Generated,
   BeforeInsert,
+  OneToMany,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { UserTypeEntity } from './user-type.entity';
@@ -13,6 +14,7 @@ import { BaseEntity } from './BaseEntity';
 import { Exclude, Expose } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
 import { SkillEntity } from './skill.entity';
+import { RoadmapEntity } from './roadmap.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -80,4 +82,7 @@ export class UserEntity extends BaseEntity {
 
   @DeleteDateColumn()
   deleted_at: Date;
+
+  @OneToMany(() => RoadmapEntity, (user) => user.created_by)
+  roadmaps: RoadmapEntity[];
 }

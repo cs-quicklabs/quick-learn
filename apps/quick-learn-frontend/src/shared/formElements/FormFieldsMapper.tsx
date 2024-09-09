@@ -6,6 +6,7 @@ import { TypeOf, z } from 'zod';
 import { FieldConfig } from '../types/formTypes';
 import ImageInput from './ImageInput';
 import { Loader } from '../components/UIElements';
+import { en } from '@src/constants/lang/en';
 
 interface Props<T extends z.ZodTypeAny> {
   readonly fields: FieldConfig[];
@@ -22,6 +23,7 @@ interface Props<T extends z.ZodTypeAny> {
   readonly resetFormOnSubmit?: boolean;
   readonly mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
   readonly id?: string;
+  readonly cancelButton?: () => void;
 }
 
 function FormFieldsMapper<T extends z.ZodTypeAny>({
@@ -36,6 +38,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   resetFormOnSubmit = false,
   mode = 'onBlur',
   id,
+  cancelButton,
 }: Props<T>) {
   // Call useForm unconditionally
   const defaultMethods = useForm<z.infer<T>>({
@@ -91,6 +94,10 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             name={field.name}
             type={field.type}
             placeholder={field.placeholder ?? ''}
+            options={field.options}
+            height={field.height}
+            width={field.width}
+            className={field.className}
             register={register}
             disabled={isLoading || field.disabled}
             errorMsg={errors[field.name]?.message as string}
@@ -98,15 +105,29 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
           />
         );
       })}
-      <button
-        type="submit"
-        disabled={buttonDisabled || isLoading || !isValid || !isDirty}
-        className={`${
-          bigButton && 'w-full'
-        } mt-4 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center align-middle disabled:bg-gray-500`}
-      >
-        {isLoading ? <Loader /> : buttonText}
-      </button>
+      <div className="flex flex-wrap mt-4 gap-2">
+        <button
+          type="submit"
+          disabled={buttonDisabled || isLoading || !isValid || !isDirty}
+          className={`${
+            bigButton && 'w-full'
+          } text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center align-middle disabled:bg-gray-500`}
+        >
+          {isLoading ? <Loader /> : buttonText}
+        </button>
+        {cancelButton && (
+          <button
+            className={`${
+              bigButton && 'w-full'
+            } py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200`}
+            onClick={() => cancelButton()}
+            type="button"
+            disabled={isLoading}
+          >
+            {en.common.cancel}
+          </button>
+        )}
+      </div>
     </form>
   );
 }

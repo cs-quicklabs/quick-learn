@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { TeamEntity } from './team.entity';
+import { RoadmapEntity } from './roadmap.entity';
 
 @Entity({ name: 'roadmap_category' })
 export class RoadmapCategoryEntity extends BaseEntity {
@@ -13,4 +14,7 @@ export class RoadmapCategoryEntity extends BaseEntity {
   @ManyToOne(() => TeamEntity, (team) => team.roadmap_categories)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
+
+  @OneToMany(() => RoadmapEntity, (roadmap) => roadmap.roadmap_category)
+  roadmaps: RoadmapEntity[];
 }

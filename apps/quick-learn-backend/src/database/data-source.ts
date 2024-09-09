@@ -38,6 +38,8 @@ export const AppDataSource = new DataSource({
             key: process.env.DATABASE_KEY ?? undefined,
             cert: process.env.DATABASE_CERT ?? undefined,
           }
+        : (process.env.DATABASE_HOST || '').includes('localhost')
+        ? 'undefined'
         : {
             rejectUnauthorized:
               process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
