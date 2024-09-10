@@ -5,4 +5,12 @@ export const en = {
   RoadmapAlreadyExists: 'Roadmap already exists with this name.',
   GetContentRepositoryMetadata: 'Successfully got content repository metadata.',
   RoadmapNotFound: 'Roadmap details not found.',
+  GetAllCourses: 'Successfully got all courses.',
+  GetCourseDetails: 'Successfully got course details.',
+  CreateCourse: 'Successfully created a course.',
+  UpdateCourse: 'Successfully updated a course.',
+  CourseNotFound: 'Course details not found.',
+  InvalidCourseCategory: 'Course category does not exist.',
+  InvalidRoadmap: 'Roadmap does not exist.',
+  courseAlreadyExists: 'Course already exists with this name.',
 };

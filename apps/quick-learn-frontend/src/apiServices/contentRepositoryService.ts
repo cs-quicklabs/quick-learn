@@ -1,5 +1,7 @@
 import {
   TContentRepositoryMetadata,
+  TCourse,
+  TCreateCourse,
   TCreateRoadmap,
   TRoadmap,
 } from '@src/shared/types/contentRepository';
@@ -35,8 +37,8 @@ export const getRoadmap = async (
 
 export const createRoadmap = async (
   data: TCreateRoadmap,
-): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.post<AxiosSuccessResponse>(
+): Promise<AxiosSuccessResponse<TRoadmap>> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse<TRoadmap>>(
     ContentRepositoryApiEnum.ROADMAP,
     data,
   );
@@ -49,6 +51,36 @@ export const updateRoadmap = async (
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.patch<AxiosSuccessResponse>(
     ContentRepositoryApiEnum.ROADMAP + `/${id}`,
+    data,
+  );
+  return response.data;
+};
+
+export const createCourse = async (
+  data: TCreateCourse & { roadmap_id: number },
+): Promise<AxiosSuccessResponse<TCourse>> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse<TCourse>>(
+    ContentRepositoryApiEnum.COURSE,
+    data,
+  );
+  return response.data;
+};
+
+export const getCourse = async (
+  id: string,
+): Promise<AxiosSuccessResponse<TCourse>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<TCourse>>(
+    ContentRepositoryApiEnum.COURSE + `/${id}`,
+  );
+  return response.data;
+};
+
+export const updateCourse = async (
+  id: string,
+  data: TCreateCourse,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.patch<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.COURSE + `/${id}`,
     data,
   );
   return response.data;

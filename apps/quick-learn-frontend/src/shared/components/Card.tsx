@@ -1,4 +1,3 @@
-import { RouteEnum } from '@src/constants/route.enum';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -7,12 +6,13 @@ interface CardProps {
   description: string;
   stats: string;
   id: string;
+  link: string;
 }
 
-const Card: FC<CardProps> = ({ id, title, description, stats }) => {
+const Card: FC<CardProps> = ({ id, title, description, stats, link }) => {
   return (
     <Link
-      href={`${RouteEnum.CONTENT}/${id}`}
+      href={link}
       className="inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full"
     >
       <div className="flex-wrap py-4 px-6 text-gray-900 h-40">

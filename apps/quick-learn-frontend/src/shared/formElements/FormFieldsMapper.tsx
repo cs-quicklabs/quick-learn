@@ -91,6 +91,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
           <InputField
             key={field.name}
             label={field.label}
+            sub_label={field.sub_label}
             name={field.name}
             type={field.type}
             placeholder={field.placeholder ?? ''}

@@ -15,6 +15,6 @@ export class CourseCategoryEntity extends BaseEntity {
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 
-  @OneToMany(() => CourseEntity, (course) => course.category)
+  @OneToMany(() => CourseEntity, (course) => course.course_category)
   courses: CourseEntity[];
 }

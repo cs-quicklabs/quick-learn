@@ -11,6 +11,7 @@ export type FieldType =
 
 export interface FieldConfig {
   label: string;
+  sub_label?: string;
   name: string;
   type: FieldType;
   placeholder?: string;

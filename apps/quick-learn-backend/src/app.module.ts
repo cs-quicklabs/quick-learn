@@ -14,11 +14,12 @@ import {
   SkillsModule,
   CourseCategoriesModule,
   RoadmapCategoriesModule,
+  RoadmapModule,
+  CourseModule,
 } from './routes';
 import { FileModule } from './file/file.module';
 import fileConfig from './file/config/file.config';
 import authConfig from './routes/auth/config/auth.config';
-import { RoadmapModule } from './routes/roadmap/roadmap.module';
 import { MetadataModule } from './routes/metadata/metadata.module';
 
 @Module({
@@ -44,6 +45,7 @@ import { MetadataModule } from './routes/metadata/metadata.module';
     CourseCategoriesModule,
     RoadmapCategoriesModule,
     RoadmapModule,
+    CourseModule,
   ],
 })
 export class AppModule {}
