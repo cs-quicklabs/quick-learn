@@ -10,10 +10,20 @@ export const en = {
     createdThisRoadmapOn: 'created this roadmap on',
     addOnAlreadyExistingCourse: 'Add already existing courses to this roadmap',
     archiveRoadmap: 'Archive Roadmap',
+    editCourse: 'Edit Course',
+    assignToRoadmap: 'Assign to Roadmap',
+    archiveCourse: 'Archive Course',
+  },
+  roadmapDetails: {
+    createNewCourse: 'Create New Course',
   },
   addEditRoadMapModal: {
     addRoadmap: 'Create New Roadmap',
     editRoadmap: 'Edit Roadmap',
+  },
+  addEditCourseModal: {
+    addCourse: 'Create New Course',
+    editCourse: 'Edit Course',
   },
   common: {
     cancel: 'Cancel',
@@ -21,5 +31,10 @@ export const en = {
     roadmaps: 'roadmaps',
     courses: 'courses',
     participants: 'participants',
+    name: 'Name',
+    description: 'Description',
+    roadmapCategory: 'Roadmap Category',
+    rememberMe: 'Remember me',
+    courseCategory: 'Course Category',
   },
 };

@@ -6,6 +6,7 @@ import { FieldValues, UseFormRegister } from 'react-hook-form';
 interface Props {
   label?: string;
   name: string;
+  sub_label?: string;
   type?: FieldType;
   className?: string;
   register: UseFormRegister<FieldValues>;
@@ -20,6 +21,7 @@ interface Props {
 const InputField: FC<Props> = ({
   label,
   name,
+  sub_label,
   type = 'text',
   register,
   placeholder,
@@ -35,21 +37,28 @@ const InputField: FC<Props> = ({
   const [showPassword, setShowPassword] = useState<boolean>(!isFieldPassword);
   if (type === 'checkbox') {
     return (
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center flex-wrap space-x-2">
         <input
           id={`${id ? id : ''}_checkbox_${name}`}
           type={type}
-          className="form-checkbox h-5 w-5 text-blue-600 rounded-full border-gray-300 focus:ring-blue-500"
+          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
           {...register(name)}
         />
         <div className="ml-3 text-sm">
           <label
             htmlFor={`${id ? id : ''}_checkbox_${name}`}
-            className="text-gray-500 dark:text-gray-300"
+            className={
+              sub_label ? 'font-medium text-gray-900' : 'text-gray-500'
+            }
           >
             {label}
           </label>
         </div>
+        {sub_label && (
+          <div className="pl-4 text-xs font-normal text-gray-400">
+            {sub_label}
+          </div>
+        )}
         {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
       </div>
     );

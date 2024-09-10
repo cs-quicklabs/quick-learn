@@ -9,5 +9,6 @@ import { RoadmapCategoriesModule } from '../roadmap-category/roadmap-category.mo
   imports: [TypeOrmModule.forFeature([RoadmapEntity]), RoadmapCategoriesModule],
   providers: [RoadmapService],
   controllers: [RoadmapController],
+  exports: [RoadmapService],
 })
 export class RoadmapModule {}

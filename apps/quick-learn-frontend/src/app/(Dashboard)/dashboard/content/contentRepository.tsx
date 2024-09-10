@@ -4,6 +4,7 @@ import {
   getRoadmaps,
 } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
+import { RouteEnum } from '@src/constants/route.enum';
 import Card from '@src/shared/components/Card';
 import CreateNewCard from '@src/shared/components/CreateNewCard';
 import AddEditRoadMapModal, {
@@ -41,6 +42,7 @@ const ContentRepository = () => {
     createRoadmap(data)
       .then((res) => {
         showApiMessageInToast(res);
+        setRoadmaps((prev) => [res.data, ...prev]);
         setOpenAddModal(false);
       })
       .catch((err) => showApiErrorInToast(err))
@@ -100,6 +102,7 @@ const ContentRepository = () => {
                     ' ' +
                     en.common.lessons
                   }
+                  link={`${RouteEnum.CONTENT}/${item.id}`}
                 />
               </li>
             ))}

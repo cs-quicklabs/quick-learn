@@ -12,15 +12,35 @@ export interface TCreateRoadmap {
   roadmap_category_id: string;
 }
 
+export interface TCreateCourse {
+  name: string;
+  description: string;
+  course_category_id: string;
+  is_community_available: boolean;
+}
+
 export interface TRoadmap extends TCreateRoadmap {
   id: string;
   archived: boolean;
   roadmap_category: TRoadmapCategories;
-  courses: TCourseCategories[];
+  courses: TCourse[];
   courses_count?: number;
   lessons_count?: number;
   users_count?: number;
   created_by_user_id: number;
+  created_by?: TUser;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TCourse extends TCreateCourse {
+  id: string;
+  archived: boolean;
+  roadmaps?: TRoadmap[];
+  course_category: TCourseCategories;
+  created_by_user_id: number;
+  lessons_count?: number;
+  users_count?: number;
   created_by?: TUser;
   created_at: string;
   updated_at: string;
