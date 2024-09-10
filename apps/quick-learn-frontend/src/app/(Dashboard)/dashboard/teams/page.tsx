@@ -193,7 +193,10 @@ const TeamMemberListing = () => {
                       </td>
                       <td className="px-4 py-2">
                         {(user.last_login_timestamp &&
-                          format(user.created_at, DateFormats.shortDate)) ||
+                          format(
+                            user.last_login_timestamp,
+                            DateFormats.shortDate,
+                          )) ||
                           'Not logged in.'}
                       </td>
                       <td className="px-4 py-2">

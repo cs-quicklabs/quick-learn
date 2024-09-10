@@ -33,7 +33,7 @@ export class CourseCategoryController {
     await this.courseCategoryService.create(createCourseCategoryDto);
     const courseCategories = await this.courseCategoryService.getMany(
       {},
-      { updated_at: 'DESC' },
+      { name: 'ASC' },
     );
     return new SuccessResponse('Successfully added course category', {
       categories: courseCategories,
@@ -45,7 +45,7 @@ export class CourseCategoryController {
   async findAll() {
     const courseCategories = await this.courseCategoryService.getMany(
       {},
-      { updated_at: 'DESC' },
+      { name: 'ASC' },
     );
     return new SuccessResponse('Course Categories', {
       categories: courseCategories,

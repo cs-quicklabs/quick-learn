@@ -1,5 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FindOptionsWhere, ILike, MoreThan, Repository } from 'typeorm';
+import {
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ILike,
+  MoreThan,
+  Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { SkillEntity } from '@src/entities/skill.entity';
@@ -84,6 +90,7 @@ export class UsersService extends PaginationService<UserEntity> {
         { email: ILike(`%${paginationDto.q}%`), ...conditions },
         { first_name: ILike(`%${paginationDto.q}%`), ...conditions },
         { last_name: ILike(`%${paginationDto.q}%`), ...conditions },
+        { full_name: ILike(`%${paginationDto.q}%`), ...conditions },
         {
           ...conditions,
           user_type: {
@@ -94,8 +101,20 @@ export class UsersService extends PaginationService<UserEntity> {
       conditions = queryConditions;
     }
 
+    const order: FindOptionsOrder<UserEntity> = {
+      first_name: 'ASC',
+      last_name: 'ASC',
+      last_login_timestamp: 'DESC',
+      created_at: 'DESC',
+    };
+
     if (paginationDto.mode == 'paginate') {
-      return await this.paginate(paginationDto, conditions, [...userRelations]);
+      return await this.paginate(
+        paginationDto,
+        conditions,
+        [...userRelations],
+        order,
+      );
     }
     return await this.userRepository.find({
       where: conditions,
