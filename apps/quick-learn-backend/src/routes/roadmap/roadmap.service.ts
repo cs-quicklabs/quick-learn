@@ -19,7 +19,7 @@ export class RoadmapService extends BasicCrudService<RoadmapEntity> {
     super(repo);
   }
 
-  async getAllMaps(): Promise<RoadmapEntity[]> {
+  async getAllRoadmaps(): Promise<RoadmapEntity[]> {
     return await this.repository
       .createQueryBuilder('roadmap')
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')

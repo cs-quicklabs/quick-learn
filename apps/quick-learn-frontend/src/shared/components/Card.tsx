@@ -6,10 +6,10 @@ interface CardProps {
   description: string;
   stats: string;
   id: string;
-  link: string;
+  link?: string;
 }
 
-const Card: FC<CardProps> = ({ id, title, description, stats, link }) => {
+const Card: FC<CardProps> = ({ id, title, description, stats, link = '#' }) => {
   return (
     <Link
       href={link}

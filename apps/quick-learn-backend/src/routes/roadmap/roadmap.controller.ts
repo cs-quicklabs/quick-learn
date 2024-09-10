@@ -29,7 +29,7 @@ export class RoadmapController {
   @Get()
   @ApiOperation({ summary: 'Get all roadmaps' })
   async getRoadmap() {
-    const roadmaps = await this.service.getAllMaps();
+    const roadmaps = await this.service.getAllRoadmaps();
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
 

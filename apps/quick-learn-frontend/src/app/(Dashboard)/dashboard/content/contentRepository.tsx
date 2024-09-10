@@ -10,7 +10,7 @@ import CreateNewCard from '@src/shared/components/CreateNewCard';
 import AddEditRoadMapModal, {
   AddEditRoadmapData,
 } from '@src/shared/modals/addEditRoadMapModal';
-import { TRoadmap } from '@src/shared/types/contentRepository';
+import { TCourse, TRoadmap } from '@src/shared/types/contentRepository';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -21,15 +21,20 @@ const ContentRepository = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isloading, setIsLoading] = useState(false);
   const [roadmaps, setRoadmaps] = useState<TRoadmap[]>([]);
-  // TODO: Need to change this with the actual course data;
-  const [courseCount, setCourseCount] = useState<number>(0);
+  const [courses, setCourses] = useState<TCourse[]>([]);
 
   useEffect(() => {
     getRoadmaps()
       .then((res) => {
         res.data.forEach((item: TRoadmap) => {
-          item?.courses_count &&
-            setCourseCount((prev) => prev + (item?.courses_count || 0));
+          item?.courses.length > 0 &&
+            setCourses((prev) => {
+              const coursesId = prev.map((course) => course.id);
+              const newCourses = item.courses.filter(
+                (course) => !coursesId.includes(course.id),
+              );
+              return [...prev, ...newCourses];
+            });
         });
         setRoadmaps(res.data);
       })
@@ -37,7 +42,6 @@ const ContentRepository = () => {
   }, []);
 
   function onSubmit(data: AddEditRoadmapData) {
-    console.log(data);
     setIsLoading(true);
     createRoadmap(data)
       .then((res) => {
@@ -63,8 +67,8 @@ const ContentRepository = () => {
             {en.contentRepository.contentRepository}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate sm:flex sm:items-center sm:justify-center capitalize text-center">
-            ({roadmaps.length} {en.contentRepository.roadmaps}, {courseCount}{' '}
-            {en.contentRepository.courses})
+            ({roadmaps.length} {en.contentRepository.roadmaps},{' '}
+            {courses.length ?? 0} {en.contentRepository.courses})
           </p>
         </div>
       </div>
@@ -74,7 +78,7 @@ const ContentRepository = () => {
             {en.contentRepository.allRoadmaps}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate capitalize">
-            (10 {en.contentRepository.roadmaps})
+            ({roadmaps.length ?? 0} {en.contentRepository.roadmaps})
           </p>
         </div>
       </div>
@@ -115,21 +119,28 @@ const ContentRepository = () => {
             {en.contentRepository.allCourses}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
-            (20 {en.contentRepository.courses})
+            ({courses.length ?? 0} {en.contentRepository.courses})
           </p>
         </div>
       </div>
-      {/* <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
+      <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
         <div id="created-spaces">
           <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-              <li key={item}>
-                <Card />
+            {courses.map((item) => (
+              <li key={item.id}>
+                <Card
+                  title={item.name}
+                  description={item.description}
+                  id={item.id}
+                  stats={
+                    '' + (item.lessons_count ?? 0) + ' ' + en.common.lessons
+                  }
+                />
               </li>
             ))}
           </ul>
         </div>
-      </div> */}
+      </div>
     </>
   );
 };
