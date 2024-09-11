@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+'use client';
+import React, { FC, useEffect } from 'react';
 import Sidebar, { TNavLink } from '@src/shared/components/Sidebar';
 import { RouteEnum } from '@src/constants/route.enum';
 import {
@@ -9,7 +10,7 @@ import {
 } from '@heroicons/react/20/solid';
 import { ChildrenProp } from '@src/shared/interfaces/propInterface';
 
-const layout: FC<ChildrenProp> = ({ children }) => {
+const Layout: FC<ChildrenProp> = ({ children }) => {
   const navLinks: TNavLink[] = [
     {
       title: 'General',
@@ -44,6 +45,17 @@ const layout: FC<ChildrenProp> = ({ children }) => {
       ),
     },
   ];
+
+  useEffect(() => {
+    // Set body background color when the component mounts
+    document.body.style.backgroundColor = 'white';
+
+    // Cleanup function: Change background when leaving the page
+    return () => {
+      document.body.style.backgroundColor = '';
+    };
+  }, []);
+
   return (
     <main className="max-w-7xl mx-auto pb-10 lg:py-6 lg:px-8">
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
@@ -58,4 +70,4 @@ const layout: FC<ChildrenProp> = ({ children }) => {
   );
 };
 
-export default layout;
+export default Layout;

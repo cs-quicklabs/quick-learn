@@ -37,11 +37,11 @@ const InputField: FC<Props> = ({
   const [showPassword, setShowPassword] = useState<boolean>(!isFieldPassword);
   if (type === 'checkbox') {
     return (
-      <div className="flex items-center flex-wrap space-x-2">
+      <div className="flex items-start space-x-2">
         <input
           id={`${id ? id : ''}_checkbox_${name}`}
           type={type}
-          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+          className="mt-0.5 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
           {...register(name)}
         />
         <div className="ml-3 text-sm">
@@ -53,12 +53,10 @@ const InputField: FC<Props> = ({
           >
             {label}
           </label>
+          {sub_label && (
+            <div className="text-xs font-normal text-gray-400">{sub_label}</div>
+          )}
         </div>
-        {sub_label && (
-          <div className="pl-4 text-xs font-normal text-gray-400">
-            {sub_label}
-          </div>
-        )}
         {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
       </div>
     );
