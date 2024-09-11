@@ -31,7 +31,7 @@ export class SkillsController {
     @Body() createSkillDto: CreateSkillDto,
   ): Promise<SuccessResponse> {
     await this.skillsService.create(createSkillDto);
-    const skills = await this.skillsService.getMany({}, { updated_at: 'DESC' });
+    const skills = await this.skillsService.getMany({}, { name: 'ASC' });
     return new SuccessResponse('Primary skill has been added successfully.', {
       skills,
     });
@@ -40,7 +40,7 @@ export class SkillsController {
   @Get()
   @ApiOperation({ summary: 'get all skills' })
   async findAll() {
-    const skills = await this.skillsService.getMany({}, { updated_at: 'DESC' });
+    const skills = await this.skillsService.getMany({}, { name: 'ASC' });
     return new SuccessResponse('Successfully retrieved primary skills.', {
       skills,
     });

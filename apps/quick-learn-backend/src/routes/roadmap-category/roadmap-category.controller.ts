@@ -35,7 +35,7 @@ export class RoadmapCategoryController {
     await this.roadmapCategoryService.create(createRoadmapCategoryDto);
     const roadmapCategories = await this.roadmapCategoryService.getMany(
       {},
-      { updated_at: 'DESC' },
+      { name: 'ASC' },
     );
     return new SuccessResponse('Successfully created roadmap category.', {
       categories: roadmapCategories,
@@ -47,7 +47,7 @@ export class RoadmapCategoryController {
   async findAll() {
     const roadmapCategories = await this.roadmapCategoryService.getMany(
       {},
-      { updated_at: 'DESC' },
+      { name: 'ASC' },
     );
     return new SuccessResponse('Sucessfully retreived roadmap categories.', {
       categories: roadmapCategories,

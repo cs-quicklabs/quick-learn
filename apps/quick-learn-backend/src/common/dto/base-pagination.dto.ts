@@ -17,16 +17,6 @@ export class BasePaginationDto {
   @Type(() => Number)
   limit?: number = 10;
 
-  @ApiProperty({ example: 'updated_at' })
-  @IsOptional()
-  @IsString()
-  sortBy?: string;
-
-  @ApiProperty({ example: 'DESC' })
-  @IsOptional()
-  @IsIn(['ASC', 'DESC'])
-  sortOrder?: 'ASC' | 'DESC';
-
   @ApiProperty({ example: 'paginate' })
   @IsOptional()
   @IsString()
