@@ -129,8 +129,9 @@ export class RoadmapService extends BasicCrudService<RoadmapEntity> {
     if (!roadmap) {
       throw new BadRequestException(en.RoadmapNotFound);
     }
-    roadmap.courses.map((course) => {
-      return { ...course, archived: true };
+    roadmap.courses.forEach((course) => {
+      course.archived = true;
+      delete course.updated_at;
     });
     roadmap.archived = true;
     delete roadmap.updated_at;

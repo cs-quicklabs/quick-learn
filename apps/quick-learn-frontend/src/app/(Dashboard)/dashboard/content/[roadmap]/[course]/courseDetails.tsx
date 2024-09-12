@@ -31,7 +31,7 @@ import {
 } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
 import { Tooltip } from 'flowbite-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 const defaultlinks: TBreadcrumb[] = [
@@ -39,9 +39,12 @@ const defaultlinks: TBreadcrumb[] = [
 ];
 
 const CourseDetails = () => {
-  const allRoadmapCategories = useDashboardStore(
-    (state) => state.metadata.contentRepository.roadmap_categories,
+  const router = useRouter();
+  const { setContentRepositoryMetadata, metadata } = useDashboardStore(
+    (state) => state,
   );
+  const allCourseCategories = metadata.contentRepository.course_categories;
+  const allRoadmapCategories = metadata.contentRepository.roadmap_categories;
   const params = useParams<{ roadmap: string; course: string }>();
   const courseId = params.course;
   const roadmapId = params.roadmap;
@@ -151,6 +154,14 @@ const CourseDetails = () => {
     archiveCourse(courseId)
       .then((res) => {
         showApiMessageInToast(res);
+        allCourseCategories.forEach((item) => {
+          item.courses = item.courses.filter((ele) => ele.id !== courseId);
+        });
+        setContentRepositoryMetadata({
+          ...metadata.contentRepository,
+          course_categories: allCourseCategories,
+        });
+        router.replace(RouteEnum.CONTENT);
         setShowConformationModal(false);
       })
       .catch((err) => showApiErrorInToast(err))

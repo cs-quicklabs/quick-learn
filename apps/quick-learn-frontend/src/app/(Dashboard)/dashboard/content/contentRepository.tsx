@@ -11,6 +11,7 @@ import AddEditRoadMapModal, {
   AddEditRoadmapData,
 } from '@src/shared/modals/addEditRoadMapModal';
 import { TCourse, TRoadmap } from '@src/shared/types/contentRepository';
+import useDashboardStore from '@src/store/dashboard.store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -18,6 +19,9 @@ import {
 import { useEffect, useState } from 'react';
 
 const ContentRepository = () => {
+  const allCourseCategories = useDashboardStore(
+    (state) => state.metadata.contentRepository.course_categories,
+  );
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isloading, setIsLoading] = useState(false);
   const [roadmaps, setRoadmaps] = useState<TRoadmap[]>([]);
@@ -26,20 +30,19 @@ const ContentRepository = () => {
   useEffect(() => {
     getRoadmaps()
       .then((res) => {
-        res.data.forEach((item: TRoadmap) => {
-          item?.courses.length > 0 &&
-            setCourses((prev) => {
-              const coursesId = prev.map((course) => course.id);
-              const newCourses = item.courses.filter(
-                (course) => !coursesId.includes(course.id),
-              );
-              return [...prev, ...newCourses];
-            });
-        });
         setRoadmaps(res.data);
       })
       .catch((err) => showApiErrorInToast(err));
   }, []);
+
+  useEffect(() => {
+    const data: TCourse[] = [];
+    allCourseCategories.forEach((category) => {
+      if (!category.courses) category.courses = [];
+      data.push(...category.courses);
+    });
+    setCourses(data);
+  }, [allCourseCategories]);
 
   function onSubmit(data: AddEditRoadmapData) {
     setIsLoading(true);

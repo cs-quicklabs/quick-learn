@@ -39,7 +39,9 @@ export class RoadmapEntity extends BaseEntity {
   @JoinColumn({ name: 'roadmap_category_id' })
   roadmap_category: RoadmapCategoryEntity;
 
-  @ManyToMany(() => CourseEntity, (course) => course.roadmaps)
+  @ManyToMany(() => CourseEntity, (course) => course.roadmaps, {
+    cascade: true,
+  })
   @JoinTable({
     name: 'roadmap_courses',
     joinColumn: {

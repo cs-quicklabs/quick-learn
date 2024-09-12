@@ -47,9 +47,11 @@ const defaultlinks: TBreadcrumb[] = [
 const RoadmapDetails = () => {
   const router = useRouter();
   const { roadmap } = useParams<{ roadmap: string }>();
-  const allCourseCategories = useDashboardStore(
-    (state) => state.metadata.contentRepository.course_categories,
+  const { setContentRepositoryMetadata, metadata } = useDashboardStore(
+    (state) => state,
   );
+  const allCourseCategories = metadata.contentRepository.course_categories;
+  const allRoadmapCategories = metadata.contentRepository.roadmap_categories;
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [roadmapData, setRoadmapData] = useState<TRoadmap>();
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
@@ -150,7 +152,22 @@ const RoadmapDetails = () => {
     archiveRoadmap(roadmap)
       .then((res) => {
         showApiMessageInToast(res);
+        const coursesId = roadmapData?.courses.map((item) => item.id) || [];
+        allRoadmapCategories.forEach((item) => {
+          item.roadmaps = item.roadmaps.filter((ele) => ele.id !== roadmap);
+        });
+        allCourseCategories.forEach((item) => {
+          item.courses = item.courses.filter(
+            (ele) => !coursesId.includes(ele.id),
+          );
+        });
+        setContentRepositoryMetadata({
+          ...metadata.contentRepository,
+          roadmap_categories: allRoadmapCategories,
+          course_categories: allCourseCategories,
+        });
         setShowConformationModal(false);
+        router.replace(RouteEnum.CONTENT);
         getRoadmapData();
       })
       .catch((err) => showApiErrorInToast(err))
