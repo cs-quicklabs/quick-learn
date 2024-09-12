@@ -13,6 +13,7 @@ import {
   CustomClipBoardIcon,
   FullPageLoader,
 } from '@src/shared/components/UIElements';
+import { en } from '@src/constants/lang/en';
 
 const TeamMemberListing = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
@@ -204,6 +205,16 @@ const TeamMemberListing = () => {
                       </td>
                     </tr>
                   ))}
+                  {data.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={7}
+                        className="px-4 py-2 font-medium text-gray-900 text-center"
+                      >
+                        {en.common.noResultFound}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -215,7 +226,7 @@ const TeamMemberListing = () => {
           <p className="text-sm text-gray-700">
             Showing{' '}
             <span className="font-medium">
-              {page > 1 ? (page - 1) * 10 + 1 : 1}
+              {page > 1 ? (page - 1) * 10 + 1 : total === 0 ? 0 : 1}
             </span>{' '}
             to{' '}
             <span className="font-medium">

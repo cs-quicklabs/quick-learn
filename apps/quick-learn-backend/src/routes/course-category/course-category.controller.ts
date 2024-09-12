@@ -75,7 +75,7 @@ export class CourseCategoryController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete the course category.' })
   async remove(@Param('id') id: string) {
-    await this.courseCategoryService.delete({ id: +id });
+    await this.courseCategoryService.deleteCourseCategory(+id);
     return new SuccessResponse('Successfully deleted course category.');
   }
 }
