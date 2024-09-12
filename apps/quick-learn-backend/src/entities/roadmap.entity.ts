@@ -23,7 +23,7 @@ export class RoadmapEntity extends BaseEntity {
   roadmap_category_id: number;
 
   @Column({ type: 'boolean', default: false })
-  achived: boolean;
+  archived: boolean;
 
   @Column({ type: 'int', nullable: false })
   created_by_user_id: number;
@@ -51,5 +51,5 @@ export class RoadmapEntity extends BaseEntity {
       referencedColumnName: 'id',
     },
   })
-  courses: RoadmapEntity[];
+  courses: CourseEntity[];
 }

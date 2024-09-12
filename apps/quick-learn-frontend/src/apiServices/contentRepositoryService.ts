@@ -85,3 +85,47 @@ export const updateCourse = async (
   );
   return response.data;
 };
+
+export const assignCoursesToRoadmap = async (
+  id: string,
+  data: string[],
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.patch<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.ROADMAP + `/${id}/assign`,
+    {
+      courses: data,
+    },
+  );
+  return response.data;
+};
+
+export const assignRoadmapsToCourse = async (
+  id: string,
+  data: string[],
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.patch<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.COURSE + `/${id}/assign`,
+    {
+      roadmaps: data,
+    },
+  );
+  return response.data;
+};
+
+export const archiveRoadmap = async (
+  id: string,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.delete<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.ROADMAP + `/${id}`,
+  );
+  return response.data;
+};
+
+export const archiveCourse = async (
+  id: string,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.delete<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.COURSE + `/${id}`,
+  );
+  return response.data;
+};

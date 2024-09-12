@@ -5,6 +5,8 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
+  archiveRoadmap,
+  assignCoursesToRoadmap,
   createCourse,
   getRoadmap,
   updateRoadmap,
@@ -36,7 +38,7 @@ import {
 import { format } from 'date-fns';
 import { Tooltip } from 'flowbite-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
@@ -62,11 +64,7 @@ const RoadmapDetails = () => {
   const [showConformationModal, setShowConformationModal] =
     useState<boolean>(false);
 
-  useEffect(() => {
-    if (!parseInt(roadmap)) {
-      router.replace(RouteEnum.CONTENT);
-      return;
-    }
+  const getRoadmapData = useCallback(async () => {
     setIsPageLoading(true);
     getRoadmap(roadmap)
       .then((res) => {
@@ -78,7 +76,7 @@ const RoadmapDetails = () => {
             link: `${RouteEnum.CONTENT}/${roadmap}`,
           },
         ]);
-        if (res.data.courses.length > 0) {
+        if (res.data.courses.length > -1) {
           setCourses(res.data.courses);
         }
       })
@@ -86,7 +84,15 @@ const RoadmapDetails = () => {
         showApiErrorInToast(err);
       })
       .finally(() => setIsPageLoading(false));
-  }, [roadmap, router]);
+  }, [roadmap]);
+
+  useEffect(() => {
+    if (!parseInt(roadmap)) {
+      router.replace(RouteEnum.CONTENT);
+      return;
+    }
+    getRoadmapData();
+  }, [roadmap, router, getRoadmapData]);
 
   useEffect(() => {
     const data = allCourseCategories.map((item) => {
@@ -128,11 +134,27 @@ const RoadmapDetails = () => {
   }
 
   function assignCourses(data: string[]) {
-    console.log(data);
+    setIsLoading(true);
+    assignCoursesToRoadmap(roadmap, data)
+      .then((res) => {
+        showApiMessageInToast(res);
+        SetOpenAssignModal(false);
+        getRoadmapData();
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
   }
 
   function onArchive() {
-    console.log('clicked on archieved');
+    setIsLoading(true);
+    archiveRoadmap(roadmap)
+      .then((res) => {
+        showApiMessageInToast(res);
+        setShowConformationModal(false);
+        getRoadmapData();
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
   }
 
   return (

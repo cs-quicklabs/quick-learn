@@ -5,6 +5,8 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
+  archiveCourse,
+  assignRoadmapsToCourse,
   getCourse,
   updateCourse,
 } from '@src/apiServices/contentRepositoryService';
@@ -23,11 +25,14 @@ import {
   TCreateCourse,
 } from '@src/shared/types/contentRepository';
 import useDashboardStore from '@src/store/dashboard.store';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
 import { format } from 'date-fns';
 import { Tooltip } from 'flowbite-react';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
@@ -52,7 +57,8 @@ const CourseDetails = () => {
   const [showConformationModal, setShowConformationModal] =
     useState<boolean>(false);
 
-  useEffect(() => {
+  const getCourseDetails = useCallback(() => {
+    if (!courseId) return;
     setIsPageLoading(true);
     getCourse(courseId)
       .then((res) => {
@@ -63,6 +69,10 @@ const CourseDetails = () => {
       })
       .finally(() => setIsPageLoading(false));
   }, [courseId]);
+
+  useEffect(() => {
+    getCourseDetails();
+  }, [getCourseDetails]);
 
   useEffect(() => {
     const data = allRoadmapCategories.map((item) => {
@@ -125,11 +135,26 @@ const CourseDetails = () => {
   }
 
   function assignRoadmaps(data: string[]) {
-    console.log(data);
+    setIsLoading(true);
+    assignRoadmapsToCourse(courseId, data)
+      .then((res) => {
+        showApiMessageInToast(res);
+        SetOpenAssignModal(false);
+        getCourseDetails();
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
   }
 
   function onArchive() {
-    console.log('clicked on archieved');
+    setIsLoading(true);
+    archiveCourse(courseId)
+      .then((res) => {
+        showApiMessageInToast(res);
+        setShowConformationModal(false);
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
   }
 
   return (

@@ -1,12 +1,18 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike } from 'typeorm';
+import { FindOptionsWhere, ILike, In } from 'typeorm';
 import { BasicCrudService } from '@src/common/services';
 import { CourseEntity, UserEntity } from '@src/entities';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CourseCategoryService } from '../course-category/course-category.service';
 import { RoadmapService } from '../roadmap/roadmap.service';
 import { en } from '@src/lang/en';
+import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -14,6 +20,7 @@ const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 export class CourseService extends BasicCrudService<CourseEntity> {
   constructor(
     @InjectRepository(CourseEntity) repo,
+    @Inject(forwardRef(() => RoadmapService))
     private roadmapService: RoadmapService,
     private courseCategoryService: CourseCategoryService,
   ) {
@@ -40,8 +47,6 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     const courseCategory = await this.courseCategoryService.get({
       id: +createCourseDto.course_category_id,
     });
-
-    console.log('courseCategory', courseCategory);
 
     if (!courseCategory) {
       throw new BadRequestException(en.InvalidCourseCategory);
@@ -116,5 +121,33 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       course_category_id:
         +updateCourseDto.course_category_id || course.course_category_id,
     });
+  }
+
+  async assignRoadmapCourse(
+    id: number,
+    assignRoadmapsToCourseDto: AssignRoadmapsToCourseDto,
+  ): Promise<void> {
+    const course = await this.get({ id });
+    if (!course) {
+      throw new BadRequestException(en.CourseNotFound);
+    }
+
+    const roadmaps = await this.roadmapService.getMany({
+      id: In(assignRoadmapsToCourseDto.roadmaps),
+    });
+
+    if (roadmaps.length !== assignRoadmapsToCourseDto.roadmaps.length) {
+      throw new BadRequestException(en.invalidRoadmaps);
+    }
+
+    await this.repository.save({ ...course, roadmaps });
+  }
+
+  async archiveCourse(id: number): Promise<void> {
+    const course = await this.getCourseDetails({ id });
+    if (!course) {
+      throw new BadRequestException(en.CourseNotFound);
+    }
+    await this.update({ id }, { archived: true });
   }
 }

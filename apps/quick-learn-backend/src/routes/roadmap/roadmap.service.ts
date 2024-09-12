@@ -6,7 +6,9 @@ import { CreateRoadmapDto } from './dto/create-roadmap.dto';
 import { UpdateRoadmapDto } from './dto/update-roadmap.dto';
 import { RoadmapCategoryService } from '../roadmap-category/roadmap-category.service';
 import { en } from '@src/lang/en';
-import { FindOptionsWhere, ILike } from 'typeorm';
+import { FindOptionsWhere, ILike, In } from 'typeorm';
+import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
+import { CourseService } from '../course/course.service';
 
 const roadmapRelations = ['roadmap_category', 'courses', 'created_by'];
 
@@ -15,6 +17,7 @@ export class RoadmapService extends BasicCrudService<RoadmapEntity> {
   constructor(
     @InjectRepository(RoadmapEntity) repo,
     private roadmapCategoryService: RoadmapCategoryService,
+    private courseService: CourseService,
   ) {
     super(repo);
   }
@@ -22,9 +25,21 @@ export class RoadmapService extends BasicCrudService<RoadmapEntity> {
   async getAllRoadmaps(): Promise<RoadmapEntity[]> {
     return await this.repository
       .createQueryBuilder('roadmap')
+      .andWhere('roadmap.archived = :archived', { archived: false })
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
-      .leftJoinAndSelect('roadmap.courses', 'courses')
-      .loadRelationCountAndMap('roadmap.courses_count', 'roadmap.courses')
+      .leftJoinAndSelect(
+        'roadmap.courses',
+        'courses',
+        'courses.archived = :archived',
+        { archived: false },
+      )
+      .loadRelationCountAndMap(
+        'roadmap.courses_count',
+        'roadmap.courses',
+        'courses',
+        (qb) =>
+          qb.andWhere('courses.archived = :archived', { archived: false }),
+      )
       .orderBy('roadmap.created_at', 'DESC')
       .getMany();
   }
@@ -64,6 +79,9 @@ export class RoadmapService extends BasicCrudService<RoadmapEntity> {
     if (!roadmaps) {
       throw new BadRequestException(en.RoadmapNotFound);
     }
+
+    roadmaps.courses = roadmaps.courses.filter((course) => !course.archived);
+
     return roadmaps;
   }
 
@@ -104,5 +122,35 @@ export class RoadmapService extends BasicCrudService<RoadmapEntity> {
     );
 
     return await this.get({ id });
+  }
+
+  async archiveRoadmap(id: number) {
+    const roadmap = await this.get({ id }, ['courses']);
+    if (!roadmap) {
+      throw new BadRequestException(en.RoadmapNotFound);
+    }
+    roadmap.courses.map((course) => {
+      return { ...course, archived: true };
+    });
+    roadmap.archived = true;
+    delete roadmap.updated_at;
+    await this.repository.save(roadmap);
+  }
+
+  async assignRoadmap(id: number, assingCourses: AssignCoursesToRoadmapDto) {
+    const roadmap = await this.get({ id });
+    if (!roadmap) {
+      throw new BadRequestException(en.RoadmapNotFound);
+    }
+
+    const courses = await this.courseService.getMany({
+      id: In(assingCourses.courses),
+    });
+
+    if (courses.length !== assingCourses.courses.length) {
+      throw new BadRequestException(en.invalidCourses);
+    }
+
+    await this.repository.save({ ...roadmap, courses });
   }
 }

@@ -1,6 +1,7 @@
 export const en = {
   GetAllRoapmaps: 'Successfully got all roadmaps.',
   CreateRoadmap: 'Successfully created a roadmap.',
+  updateRoadmap: 'Successfully updated a roadmap.',
   InvalidRoadmapCategory: 'Roadmap category does not exist.',
   RoadmapAlreadyExists: 'Roadmap already exists with this name.',
   GetContentRepositoryMetadata: 'Successfully got content repository metadata.',
@@ -12,5 +13,9 @@ export const en = {
   CourseNotFound: 'Course details not found.',
   InvalidCourseCategory: 'Course category does not exist.',
   InvalidRoadmap: 'Roadmap does not exist.',
+  invalidRoadmaps: 'Roadmaps does not exist.',
   courseAlreadyExists: 'Course already exists with this name.',
+  archiveRoadmap: 'Successfully archived roadmap.',
+  archiveCourse: 'Successfully archived course.',
+  invalidCourses: 'Courses does not exist.',
 };
