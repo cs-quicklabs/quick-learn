@@ -14,6 +14,7 @@ import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { CourseCategoryService } from './course-category.service';
 import { UpdateCourseCategoryDto } from './dto/update-course-category.dto';
+import { en } from '@src/lang/en';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/course-categories
 @ApiTags('Course Categories')
@@ -69,13 +70,13 @@ export class CourseCategoryController {
       +id,
       updateCourseCategoryDto,
     );
-    return new SuccessResponse('Successfully updated course category.');
+    return new SuccessResponse(en.successUpdateCourse);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete the course category.' })
   async remove(@Param('id') id: string) {
     await this.courseCategoryService.deleteCourseCategory(+id);
-    return new SuccessResponse('Successfully deleted course category.');
+    return new SuccessResponse(en.successDeleteCourse);
   }
 }
