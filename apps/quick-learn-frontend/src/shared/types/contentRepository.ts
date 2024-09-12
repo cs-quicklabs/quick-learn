@@ -45,3 +45,11 @@ export interface TCourse extends TCreateCourse {
   created_at: string;
   updated_at: string;
 }
+
+export type TAssignModalMetadata = {
+  name: string;
+  list: {
+    value: number;
+    name: string;
+  }[];
+};

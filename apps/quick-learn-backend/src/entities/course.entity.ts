@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
 import { CourseCategoryEntity } from './course-category.entity';
 import { RoadmapEntity } from './roadmap.entity';
 import { BaseEntity } from './BaseEntity';
@@ -23,7 +16,7 @@ export class CourseEntity extends BaseEntity {
   course_category_id: number;
 
   @Column({ type: 'bool', default: false })
-  acheived: boolean;
+  archived: boolean;
 
   @Column({ type: 'bool', default: false })
   is_community_available: boolean;
@@ -43,16 +36,5 @@ export class CourseEntity extends BaseEntity {
   course_category: CourseCategoryEntity;
 
   @ManyToMany(() => RoadmapEntity, (roadmap) => roadmap.courses)
-  @JoinTable({
-    name: 'roadmap_courses',
-    inverseJoinColumn: {
-      name: 'roadmap_id',
-      referencedColumnName: 'id',
-    },
-    joinColumn: {
-      name: 'course_id',
-      referencedColumnName: 'id',
-    },
-  })
   roadmaps: RoadmapEntity[];
 }

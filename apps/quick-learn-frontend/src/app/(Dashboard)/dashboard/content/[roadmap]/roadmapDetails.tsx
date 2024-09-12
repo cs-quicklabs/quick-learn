@@ -5,6 +5,8 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
+  archiveRoadmap,
+  assignCoursesToRoadmap,
   createCourse,
   getRoadmap,
   updateRoadmap,
@@ -18,28 +20,38 @@ import CreateNewCard from '@src/shared/components/CreateNewCard';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import AddEditCourseModal from '@src/shared/modals/addEditCourseModal';
 import AddEditRoadMapModal from '@src/shared/modals/addEditRoadMapModal';
+import AssignDataModal from '@src/shared/modals/assignDataModal';
+import ConformationModal from '@src/shared/modals/conformationModal';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import {
+  TAssignModalMetadata,
   TCourse,
   TCreateCourse,
   TCreateRoadmap,
   TRoadmap,
 } from '@src/shared/types/contentRepository';
+import useDashboardStore from '@src/store/dashboard.store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
 import { Tooltip } from 'flowbite-react';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
 const RoadmapDetails = () => {
+  const router = useRouter();
   const { roadmap } = useParams<{ roadmap: string }>();
+  const { setContentRepositoryMetadata, metadata } = useDashboardStore(
+    (state) => state,
+  );
+  const allCourseCategories = metadata.contentRepository.course_categories;
+  const allRoadmapCategories = metadata.contentRepository.roadmap_categories;
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [roadmapData, setRoadmapData] = useState<TRoadmap>();
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
@@ -47,8 +59,14 @@ const RoadmapDetails = () => {
   const [openAddCourseModal, setOpenAddCourseModal] = useState(false);
   const [isloading, setIsLoading] = useState(false);
   const [courses, setCourses] = useState<TCourse[]>([]);
+  const [openAssignModal, SetOpenAssignModal] = useState<boolean>(false);
+  const [courseCategoriesData, setCourseCategoriesData] = useState<
+    TAssignModalMetadata[]
+  >([]);
+  const [showConformationModal, setShowConformationModal] =
+    useState<boolean>(false);
 
-  useEffect(() => {
+  const getRoadmapData = useCallback(async () => {
     setIsPageLoading(true);
     getRoadmap(roadmap)
       .then((res) => {
@@ -60,7 +78,7 @@ const RoadmapDetails = () => {
             link: `${RouteEnum.CONTENT}/${roadmap}`,
           },
         ]);
-        if (res.data.courses.length > 0) {
+        if (res.data.courses.length > -1) {
           setCourses(res.data.courses);
         }
       })
@@ -69,6 +87,29 @@ const RoadmapDetails = () => {
       })
       .finally(() => setIsPageLoading(false));
   }, [roadmap]);
+
+  useEffect(() => {
+    if (!parseInt(roadmap)) {
+      router.replace(RouteEnum.CONTENT);
+      return;
+    }
+    getRoadmapData();
+  }, [roadmap, router, getRoadmapData]);
+
+  useEffect(() => {
+    const data = allCourseCategories.map((item) => {
+      return {
+        name: item.name,
+        list: item.courses.map((course) => {
+          return {
+            name: course.name,
+            value: Number(course.id),
+          };
+        }),
+      };
+    });
+    setCourseCategoriesData(data.filter((data) => data.list.length > 0));
+  }, [allCourseCategories]);
 
   function onEdit(data: TCreateRoadmap) {
     setIsLoading(true);
@@ -94,6 +135,45 @@ const RoadmapDetails = () => {
       .finally(() => setIsLoading(false));
   }
 
+  function assignCourses(data: string[]) {
+    setIsLoading(true);
+    assignCoursesToRoadmap(roadmap, data)
+      .then((res) => {
+        showApiMessageInToast(res);
+        SetOpenAssignModal(false);
+        getRoadmapData();
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
+  }
+
+  function onArchive() {
+    setIsLoading(true);
+    archiveRoadmap(roadmap)
+      .then((res) => {
+        showApiMessageInToast(res);
+        const coursesId = roadmapData?.courses.map((item) => item.id) || [];
+        allRoadmapCategories.forEach((item) => {
+          item.roadmaps = item.roadmaps.filter((ele) => ele.id !== roadmap);
+        });
+        allCourseCategories.forEach((item) => {
+          item.courses = item.courses.filter(
+            (ele) => !coursesId.includes(ele.id),
+          );
+        });
+        setContentRepositoryMetadata({
+          ...metadata.contentRepository,
+          roadmap_categories: allRoadmapCategories,
+          course_categories: allCourseCategories,
+        });
+        setShowConformationModal(false);
+        router.replace(RouteEnum.CONTENT);
+        getRoadmapData();
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
+  }
+
   return (
     <>
       {isPageLoading && <FullPageLoader />}
@@ -111,6 +191,25 @@ const RoadmapDetails = () => {
         isAdd={true}
         onSubmit={onAddCourse}
         isloading={isloading}
+      />
+      <AssignDataModal
+        show={openAssignModal}
+        setShow={SetOpenAssignModal}
+        heading={en.roadmapDetails.addExistingCourses}
+        sub_heading={en.common.selectCourses}
+        isLoading={isloading}
+        data={courseCategoriesData}
+        initialValues={{
+          selected: roadmapData?.courses.map((item) => String(item.id)) || [],
+        }}
+        onSubmit={assignCourses}
+      />
+      <ConformationModal
+        title={en.roadmapDetails.archiveConfirmHeading}
+        subTitle={en.roadmapDetails.archiveConfirmSubHeading}
+        open={showConformationModal}
+        setOpen={setShowConformationModal}
+        onConfirm={onArchive}
       />
       <div>
         <Breadcrumb links={links} />
@@ -154,6 +253,7 @@ const RoadmapDetails = () => {
               <button
                 type="button"
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                onClick={() => SetOpenAssignModal(true)}
               >
                 <ArrowRightEndOnRectangleIcon className="h-4 w-4" />
               </button>
@@ -166,6 +266,7 @@ const RoadmapDetails = () => {
               <button
                 type="button"
                 className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                onClick={() => setShowConformationModal(true)}
               >
                 <TrashIcon className="h-4 w-4" />
               </button>

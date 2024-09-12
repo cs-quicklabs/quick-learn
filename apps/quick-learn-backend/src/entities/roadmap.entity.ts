@@ -23,7 +23,7 @@ export class RoadmapEntity extends BaseEntity {
   roadmap_category_id: number;
 
   @Column({ type: 'boolean', default: false })
-  acheived: boolean;
+  archived: boolean;
 
   @Column({ type: 'int', nullable: false })
   created_by_user_id: number;
@@ -39,7 +39,9 @@ export class RoadmapEntity extends BaseEntity {
   @JoinColumn({ name: 'roadmap_category_id' })
   roadmap_category: RoadmapCategoryEntity;
 
-  @ManyToMany(() => CourseEntity, (course) => course.roadmaps)
+  @ManyToMany(() => CourseEntity, (course) => course.roadmaps, {
+    cascade: true,
+  })
   @JoinTable({
     name: 'roadmap_courses',
     joinColumn: {
@@ -51,5 +53,5 @@ export class RoadmapEntity extends BaseEntity {
       referencedColumnName: 'id',
     },
   })
-  courses: RoadmapEntity[];
+  courses: CourseEntity[];
 }

@@ -32,7 +32,6 @@ const Roadmapcategories = () => {
       .then((res) => {
         showApiMessageInToast(res);
         setRoadmapCategories(res.data.categories);
-        console.log(res.data);
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));

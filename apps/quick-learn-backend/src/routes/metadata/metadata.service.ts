@@ -13,12 +13,14 @@ export class MetadataService {
     const metadata = {};
     const [roadmapCategories, courseCategories] = await Promise.all([
       this.roadmapCategoryService.getMany(
-        {},
+        { roadmaps: { archived: false } },
         { name: 'ASC', created_at: 'DESC' },
+        ['roadmaps'],
       ),
       this.courseCategoryService.getMany(
-        {},
+        { courses: { archived: false } },
         { name: 'ASC', created_at: 'DESC' },
+        ['courses'],
       ),
     ]);
     metadata['roadmap_categories'] = roadmapCategories;
