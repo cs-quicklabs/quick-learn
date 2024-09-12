@@ -135,6 +135,7 @@ const ContentRepository = () => {
                   stats={
                     '' + (item.lessons_count ?? 0) + ' ' + en.common.lessons
                   }
+                  link={`${RouteEnum.CONTENT}/courses/${item.id}`}
                 />
               </li>
             ))}

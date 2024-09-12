@@ -38,8 +38,13 @@ export class BasicCrudService<T> {
   async getMany(
     options?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     orderOptions?: FindOptionsOrder<T>,
+    relations: string[] = [],
   ): Promise<T[]> {
-    return await this.repository.find({ where: options, order: orderOptions });
+    return await this.repository.find({
+      where: options,
+      order: orderOptions,
+      relations: [...relations],
+    });
   }
 
   /**

@@ -23,7 +23,7 @@ export class CourseEntity extends BaseEntity {
   course_category_id: number;
 
   @Column({ type: 'bool', default: false })
-  acheived: boolean;
+  achived: boolean;
 
   @Column({ type: 'bool', default: false })
   is_community_available: boolean;

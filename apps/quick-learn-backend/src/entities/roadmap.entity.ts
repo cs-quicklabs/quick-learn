@@ -23,7 +23,7 @@ export class RoadmapEntity extends BaseEntity {
   roadmap_category_id: number;
 
   @Column({ type: 'boolean', default: false })
-  acheived: boolean;
+  achived: boolean;
 
   @Column({ type: 'int', nullable: false })
   created_by_user_id: number;
