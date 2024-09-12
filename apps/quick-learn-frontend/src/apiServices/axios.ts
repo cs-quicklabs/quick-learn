@@ -61,6 +61,9 @@ axiosInstance.interceptors.response.use(
           return axios(originalRequest);
         } else throw new Error('Original request is undefined');
       } catch (err) {
+        setTimeout(() => {
+          window.location.replace('/');
+        }, 400);
         return Promise.reject(error);
       }
     }

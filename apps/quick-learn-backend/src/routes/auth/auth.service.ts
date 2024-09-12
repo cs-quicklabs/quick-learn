@@ -287,6 +287,7 @@ export class AuthService {
       token,
       refreshToken,
       tokenExpires,
+      role: data.role,
     };
   }
 }
