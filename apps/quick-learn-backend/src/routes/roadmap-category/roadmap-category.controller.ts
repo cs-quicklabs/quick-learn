@@ -77,7 +77,7 @@ export class RoadmapCategoryController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete the roadmap category.' })
   async remove(@Param('id') id: string) {
-    await this.roadmapCategoryService.delete({ id: +id });
+    await this.roadmapCategoryService.deleteRoadmapCategory(+id);
     return new SuccessResponse('Successfully deleted roadmap category.');
   }
 }

@@ -18,4 +18,9 @@ export const en = {
   archiveRoadmap: 'Successfully archived roadmap.',
   archiveCourse: 'Successfully archived course.',
   invalidCourses: 'Courses does not exist.',
+  accountDeactiveMessage:
+    'your account is deactivated, please connect with your admin.',
+  deactiveUserAddError: 'The account is deactivated.',
+  roadmapCategriesHasData: 'Roadmap category has roadmap(s) assigned.',
+  courseCategriesHasData: 'Course category has course(s) assigned.',
 };

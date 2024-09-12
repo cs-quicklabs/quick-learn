@@ -23,6 +23,7 @@ import { SessionService } from './session.service';
 import { SessionEntity } from '@src/entities';
 import { LoginDto } from './dto';
 import { ITokenData } from '@src/common/interfaces';
+import { en } from '@src/lang/en';
 @Injectable()
 export class AuthService {
   constructor(
@@ -44,9 +45,7 @@ export class AuthService {
     }
 
     if (!user.active) {
-      throw new ForbiddenException(
-        'your account is deactivated, please connect with your admin.',
-      );
+      throw new ForbiddenException(en.accountDeactiveMessage);
     }
 
     // Comparing password
@@ -223,6 +222,11 @@ export class AuthService {
         secret: this.configService.getOrThrow('auth.secret', { infer: true }),
         expiresIn: Date.now() + tokenExpiresIn,
       },
+    );
+
+    await this.userRepository.update(
+      { id: session.user.id },
+      { last_login_timestamp: new Date() },
     );
 
     return {

@@ -49,5 +49,11 @@ export const en = {
     selectCourses: 'Select Courses',
     save: 'Save',
     selectRoadmaps: 'Select Roadmaps',
+    logoutConformation: 'Are you sure you want to log out?',
+    yes: 'Yes',
+    no: 'No',
+    teamSettings: 'Organizational Settings',
+    changeSettingsOfYourTeam: 'Change settings of your organization.',
+    noResultFound: 'No result found',
   },
 };

@@ -1,11 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import {
-  FindOptionsOrder,
-  FindOptionsWhere,
-  ILike,
-  MoreThan,
-  Repository,
-} from 'typeorm';
+import { FindOptionsWhere, ILike, MoreThan, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { SkillEntity } from '@src/entities/skill.entity';
@@ -15,6 +9,7 @@ import { EmailService } from '@src/common/modules/email/email.service';
 import { emailSubjects } from '@src/common/constants/email-subject';
 import { UserEntity, UserTypeEntity } from '@src/entities';
 import { SessionService } from '../auth/session.service';
+import { en } from '@src/lang/en';
 
 const userRelations = ['user_type', 'skill', 'team'];
 @Injectable()
@@ -44,11 +39,16 @@ export class UsersService extends PaginationService<UserEntity> {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const foundUser = await this.userRepository.count({
+    const foundUser = await this.userRepository.findOne({
       where: { email: createUserDto.email },
     });
-    if (foundUser) {
+
+    if (foundUser && foundUser.active) {
       throw new BadRequestException('Email already exists.');
+    }
+
+    if (foundUser && !foundUser.active) {
+      throw new BadRequestException(en.deactiveUserAddError);
     }
     const user = this.userRepository.create(createUserDto);
 
@@ -101,24 +101,32 @@ export class UsersService extends PaginationService<UserEntity> {
       conditions = queryConditions;
     }
 
-    const order: FindOptionsOrder<UserEntity> = {
-      first_name: 'ASC',
-      last_name: 'ASC',
-      last_login_timestamp: 'DESC',
-      created_at: 'DESC',
-    };
-
     if (paginationDto.mode == 'paginate') {
-      return await this.paginate(
-        paginationDto,
-        conditions,
-        [...userRelations],
-        order,
-      );
+      const results = await this.paginate(paginationDto, conditions, [
+        ...userRelations,
+      ]);
+      this.sortByLastLogin(results.items);
+      return results;
     }
-    return await this.userRepository.find({
+    const users = await this.userRepository.find({
       where: conditions,
       relations: [...userRelations],
+    });
+    this.sortByLastLogin(users);
+    return users;
+  }
+
+  sortByLastLogin(users: UserEntity[]) {
+    users.sort((a, b) => {
+      if (a.last_login_timestamp === null) {
+        return 1;
+      } else if (b.last_login_timestamp === null) {
+        return -1;
+      } else {
+        return (
+          b.last_login_timestamp.getTime() - a.last_login_timestamp.getTime()
+        );
+      }
     });
   }
 

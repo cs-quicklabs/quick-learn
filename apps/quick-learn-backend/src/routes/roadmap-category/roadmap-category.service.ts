@@ -5,6 +5,7 @@ import { ILike, Repository } from 'typeorm';
 import { RoadmapCategoryEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { UpdateRoadmapCategoryDto } from './dto/update-roadmap-category.dto';
+import { en } from '@src/lang/en';
 
 @Injectable()
 export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEntity> {
@@ -43,5 +44,14 @@ export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEnti
       throw new BadRequestException('Roadmap Category already exists.');
     }
     await this.update({ id }, updateRoadmapCategoryDto);
+  }
+
+  async deleteRoadmapCategory(id: number): Promise<void> {
+    const roadmapCategory = await this.get({ id }, ['roadmaps']);
+    if (roadmapCategory.roadmaps.length > 0) {
+      throw new BadRequestException(en.roadmapCategriesHasData);
+    }
+
+    await this.repository.delete({ id });
   }
 }
