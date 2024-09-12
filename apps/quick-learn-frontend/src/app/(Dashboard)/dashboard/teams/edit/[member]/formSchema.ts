@@ -1,44 +1,45 @@
+import { en } from '@src/constants/lang/en';
 import { onlyAlphabeticValidation } from '@src/utils/helpers';
 import { z } from 'zod';
 
 const baseSchema = {
   first_name: z
     .string({
-      required_error: 'This field is required',
+      required_error: en.common.fieldRequired,
     })
     .trim()
-    .min(1, { message: 'This field is required' })
+    .min(1, { message: en.common.fieldRequired })
     .max(30, { message: 'The value should not exceed 30 character' })
     .refine(onlyAlphabeticValidation, {
       message: 'First name should only contain alphabetic characters',
     }),
   last_name: z
     .string({
-      required_error: 'This field is required',
+      required_error: en.common.fieldRequired,
     })
     .trim()
-    .min(1, { message: 'This field is required' })
+    .min(1, { message: en.common.fieldRequired })
     .max(30, { message: 'The value should not exceed 30 character' })
     .refine(onlyAlphabeticValidation, {
       message: 'Last name should only contain alphabetic characters',
     }),
   user_type_id: z
     .string({
-      required_error: 'This field is required',
+      required_error: en.common.fieldRequired,
     })
-    .min(1, { message: 'This field is required' }),
+    .min(1, { message: en.common.fieldRequired }),
   email: z
     .string({
-      required_error: 'This field is required',
+      required_error: en.common.fieldRequired,
     })
     .trim()
-    .min(1, { message: 'This field is required' })
+    .min(1, { message: en.common.fieldRequired })
     .email({ message: 'Invalid email address' }),
   skill_id: z
     .string({
-      required_error: 'This field is required',
+      required_error: en.common.fieldRequired,
     })
-    .min(1, { message: 'This field is required' }),
+    .min(1, { message: en.common.fieldRequired }),
 };
 
 export const addMemberFormSchema = z
@@ -46,7 +47,7 @@ export const addMemberFormSchema = z
     ...baseSchema,
     password: z
       .string({
-        required_error: 'This field is required',
+        required_error: en.common.fieldRequired,
       })
       .trim()
       .min(8, { message: 'Password must be at least 8 characters long' })
@@ -61,7 +62,7 @@ export const addMemberFormSchema = z
         message: 'Password must contain at least one special character',
       }),
     confirm_password: z.string({
-      required_error: 'This field is required',
+      required_error: en.common.fieldRequired,
     }),
   })
   .refine((data) => data.password === data.confirm_password, {

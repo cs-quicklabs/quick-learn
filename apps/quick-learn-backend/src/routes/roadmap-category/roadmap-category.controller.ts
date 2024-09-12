@@ -14,6 +14,7 @@ import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { RoadmapCategoryService } from './roadmap-category.service';
 import { UpdateRoadmapCategoryDto } from './dto/update-roadmap-category.dto';
+import { en } from '@src/lang/en';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/roadmap-categories
 @ApiTags('Roadmap Category')
@@ -71,13 +72,13 @@ export class RoadmapCategoryController {
       +id,
       updateRoadmapCategoryDto,
     );
-    return new SuccessResponse('Successfully updated roadmap category.');
+    return new SuccessResponse(en.successUpdateRoadmap);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete the roadmap category.' })
   async remove(@Param('id') id: string) {
     await this.roadmapCategoryService.deleteRoadmapCategory(+id);
-    return new SuccessResponse('Successfully deleted roadmap category.');
+    return new SuccessResponse(en.successDeleteRoadmap);
   }
 }

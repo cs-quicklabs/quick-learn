@@ -3,7 +3,6 @@ import { FC, useEffect } from 'react';
 import { Modal } from 'flowbite-react';
 import { CloseIcon } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
-import { noSpecialCharValidation } from '@src/utils/helpers';
 import { z } from 'zod';
 import useDashboardStore from '@src/store/dashboard.store';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -27,11 +26,7 @@ const AddEditRoadmapSchema = z.object({
     .max(200, 'The value should not exceed 200 character')
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
-    })
-    .refine(
-      noSpecialCharValidation,
-      'Only alphabets, numbers and space are allowed',
-    ),
+    }),
   description: z
     .string()
     .min(1, 'This field is mandatory')

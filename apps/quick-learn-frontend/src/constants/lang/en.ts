@@ -55,5 +55,8 @@ export const en = {
     teamSettings: 'Organizational Settings',
     changeSettingsOfYourTeam: 'Change settings of your organization.',
     noResultFound: 'No result found',
+    firstNameError: 'First name cannot exceed 50 characters.',
+    lastNameError: 'Last name cannot exceed 50 characters.',
+    fieldRequired: 'This field is required',
   },
 };

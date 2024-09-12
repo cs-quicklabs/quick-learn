@@ -1,6 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { updateUserProfileService } from '@src/apiServices/profileService';
+import { en } from '@src/constants/lang/en';
 import { UserContext } from '@src/context/userContext';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
@@ -17,7 +18,7 @@ const profileSchema = z.object({
   first_name: z
     .string()
     .min(1, 'First name is required')
-    .max(50, 'First name should be less than or equal to 50')
+    .max(50, en.common.firstNameError)
     .refine(
       onlyAlphabeticValidation,
       'First name should only contain alphabetic characters',
@@ -25,7 +26,7 @@ const profileSchema = z.object({
   last_name: z
     .string()
     .min(1, 'Last name is required')
-    .max(50, 'Last name should be less than or equal to 50')
+    .max(50, en.common.lastNameError)
     .refine(
       onlyAlphabeticValidation,
       'Last name should only contain alphabetic characters',

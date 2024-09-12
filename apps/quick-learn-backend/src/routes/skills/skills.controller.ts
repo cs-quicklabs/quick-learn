@@ -14,6 +14,7 @@ import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { UpdateSkillDto } from './dto/update-skill.dto';
+import { en } from '@src/lang/en';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/skills
 @ApiTags('Skills')
@@ -54,7 +55,7 @@ export class SkillsController {
     @Body() updateSkillDto: UpdateSkillDto,
   ) {
     await this.skillsService.updateSkill(+id, updateSkillDto);
-    return new SuccessResponse('Succesfully updated primary skill.');
+    return new SuccessResponse(en.successSkillUpdate);
   }
 
   @Delete(':id')
@@ -62,6 +63,6 @@ export class SkillsController {
   @ApiOperation({ summary: 'Delete skill by id' })
   async remove(@Param('id') id: string) {
     await this.skillsService.deleteSkill(+id);
-    return new SuccessResponse('Successfully deleted primary skill.');
+    return new SuccessResponse(en.successSkillDelete);
   }
 }

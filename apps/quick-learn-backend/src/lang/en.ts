@@ -19,8 +19,15 @@ export const en = {
   archiveCourse: 'Successfully archived course.',
   invalidCourses: 'Courses does not exist.',
   accountDeactiveMessage:
-    'your account is deactivated, please connect with your admin.',
+    'Your account is deactivated. Please reach out to the system administrator for further assistance.',
   deactiveUserAddError: 'The account is deactivated.',
   roadmapCategriesHasData: 'Roadmap category has roadmap(s) assigned.',
   courseCategriesHasData: 'Course category has course(s) assigned.',
+  successDeleteCourse: 'Course category is deleted.',
+  successUpdateCourse: 'Course category is updated.',
+  successUpdateRoadmap: 'Roadmap category is updated.',
+  successDeleteRoadmap: 'Roadmap category is deleted.',
+  successSkillDelete: 'Primary skill is deleted.',
+  successSkillUpdate: 'Primary skill is updated.',
+  successUserCreate: 'User is created.',
 };

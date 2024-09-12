@@ -16,9 +16,11 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const ContentRepository = () => {
+  const router = useRouter();
   const allCourseCategories = useDashboardStore(
     (state) => state.metadata.contentRepository.course_categories,
   );
@@ -48,9 +50,10 @@ const ContentRepository = () => {
     setIsLoading(true);
     createRoadmap(data)
       .then((res) => {
-        showApiMessageInToast(res);
         setRoadmaps((prev) => [res.data, ...prev]);
         setOpenAddModal(false);
+        router.push(`${RouteEnum.CONTENT}/${res.data.id}`);
+        showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
