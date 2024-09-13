@@ -57,7 +57,7 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
       label: 'Name',
       name: 'name',
       type: 'text',
-      placeholder: 'Type roadmap name',
+      placeholder: 'Type course name',
       className:
         'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5',
     },
@@ -78,7 +78,7 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
       label: 'Description',
       name: 'description',
       type: 'textarea',
-      placeholder: 'Write roadmap description here',
+      placeholder: 'Write course description here',
       height: '105px',
       width: '100%',
       className:
@@ -141,7 +141,7 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
                 : en.addEditCourseModal.editCourse
             }
             cancelButton={() => setOpen(false)}
-            id="addRoadmapForm"
+            id="addCourseForm"
           />
         </FormProvider>
       </Modal.Body>
