@@ -49,7 +49,7 @@ export class FileController {
     }
 
     const location = file.location; //TODO: Send only path name and then update the expose method to return the full URL
-    return new SuccessResponse('File upload sucessfully.', {
+    return new SuccessResponse('File upload successfully.', {
       file: location,
       type: file.mimetype,
     });

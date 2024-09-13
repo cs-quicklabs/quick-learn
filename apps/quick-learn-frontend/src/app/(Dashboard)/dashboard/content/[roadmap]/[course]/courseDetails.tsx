@@ -174,7 +174,7 @@ const CourseDetails = () => {
       <AddEditCourseModal
         open={openAddModal}
         setOpen={setOpenAddModal}
-        isAdd={true}
+        isAdd={false}
         onSubmit={onEdit}
         isloading={isloading}
         initialData={courseData}

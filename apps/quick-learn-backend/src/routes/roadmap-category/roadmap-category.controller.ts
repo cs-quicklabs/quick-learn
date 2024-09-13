@@ -50,7 +50,7 @@ export class RoadmapCategoryController {
       {},
       { name: 'ASC' },
     );
-    return new SuccessResponse('Sucessfully retreived roadmap categories.', {
+    return new SuccessResponse('Successfully retreived roadmap categories.', {
       categories: roadmapCategories,
     });
   }
