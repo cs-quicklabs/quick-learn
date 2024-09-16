@@ -4,6 +4,7 @@ import { z } from 'zod';
 export const loginFormSchema = z.object({
   email: z
     .string()
+    .trim()
     .min(1, { message: en.common.fieldRequired })
     .email({ message: 'Invalid email address' }),
   password: z

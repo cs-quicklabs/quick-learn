@@ -13,16 +13,30 @@ export class MetadataService {
     const metadata = {};
     const [roadmapCategories, courseCategories] = await Promise.all([
       this.roadmapCategoryService.getMany(
-        { roadmaps: { archived: false } },
+        {},
         { name: 'ASC', created_at: 'DESC' },
         ['roadmaps'],
       ),
       this.courseCategoryService.getMany(
-        { courses: { archived: false } },
+        {},
         { name: 'ASC', created_at: 'DESC' },
         ['courses'],
       ),
     ]);
+
+    // TODO: Enhance this to use a query builder or typeorm function to filter out archived roadmaps and courses
+    roadmapCategories.forEach((category) => {
+      category.roadmaps = category.roadmaps.filter(
+        (roadmap) => roadmap.archived === false,
+      );
+    });
+
+    courseCategories.forEach((category) => {
+      category.courses = category.courses.filter(
+        (course) => course.archived === false,
+      );
+    });
+
     metadata['roadmap_categories'] = roadmapCategories;
     metadata['course_categories'] = courseCategories;
     return metadata;

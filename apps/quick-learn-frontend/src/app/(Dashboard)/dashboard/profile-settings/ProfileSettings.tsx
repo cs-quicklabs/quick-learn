@@ -17,6 +17,7 @@ import { z } from 'zod';
 const profileSchema = z.object({
   first_name: z
     .string()
+    .trim()
     .min(1, 'First name is required')
     .max(50, en.common.firstNameError)
     .refine(
@@ -25,6 +26,7 @@ const profileSchema = z.object({
     ),
   last_name: z
     .string()
+    .trim()
     .min(1, 'Last name is required')
     .max(50, en.common.lastNameError)
     .refine(

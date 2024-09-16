@@ -1,7 +1,9 @@
 import React, { FC, useState } from 'react';
+import Link from 'next/link';
 import { FieldType } from '../types/formTypes';
 import { OpenEyeIcon, ClosedEyeIcon } from '../components/UIElements';
 import { FieldValues, UseFormRegister } from 'react-hook-form';
+import { RouteEnum } from '@src/constants/route.enum';
 
 interface Props {
   label?: string;
@@ -37,27 +39,40 @@ const InputField: FC<Props> = ({
   const [showPassword, setShowPassword] = useState<boolean>(!isFieldPassword);
   if (type === 'checkbox') {
     return (
-      <div className="flex items-start space-x-2">
-        <input
-          id={`${id ? id : ''}_checkbox_${name}`}
-          type={type}
-          className="mt-0.5 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-          {...register(name)}
-        />
-        <div className="ml-3 text-sm">
-          <label
-            htmlFor={`${id ? id : ''}_checkbox_${name}`}
-            className={
-              sub_label ? 'font-medium text-gray-900' : 'text-gray-500'
-            }
-          >
-            {label}
-          </label>
-          {sub_label && (
-            <div className="text-xs font-normal text-gray-400">{sub_label}</div>
-          )}
+      <div className="flex justify-between items-center">
+        <div className="flex items-start space-x-2">
+          <input
+            id={`${id ? id : ''}_checkbox_${name}`}
+            type={type}
+            className="mt-0.5 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            {...register(name)}
+          />
+          <div className="ml-3 text-sm">
+            <label
+              htmlFor={`${id ? id : ''}_checkbox_${name}`}
+              className={
+                sub_label ? 'font-medium text-gray-900' : 'text-gray-500'
+              }
+            >
+              {label}
+            </label>
+            {sub_label && (
+              <div className="text-xs font-normal text-gray-400">
+                {sub_label}
+              </div>
+            )}
+          </div>
+          {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
         </div>
-        {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+        {/* TODO: Remove this and make independent component for login */}
+        {name === 'rememberMe' && (
+          <Link
+            href={RouteEnum.FORGOT_PASSWORD}
+            className="text-sm font-medium text-primary-600 hover:underline"
+          >
+            Forgot password?
+          </Link>
+        )}
       </div>
     );
   } else if (type === 'select') {
@@ -138,6 +153,7 @@ const InputField: FC<Props> = ({
             type="button"
             className="absolute inset-y-0 right-0 pr-3 flex items-center"
             onClick={() => setShowPassword(!showPassword)}
+            tabIndex={-1}
           >
             {showPassword ? <OpenEyeIcon /> : <ClosedEyeIcon />}
           </button>

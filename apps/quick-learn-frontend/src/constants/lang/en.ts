@@ -49,7 +49,7 @@ export const en = {
     selectCourses: 'Select Courses',
     save: 'Save',
     selectRoadmaps: 'Select Roadmaps',
-    logoutConformation: 'Are you sure you want to log out?',
+    logoutConformation: 'Are you sure you want to Log out?',
     yes: 'Yes',
     no: 'No',
     teamSettings: 'Organizational Settings',
