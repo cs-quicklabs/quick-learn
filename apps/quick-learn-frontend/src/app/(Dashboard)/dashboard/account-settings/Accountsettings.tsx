@@ -4,6 +4,7 @@ import {
   getTeamDetails,
   updateTeamDetails,
 } from '@src/apiServices/accountService';
+import { en } from '@src/constants/lang/en';
 import { UserContext } from '@src/context/userContext';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
@@ -21,6 +22,7 @@ import { z } from 'zod';
 const AccountSettingSechema = z.object({
   name: z
     .string()
+    .trim()
     .min(1, 'This field is mandatory')
     .max(30, 'The value should not exceed 30 character')
     .refine((value) => value.trim().length > 0, {
@@ -92,9 +94,9 @@ const AccountSettings = () => {
     <>
       {isPageLoading && <FullPageLoader />}
       <div>
-        <h1 className="text-lg font-semibold">Team Settings</h1>
+        <h1 className="text-lg font-semibold">{en.common.teamSettings}</h1>
         <p className="text-gray-500 text-sm mb-6">
-          Change settings of your team.
+          {en.common.changeSettingsOfYourTeam}
         </p>
         <FormProvider {...methods}>
           <FormFieldsMapper

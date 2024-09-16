@@ -27,3 +27,9 @@ export enum accountApiEnum {
 export enum FileApiEnum {
   UPLOAD = '/file/upload',
 }
+
+export enum ContentRepositoryApiEnum {
+  METADATA = '/metadata/content-repository',
+  ROADMAP = '/roadmap',
+  COURSE = '/course',
+}

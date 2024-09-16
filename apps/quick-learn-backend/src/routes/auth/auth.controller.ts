@@ -22,6 +22,7 @@ import { ResetPasswordDto } from './dto/resetpassword.dto';
 import { LoginDto } from './dto';
 import { JwtRefreshAuthGuard } from './guards';
 import { SessionEntity } from '@src/entities';
+import Helpers from '@src/common/utils/helper';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/auth/login
 @ApiTags('Authentication')
@@ -38,25 +39,12 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<SuccessResponse> {
-    const { token, tokenExpires, refreshToken } = await this.authService.login(
-      loginDto,
-    );
+    const { token, tokenExpires, refreshToken, role } =
+      await this.authService.login(loginDto);
 
-    res.cookie('access_token', token, {
-      httpOnly: true,
-      secure: process.env.ENV !== EnvironmentEnum.Developemnt, // TODO: Update this to use config file
-      sameSite: 'lax',
-      maxAge: tokenExpires,
-      path: '/',
-    });
-
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: process.env.ENV !== EnvironmentEnum.Developemnt, // TODO: Update this to use config file
-      sameSite: 'lax',
-      path: '/',
-    });
-
+    Helpers.setCookies(res, 'access_token', token, tokenExpires);
+    Helpers.setCookies(res, 'refresh_token', refreshToken);
+    Helpers.setCookies(res, 'user_role', role.toString());
     return new SuccessResponse('Successfully logged in.');
   }
 
@@ -79,21 +67,7 @@ export class AuthController {
     }
 
     await this.authService.logout(refresh_token);
-
-    res.cookie('access_token', '', {
-      httpOnly: true,
-      secure: process.env.ENV !== EnvironmentEnum.Developemnt, // TODO: Update this to use config file
-      sameSite: 'lax',
-      path: '/',
-    });
-
-    res.cookie('refresh_token', '', {
-      httpOnly: true,
-      secure: process.env.ENV !== EnvironmentEnum.Developemnt, // TODO: Update this to use config file
-      sameSite: 'lax',
-      path: '/',
-    });
-
+    Helpers.clearCookies(res);
     return new SuccessResponse('Successfully logged out.');
   }
 

@@ -6,13 +6,16 @@ import {
   DeleteDateColumn,
   Generated,
   BeforeInsert,
+  OneToMany,
+  VirtualColumn,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { UserTypeEntity } from './user-type.entity';
 import { BaseEntity } from './BaseEntity';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
 import { SkillEntity } from './skill.entity';
+import { RoadmapEntity } from './roadmap.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -26,10 +29,11 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   last_name: string;
 
-  @Expose()
-  get full_name(): string {
-    return `${this.first_name} ${this.last_name}`;
-  }
+  @VirtualColumn({
+    type: 'varchar',
+    query: (alias) => `CONCAT(${alias}.first_name, ' ', ${alias}.last_name)`,
+  })
+  full_name: string;
 
   @Column({ type: 'varchar', unique: true, length: 255 })
   email: string;
@@ -80,4 +84,7 @@ export class UserEntity extends BaseEntity {
 
   @DeleteDateColumn()
   deleted_at: Date;
+
+  @OneToMany(() => RoadmapEntity, (user) => user.created_by)
+  roadmaps: RoadmapEntity[];
 }

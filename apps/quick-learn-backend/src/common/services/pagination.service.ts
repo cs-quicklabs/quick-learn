@@ -1,4 +1,4 @@
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
 import { BasePaginationDto } from '../dto';
 import { PaginatedResult } from '../interfaces';
 
@@ -9,6 +9,7 @@ export class PaginationService<T> {
     paginationDto: BasePaginationDto,
     searchOptions: FindOptionsWhere<T>[] | FindOptionsWhere<T> = {},
     relations: string[] = [],
+    order: FindOptionsOrder<T> = {},
   ): Promise<PaginatedResult<T>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
@@ -17,14 +18,8 @@ export class PaginationService<T> {
       take: limit,
       where: searchOptions,
       relations,
-      order: { updated_at: 'DESC' },
+      order: Object.keys(order).length > 0 ? order : { updated_at: 'DESC' },
     };
-
-    if (paginationDto.sortBy && paginationDto.sortOrder) {
-      findAndCountOptions['order'] = {};
-      findAndCountOptions['order'][`${paginationDto.sortBy}`] =
-        paginationDto.sortOrder;
-    }
 
     const [items, total] = await this.repository.findAndCount(
       findAndCountOptions,

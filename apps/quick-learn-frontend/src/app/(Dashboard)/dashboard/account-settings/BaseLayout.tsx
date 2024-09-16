@@ -33,6 +33,7 @@ type Props = {
 const addSchema = z.object({
   name: z
     .string()
+    .trim()
     .min(1, 'This field is mandatory')
     .max(30, 'The value should not exceed 30 character')
     .refine((value) => value.trim().length > 0, {
@@ -46,6 +47,7 @@ type AddSchemaType = z.infer<typeof addSchema>;
 const editSchema = z.object({
   name: z
     .string()
+    .trim()
     .min(1, 'This field is mandatory')
     .max(30, 'The value should not exceed 30 character')
     .refine((value) => value.trim().length > 0, {

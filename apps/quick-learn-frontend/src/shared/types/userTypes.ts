@@ -13,7 +13,7 @@ export type TSkill = {
 
 export type TUser = {
   uuid: string;
-  display_name: string;
+  full_name: string;
   first_name: string;
   last_name: string;
   role: string;

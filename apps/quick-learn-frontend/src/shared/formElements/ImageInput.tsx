@@ -1,10 +1,7 @@
 'use client';
 import { CameraIcon } from '@heroicons/react/24/outline';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
-import {
-  showApiErrorInToast,
-  showApiMessageInToast,
-} from '@src/utils/toastUtils';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { FilePathType } from 'lib/shared/src';
 import Image from 'next/image';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -52,7 +49,6 @@ const ImageInput: FC<Props> = ({
       fileUploadApiCall(formData, imageType)
         .then((res) => {
           setValue(name, res.data.file, { shouldValidate: true });
-          showApiMessageInToast(res);
         })
         .catch((err) => showApiErrorInToast(err));
     }

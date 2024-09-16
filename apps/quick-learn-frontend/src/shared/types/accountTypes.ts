@@ -1,3 +1,5 @@
+import { TCourse, TRoadmap } from './contentRepository';
+
 export type TSkill = {
   id: number;
   name: string;
@@ -8,12 +10,14 @@ export type TRoadmapCategories = {
   id: number;
   name: string;
   team_id: number;
+  roadmaps: TRoadmap[];
 };
 
 export type TCourseCategories = {
   id: number;
   name: string;
   team_id: number;
+  courses: TCourse[];
 };
 
 export type TSkills = {
