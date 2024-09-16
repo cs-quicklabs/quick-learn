@@ -22,6 +22,7 @@ import { z } from 'zod';
 const AccountSettingSechema = z.object({
   name: z
     .string()
+    .trim()
     .min(1, 'This field is mandatory')
     .max(30, 'The value should not exceed 30 character')
     .refine((value) => value.trim().length > 0, {

@@ -22,6 +22,7 @@ interface AddEditCourseProps {
 const AddEditCourseSchema = z.object({
   name: z
     .string()
+    .trim()
     .min(1, 'This field is mandatory')
     .max(200, 'The value should not exceed 200 character')
     .refine((value) => value.trim().length > 0, {
@@ -29,6 +30,7 @@ const AddEditCourseSchema = z.object({
     }),
   description: z
     .string()
+    .trim()
     .min(1, 'This field is mandatory')
     .max(5000, 'The value should not exceed 5000 character')
     .refine((value) => value.trim().length > 0, {
@@ -108,6 +110,7 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
       setValue('name', initialData.name);
       setValue('description', initialData.description);
       setValue('course_category_id', `${initialData.course_category_id}`);
+      setValue('is_community_available', initialData.is_community_available);
     }
   }, [open, reset, setValue, initialData]);
 

@@ -1,5 +1,5 @@
-import { TContentRepositoryMetadata } from '@src/shared/types/contentRepository';
 import { create } from 'zustand';
+import { TContentRepositoryMetadata } from '@src/shared/types/contentRepository';
 
 type State = {
   metadata: {

@@ -128,10 +128,11 @@ const CourseDetails = () => {
   function onEdit(data: TCreateCourse) {
     setIsLoading(true);
     updateCourse(courseId, data)
-      .then(() => {
+      .then((res) => {
         setOpenAddModal(false);
         if (!courseData) return;
         setcourseData({ ...courseData, ...data });
+        showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
