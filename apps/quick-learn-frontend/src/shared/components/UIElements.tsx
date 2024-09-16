@@ -45,12 +45,16 @@ export const OpenEyeIcon = () => {
   );
 };
 
-export const Loader = () => {
+export const Loader = ({
+  className = 'inline w-4 h-4 me-3',
+}: {
+  className?: string;
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      className="inline w-4 h-4 me-3 text-white animate-spin"
+      className={className + ' ' + 'text-white animate-spin'}
       viewBox="0 0 100 101"
     >
       <path

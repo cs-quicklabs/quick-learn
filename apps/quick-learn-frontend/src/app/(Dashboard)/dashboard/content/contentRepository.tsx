@@ -1,12 +1,16 @@
 'use client';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
   createRoadmap,
+  getContentRepositoryMetadata,
   getRoadmaps,
 } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Card from '@src/shared/components/Card';
 import CreateNewCard from '@src/shared/components/CreateNewCard';
+import { FullPageLoader } from '@src/shared/components/UIElements';
 import AddEditRoadMapModal, {
   AddEditRoadmapData,
 } from '@src/shared/modals/addEditRoadMapModal';
@@ -16,18 +20,26 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 const ContentRepository = () => {
   const router = useRouter();
-  const allCourseCategories = useDashboardStore(
-    (state) => state.metadata.contentRepository.course_categories,
+  const { setContentRepositoryMetadata, metadata } = useDashboardStore(
+    (state) => state,
   );
+  const allCourseCategories = metadata.contentRepository.course_categories;
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(false);
   const [isloading, setIsLoading] = useState(false);
   const [roadmaps, setRoadmaps] = useState<TRoadmap[]>([]);
   const [courses, setCourses] = useState<TCourse[]>([]);
+
+  useEffect(() => {
+    setIsPageLoading(true);
+    getContentRepositoryMetadata()
+      .then((response) => setContentRepositoryMetadata(response.data))
+      .catch((error) => showApiErrorInToast(error))
+      .finally(() => setIsPageLoading(false));
+  }, [setContentRepositoryMetadata]);
 
   useEffect(() => {
     getRoadmaps()
@@ -61,6 +73,7 @@ const ContentRepository = () => {
 
   return (
     <>
+      {isPageLoading && <FullPageLoader />}
       <AddEditRoadMapModal
         open={openAddModal}
         setOpen={setOpenAddModal}

@@ -61,7 +61,7 @@ export class CourseController {
     @Body() updateCourseDto: UpdateCourseDto,
   ) {
     await this.service.updateCourse(+id, updateCourseDto);
-    return new SuccessResponse(en.CreateRoadmap);
+    return new SuccessResponse(en.UpdateCourse);
   }
 
   @Patch(':id/assign')

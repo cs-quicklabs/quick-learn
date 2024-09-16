@@ -52,10 +52,10 @@ const AssignDataModal: FC<Props> = ({
       reset();
       setIsFormDirty(false);
     }
-    if (initialValues?.selected) {
+    if (initialValues?.selected && show && !isLoading) {
       setValue('selected', initialValues.selected);
     }
-  }, [initialValues, setValue, show, reset]);
+  }, [initialValues, show, isLoading, reset, setValue]);
 
   function onFormSubmit(formData: schemaType) {
     onSubmit(formData?.selected ?? []);
