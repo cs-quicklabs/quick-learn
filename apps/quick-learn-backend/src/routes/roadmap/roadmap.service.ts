@@ -125,17 +125,11 @@ export class RoadmapService extends BasicCrudService<RoadmapEntity> {
   }
 
   async archiveRoadmap(id: number) {
-    const roadmap = await this.get({ id }, ['courses']);
+    const roadmap = await this.get({ id });
     if (!roadmap) {
       throw new BadRequestException(en.RoadmapNotFound);
     }
-    roadmap.courses.forEach((course) => {
-      course.archived = true;
-      delete course.updated_at;
-    });
-    roadmap.archived = true;
-    delete roadmap.updated_at;
-    await this.repository.save(roadmap);
+    await this.repository.update({ id }, { archived: true });
   }
 
   async assignRoadmap(id: number, assingCourses: AssignCoursesToRoadmapDto) {
