@@ -24,7 +24,7 @@ const AddEditCourseSchema = z.object({
     .string()
     .trim()
     .min(1, 'This field is mandatory')
-    .max(200, 'The value should not exceed 200 character')
+    .max(50, 'The value should not exceed 50 character')
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     }),
