@@ -42,7 +42,7 @@ const AccountSettings = () => {
     resolver: zodResolver(AccountSettingSechema),
     mode: 'onChange',
   });
-  const { setValue, reset } = methods;
+  const { setValue } = methods;
 
   const accountSettingsFields: FieldConfig[] = [
     {
