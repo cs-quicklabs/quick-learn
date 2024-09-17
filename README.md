@@ -124,5 +124,3 @@ pm start ecosystem.config.js
 You can go through this [pm2 docs](https://pm2.keymetrics.io/docs/usage/quick-start/), to monitor the pm2 running apps.
 
 TODO: Add a well docs for using nginx for the reverse proxy.
-
-### Editted by gagan
