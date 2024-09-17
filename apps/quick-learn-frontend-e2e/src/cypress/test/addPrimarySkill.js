@@ -60,11 +60,10 @@ class addPrimarySkill{
         return cy.get('.mt-1')
       }
 
-       saveButton()
-       {
-        return cy.get('.space-y-4 > .false').click()
-       }
-     
+      saveButton()
+      {
+       return cy.get('.flex-wrap > .false').click()
+      }
 
        OpenAccountSettings()
        {

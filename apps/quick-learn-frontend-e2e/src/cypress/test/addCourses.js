@@ -37,7 +37,7 @@ class addCourses{
 
        saveButton()
        {
-        return cy.get('.space-y-4 > .false').click()
+        return cy.get('.flex-wrap > .false').click()
        }
        getErrorMessage() {
         return cy.get('.mt-1')

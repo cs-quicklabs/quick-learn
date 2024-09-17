@@ -30,13 +30,13 @@ cy.get('.Toastify').should('contain','File upload sucessfully')
        {
           cy.get('#profileSettingsForm_input_text').clear()
           cy.get('#profileSettingsForm_input_text').type('Divanshu')
-          cy.get('.space-y-4 > .false').click()
+          cy.get('.flex-wrap > .false').click()
        }
        UpdateLastName()
        {
         cy.get(':nth-child(3) > .relative > #profileSettingsForm_input_text').clear()
         cy.get(':nth-child(3) > .relative > #profileSettingsForm_input_text').type('Gupta')
-        cy.get('.space-y-4 > .false').click()
+        cy.get('.flex-wrap > .false').click()
         cy.get('.Toastify').should('contain','Profile updated successfully')
        }
        UpdateFirstNameWithEmptySpaces()

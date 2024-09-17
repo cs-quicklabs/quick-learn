@@ -18,9 +18,9 @@ class updateGeneralSettings{
         return cy.get('.mt-1')
        }
        saveButton()
-       {
-        return cy.get('.space-y-4 > .false')
-       }
+      {
+       return cy.get('.flex-wrap > .false').click()
+      }
 
        OpenAccountSettings()
        {

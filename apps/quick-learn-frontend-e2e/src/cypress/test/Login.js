@@ -37,6 +37,9 @@ class LoginPage {
       this.getPasswordInput().type(password);
       this.getSubmitButton().click();
     }
+    loginWithEmptyValue() {
+      this.getSubmitButton().should('be.disabled');
+    }
 
   }
   
