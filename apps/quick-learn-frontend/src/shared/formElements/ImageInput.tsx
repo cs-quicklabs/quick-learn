@@ -39,7 +39,11 @@ const ImageInput: FC<Props> = ({
       fileInputRef.current?.click();
     } else {
       setIsLoading(true);
-      setValue(name, '', { shouldValidate: true });
+      setValue(name, '', {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
       setImagePreview(null);
       setIsLoading(false);
     }
@@ -59,7 +63,11 @@ const ImageInput: FC<Props> = ({
       setIsLoading(true);
       fileUploadApiCall(formData, imageType)
         .then((res) => {
-          setValue(name, res.data.file, { shouldValidate: true });
+          setValue(name, res.data.file, {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true,
+          });
         })
         .catch((err) => showApiErrorInToast(err))
         .finally(() => setIsLoading(false));
