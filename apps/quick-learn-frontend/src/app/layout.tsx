@@ -18,7 +18,7 @@ export default function RootLayout({
       <body className="bg-gray-50">
         <ToastContainer
           position="top-center"
-          autoClose={5000}
+          autoClose={2000}
           hideProgressBar={true}
           pauseOnFocusLoss={false}
         />

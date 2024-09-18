@@ -35,6 +35,17 @@ export const en = {
     addCourse: 'Create New Course',
     editCourse: 'Edit Course',
   },
+  accountSetting: {
+    skillDeleteError:
+      'This skill is associated with some team members and therefore can not be deleted. Please assign different skill to those team members before deleting this skill.',
+    skillDeleteTitle: 'Failed to delete skill',
+    RoadmapDeleteError:
+      'This roadmap category is associated with some roadmaps and therefore can not be deleted. Please assign different roadmap category to those roadmaps before deleting this roadmap category.',
+    RoadmapDeleteTitle: 'Failed to delete roadmap category',
+    courseDeleteError:
+      'This course category is associated with some courses and therefore can not be deleted. Please assign different course category to those courses before deleting this course category.',
+    courseDeleteTitle: 'Failed to delete course category',
+  },
   common: {
     cancel: 'Cancel',
     lessons: 'lessons',
@@ -58,5 +69,6 @@ export const en = {
     firstNameError: 'First name cannot exceed 50 characters.',
     lastNameError: 'Last name cannot exceed 50 characters.',
     fieldRequired: 'This field is required',
+    ok: 'ok',
   },
 };

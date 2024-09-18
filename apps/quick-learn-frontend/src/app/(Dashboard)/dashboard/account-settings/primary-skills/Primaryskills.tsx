@@ -12,6 +12,8 @@ import {
 } from '@src/utils/toastUtils';
 import React, { useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
+import AccountSettingConformationModal from '@src/shared/modals/AccountSettiongConformationModal';
+import { en } from '@src/constants/lang/en';
 
 type AddSkillType = {
   name: string;
@@ -22,6 +24,7 @@ const Primaryskills = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
   const [primarySkills, setPrimarySkills] = useState<TSkill[]>([]);
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const onSubmitEditForm = (id: number, data: Partial<TSkill>) => {
     setIsEditLoading(true);
@@ -71,7 +74,13 @@ const Primaryskills = () => {
         setPrimarySkills(skill);
         showApiMessageInToast(res);
       })
-      .catch((err) => showApiErrorInToast(err))
+      .catch((err) => {
+        if (err.response.status === 400) {
+          setOpenModal(true);
+        } else {
+          showApiErrorInToast(err);
+        }
+      })
       .finally(() => setIsEditLoading(false));
   };
 
@@ -81,21 +90,29 @@ const Primaryskills = () => {
   };
 
   return (
-    <BaseLayout
-      heading="Primary Skills"
-      subHeading="Primary skill can be assigned to a person which tells the main trade of a candidate."
-      isAddLoading={isLoading}
-      isEditLoading={isEditLoading}
-      onAdd={onSubmit}
-      onDelete={onDelete}
-      onEdit={onSubmitEditForm}
-      input={inputPlaceHolder}
-      tableColumnName="Skill name"
-      data={primarySkills.map((item) => {
-        return { id: item.id, name: item.name };
-      })}
-      isPageLoading={isPageLoading}
-    />
+    <>
+      <AccountSettingConformationModal
+        open={openModal}
+        setOpen={setOpenModal}
+        title={en.accountSetting.skillDeleteTitle}
+        description={en.accountSetting.skillDeleteError}
+      />
+      <BaseLayout
+        heading="Primary Skills"
+        subHeading="Primary skill can be assigned to a person which tells the main trade of a candidate."
+        isAddLoading={isLoading}
+        isEditLoading={isEditLoading}
+        onAdd={onSubmit}
+        onDelete={onDelete}
+        onEdit={onSubmitEditForm}
+        input={inputPlaceHolder}
+        tableColumnName="Skill name"
+        data={primarySkills.map((item) => {
+          return { id: item.id, name: item.name };
+        })}
+        isPageLoading={isPageLoading}
+      />
+    </>
   );
 };
 
