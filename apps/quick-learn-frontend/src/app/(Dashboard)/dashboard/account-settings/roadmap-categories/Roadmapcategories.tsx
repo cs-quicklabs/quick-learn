@@ -12,6 +12,7 @@ import {
 } from '@src/utils/toastUtils';
 import React, { useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
+import {en} from '@src/constants/lang/en';
 
 type formOutput = {
   name: string;
@@ -78,21 +79,21 @@ const Roadmapcategories = () => {
   };
 
   const inputPlaceHolder = {
-    label: 'Add New Roadmap Category',
-    placeholder: 'Engineering',
+    label: en.roadmapCategories.inputLabel,
+    placeholder: en.roadmapCategories.inputPlaceHolder,
   };
 
   return (
     <BaseLayout
-      heading="Roadmap Categories"
-      subHeading='Roadmaps can belong to a category. A category could be a way to group learning roadmaps. For example, a department can have a category called "Engineering" and all the roadmaps related to engineering can be added to this category.'
+      heading={en.roadmapCategories.heading}
+      subHeading={en.roadmapCategories.subHeading}
       isAddLoading={isLoading}
       onAdd={onSubmit}
       isEditLoading={isEditLoading}
       onDelete={onDelete}
       onEdit={onSubmitEditForm}
       input={inputPlaceHolder}
-      tableColumnName="Category name"
+      tableColumnName={en.roadmapCategories.tableName}
       data={roadmapCategories.map((item) => {
         return { id: item.id, name: item.name };
       })}

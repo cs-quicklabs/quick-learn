@@ -6,6 +6,8 @@ import {
   updateCourseCategory,
 } from '@src/apiServices/accountService';
 import { TCourseCategories } from '@src/shared/types/accountTypes';
+import {en} from '@src/constants/lang/en';
+
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -79,12 +81,11 @@ const Coursecategories = () => {
       .finally(() => setIsEditLoading(false));
   };
 
-  const heading = 'Courses Categories';
-  const subHeading =
-    'Courses can belong to a category. A category could be a way to group learning courses. For example, a you can create a learning course from a book, a blog, a video, for a software application or for any onboarding needs.';
+  const heading = en.courseCategories.heading;
+  const subHeading =en.courseCategories.subHeading;
   const inputPlaceHolder = {
-    label: 'Add new course category',
-    placeholder: 'Engineering',
+    label: en.courseCategories.inputlabel,
+    placeholder: en.courseCategories.inputPlaceHolder,
   };
 
   return (
@@ -97,7 +98,7 @@ const Coursecategories = () => {
       onDelete={onDelete}
       onEdit={onSubmitEditForm}
       input={inputPlaceHolder}
-      tableColumnName="Category name"
+      tableColumnName={en.courseCategories.tableName}
       data={courseCategories.map((item) => {
         return { id: item.id, name: item.name };
       })}
