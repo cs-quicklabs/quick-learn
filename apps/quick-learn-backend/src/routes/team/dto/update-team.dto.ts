@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsOptional,
-  IsString,
-  IsUrl,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateTeamDto {
   @ApiProperty({ example: 'CS Warriors' })
@@ -17,7 +11,7 @@ export class UpdateTeamDto {
 
   @ApiProperty({ example: 'https:www.example.com' })
   @IsOptional()
-  @IsUrl()
+  @IsString()
   @MaxLength(2048)
   logo?: string;
 }

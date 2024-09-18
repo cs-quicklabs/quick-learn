@@ -15,7 +15,7 @@ export class CreateCourseDto {
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(255)
+  @MaxLength(50)
   name: string;
 
   @ApiProperty({

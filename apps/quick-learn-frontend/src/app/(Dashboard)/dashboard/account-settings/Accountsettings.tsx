@@ -42,7 +42,7 @@ const AccountSettings = () => {
     resolver: zodResolver(AccountSettingSechema),
     mode: 'onChange',
   });
-  const { setValue, reset } = methods;
+  const { setValue } = methods;
 
   const accountSettingsFields: FieldConfig[] = [
     {
@@ -75,10 +75,6 @@ const AccountSettings = () => {
     updateTeamDetails(data as TTeam)
       .then((res) => {
         showApiMessageInToast(res);
-        reset({
-          name: data.name,
-          logo: data.logo,
-        });
         if (user) {
           setUser({
             ...user,

@@ -162,7 +162,11 @@ const CourseDetails = () => {
           ...metadata.contentRepository,
           course_categories: allCourseCategories,
         });
-        router.replace(RouteEnum.CONTENT);
+        if (roadmapId && parseInt(roadmapId)) {
+          router.replace(RouteEnum.CONTENT + `/${roadmapId}`);
+        } else {
+          router.replace(RouteEnum.CONTENT);
+        }
         setShowConformationModal(false);
       })
       .catch((err) => showApiErrorInToast(err))

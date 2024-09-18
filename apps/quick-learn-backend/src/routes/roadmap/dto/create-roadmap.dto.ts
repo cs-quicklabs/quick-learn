@@ -5,7 +5,7 @@ export class CreateRoadmapDto {
   @ApiProperty({ example: 'Roadmap name' })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(255)
+  @MaxLength(50)
   name: string;
 
   @ApiProperty({ example: 'Roadmap description' })

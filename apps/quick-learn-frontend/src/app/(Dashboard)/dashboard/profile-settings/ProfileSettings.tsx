@@ -33,7 +33,7 @@ const profileSchema = z.object({
       onlyAlphabeticValidation,
       'Last name should only contain alphabetic characters',
     ),
-  profile_image: z.union([z.instanceof(File), z.string()]),
+  profile_image: z.union([z.instanceof(File), z.string()]).optional(),
   email: z.string().email('Invalid email address').optional(),
 });
 
@@ -79,7 +79,11 @@ const ProfileSettings = () => {
   const onSubmit = (data: ProfileFormData) => {
     setIsLoading(true);
     const { first_name, last_name, profile_image } = data;
-    updateUserProfileService({ first_name, last_name, profile_image })
+    updateUserProfileService({
+      first_name,
+      last_name,
+      profile_image: profile_image ?? '',
+    })
       .then((res) => {
         if (user) {
           setUser({
