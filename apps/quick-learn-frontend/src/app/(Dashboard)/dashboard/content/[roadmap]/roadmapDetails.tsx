@@ -114,10 +114,11 @@ const RoadmapDetails = () => {
   function onEdit(data: TCreateRoadmap) {
     setIsLoading(true);
     updateRoadmap(roadmap, data)
-      .then(() => {
+      .then((res) => {
         setOpenAddModal(false);
         if (!roadmapData) return;
         setRoadmapData({ ...roadmapData, ...data });
+        showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
