@@ -15,7 +15,7 @@ const ForgotPassword = () => {
   const router = useRouter();
   const forgotPasswordFields: FieldConfig[] = [
     {
-      label: 'Email',
+      label: 'Your Email',
       name: 'email',
       type: 'email',
       placeholder: 'name@company.com',
