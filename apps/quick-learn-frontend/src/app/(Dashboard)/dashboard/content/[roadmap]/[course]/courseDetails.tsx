@@ -89,7 +89,7 @@ const CourseDetails = () => {
         }),
       };
     });
-    setRoadmapCategoriesData(data.filter((data) => data.list.length > 0));
+    setRoadmapCategoriesData(data);
   }, [allRoadmapCategories]);
 
   useEffect(() => {

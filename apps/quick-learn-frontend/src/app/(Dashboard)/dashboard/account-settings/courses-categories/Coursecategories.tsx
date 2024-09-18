@@ -13,6 +13,8 @@ import {
 import React, { useContext, useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
 import { UserContext } from '@src/context/userContext';
+import AccountSettingConformationModal from '@src/shared/modals/AccountSettiongConformationModal';
+import { en } from '@src/constants/lang/en';
 
 type formOutput = {
   name: string;
@@ -26,6 +28,7 @@ const Coursecategories = () => {
   const [courseCategories, setCourseCategories] = useState<TCourseCategories[]>(
     [],
   );
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const onSubmit = (data: formOutput) => {
     setIsLoading(true);
@@ -57,7 +60,13 @@ const Coursecategories = () => {
         setCourseCategories(data);
         showApiMessageInToast(res);
       })
-      .catch((err) => showApiErrorInToast(err))
+      .catch((err) => {
+        if (err.response.status === 400) {
+          setOpenModal(true);
+        } else {
+          showApiErrorInToast(err);
+        }
+      })
       .finally(() => setIsEditLoading(false));
   };
 
@@ -88,21 +97,29 @@ const Coursecategories = () => {
   };
 
   return (
-    <BaseLayout
-      heading={heading}
-      subHeading={subHeading}
-      isAddLoading={isLoading}
-      isEditLoading={isEditLoading}
-      onAdd={onSubmit}
-      onDelete={onDelete}
-      onEdit={onSubmitEditForm}
-      input={inputPlaceHolder}
-      tableColumnName="Category name"
-      data={courseCategories.map((item) => {
-        return { id: item.id, name: item.name };
-      })}
-      isPageLoading={isPageLoading}
-    />
+    <>
+      <AccountSettingConformationModal
+        open={openModal}
+        setOpen={setOpenModal}
+        title={en.accountSetting.courseDeleteTitle}
+        description={en.accountSetting.courseDeleteError}
+      />
+      <BaseLayout
+        heading={heading}
+        subHeading={subHeading}
+        isAddLoading={isLoading}
+        isEditLoading={isEditLoading}
+        onAdd={onSubmit}
+        onDelete={onDelete}
+        onEdit={onSubmitEditForm}
+        input={inputPlaceHolder}
+        tableColumnName="Category name"
+        data={courseCategories.map((item) => {
+          return { id: item.id, name: item.name };
+        })}
+        isPageLoading={isPageLoading}
+      />
+    </>
   );
 };
 
