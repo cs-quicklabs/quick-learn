@@ -11,7 +11,7 @@ export const en = {
     addOnAlreadyExistingCourse: 'Add already existing courses to this roadmap',
     archiveRoadmap: 'Archive Roadmap',
     editCourse: 'Edit Course',
-    assignToRoadmap: 'Assign to Roadmap',
+    assignToRoadmap: 'Move or add this course to another Roadmap',
     archiveCourse: 'Archive Course',
   },
   roadmapDetails: {

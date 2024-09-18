@@ -108,7 +108,7 @@ const RoadmapDetails = () => {
         }),
       };
     });
-    setCourseCategoriesData(data.filter((data) => data.list.length > 0));
+    setCourseCategoriesData(data);
   }, [allCourseCategories]);
 
   function onEdit(data: TCreateRoadmap) {
