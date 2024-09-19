@@ -1,5 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FindOptionsWhere, ILike, MoreThan, Repository } from 'typeorm';
+import {
+  FindOptionsWhere,
+  ILike,
+  MoreThan,
+  Repository,
+  Equal,
+  Or,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { SkillEntity } from '@src/entities/skill.entity';
@@ -72,7 +79,7 @@ export class UsersService extends PaginationService<UserEntity> {
     let conditions:
       | FindOptionsWhere<UserEntity>
       | FindOptionsWhere<UserEntity>[] = {
-      user_type_id: MoreThan(userTypeId),
+      user_type_id: Or(Equal(userTypeId), MoreThan(userTypeId)),
     };
 
     // For getting data base on the user type

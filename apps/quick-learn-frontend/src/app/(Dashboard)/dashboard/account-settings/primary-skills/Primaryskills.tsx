@@ -10,10 +10,10 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
+import { en } from '@src/constants/lang/en';
 import React, { useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
 import AccountSettingConformationModal from '@src/shared/modals/AccountSettiongConformationModal';
-import { en } from '@src/constants/lang/en';
 
 type AddSkillType = {
   name: string;
@@ -85,8 +85,8 @@ const Primaryskills = () => {
   };
 
   const inputPlaceHolder = {
-    label: 'Add new Skill',
-    placeholder: 'iOS Developer',
+    label: en.primarySkills.inputLabel,
+    placeholder: en.primarySkills.inputPlaceHolder,
   };
 
   return (
@@ -98,15 +98,15 @@ const Primaryskills = () => {
         description={en.accountSetting.skillDeleteError}
       />
       <BaseLayout
-        heading="Primary Skills"
-        subHeading="Primary skill can be assigned to a person which tells the main trade of a candidate."
+        heading={en.primarySkills.heading}
+        subHeading={en.primarySkills.subHeading}
         isAddLoading={isLoading}
         isEditLoading={isEditLoading}
         onAdd={onSubmit}
         onDelete={onDelete}
         onEdit={onSubmitEditForm}
         input={inputPlaceHolder}
-        tableColumnName="Skill name"
+        tableColumnName={en.primarySkills.tableName}
         data={primarySkills.map((item) => {
           return { id: item.id, name: item.name };
         })}

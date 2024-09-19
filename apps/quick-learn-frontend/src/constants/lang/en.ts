@@ -71,4 +71,28 @@ export const en = {
     fieldRequired: 'This field is required',
     ok: 'ok',
   },
+  courseCategories: {
+    heading: 'Courses Categories',
+    subHeading:
+      'Courses can belong to a category. A category could be a way to group learning courses. For example, a you can create a learning course from a book, a blog, a video, for a software application or for any onboarding needs.',
+    inputlabel: 'Add new course category',
+    inputPlaceHolder: 'Engineering',
+    tableName: 'Category name',
+  },
+  primarySkills: {
+    inputLabel: 'Add new Skill',
+    inputPlaceHolder: 'iOS Developer',
+    heading: 'Primary Skills',
+    subHeading:
+      'Primary skill can be assigned to a person which tells the main trade of a candidate.',
+    tableName: 'skill name',
+  },
+  roadmapCategories: {
+    inputLabel: 'Add New Roadmap Category',
+    inputPlaceHolder: 'Engineering',
+    heading: 'Roadmap Categories',
+    subHeading:
+      'Roadmaps can belong to a category. A category could be a way to group learning roadmaps. For example, a department can have a category called "Engineering" and all the roadmaps related to engineering can be added to this category.',
+    tableName: 'Category name',
+  },
 };
