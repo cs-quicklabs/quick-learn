@@ -26,7 +26,7 @@ import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
 })
 @UseGuards(JwtAuthGuard)
 export class RoadmapController {
-  constructor(private service: RoadmapService) {}
+  constructor(private service: RoadmapService) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all roadmaps' })
@@ -61,7 +61,7 @@ export class RoadmapController {
     @Body() updateRoadmapDto: UpdateRoadmapDto,
   ) {
     const roadmap = await this.service.updateRoadmap(+id, updateRoadmapDto);
-    return new SuccessResponse(en.CreateRoadmap, roadmap);
+    return new SuccessResponse(en.updateRoadmap, roadmap);
   }
 
   @Patch(':id/assign')
