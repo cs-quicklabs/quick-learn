@@ -1,4 +1,5 @@
 'use client';
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import {
   ArrowRightEndOnRectangleIcon,
   PencilIcon,
@@ -26,6 +27,7 @@ import {
   TCreateCourse,
 } from '@src/shared/types/contentRepository';
 import useDashboardStore from '@src/store/dashboard.store';
+import { HTMLSanitizer } from '@src/utils/helpers';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -178,6 +180,10 @@ const CourseDetails = () => {
     router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/add`);
   }
 
+  function onEditLesson(id: number) {
+    router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${id}`);
+  }
+
   return (
     <>
       {isPageLoading && <FullPageLoader />}
@@ -278,6 +284,54 @@ const CourseDetails = () => {
                 onAdd={onAddLesson}
               />
             </li>
+            {courseData?.lessons?.map(
+              ({
+                name,
+                content,
+                new_content,
+                approved,
+                created_by_user,
+                created_at,
+                id,
+              }) => (
+                <button
+                  type="button"
+                  key={id}
+                  disabled={!approved}
+                  onClick={() => onEditLesson(id)}
+                  className="text-left inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <div className="flex-wrap py-4 px-6 text-gray-900 h-40">
+                    <h1
+                      id="message-heading"
+                      className="font-medium text-gray-900 line-clamp-2 group-hover:underline capitalize"
+                    >
+                      {name}
+                    </h1>
+                    <p className="font-normal text-sm text-gray-500 line-clamp-2 mt-2">
+                      {HTMLSanitizer(approved ? content : new_content)}
+                    </p>
+                    <p className="inline-flex align-center font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
+                      {approved ? (
+                        'Added by ' +
+                        created_by_user.full_name +
+                        ' on ' +
+                        format(created_at, DateFormats.shortDate)
+                      ) : (
+                        <>
+                          <ExclamationTriangleIcon
+                            className="text-yellow-500 mr-1"
+                            height={16}
+                            width={16}
+                          />{' '}
+                          {en.lesson.pendingApproval}
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </button>
+              ),
+            )}
           </ul>
         </div>
       </div>

@@ -48,6 +48,10 @@ export const en = {
   },
   lesson: {
     createNewLesson: 'Create New Lesson',
+    titleRequired: 'Title is required',
+    contentRequired: 'Content is required',
+    titleMaxLength: 'Title cannot exceed 50 characters',
+    pendingApproval: 'Pending for approval',
   },
   common: {
     cancel: 'Cancel',
@@ -73,6 +77,10 @@ export const en = {
     lastNameError: 'Last name cannot exceed 50 characters.',
     fieldRequired: 'This field is required',
     ok: 'ok',
+    addLesson: 'Add Lesson',
+    addTitlePlaceholder: 'Enter title',
+    addContentPlaceholder: 'Type your content here...',
+    lessonSaveAndApprovalButton: 'Save & send for approval',
   },
   courseCategories: {
     heading: 'Courses Categories',

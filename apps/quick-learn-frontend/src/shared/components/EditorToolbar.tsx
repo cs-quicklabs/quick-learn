@@ -1,7 +1,6 @@
 import { PencilIcon } from '@heroicons/react/20/solid';
 import { CheckIcon, EyeIcon } from '@heroicons/react/24/outline';
-import React, { FC, useState } from 'react';
-import { UndoWithTime } from './UIElements';
+import React, { FC } from 'react';
 
 // Modules object for setting up the Quill editor
 export const modules = {

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BasicCrudService, PaginationService } from '@src/common/services';
+import { PaginationService } from '@src/common/services';
 import { LessonEntity, UserEntity } from '@src/entities';
 import { CreateLessonDto, UpdateLessonDto } from './dto';
 import { CourseService } from '../course/course.service';

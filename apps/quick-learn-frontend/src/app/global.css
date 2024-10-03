@@ -56,6 +56,7 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: #000000 !important;
 }
 
+/* Quill  toolbar and editor css */
 .ql-snow.ql-toolbar {
   padding: 8px 16px !important;
 }
@@ -72,6 +73,24 @@ input:-webkit-autofill:active {
   display: none !important;
 }
 
+.quill .ql-container {
+  border: none !important;
+}
+
+.quill .ql-container:focus {
+  border: 1px red solid !important;
+}
+
 .quill .ql-container .ql-editor {
   min-height: 100vh;
 }
+
+.quill .ql-container .ql-editor:focus {
+  border: 1px #1C64F2 solid;
+}
+
+.quill .ql-container .ql-syntax {
+  background-color: #d3d3d3 !important;
+  color: #000000 !important;
+}
+/* Quill  toolbar and editor css */

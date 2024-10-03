@@ -28,10 +28,13 @@ export const getRoadmaps = async (): Promise<
 
 export const getRoadmap = async (
   id: string,
+  courseId?: string,
 ): Promise<AxiosSuccessResponse<TRoadmap>> => {
-  const response = await axiosInstance.get<AxiosSuccessResponse<TRoadmap>>(
-    ContentRepositoryApiEnum.ROADMAP + `/${id}`,
-  );
+  const url =
+    ContentRepositoryApiEnum.ROADMAP +
+    `/${id}` +
+    (courseId ? `?courseId=${courseId}` : '');
+  const response = await axiosInstance.get<AxiosSuccessResponse<TRoadmap>>(url);
   return response.data;
 };
 
@@ -126,6 +129,18 @@ export const archiveCourse = async (
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.delete<AxiosSuccessResponse>(
     ContentRepositoryApiEnum.COURSE + `/${id}`,
+  );
+  return response.data;
+};
+
+export const createLesson = async (payload: {
+  name: string;
+  content: string;
+  course_id: string;
+}): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.LESSON,
+    payload,
   );
   return response.data;
 };
