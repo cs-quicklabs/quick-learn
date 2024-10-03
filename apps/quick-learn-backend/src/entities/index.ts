@@ -8,6 +8,7 @@ import { CourseCategoryEntity } from './course-category.entity';
 import { SessionEntity } from './session.entity';
 import { RoadmapEntity } from './roadmap.entity';
 import { CourseEntity } from './course.entity';
+import { LessonEntity } from './lesson.entity';
 
 export const Entities = [
   UserEntity,
@@ -20,6 +21,7 @@ export const Entities = [
   SessionEntity,
   RoadmapEntity,
   CourseEntity,
+  LessonEntity,
 ];
 
 export {
@@ -33,4 +35,5 @@ export {
   SessionEntity,
   RoadmapEntity,
   CourseEntity,
+  LessonEntity,
 };

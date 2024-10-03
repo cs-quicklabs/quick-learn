@@ -46,6 +46,9 @@ export const en = {
       'This course category is associated with some courses and therefore can not be deleted. Please assign different course category to those courses before deleting this course category.',
     courseDeleteTitle: 'Failed to delete course category',
   },
+  lesson: {
+    createNewLesson: 'Create New Lesson',
+  },
   common: {
     cancel: 'Cancel',
     lessons: 'lessons',

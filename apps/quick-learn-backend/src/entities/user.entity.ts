@@ -16,6 +16,7 @@ import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
 import { SkillEntity } from './skill.entity';
 import { RoadmapEntity } from './roadmap.entity';
+import { LessonEntity } from './lesson.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -87,4 +88,13 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => RoadmapEntity, (user) => user.created_by)
   roadmaps: RoadmapEntity[];
+
+  @OneToMany(() => LessonEntity, (user) => user.created_by)
+  created_by_lessons: LessonEntity[];
+
+  @OneToMany(() => LessonEntity, (user) => user.approved_by)
+  approved_by_lessons: LessonEntity[];
+
+  @OneToMany(() => LessonEntity, (user) => user.archive_by)
+  archive_by_lessons: LessonEntity[];
 }

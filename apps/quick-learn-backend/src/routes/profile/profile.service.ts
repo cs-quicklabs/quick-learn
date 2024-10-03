@@ -11,7 +11,7 @@ export class ProfileService {
   constructor(private usersService: UsersService) {}
 
   async updateUserProfile(user: UserEntity, newDetails: UpdateProfileDto) {
-    await this.usersService.update(user.uuid, newDetails);
+    await this.usersService.updateUser(user.uuid, newDetails);
     return new SuccessResponse('Profile updated successfully');
   }
 
@@ -26,7 +26,7 @@ export class ProfileService {
     if (!arePasswordsSame) {
       throw new UnauthorizedException('Invalid Old Password');
     }
-    await this.usersService.update(user.uuid, {
+    await this.usersService.updateUser(user.uuid, {
       password: await bcrypt.hash(changePasswordDTO.newPassword, 10),
     });
     return new SuccessResponse('Password updated successfully');
@@ -38,7 +38,7 @@ export class ProfileService {
     });
   }
   async changePreferencesService(user: UserEntity, preference: boolean) {
-    await this.usersService.update(user.uuid, {
+    await this.usersService.updateUser(user.uuid, {
       email_alert_preference: preference,
     });
     return new SuccessResponse('Email preference updated successfully', {

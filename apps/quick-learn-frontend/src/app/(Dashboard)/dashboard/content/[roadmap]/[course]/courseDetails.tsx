@@ -14,6 +14,7 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
+import CreateNewCard from '@src/shared/components/CreateNewCard';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import AddEditCourseModal from '@src/shared/modals/addEditCourseModal';
 import AssignDataModal from '@src/shared/modals/assignDataModal';
@@ -173,6 +174,10 @@ const CourseDetails = () => {
       .finally(() => setIsLoading(false));
   }
 
+  function onAddLesson() {
+    router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/add`);
+  }
+
   return (
     <>
       {isPageLoading && <FullPageLoader />}
@@ -262,6 +267,18 @@ const CourseDetails = () => {
               </button>
             </Tooltip>
           </div>
+        </div>
+      </div>
+      <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
+        <div id="created-spaces">
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
+            <li>
+              <CreateNewCard
+                title={en.lesson.createNewLesson}
+                onAdd={onAddLesson}
+              />
+            </li>
+          </ul>
         </div>
       </div>
     </>

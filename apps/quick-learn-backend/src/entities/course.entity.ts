@@ -1,8 +1,16 @@
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { CourseCategoryEntity } from './course-category.entity';
 import { RoadmapEntity } from './roadmap.entity';
 import { BaseEntity } from './BaseEntity';
 import { UserEntity } from './user.entity';
+import { LessonEntity } from './lesson.entity';
 
 @Entity('course')
 export class CourseEntity extends BaseEntity {
@@ -37,4 +45,7 @@ export class CourseEntity extends BaseEntity {
 
   @ManyToMany(() => RoadmapEntity, (roadmap) => roadmap.courses)
   roadmaps: RoadmapEntity[];
+
+  @OneToMany(() => LessonEntity, (lesson) => lesson.course)
+  lessons: LessonEntity[];
 }
