@@ -64,7 +64,7 @@ const Lesson = () => {
     return () => {
       setHideNavbar(false);
     };
-  });
+  }, [setHideNavbar]);
 
   useEffect(() => {
     const url = `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${lessonId}`;
