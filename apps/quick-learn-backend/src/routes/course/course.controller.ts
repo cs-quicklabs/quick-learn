@@ -49,7 +49,10 @@ export class CourseController {
   @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Get course details' })
   async getRoadmapDetails(@Param('id') id: string) {
-    const data = await this.service.getCourseDetails({ id: +id });
+    const data = await this.service.getCourseDetails({ id: +id }, [
+      'lessons',
+      'lessons.created_by_user',
+    ]);
     return new SuccessResponse(en.GetCourseDetails, data);
   }
 

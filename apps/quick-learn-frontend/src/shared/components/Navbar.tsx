@@ -97,7 +97,10 @@ const Navbar = () => {
         cancelText={en.common.no}
         confirmText={en.common.yes}
       />
-      <Disclosure as="nav" className="bg-gray-800 text-white shadow">
+      <Disclosure
+        as="nav"
+        className="bg-gray-800 text-white shadow fixed z-10 w-full top-0"
+      >
         <div className="mx-auto px-2 sm:px-4 lg:px-8">
           <div className="flex py-2 justify-between">
             <div className="flex px-2 lg:px-0">

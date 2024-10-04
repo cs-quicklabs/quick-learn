@@ -45,10 +45,18 @@ export class UsersService extends PaginationService<UserEntity> {
     return metadata;
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto & { team_id: number }) {
     const foundUser = await this.userRepository.findOne({
       where: { email: createUserDto.email },
     });
+
+    const skill = await this.skillRepository.findOne({
+      where: { id: createUserDto.skill_id },
+    });
+
+    if (!skill) {
+      throw new BadRequestException(en.invalidSkill);
+    }
 
     if (foundUser && foundUser.active) {
       throw new BadRequestException('Email already exists.');
@@ -57,7 +65,9 @@ export class UsersService extends PaginationService<UserEntity> {
     if (foundUser && !foundUser.active) {
       throw new BadRequestException(en.deactiveUserAddError);
     }
-    const user = this.userRepository.create(createUserDto);
+
+    let user = this.userRepository.create(createUserDto);
+    user = await this.userRepository.save(user);
 
     // send email to the user
     const emailData = {
@@ -67,7 +77,7 @@ export class UsersService extends PaginationService<UserEntity> {
     };
     this.emailService.email(emailData);
 
-    return await this.userRepository.save(user);
+    return user;
   }
 
   async findAll(
@@ -143,7 +153,7 @@ export class UsersService extends PaginationService<UserEntity> {
     });
   }
 
-  async update(uuid: UserEntity['uuid'], payload: Partial<UserEntity>) {
+  async updateUser(uuid: UserEntity['uuid'], payload: Partial<UserEntity>) {
     const user = await this.findOne({ uuid });
 
     if (payload.email) {

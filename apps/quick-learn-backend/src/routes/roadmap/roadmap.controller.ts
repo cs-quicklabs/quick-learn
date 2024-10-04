@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { RoadmapService } from './roadmap.service';
@@ -16,8 +17,9 @@ import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateRoadmapDto } from './dto/create-roadmap.dto';
 import { UpdateRoadmapDto } from './dto/update-roadmap.dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
-import { UserEntity } from '@src/entities';
+import { RoadmapEntity, UserEntity } from '@src/entities';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
+import { FindOptionsWhere } from 'typeorm';
 
 @ApiTags('Roadmap')
 @Controller({
@@ -48,8 +50,18 @@ export class RoadmapController {
   @Get(':id')
   @ApiParam({ name: 'id', description: 'Roadmap ID', required: true })
   @ApiOperation({ summary: 'Get roadmap details' })
-  async getRoadmapDetails(@Param('id') id: string) {
-    const roadmaps = await this.service.getRoadmapDetails({ id: +id });
+  async getRoadmapDetails(
+    @Param('id') id: string,
+    @Query('courseId') courseId?: string,
+  ) {
+    let options: FindOptionsWhere<RoadmapEntity> = { id: +id };
+    if (courseId) {
+      options = {
+        ...options,
+        courses: { id: +courseId },
+      };
+    }
+    const roadmaps = await this.service.getRoadmapDetails(options, ['courses']);
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
 

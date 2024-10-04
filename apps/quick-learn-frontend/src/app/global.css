@@ -55,3 +55,42 @@ input:-webkit-autofill:active {
   transition: background-color 5000s;
   -webkit-text-fill-color: #000000 !important;
 }
+
+/* Quill  toolbar and editor css */
+.ql-snow.ql-toolbar {
+  padding: 8px 16px !important;
+}
+
+.ql-snow.ql-toolbar button.custom-quill-button {
+  padding: 0 !important;
+}
+
+.ql-snow.ql-toolbar button:focus {
+  color: #000000 !important;
+}
+
+#toolbar:not(.ql-toolbar.ql-snow) .ql-image {
+  display: none !important;
+}
+
+.quill .ql-container {
+  border: none !important;
+}
+
+.quill .ql-container:focus {
+  border: 1px red solid !important;
+}
+
+.quill .ql-container .ql-editor {
+  min-height: 100vh;
+}
+
+.quill .ql-container .ql-editor:focus {
+  border: 1px #1C64F2 solid;
+}
+
+.quill .ql-container .ql-syntax {
+  background-color: #d3d3d3 !important;
+  color: #000000 !important;
+}
+/* Quill  toolbar and editor css */

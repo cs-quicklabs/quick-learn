@@ -1,10 +1,9 @@
-import { FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsWhere } from 'typeorm';
 import { BasePaginationDto } from '../dto';
 import { PaginatedResult } from '../interfaces';
+import { BasicCrudService } from './basic-crud.service';
 
-export class PaginationService<T> {
-  constructor(private repository: Repository<T>) {}
-
+export class PaginationService<T> extends BasicCrudService<T> {
   async paginate(
     paginationDto: BasePaginationDto,
     searchOptions: FindOptionsWhere<T>[] | FindOptionsWhere<T> = {},
