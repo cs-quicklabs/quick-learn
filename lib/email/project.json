@@ -7,16 +7,12 @@
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/lib/email",
         "main": "lib/email/src/index.ts",
         "tsConfig": "lib/email/tsconfig.lib.json",
-        "assets": [
-          "lib/email/*.md"
-        ]
+        "assets": ["lib/email/*.md"]
       }
     }
   }

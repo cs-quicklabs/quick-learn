@@ -2,22 +2,16 @@
   "name": "quick-learn-backend-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "implicitDependencies": [
-    "quick-learn-backend"
-  ],
+  "implicitDependencies": ["quick-learn-backend"],
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{e2eProjectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{e2eProjectRoot}"],
       "options": {
         "jestConfig": "apps/quick-learn-backend-e2e/jest.config.ts",
         "passWithNoTests": true
       },
-      "dependsOn": [
-        "quick-learn-backend:build"
-      ]
+      "dependsOn": ["quick-learn-backend:build"]
     }
   }
 }
