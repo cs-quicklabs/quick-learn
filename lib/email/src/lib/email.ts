@@ -15,14 +15,20 @@ export class EmailNotification {
    * @param data Send Grid API Key
    * @param emai verified sender email
    */
-  constructor(data: { host: string, port: number, auth: { user: string, pass: string } }, emai: string) {
-    this.emailTransporter = nodemailer.createTransport({ ...data, secure: false });
+  constructor(
+    data: { host: string; port: number; auth: { user: string; pass: string } },
+    emai: string,
+  ) {
+    this.emailTransporter = nodemailer.createTransport({
+      ...data,
+      secure: false,
+    });
     this.accountEmail = emai;
   }
 
   private async sendEmail(message: Message): Promise<void> {
     if (message.subject === undefined) {
-      throw new Error("Subject is required");
+      throw new Error('Subject is required');
     }
 
     const toAddresses = message.recipients;
@@ -37,14 +43,14 @@ export class EmailNotification {
       cc: ccAddresses.join(', '),
       bcc: bccAddresses.join(', '),
       subject: subject,
-      html: body
+      html: body,
     };
 
     try {
       const info = await this.emailTransporter.sendMail(mailOptions);
-      console.log("Email sent successfully to", info.accepted.join(', '));
+      console.log('Email sent successfully to', info.accepted.join(', '));
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error('Error sending email:', error);
       throw error;
     }
   }
@@ -52,7 +58,7 @@ export class EmailNotification {
   async send(message: Message | Message[]): Promise<void> {
     try {
       if (Array.isArray(message)) {
-        await Promise.all(message.map(msg => this.sendEmail(msg)));
+        await Promise.all(message.map((msg) => this.sendEmail(msg)));
       } else {
         await this.sendEmail(message);
       }

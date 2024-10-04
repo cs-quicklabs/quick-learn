@@ -17,10 +17,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: process.env.BUCKET_URL || '',
-      }
-    ]
+      },
+    ],
   },
-  transpilePackages: ['flowbite-react']
+  transpilePackages: ['flowbite-react'],
 };
 
 const plugins = [

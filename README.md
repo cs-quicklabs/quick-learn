@@ -65,7 +65,7 @@ Or, run both the app at once:
 npx nx run-many --target=dev
 ```
 
-Or, you can use the predefined script in *package.json*. This is make the db up and at the same time it will run both the apps.
+Or, you can use the predefined script in _package.json_. This is make the db up and at the same time it will run both the apps.
 
 ```bash
 npm run dev
@@ -73,7 +73,7 @@ npm run dev
 
 ## Hosting
 
-Note: Before going for hosting, check if the backend app has *.env.production* and frontend app has *.env* files.
+Note: Before going for hosting, check if the backend app has _.env.production_ and frontend app has _.env_ files.
 
 For hosting, quick-learn is using two ways. you can use whatever that suits you:
 
