@@ -29,7 +29,7 @@ const ContentRepository = () => {
   const allCourseCategories = metadata.contentRepository.course_categories;
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
-  const [isloading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [roadmaps, setRoadmaps] = useState<TRoadmap[]>([]);
   const [courses, setCourses] = useState<TCourse[]>([]);
 
@@ -78,7 +78,7 @@ const ContentRepository = () => {
         open={openAddModal}
         setOpen={setOpenAddModal}
         onSubmit={onSubmit}
-        isloading={isloading}
+        isloading={isLoading}
       />
       <div className="px-4 mb-8 sm:flex sm:items-center sm:justify-center sm:px-6 lg:px-8">
         <div className="items-baseline">

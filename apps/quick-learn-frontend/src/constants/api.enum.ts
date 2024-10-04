@@ -32,4 +32,5 @@ export enum ContentRepositoryApiEnum {
   METADATA = '/metadata/content-repository',
   ROADMAP = '/roadmap',
   COURSE = '/course',
+  LESSON = '/lesson',
 }

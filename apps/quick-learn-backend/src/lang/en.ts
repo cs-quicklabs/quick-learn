@@ -30,4 +30,13 @@ export const en = {
   successSkillDelete: 'Primary skill is deleted.',
   successSkillUpdate: 'Primary skill is updated.',
   successUserCreate: 'User is created.',
+  getLessons: 'Successfully got all lessons.',
+  createLesson: 'Successfully created a lesson.',
+  getLesson: 'Successfully got lesson details.',
+  invalidCourse: 'Invalid course is provided.',
+  invalidSkill: 'Invalid skill is provided.',
+  updateLesson: 'Successfully updated a lesson.',
+  lessonNotFound: 'Invalid lesson is provided.',
+  approveLesson: 'Successfully approved a lesson.',
+  archiveLesson: 'Successfully archived a lesson.',
 };

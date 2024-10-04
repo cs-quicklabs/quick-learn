@@ -16,6 +16,7 @@ import {
   RoadmapCategoriesModule,
   RoadmapModule,
   CourseModule,
+  LessonModule,
 } from './routes';
 import { FileModule } from './file/file.module';
 import fileConfig from './file/config/file.config';
@@ -46,6 +47,7 @@ import { MetadataModule } from './routes/metadata/metadata.module';
     RoadmapCategoriesModule,
     RoadmapModule,
     CourseModule,
+    LessonModule,
   ],
 })
 export class AppModule {}

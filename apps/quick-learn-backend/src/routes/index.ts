@@ -8,3 +8,4 @@ export * from './course-category/course-category.module';
 export * from './roadmap-category/roadmap-category.module';
 export * from './roadmap/roadmap.module';
 export * from './course/course.module';
+export * from './lesson/lesson.module';

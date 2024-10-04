@@ -1,4 +1,5 @@
 'use client';
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import {
   ArrowRightEndOnRectangleIcon,
   PencilIcon,
@@ -14,6 +15,7 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
+import CreateNewCard from '@src/shared/components/CreateNewCard';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import AddEditCourseModal from '@src/shared/modals/addEditCourseModal';
 import AssignDataModal from '@src/shared/modals/assignDataModal';
@@ -25,6 +27,7 @@ import {
   TCreateCourse,
 } from '@src/shared/types/contentRepository';
 import useDashboardStore from '@src/store/dashboard.store';
+import { HTMLSanitizer } from '@src/utils/helpers';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -173,6 +176,14 @@ const CourseDetails = () => {
       .finally(() => setIsLoading(false));
   }
 
+  function onAddLesson() {
+    router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/add`);
+  }
+
+  function onEditLesson(id: number) {
+    router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${id}`);
+  }
+
   return (
     <>
       {isPageLoading && <FullPageLoader />}
@@ -262,6 +273,66 @@ const CourseDetails = () => {
               </button>
             </Tooltip>
           </div>
+        </div>
+      </div>
+      <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
+        <div id="created-spaces">
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
+            <li>
+              <CreateNewCard
+                title={en.lesson.createNewLesson}
+                onAdd={onAddLesson}
+              />
+            </li>
+            {courseData?.lessons?.map(
+              ({
+                name,
+                content,
+                new_content,
+                approved,
+                created_by_user,
+                created_at,
+                id,
+              }) => (
+                <button
+                  type="button"
+                  key={id}
+                  disabled={!approved}
+                  onClick={() => onEditLesson(id)}
+                  className="text-left inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <div className="flex-wrap py-4 px-6 text-gray-900 h-40">
+                    <h1
+                      id="message-heading"
+                      className="font-medium text-gray-900 line-clamp-2 group-hover:underline capitalize"
+                    >
+                      {name}
+                    </h1>
+                    <p className="font-normal text-sm text-gray-500 line-clamp-2 mt-2">
+                      {HTMLSanitizer(approved ? content : new_content)}
+                    </p>
+                    <p className="inline-flex align-center font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
+                      {approved ? (
+                        'Added by ' +
+                        created_by_user.full_name +
+                        ' on ' +
+                        format(created_at, DateFormats.shortDate)
+                      ) : (
+                        <>
+                          <ExclamationTriangleIcon
+                            className="text-yellow-500 mr-1"
+                            height={16}
+                            width={16}
+                          />{' '}
+                          {en.lesson.pendingApproval}
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </button>
+              ),
+            )}
+          </ul>
         </div>
       </div>
     </>

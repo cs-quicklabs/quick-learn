@@ -1,4 +1,6 @@
+'use client';
 import { UserProvider } from '@src/context/userContext';
+import useDashboardStore from '@src/store/dashboard.store';
 import Navbar from '@src/shared/components/Navbar';
 
 export default function Layout({
@@ -6,11 +8,12 @@ export default function Layout({
 }: {
   readonly children: React.ReactNode;
 }) {
+  const { hideNavbar } = useDashboardStore((state) => state);
   return (
     <UserProvider>
-      <div className="min-h-screen max-w-screen">
-        <Navbar />
-        <main className="max-w-screen-2xl mx-auto py-3 px-4 sm:py-5 lg:px-8">
+      <div className="max-w-screen">
+        {!hideNavbar && <Navbar />}
+        <main className="max-w-screen-2xl mx-auto mt-16 py-3 px-4 sm:py-5 lg:px-8">
           {children}
         </main>
       </div>

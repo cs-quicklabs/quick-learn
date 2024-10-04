@@ -5,6 +5,7 @@ type State = {
   metadata: {
     contentRepository: TContentRepositoryMetadata;
   };
+  hideNavbar: boolean;
 };
 
 const initialState: State = {
@@ -14,16 +15,19 @@ const initialState: State = {
       course_categories: [],
     },
   },
+  hideNavbar: false,
 };
 
 type Actions = {
   setContentRepositoryMetadata: (
     metadata: State['metadata']['contentRepository'],
   ) => void;
+  setHideNavbar: (hideNavbar: State['hideNavbar']) => void;
 };
 
 const useDashboardStore = create<State & Actions>((set) => ({
   metadata: initialState.metadata,
+  hideNavbar: initialState.hideNavbar,
   setContentRepositoryMetadata: (
     metadata: State['metadata']['contentRepository'],
   ) =>
@@ -35,6 +39,11 @@ const useDashboardStore = create<State & Actions>((set) => ({
           ...metadata,
         },
       },
+    })),
+  setHideNavbar: (hideNavbar: State['hideNavbar']) =>
+    set((state) => ({
+      ...state,
+      hideNavbar,
     })),
 }));
 
