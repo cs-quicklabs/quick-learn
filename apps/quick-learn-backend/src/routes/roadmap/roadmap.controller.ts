@@ -27,7 +27,6 @@ import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
 })
 @UseGuards(JwtAuthGuard)
 export class RoadmapController {
-  
   constructor(private readonly service: RoadmapService) {}
 
   @Get()
