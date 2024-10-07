@@ -34,3 +34,7 @@ export enum ContentRepositoryApiEnum {
   COURSE = '/course',
   LESSON = '/lesson',
 }
+
+export enum ArchivedApiEnum {
+  ARCHIVED_USERS = '/archived/users',
+}

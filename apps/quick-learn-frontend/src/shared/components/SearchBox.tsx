@@ -35,7 +35,7 @@ const SearchBox: FC<Props> = ({ value, setValue }) => {
         <input
           type="search"
           id="default-search"
-          className="pl-10 w-full border-gray-600"
+          className="pl-10 w-full border-gray-300 bg-gray-50"
           placeholder="Search"
           value={value}
           onChange={(e) => setValue(e.target.value)}
