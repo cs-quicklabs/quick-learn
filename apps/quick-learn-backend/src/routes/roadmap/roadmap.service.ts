@@ -16,8 +16,8 @@ const roadmapRelations = ['roadmap_category', 'courses', 'created_by'];
 export class RoadmapService extends BasicCrudService<RoadmapEntity> {
   constructor(
     @InjectRepository(RoadmapEntity) repo,
-    private roadmapCategoryService: RoadmapCategoryService,
-    private courseService: CourseService,
+    private readonly roadmapCategoryService: RoadmapCategoryService,
+    private readonly courseService: CourseService,
   ) {
     super(repo);
   }
@@ -39,6 +39,14 @@ export class RoadmapService extends BasicCrudService<RoadmapEntity> {
         'courses',
         (qb) =>
           qb.andWhere('courses.archived = :archived', { archived: false }),
+      )
+      .leftJoin('courses.lessons', 'lessons')
+      .loadRelationCountAndMap(
+        'courses.lessons_count',
+        'courses.lessons',
+        'lessons',
+        (qb) =>
+          qb.andWhere('lessons.archived = :archived', { archived: false }),
       )
       .orderBy('roadmap.created_at', 'DESC')
       .getMany();
@@ -83,6 +91,49 @@ export class RoadmapService extends BasicCrudService<RoadmapEntity> {
     roadmaps.courses = roadmaps.courses.filter((course) => !course.archived);
 
     return roadmaps;
+  }
+
+  async getRoadmapDetailsWithCourseAndLessonsCount(
+    roadmapId: number,
+    courseId?: number,
+  ): Promise<RoadmapEntity> {
+    // TODO: Make this thing dynamic
+    let roadmap = this.repository
+      .createQueryBuilder('roadmap')
+      .where('roadmap.id = :id', { id: roadmapId })
+      .andWhere('roadmap.archived = :archived', { archived: false })
+      .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
+      .leftJoinAndSelect(
+        'roadmap.courses',
+        'courses',
+        'courses.archived = :archived',
+        {
+          archived: false,
+        },
+      );
+
+    if (courseId) {
+      roadmap = roadmap.andWhere('courses.id = :courseId', { courseId });
+    }
+
+    roadmap = roadmap
+      .leftJoin('courses.lessons', 'lessons')
+      .loadRelationCountAndMap(
+        'courses.lessons_count',
+        'courses.lessons',
+        'lessons',
+        (qb) =>
+          qb.andWhere('lessons.archived = :archived', { archived: false }),
+      )
+      .orderBy('courses.created_at', 'DESC')
+      .addOrderBy('roadmap.created_at', 'DESC');
+
+    const details = await roadmap.getOne();
+
+    if (!details) {
+      throw new BadRequestException(en.RoadmapNotFound);
+    }
+    return details;
   }
 
   async updateRoadmap(

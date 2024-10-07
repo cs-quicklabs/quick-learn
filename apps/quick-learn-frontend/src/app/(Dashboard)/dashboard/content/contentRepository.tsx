@@ -121,7 +121,9 @@ const ContentRepository = () => {
                     ' ' +
                     en.common.courses +
                     ', ' +
-                    (item.lessons_count || 0) +
+                    (item.courses.reduce((acc, curr) => {
+                      return acc + (curr?.lessons_count ?? 0);
+                    }, 0) || 0) +
                     ' ' +
                     en.common.lessons
                   }
@@ -147,6 +149,7 @@ const ContentRepository = () => {
           <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
             {courses.map((item) => (
               <li key={item.id}>
+                {console.log(item)}
                 <Card
                   title={item.name}
                   description={item.description}

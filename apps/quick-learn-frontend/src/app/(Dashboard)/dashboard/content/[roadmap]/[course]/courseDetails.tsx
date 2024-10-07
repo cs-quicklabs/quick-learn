@@ -229,7 +229,7 @@ const CourseDetails = () => {
               format(courseData?.created_at, DateFormats.shortDate)}
           </p>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
-            ({courseData?.lessons_count ?? 0} {en.common.lessons}, &nbsp;
+            ({courseData?.lessons?.length ?? 0} {en.common.lessons}, &nbsp;
             {courseData?.users_count ?? 0} {en.common.participants})
           </p>
           <div className="flex items-center justify-center gap-2 mt-2">
