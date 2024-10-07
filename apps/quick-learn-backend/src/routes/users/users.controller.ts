@@ -60,7 +60,24 @@ export class UsersController {
     @Body() paginationDto: PaginationDto,
     @Query() filter: ListFilterDto,
   ): Promise<SuccessResponse> {
-    const users = await this.usersService.findAll(user, paginationDto, filter);
+    const users = await this.usersService.findAll(user, paginationDto, {
+      ...filter,
+      active: true,
+    });
+    return new SuccessResponse('Successfully got users.', users);
+  }
+
+  @Post('archived')
+  @ApiOperation({ summary: 'Filter users' })
+  async findAllArchivedUser(
+    @CurrentUser() user: UserEntity,
+    @Body() paginationDto: PaginationDto,
+    @Query() filter: ListFilterDto,
+  ): Promise<SuccessResponse> {
+    const users = await this.usersService.findAll(user, paginationDto, {
+      ...filter,
+      active: false,
+    });
     return new SuccessResponse('Successfully got users.', users);
   }
 
