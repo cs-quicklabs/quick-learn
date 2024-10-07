@@ -3,7 +3,11 @@ import React, { FC, useEffect } from 'react';
 import Sidebar, { TNavLink } from '@src/shared/components/Sidebar';
 import { RouteEnum } from '@src/constants/route.enum';
 import { ChildrenProp } from '@src/shared/interfaces/propInterface';
-import { ProfileIdentificationCard } from '@src/shared/components/UIElements';
+import {
+  ClipboardWithTick,
+  OpenBookIcon,
+  ProfileIdentificationCard,
+} from '@src/shared/components/UIElements';
 
 const Layout: FC<ChildrenProp> = ({ children }) => {
   const navLinks: TNavLink[] = [
@@ -15,12 +19,12 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
     {
       title: 'Archived Roadmaps',
       linkTo: RouteEnum.ARCHIVED_ROADMAPS,
-      icon: <ProfileIdentificationCard />,
+      icon: <OpenBookIcon />,
     },
     {
       title: 'Archived Courses',
       linkTo: RouteEnum.ARCHIVED_COURSES,
-      icon: <ProfileIdentificationCard />,
+      icon: <ClipboardWithTick />,
     },
     {
       title: 'Archived Lessons',
