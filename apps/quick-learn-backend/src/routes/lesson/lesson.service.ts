@@ -67,7 +67,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns nothing
    */
-  async approveLesson(userId: UserEntity['id'], lessonId: LessonEntity['id']) {
+  async approveLesson(lessonId: LessonEntity['id'], userId: UserEntity['id']) {
     const lesson = await this.get({ id: lessonId });
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);

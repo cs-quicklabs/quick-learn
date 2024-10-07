@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { LessonService } from './lesson.service';
@@ -32,8 +33,23 @@ export class LessonController {
    * Retrieves all lessons.
    * @returns A list of lessons.
    */
-  async getLessons() {
+  async getLessons(): Promise<SuccessResponse> {
     const lessons = await this.service.getMany();
+    return new SuccessResponse(en.getLessons, lessons);
+  }
+
+  @ApiOperation({ summary: 'Get all unapproved the lessons.' })
+  @Get('unapproved')
+  /**
+   * Retrieves all unapproved lessons.
+   * @returns A list of lessons.
+   */
+  async getUnapprovedLessons(): Promise<SuccessResponse> {
+    const lessons = await this.service.getMany(
+      { approved: false },
+      { updated_at: 'ASC' },
+      ['created_by_user'],
+    );
     return new SuccessResponse(en.getLessons, lessons);
   }
 
@@ -48,7 +64,7 @@ export class LessonController {
   async create(
     @CurrentUser() user: UserEntity,
     @Body() createLessonDto: CreateLessonDto,
-  ) {
+  ): Promise<SuccessResponse> {
     await this.service.createLesson(user.id, createLessonDto);
     return new SuccessResponse(en.createLesson);
   }
@@ -61,8 +77,14 @@ export class LessonController {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns A promise that resolves to a success response containing the lesson entity.
    */
-  async get(@Param('id') id: string) {
-    const lesson = await this.service.get({ id: +id });
+  async get(
+    @Param('id') id: string,
+    @Query('approved') approved: string,
+  ): Promise<SuccessResponse> {
+    const lesson = await this.service.get(
+      { id: +id, approved: approved == 'true' },
+      ['created_by_user'],
+    );
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);
     }
@@ -81,7 +103,7 @@ export class LessonController {
   async update(
     @Param('id') id: string,
     @Body() updateLessonDto: UpdateLessonDto,
-  ) {
+  ): Promise<SuccessResponse> {
     await this.service.updateLesson(+id, updateLessonDto);
     return new SuccessResponse(en.updateLesson);
   }
@@ -95,7 +117,10 @@ export class LessonController {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns A promise that resolves to a success response.
    */
-  async approve(@Param('id') id: string, @CurrentUser() user: UserEntity) {
+  async approve(
+    @Param('id') id: string,
+    @CurrentUser() user: UserEntity,
+  ): Promise<SuccessResponse> {
     await this.service.approveLesson(+id, user.id);
     return new SuccessResponse(en.approveLesson);
   }
@@ -109,7 +134,10 @@ export class LessonController {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns A promise that resolves to a success response.
    */
-  async archive(@Param('id') id: string, @CurrentUser() user: UserEntity) {
+  async archive(
+    @Param('id') id: string,
+    @CurrentUser() user: UserEntity,
+  ): Promise<SuccessResponse> {
     await this.service.archiveLesson(+id, user.id);
     return new SuccessResponse(en.archiveLesson);
   }
