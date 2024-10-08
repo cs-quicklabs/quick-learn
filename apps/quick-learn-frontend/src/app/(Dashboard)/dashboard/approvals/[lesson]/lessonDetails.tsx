@@ -85,7 +85,12 @@ const LessonDetails = () => {
         </div>
       </div>
       <article className="lesson-content flex bg-white justify-center mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-10 py-4 max-w-5xl shadow shadow-md">
-        <div dangerouslySetInnerHTML={{ __html: lesson?.new_content || '' }} />
+        <div
+          className="lesson-viewer"
+          dangerouslySetInnerHTML={{
+            __html: lesson?.new_content || lesson?.content || '',
+          }}
+        />
       </article>
       <div className="flex items-center p-16 mb-16 w-full max-w-5xl justify-center mx-auto">
         <input

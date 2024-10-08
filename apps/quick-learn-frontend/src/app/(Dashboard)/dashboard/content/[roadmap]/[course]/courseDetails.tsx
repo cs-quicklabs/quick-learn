@@ -277,9 +277,10 @@ const CourseDetails = () => {
       </div>
       <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
         <div id="created-spaces">
-          <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
+          <ul className="grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-6 xl:gap-x-6">
             <li>
               <CreateNewCard
+                className="col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group content-center w-full h-full"
                 title={en.lesson.createNewLesson}
                 onAdd={onAddLesson}
               />
@@ -294,42 +295,45 @@ const CourseDetails = () => {
                 created_at,
                 id,
               }) => (
-                <button
-                  type="button"
-                  key={id}
-                  disabled={!approved}
-                  onClick={() => onEditLesson(id)}
-                  className="text-left inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                  <div className="flex-wrap py-4 px-6 text-gray-900 h-40">
-                    <h1
-                      id="message-heading"
-                      className="font-medium text-gray-900 line-clamp-2 group-hover:underline capitalize"
-                    >
-                      {name}
-                    </h1>
-                    <p className="font-normal text-sm text-gray-500 line-clamp-2 mt-2">
-                      {HTMLSanitizer(approved ? content : new_content)}
-                    </p>
-                    <p className="inline-flex align-center font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
-                      {approved ? (
-                        'Added by ' +
-                        created_by_user.full_name +
-                        ' on ' +
-                        format(created_at, DateFormats.shortDate)
-                      ) : (
-                        <>
-                          <ExclamationTriangleIcon
-                            className="text-yellow-500 mr-1"
-                            height={16}
-                            width={16}
-                          />{' '}
-                          {en.lesson.pendingApproval}
-                        </>
-                      )}
-                    </p>
-                  </div>
-                </button>
+                <li key={id}>
+                  <button
+                    type="button"
+                    disabled={!approved}
+                    onClick={() => onEditLesson(id)}
+                    className="text-left inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full disabled:bg-gray-100 disabled:cursor-not-allowed h-56"
+                  >
+                    <div className="flex-wrap py-4 px-6 text-gray-900 h-full">
+                      <h1
+                        id="message-heading"
+                        className="font-medium text-gray-900 group-hover:underline capitalize"
+                      >
+                        {name}
+                      </h1>
+                      <p className="font-normal text-sm text-gray-500 line-clamp-4 mt-2">
+                        {HTMLSanitizer(
+                          (approved && content) || new_content || content,
+                        )}
+                      </p>
+                      <p className="inline-flex align-center font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
+                        {approved ? (
+                          'Added by ' +
+                          created_by_user.full_name +
+                          ' on ' +
+                          format(created_at, DateFormats.shortDate)
+                        ) : (
+                          <>
+                            <ExclamationTriangleIcon
+                              className="text-yellow-500 mr-1"
+                              height={16}
+                              width={16}
+                            />{' '}
+                            {en.lesson.pendingApproval}
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </button>
+                </li>
               ),
             )}
           </ul>

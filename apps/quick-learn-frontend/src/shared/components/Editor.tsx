@@ -12,6 +12,8 @@ interface Props {
   value: string;
   setValue?: (value: string) => void;
   placeholder?: string;
+  isUpdating?: boolean;
+  isAdd?: boolean;
 }
 
 const Editor: FC<Props> = ({
@@ -20,6 +22,8 @@ const Editor: FC<Props> = ({
   value,
   setValue,
   placeholder = en.common.addContentPlaceholder,
+  isUpdating = false,
+  isAdd = false,
 }) => {
   const quillRef = useRef<ReactQuill | null>(null);
 
@@ -45,6 +49,8 @@ const Editor: FC<Props> = ({
         isEditing={isEditing}
         setIsEditing={setIsEditing}
         undo={onUndo}
+        isUpdating={isUpdating}
+        isAdd={isAdd}
       />
       <ReactQuill
         ref={quillRef}

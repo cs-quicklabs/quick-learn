@@ -38,3 +38,14 @@ export const approveLesson = async (
   );
   return response.data;
 };
+
+export const updateLesson = async (
+  id: string,
+  data: Partial<TLesson>,
+): Promise<AxiosSuccessResponse<TLesson>> => {
+  const response = await axiosInstance.patch<AxiosSuccessResponse<TLesson>>(
+    ContentRepositoryApiEnum.LESSON + `/${id}`,
+    data,
+  );
+  return response.data;
+};

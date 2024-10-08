@@ -105,7 +105,9 @@ input:-webkit-autofill:active {
 }
 
 .quill .ql-container .ql-editor:focus {
-  border: 1px #1c64f2 solid;
+  outline: solid;
+  outline-width: 1px;
+  outline-color: #1c64f2;
 }
 
 .quill .ql-container .ql-syntax {
@@ -113,3 +115,84 @@ input:-webkit-autofill:active {
   color: #000000 !important;
 }
 /* Quill  toolbar and editor css */
+
+
+/* lesson viewer css */
+.quill .ql-container .ql-editor,
+.lesson-viewer {
+  font: 400 16px/28px 'Open Sans', sans-serif;
+}
+.quill .ql-container .ql-editor a,
+.quill .ql-container .ql-editor p,
+.lesson-viewer a,
+.lesson-viewer p {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.quill .ql-container .ql-editor a,
+.lesson-viewer a {
+  color: #1c64f2;
+}
+.quill .ql-container .ql-editor a:hover,
+.lesson-viewer a:hover {
+  text-decoration-color: #1c64f2;
+  text-decoration: underline;
+}
+.quill .ql-container .ql-editor strong,
+.lesson-viewer strong {
+  font-weight: 600;
+}
+.quill .ql-container .ql-editor h1,
+.lesson-viewer h1 {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+.quill .ql-container .ql-editor h2,
+.lesson-viewer h2 {
+  font-size: 1.75rem;
+  line-height: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.ql-snow .ql-editor blockquote,
+.lesson-viewer blockquote {
+  border-left: 4px solid #ccc;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding-left: 16px;
+  background-color: #eee;
+}
+.quill .ql-container .ql-syntax,
+.lesson-viewer .ql-syntax {
+  background-color: #dedede !important;
+  color: #000000 !important;
+  margin: 1rem 0;
+  font-size: 14px;
+  padding: 1rem 2rem;
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+.quill .ql-container ul,
+.quill .ql-container ol,
+.lesson-viewer ul ,
+.lesson-viewer ol {
+  margin-left: 3.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+.quill .ql-container ul,
+.lesson-viewer ul {
+  list-style-type: disc;
+}
+.quill .ql-container ol,
+.lesson-viewer ol {
+  list-style-type: decimal;
+}
+.quill .ql-container img,
+.lesson-viewer img {
+  max-width: 85% !important;
+}
+/* lesson viewer css */
