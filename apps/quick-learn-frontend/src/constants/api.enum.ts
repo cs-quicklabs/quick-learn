@@ -36,5 +36,5 @@ export enum ContentRepositoryApiEnum {
 }
 
 export enum ArchivedApiEnum {
-  ARCHIVED_USERS = '/archived/users',
+  ARCHIVED_USERS = '/users/archived',
 }
