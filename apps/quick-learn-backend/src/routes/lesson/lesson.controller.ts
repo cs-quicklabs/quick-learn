@@ -65,7 +65,7 @@ export class LessonController {
     @CurrentUser() user: UserEntity,
     @Body() createLessonDto: CreateLessonDto,
   ): Promise<SuccessResponse> {
-    await this.service.createLesson(user.id, createLessonDto);
+    await this.service.createLesson(user, createLessonDto);
     return new SuccessResponse(en.createLesson);
   }
 
@@ -103,8 +103,9 @@ export class LessonController {
   async update(
     @Param('id') id: string,
     @Body() updateLessonDto: UpdateLessonDto,
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    await this.service.updateLesson(+id, updateLessonDto);
+    await this.service.updateLesson(user, +id, updateLessonDto);
     return new SuccessResponse(en.updateLesson);
   }
 

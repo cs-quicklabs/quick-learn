@@ -96,6 +96,7 @@ export const en = {
     courseCategory: 'Course Category',
     selectCourses: 'Select Courses',
     save: 'Save',
+    saveAndPublish: 'Save & Publish',
     selectRoadmaps: 'Select Roadmaps',
     logoutConformation: 'Are you sure you want to Log out?',
     yes: 'Yes',
