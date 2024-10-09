@@ -37,7 +37,7 @@ const CommunityCourse = () => {
             <ul className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-4 2xl:grid-cols-5">
               {
                 currCourse.course.length>0 ? currCourse.course.map((course)=>{
-                  return <li key={course.id} className="col-span-1 hover:shadow-2xl cursor-pointer shadow-md"><a href={`#`}><CourseCard  course={course}/></a></li>
+                  return <li key={course.id} className="col-span-1 hover:shadow-2xl rounded-md cursor-pointer shadow-md"><a href={`#`}><CourseCard  course={course}/></a></li>
                 }):"No courses yet"
               }
                 

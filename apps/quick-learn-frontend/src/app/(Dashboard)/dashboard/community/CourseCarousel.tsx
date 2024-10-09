@@ -10,7 +10,7 @@ interface CourseProps{
 
 const CourseCarousel: React.FC<{ course: CourseProps }> = ({ course }) => {
 
-  return <div id="courseCarousel" className="flex flex-col gap-2 h-40 px-3 py-4 md:px-3 md:py-4 group">
+  return <div id="courseCarousel" className="flex flex-col gap-2 h-40 px-6 py-4 group">
         <h1 id="courseCarouseltitle" className="text-gray-900 line-clamp-1 font-medium group-hover:underline">
           {course.name}
         </h1>
