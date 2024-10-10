@@ -305,7 +305,7 @@ const CourseDetails = () => {
                     <div className="flex-wrap py-4 px-6 text-gray-900 h-full">
                       <h1
                         id="message-heading"
-                        className="font-medium text-gray-900 group-hover:underline capitalize"
+                        className="font-medium text-gray-900 group-hover:underline capitalize break-all line-clamp-2"
                       >
                         {name}
                       </h1>

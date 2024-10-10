@@ -2,18 +2,6 @@ import { PencilIcon } from '@heroicons/react/20/solid';
 import { ArrowPathIcon, CheckIcon, EyeIcon } from '@heroicons/react/24/outline';
 import React, { FC } from 'react';
 
-// Modules object for setting up the Quill editor
-export const modules = {
-  toolbar: {
-    container: '#toolbar',
-  },
-  history: {
-    delay: 500,
-    maxStack: 100,
-    userOnly: true,
-  },
-};
-
 // Formats objects for setting up the Quill editor
 export const formats = [
   'header',

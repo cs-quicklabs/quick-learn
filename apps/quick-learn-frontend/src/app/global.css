@@ -198,5 +198,7 @@ input:-webkit-autofill:active {
 .quill .ql-container img,
 .lesson-viewer img {
   max-width: 85% !important;
+  margin: 1rem auto;
+  max-height: 400px;
 }
 /* lesson viewer css */

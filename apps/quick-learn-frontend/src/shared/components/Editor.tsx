@@ -1,10 +1,12 @@
 'use client';
 import ReactQuill from 'react-quill';
-import { FC, useEffect, useRef } from 'react';
+import { FC, useCallback, useEffect, useRef } from 'react';
 // quill snow theme css
 import 'react-quill/dist/quill.snow.css';
-import EditorToolbar, { formats, modules } from './EditorToolbar';
+import EditorToolbar, { formats } from './EditorToolbar';
 import { en } from '@src/constants/lang/en';
+import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 
 interface Props {
   isEditing: boolean;
@@ -26,6 +28,48 @@ const Editor: FC<Props> = ({
   isAdd = false,
 }) => {
   const quillRef = useRef<ReactQuill | null>(null);
+
+  // Reference to the Quill editor
+  const imageHandler = useCallback(() => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+    input.onchange = async () => {
+      const files = input.files;
+      if (files === null || files.length === 0) return;
+      const file = files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // uploading image for the quill editor
+      // TODO: Replace this and find some efficient way
+      fileUploadApiCall(formData, 'lesson')
+        .then((res) => {
+          if (!quillRef.current) return;
+          const quill = quillRef.current.getEditor();
+          const range = quill.getSelection(true);
+          quill.insertEmbed(range.index, 'image', res.data.file);
+          console.log(quill.getText());
+        })
+        .catch((err) => showApiErrorInToast(err));
+    };
+  }, [quillRef]);
+
+  // Modules object for setting up the Quill editor
+  const modules = {
+    toolbar: {
+      container: '#toolbar',
+      history: {
+        delay: 500,
+        maxStack: 100,
+        userOnly: true,
+      },
+      handlers: {
+        image: imageHandler,
+      },
+    },
+  };
 
   useEffect(() => {
     // Set body background color when the component mounts
