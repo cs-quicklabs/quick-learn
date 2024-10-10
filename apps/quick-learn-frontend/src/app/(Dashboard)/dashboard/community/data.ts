@@ -1,3 +1,4 @@
+// Dummy data used for design purpose to be deleted when Courses data is Available
 const courseData=[
     {
         id:"1",

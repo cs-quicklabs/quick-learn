@@ -1,15 +1,22 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import data from "../data"; 
+import data from "../data"; // Dummy data used for design purpose to be deleted when Courses data is Available
 import { useParams } from 'next/navigation';
-import CourseCard from './CourseCard';
+import CourseCard from '../CourseCard';
+
+type courseCh ={
+  id: string;
+  name: string;
+  title: string;
+  createdDate: string;
+}
 
 interface Course {
   id: string;
   name: string;
   title: string;
-  course: any[];
-  publisher: string;
+  course: courseCh[];
+  publisher: string |undefined;
 }
 
 const CommunityCourse = () => {
@@ -37,7 +44,7 @@ const CommunityCourse = () => {
             <ul className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-4 2xl:grid-cols-5">
               {
                 currCourse.course.length>0 ? currCourse.course.map((course)=>{
-                  return <li key={course.id} className="col-span-1 hover:shadow-2xl rounded-md cursor-pointer shadow-md"><a href={`#`}><CourseCard  course={course}/></a></li>
+                  return <li key={course.id} className="col-span-1 hover:shadow-2xl rounded-md cursor-pointer shadow-md"><a href={`#`}><CourseCard  name={course.name} title={course.title} createdDate={course.createdDate}/></a></li>
                 }):"No courses yet"
               }
                 
