@@ -77,11 +77,16 @@ const Lesson = () => {
   // To set the links for the breadcrumb
   const links = useMemo<TBreadcrumb[]>(() => {
     const url = `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${lessonId}`;
-    if (!roadmap)
+    if (!roadmap) {
       return [
         ...defaultlinks,
-        { name: lesson?.name || en.common.addLesson, link: url },
+        {
+          name: lesson?.course?.name ?? 'Course',
+          link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
+        },
+        { name: lesson?.name ?? en.common.addLesson, link: url },
       ];
+    }
     return [
       ...defaultlinks,
       { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
@@ -89,7 +94,7 @@ const Lesson = () => {
         name: roadmap.courses[0].name,
         link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
       },
-      { name: lesson?.name || en.common.addLesson, link: url },
+      { name: lesson?.name ?? en.common.addLesson, link: url },
     ];
   }, [roadmap, lesson, roadmapId, courseId, lessonId]);
 
@@ -107,9 +112,11 @@ const Lesson = () => {
   });
 
   useEffect(() => {
-    getRoadmap(roadmapId, courseId)
-      .then((res) => setRoadmap(res.data))
-      .catch((err) => showApiErrorInToast(err));
+    if (!(isNaN(+roadmapId) || isNaN(+courseId))) {
+      getRoadmap(roadmapId, courseId)
+        .then((res) => setRoadmap(res.data))
+        .catch((err) => showApiErrorInToast(err));
+    }
     if (lessonId !== 'add') {
       getLessonDetails(lessonId)
         .then((res) => {
@@ -140,6 +147,7 @@ const Lesson = () => {
 
   const onEdit = useCallback(
     (redirect = false) => {
+      if (lessonId === 'add') return;
       updateLesson(lessonId, {
         content: getValues('content'),
         name: getValues('name').trim().slice(0, 50),
@@ -152,8 +160,9 @@ const Lesson = () => {
           }
         })
         .catch((err) => {
-          if (redirect) showApiErrorInToast(err);
-          else console.log(err);
+          if (redirect) {
+            showApiErrorInToast(err);
+          } else console.log(err);
         })
         .finally(() => setIsUpdating(false));
     },
@@ -166,7 +175,11 @@ const Lesson = () => {
 
   function onChange(field: 'name' | 'content', value: string) {
     setIsUpdating(true);
-    setValue(field, value, { shouldValidate: true });
+    setValue(field, value, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
     updateContent();
   }
 
@@ -183,7 +196,10 @@ const Lesson = () => {
               <>
                 <textarea
                   {...field}
-                  className="w-full text-3xl md:text-5xl font-bold text-center md:h-20 h-10 border-none overflow-y-auto resize-none md:p-4"
+                  className={
+                    'w-full text-3xl md:text-5xl font-bold text-center md:h-20 h-10 border-none overflow-y-auto resize-none md:p-4 focus:outline-none' +
+                    (!isEditing ? ' focus:ring-0' : '')
+                  }
                   placeholder={en.common.addTitlePlaceholder}
                   readOnly={!isEditing}
                   onChange={(e) => onChange(field.name, e.target.value)}

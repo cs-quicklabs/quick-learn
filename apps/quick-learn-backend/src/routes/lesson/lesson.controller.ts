@@ -83,7 +83,7 @@ export class LessonController {
   ): Promise<SuccessResponse> {
     const lesson = await this.service.get(
       { id: +id, approved: approved == 'true' },
-      ['created_by_user'],
+      ['created_by_user', 'course'],
     );
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);
