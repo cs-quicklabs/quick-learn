@@ -69,6 +69,9 @@ const Editor: FC<Props> = ({
         image: imageHandler,
       },
     },
+    clipboard: {
+      matchVisual: false,
+    },
   };
 
   useEffect(() => {
