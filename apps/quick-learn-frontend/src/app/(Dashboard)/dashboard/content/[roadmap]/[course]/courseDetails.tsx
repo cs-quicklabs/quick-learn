@@ -181,7 +181,12 @@ const CourseDetails = () => {
   }
 
   function onEditLesson(id: number) {
-    router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${id}`);
+    const lesson = courseData?.lessons?.find((ele) => ele.id === id);
+    if (!lesson) return;
+    const url =
+      `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/` +
+      (lesson.approved ? id : `view/${id}`);
+    router.push(url);
   }
 
   return (
@@ -298,9 +303,11 @@ const CourseDetails = () => {
                 <li key={id}>
                   <button
                     type="button"
-                    disabled={!approved}
                     onClick={() => onEditLesson(id)}
-                    className="text-left inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full disabled:bg-gray-100 disabled:cursor-not-allowed h-56"
+                    className={
+                      'text-left inline-block col-span-1 rounded-lg shadow-sm hover:shadow-lg border-gray-100 group w-full h-56' +
+                      (approved ? ' bg-white' : ' bg-gray-100')
+                    }
                   >
                     <div className="flex-wrap py-4 px-6 text-gray-900 h-full">
                       <h1
