@@ -115,5 +115,8 @@ export const en = {
     updatedOn: 'Updated on',
     createdOn: 'Created on',
     createdBy: 'Created by',
+    approvalPendingExclamation: 'Approval Pending!',
+    approvalPendingInfo:
+      'This lesson is awaiting approval from the team. After approval this will be available to all the team members.',
   },
 };
