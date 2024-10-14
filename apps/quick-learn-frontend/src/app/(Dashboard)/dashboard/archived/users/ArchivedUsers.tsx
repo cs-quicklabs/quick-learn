@@ -1,19 +1,27 @@
 'use client';
 import { getArchivedUsers } from '@src/apiServices/archivedService';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
-import InfiniteScrollComponent from '@src/shared/components/InfiniteScrollComponent';
 import SearchBox from '@src/shared/components/SearchBox';
+import { Loader } from '@src/shared/components/UIElements';
 import { TUser } from '@src/shared/types/userTypes';
 import React, { useEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const ArchivedUsers = () => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [usersList, setUserslist] = useState<TUser[]>([]);
-  useEffect(() => {
-    getArchivedUsers({}).then((res) => {
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const getNextUsers = () => {
+    getArchivedUsers(page, searchValue).then((res) => {
       console.log(res);
-      setUserslist(res.data);
+      setUserslist((prev) => [...prev, ...res.data.items]);
+      setPage(page + 1);
+      setHasMore(res.data.page !== res.data.total_pages);
     });
+  };
+  useEffect(() => {
+    getNextUsers();
   }, []);
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
@@ -25,8 +33,13 @@ const ArchivedUsers = () => {
       </p>
       <SearchBox value={searchValue} setValue={setSearchValue} />
       <div className="flex">
-        <InfiniteScrollComponent
-          items={usersList.map((item) => (
+        <InfiniteScroll
+          dataLength={usersList.length} //This is important field to render the next data
+          next={getNextUsers}
+          hasMore={hasMore}
+          loader={<Loader />}
+        >
+          {usersList.map((item) => (
             <ArchivedCell
               key={item.uuid}
               title={item.full_name}
@@ -37,8 +50,7 @@ const ArchivedUsers = () => {
               onClickRestore={() => console.log(item)}
             />
           ))}
-          fetchData={() => console.log('ennd')}
-        />
+        </InfiniteScroll>
       </div>
     </div>
   );

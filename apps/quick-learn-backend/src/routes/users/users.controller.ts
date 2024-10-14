@@ -68,7 +68,7 @@ export class UsersController {
   }
 
   @Post('archived')
-  @ApiOperation({ summary: 'Filter users' })
+  @ApiOperation({ summary: 'Get Archived Users' })
   async findAllArchivedUser(
     @CurrentUser() user: UserEntity,
     @Body() paginationDto: PaginationDto,
@@ -76,7 +76,7 @@ export class UsersController {
   ): Promise<SuccessResponse> {
     const users = await this.usersService.findAll(user, paginationDto, {
       ...filter,
-      active: false,
+      active: true,
     });
     return new SuccessResponse('Successfully got users.', users);
   }

@@ -1,4 +1,5 @@
 import React from 'react';
+import ArchivedRoadmaps from './ArchivedRoadmaps';
 
 export const metadata = {
   title: 'Roadmap Categories • Quick Learn',
@@ -6,7 +7,7 @@ export const metadata = {
 };
 
 const page = () => {
-  return <div>roadmaps</div>;
+  return <ArchivedRoadmaps />;
 };
 
 export default page;

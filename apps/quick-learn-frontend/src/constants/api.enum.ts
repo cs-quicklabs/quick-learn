@@ -37,4 +37,5 @@ export enum ContentRepositoryApiEnum {
 
 export enum ArchivedApiEnum {
   ARCHIVED_USERS = '/users/archived',
+  ARCHIVED_ROADMAPS = '/roadmap-categories',
 }
