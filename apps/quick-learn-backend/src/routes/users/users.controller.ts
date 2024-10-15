@@ -76,9 +76,22 @@ export class UsersController {
   ): Promise<SuccessResponse> {
     const users = await this.usersService.findAll(user, paginationDto, {
       ...filter,
-      active: true,
+      active: false,
     });
     return new SuccessResponse('Successfully got users.', users);
+  }
+
+  @Post('activate')
+  @ApiOperation({ summary: 'Activate or archive user' })
+  async activateUser(
+    @Body() body: { uuid: string; active: boolean },
+  ): Promise<SuccessResponse> {
+    const { active, uuid } = body; // Destructure the active property from the request body
+    const updatedUser = await this.usersService.update({ uuid }, { active });
+    return new SuccessResponse(
+      'User status updated successfully.',
+      updatedUser,
+    );
   }
 
   @Get(':uuid')

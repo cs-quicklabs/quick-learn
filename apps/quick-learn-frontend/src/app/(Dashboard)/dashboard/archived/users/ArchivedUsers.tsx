@@ -1,10 +1,14 @@
 'use client';
-import { getArchivedUsers } from '@src/apiServices/archivedService';
+import {
+  activateUser,
+  getArchivedUsers,
+} from '@src/apiServices/archivedService';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
 import SearchBox from '@src/shared/components/SearchBox';
 import { Loader } from '@src/shared/components/UIElements';
 import { TUser } from '@src/shared/types/userTypes';
-import React, { useEffect, useState } from 'react';
+import { debounce } from '@src/utils/helpers';
+import React, { useEffect, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const ArchivedUsers = () => {
@@ -12,14 +16,56 @@ const ArchivedUsers = () => {
   const [usersList, setUserslist] = useState<TUser[]>([]);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
+
   const getNextUsers = () => {
     getArchivedUsers(page, searchValue).then((res) => {
-      console.log(res);
       setUserslist((prev) => [...prev, ...res.data.items]);
       setPage(page + 1);
-      setHasMore(res.data.page !== res.data.total_pages);
+      setHasMore(
+        Boolean(res.data.total_pages) && res.data.page !== res.data.total_pages,
+      );
     });
   };
+
+  const restoreUser = (uuid: string) => {
+    activateUser({ active: true, uuid }).then(() => {
+      getArchivedUsers(1, searchValue).then((res) => {
+        console.log(res);
+        setUserslist(res.data.items);
+        setPage(1);
+        setHasMore(
+          Boolean(res.data.total_pages) &&
+            res.data.page !== res.data.total_pages,
+        );
+      });
+    });
+  };
+
+  const handleQueryChange = useMemo(
+    () =>
+      debounce(async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const _value = (e.target as HTMLInputElement).value || '';
+        try {
+          setSearchValue(_value);
+          setPage(1);
+        } catch (err) {
+          console.log('Something went wrong!', err);
+        }
+      }, 300),
+    [],
+  );
+
+  useEffect(() => {
+    getArchivedUsers(1, searchValue).then((res) => {
+      console.log(res);
+      setUserslist(res.data.items);
+      setPage(1);
+      setHasMore(
+        Boolean(res.data.total_pages) && res.data.page !== res.data.total_pages,
+      );
+    });
+  }, [searchValue]);
+
   useEffect(() => {
     getNextUsers();
   }, []);
@@ -31,7 +77,7 @@ const ArchivedUsers = () => {
       <p className="text-gray-500 text-sm mb-6">
         Following users have been deactivated.
       </p>
-      <SearchBox value={searchValue} setValue={setSearchValue} />
+      <SearchBox value={searchValue} handleChange={handleQueryChange} />
       <div className="flex">
         <InfiniteScroll
           dataLength={usersList.length} //This is important field to render the next data
@@ -47,7 +93,8 @@ const ArchivedUsers = () => {
               deactivatedBy="Aasish Dhawan"
               deactivationDate={item.updated_at}
               onClickDelete={() => console.log(item.uuid)}
-              onClickRestore={() => console.log(item)}
+              onClickRestore={() => restoreUser(item.uuid)}
+              alternateButton
             />
           ))}
         </InfiniteScroll>

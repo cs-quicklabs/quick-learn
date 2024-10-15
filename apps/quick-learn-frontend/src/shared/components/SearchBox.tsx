@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 
 interface Props {
   value: string;
-  setValue: any;
+  handleChange: () => void;
 }
 
-const SearchBox: FC<Props> = ({ value, setValue }) => {
+const SearchBox: FC<Props> = ({ value, handleChange }) => {
   return (
     <form className="flex-1 min-w-0 ">
       <label
@@ -37,8 +37,8 @@ const SearchBox: FC<Props> = ({ value, setValue }) => {
           id="default-search"
           className="pl-10 w-full border-gray-300 bg-gray-50"
           placeholder="Search"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
+          // value={value}
+          onChange={handleChange}
         />
       </div>
     </form>

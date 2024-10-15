@@ -9,6 +9,7 @@ interface Props {
   deactivatedBy: string;
   onClickRestore: () => void;
   onClickDelete: () => void;
+  alternateButton?: boolean;
 }
 
 const ArchivedCell: FC<Props> = ({
@@ -18,6 +19,7 @@ const ArchivedCell: FC<Props> = ({
   deactivatedBy,
   onClickDelete,
   onClickRestore,
+  alternateButton,
 }) => {
   return (
     <div className="flex items-center mt-4">
@@ -66,7 +68,7 @@ const ArchivedCell: FC<Props> = ({
             className="text-gray-500 hover:underline text-sm mr-2"
             onClick={onClickRestore}
           >
-            Activate
+            {alternateButton ? 'Restore' : 'Activate'}
           </button>
           <button
             className="text-gray-500 hover:text-red-600 hover:underline text-sm"

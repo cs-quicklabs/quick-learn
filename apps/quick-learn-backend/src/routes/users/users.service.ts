@@ -108,7 +108,7 @@ export class UsersService extends PaginationService<UserEntity> {
         { email: ILike(`%${paginationDto.q}%`), ...conditions },
         { first_name: ILike(`%${paginationDto.q}%`), ...conditions },
         { last_name: ILike(`%${paginationDto.q}%`), ...conditions },
-        { full_name: ILike(`%${paginationDto.q}%`), ...conditions },
+        // { full_name: ILike(`%${paginationDto.q}%`), ...conditions },
         {
           ...conditions,
           user_type: {
