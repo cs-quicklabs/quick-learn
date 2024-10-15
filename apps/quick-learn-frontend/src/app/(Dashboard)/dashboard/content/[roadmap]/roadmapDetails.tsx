@@ -220,7 +220,11 @@ const RoadmapDetails = () => {
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
             <span className="capitalize">
-              {roadmapData?.created_by?.full_name ?? 'Admin'}
+              {roadmapData?.created_by
+                ? roadmapData?.created_by?.first_name +
+                  ' ' +
+                  roadmapData?.created_by?.last_name
+                : 'Admin'}
             </span>
             &nbsp;{en.contentRepository.createdThisRoadmapOn}&nbsp;
             {roadmapData?.created_at &&
