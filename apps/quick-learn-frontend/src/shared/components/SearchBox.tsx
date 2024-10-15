@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { ChangeEvent, FC } from 'react';
 
 interface Props {
   value: string;
-  handleChange: () => void;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const SearchBox: FC<Props> = ({ value, handleChange }) => {
