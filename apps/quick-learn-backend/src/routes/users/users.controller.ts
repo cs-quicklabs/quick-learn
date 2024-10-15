@@ -78,6 +78,10 @@ export class UsersController {
       ...filter,
       active: false,
     });
+    // const transformedUsers = users.map((user) => ({
+    //   ...user,
+    //   updater_full_name: user.updater_full_name,
+    // }));
     return new SuccessResponse('Successfully got users.', users);
   }
 

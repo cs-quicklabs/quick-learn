@@ -104,7 +104,7 @@ const ArchivedUsers = () => {
               key={item.uuid}
               title={item.full_name}
               subtitle={item.skill.name}
-              deactivatedBy="Aasish Dhawan"
+              deactivatedBy={item.updatedBy.full_name}
               deactivationDate={item.updated_at}
               onClickDelete={() => console.log(item.uuid)}
               onClickRestore={() => restoreUser(item.uuid)}

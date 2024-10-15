@@ -108,7 +108,6 @@ export class UsersService extends PaginationService<UserEntity> {
         { email: ILike(`%${paginationDto.q}%`), ...conditions },
         { first_name: ILike(`%${paginationDto.q}%`), ...conditions },
         { last_name: ILike(`%${paginationDto.q}%`), ...conditions },
-        // { full_name: ILike(`%${paginationDto.q}%`), ...conditions },
         {
           ...conditions,
           user_type: {
@@ -122,13 +121,14 @@ export class UsersService extends PaginationService<UserEntity> {
     if (paginationDto.mode == 'paginate') {
       const results = await this.paginate(paginationDto, conditions, [
         ...userRelations,
+        'updated_by',
       ]);
       this.sortByLastLogin(results.items);
       return results;
     }
     const users = await this.userRepository.find({
       where: conditions,
-      relations: [...userRelations],
+      relations: [...userRelations, 'updated_by'],
     });
     this.sortByLastLogin(users);
     return users;
