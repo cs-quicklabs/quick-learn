@@ -33,6 +33,8 @@ export enum ContentRepositoryApiEnum {
   ROADMAP = '/roadmap',
   COURSE = '/course',
   LESSON = '/lesson',
+  LESSON_UNAPPROVED = '/lesson/unapproved',
+  LESSON_ARCHIVED = '/lesson/archived',
 }
 
 export enum ArchivedApiEnum {

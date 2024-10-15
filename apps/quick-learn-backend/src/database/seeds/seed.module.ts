@@ -8,13 +8,14 @@ import databaseConfig from '../config/database.config';
 import appConfig from '@src/config/app.config';
 import { UserModule } from './user/user.module';
 import { TeamModule } from './team/team.module';
+import { SkillModule } from './skill/skill.module';
 
 @Module({
   imports: [
     TeamModule,
     UserModule,
     UserTypeModule,
-    TeamModule,
+    SkillModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, appConfig],

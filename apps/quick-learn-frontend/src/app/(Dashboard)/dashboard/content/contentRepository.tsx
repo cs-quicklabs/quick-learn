@@ -121,7 +121,9 @@ const ContentRepository = () => {
                     ' ' +
                     en.common.courses +
                     ', ' +
-                    (item.lessons_count || 0) +
+                    (item?.courses?.reduce((acc, curr) => {
+                      return acc + (curr?.lessons_count ?? 0);
+                    }, 0) || 0) +
                     ' ' +
                     en.common.lessons
                   }
