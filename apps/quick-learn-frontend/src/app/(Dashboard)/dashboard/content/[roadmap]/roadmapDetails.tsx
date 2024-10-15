@@ -229,7 +229,11 @@ const RoadmapDetails = () => {
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
             ({roadmapData?.courses?.length ?? 0} {en.contentRepository.courses},
             &nbsp;
-            {roadmapData?.lessons_count ?? 0} {en.common.lessons}, &nbsp;
+            {roadmapData?.courses?.reduce(
+              (acc, curr) => acc + (curr?.lessons_count ?? 0),
+              0,
+            ) ?? 0}{' '}
+            {en.common.lessons}, &nbsp;
             {roadmapData?.users_count ?? 0} {en.common.participants})
           </p>
           <div className="flex items-center justify-center gap-2 mt-2">
