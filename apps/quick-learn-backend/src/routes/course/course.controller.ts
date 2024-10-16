@@ -35,6 +35,14 @@ export class CourseController {
     return new SuccessResponse(en.GetAllCourses, data);
   }
 
+  @Get('/community-course')
+  @ApiOperation({summary:'Get all community courses'})
+  async getCommunityCourses() {
+  const relation =['created_by']
+    const data=  await this.service.getMany({is_community_available:true},undefined,relation);
+    return new SuccessResponse('Get all community courses', data);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create a new course' })
   async createRoadmap(

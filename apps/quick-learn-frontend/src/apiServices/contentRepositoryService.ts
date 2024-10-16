@@ -144,3 +144,10 @@ export const createLesson = async (payload: {
   );
   return response.data;
 };
+
+export const getCommunityCourses= async()=>{
+  const response = await axiosInstance.get<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.COURSE + `/community-course`
+  );
+  return response.data;
+}
