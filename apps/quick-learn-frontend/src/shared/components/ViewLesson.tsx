@@ -50,7 +50,8 @@ const ViewLesson: FC<Props> = ({
             {lesson?.name}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500">
-            {lesson?.created_by_user?.full_name} added this lesson on{' '}
+            {lesson?.created_by_user?.first_name}{' '}
+            {lesson?.created_by_user?.last_name} added this lesson on{' '}
             {lesson?.created_at &&
               format(lesson.created_at, DateFormats.shortDate)}
           </p>

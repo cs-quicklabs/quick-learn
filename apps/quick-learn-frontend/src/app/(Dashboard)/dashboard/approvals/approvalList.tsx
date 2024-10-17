@@ -78,7 +78,9 @@ const ApprovalList = () => {
                         {format(lesson.created_at, DateFormats.shortDate)}
                       </td>
                       <td className="px-4 py-2 font-medium text-gray-500 whitespace-nowrap capitalize">
-                        {lesson.created_by_user.full_name || '-'}
+                        {lesson.created_by_user.first_name +
+                          ' ' +
+                          lesson.created_by_user.last_name || '-'}
                       </td>
                     </tr>
                   ))}
