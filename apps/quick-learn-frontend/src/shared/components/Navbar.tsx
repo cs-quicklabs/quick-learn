@@ -54,7 +54,7 @@ const menuItems: TLink[] = [
   },
   {
     name: 'Archive',
-    link: RouteEnum.ARCHIVE,
+    link: RouteEnum.ARCHIVED_USERS,
   },
 ];
 
