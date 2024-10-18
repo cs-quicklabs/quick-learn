@@ -15,7 +15,6 @@ services:
       - quick-learn
     depends_on:
       - backend
-      - db
     restart: on-failure
 
   backend:
@@ -32,21 +31,7 @@ services:
       - path: ./apps/quick-learn-backend/.env.production
     networks:
       - quick-learn
-    depends_on:
-      - db
     restart: on-failure
-
-  db:
-    container_name: db
-    image: postgres:16
-    ports:
-      - 5432:5432
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root@123
-      POSTGRES_DB: quick-learn
-    networks:
-      - quick-learn
 
 networks:
   quick-learn:

@@ -21,6 +21,14 @@ const nextConfig = {
     ],
   },
   transpilePackages: ['flowbite-react'],
+  rewrites: async () => {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.BACKEND_BASE_API_URL || 'http://localhost:3001/api'}/:path*`,
+      },
+    ];
+  }
 };
 
 const plugins = [
