@@ -28,7 +28,7 @@ import { FindOptionsWhere } from 'typeorm';
 })
 @UseGuards(JwtAuthGuard)
 export class RoadmapController {
-  constructor(private service: RoadmapService) { }
+  constructor(private service: RoadmapService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all roadmaps' })

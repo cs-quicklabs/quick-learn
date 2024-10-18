@@ -1,13 +1,12 @@
 import React from 'react';
 import { FC } from 'react';
 
-
 interface CourseProps {
   name: string;
   title: string;
   publisher?: string; //optional (Displayed when on the Community Course List)
   createdDate?: string; //optional (Displayed when on the Coummunity Course)
-  lesson?:number|undefined;
+  lesson?: number | undefined;
 }
 
 const CourseCard: FC<CourseProps> = ({
@@ -15,7 +14,7 @@ const CourseCard: FC<CourseProps> = ({
   title,
   publisher = '',
   createdDate = '',
-  lesson=0
+  lesson = 0,
 }) => {
   return (
     <div
@@ -36,13 +35,15 @@ const CourseCard: FC<CourseProps> = ({
           Published by {publisher}
         </p>
       )}
-     {createdDate ? (<div className="font-normal line-clamp-1 text-xs underline text-gray-500">
-        {createdDate ? `Added on ${createdDate}}` : `(Lesson 20)`}
-      </div>)
-      :
-      <div className="font-normal line-clamp-1 text-xs underline text-gray-500">
-        Lesson ({lesson})
-      </div>}
+      {createdDate ? (
+        <div className="font-normal line-clamp-1 text-xs underline text-gray-500">
+          {createdDate ? `Added on ${createdDate}}` : `(Lesson 20)`}
+        </div>
+      ) : (
+        <div className="font-normal line-clamp-1 text-xs underline text-gray-500">
+          Lesson ({lesson})
+        </div>
+      )}
     </div>
   );
 };

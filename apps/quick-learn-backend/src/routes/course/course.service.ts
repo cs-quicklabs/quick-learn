@@ -84,7 +84,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
     return course;
   }
-  
+
   async updateCourse(
     id: number,
     updateCourseDto: Partial<CourseEntity>,

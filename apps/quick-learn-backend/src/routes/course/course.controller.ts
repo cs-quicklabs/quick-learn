@@ -36,10 +36,14 @@ export class CourseController {
   }
 
   @Get('/community-course')
-  @ApiOperation({summary:'Get all community courses'})
+  @ApiOperation({ summary: 'Get all community courses' })
   async getCommunityCourses() {
-  const relation =['created_by']
-    const data=  await this.service.getMany({is_community_available:true},undefined,relation);
+    const relation = ['created_by'];
+    const data = await this.service.getMany(
+      { is_community_available: true },
+      undefined,
+      relation,
+    );
     return new SuccessResponse('Get all community courses', data);
   }
 
