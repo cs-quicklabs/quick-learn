@@ -2,7 +2,9 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getAccessToken } from './authService';
 import { authApiEnum } from '@src/constants/api.enum';
 
-const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${process.env.NEXT_PUBLIC_API_VERSION}`;
+const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${
+  process.env.NEXT_PUBLIC_API_VERSION || 'v1'
+}`;
 
 export type AxiosErrorObject = AxiosError & {
   response: {

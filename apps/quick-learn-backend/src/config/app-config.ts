@@ -8,7 +8,7 @@ export type AppConfig = {
   apiPrefix: string;
   smtpEmail?: string;
   smtpHost?: string;
-  smtpPort?: string;
+  smtpPort?: number;
   smtpUser?: string;
   smtpPass?: string;
 };
