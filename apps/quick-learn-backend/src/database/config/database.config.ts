@@ -18,6 +18,7 @@ class EnvironmentVariablesValidator {
   @IsString()
   DATABASE_HOST: string;
 
+  @IsOptional()
   @IsInt()
   @Min(0)
   @Max(65535)
