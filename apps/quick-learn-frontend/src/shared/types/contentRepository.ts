@@ -70,4 +70,6 @@ export type TLesson = {
   archive_by_user: TUser;
   created_at: string;
   updated_at: string;
+  course_id: number;
+  course: TCourse;
 };

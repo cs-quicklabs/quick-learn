@@ -12,7 +12,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 })
 @UseGuards(JwtAuthGuard)
 export class MetadataController {
-  constructor(private service: MetadataService) {}
+  constructor(private readonly service: MetadataService) {}
 
   @Get('content-repository')
   @ApiOperation({ summary: 'Get content repository metadata' })

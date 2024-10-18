@@ -220,7 +220,11 @@ const RoadmapDetails = () => {
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
             <span className="capitalize">
-              {roadmapData?.created_by?.full_name ?? 'Admin'}
+              {roadmapData?.created_by
+                ? roadmapData?.created_by?.first_name +
+                  ' ' +
+                  roadmapData?.created_by?.last_name
+                : 'Admin'}
             </span>
             &nbsp;{en.contentRepository.createdThisRoadmapOn}&nbsp;
             {roadmapData?.created_at &&
@@ -229,7 +233,11 @@ const RoadmapDetails = () => {
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
             ({roadmapData?.courses?.length ?? 0} {en.contentRepository.courses},
             &nbsp;
-            {roadmapData?.lessons_count ?? 0} {en.common.lessons}, &nbsp;
+            {roadmapData?.courses?.reduce(
+              (acc, curr) => acc + (curr?.lessons_count ?? 0),
+              0,
+            ) ?? 0}{' '}
+            {en.common.lessons}, &nbsp;
             {roadmapData?.users_count ?? 0} {en.common.participants})
           </p>
           <div className="flex items-center justify-center gap-2 mt-2">

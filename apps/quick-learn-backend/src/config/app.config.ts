@@ -36,23 +36,16 @@ class EnvironmentVariablesValidator {
 
   @IsString()
   @IsOptional()
-  APP_FALLBACK_LANGUAGE: string;
-
-  @IsString()
-  @IsOptional()
-  APP_HEADER_LANGUAGE: string;
-
-  @IsString()
-  @IsOptional()
   SMTP_EMAIL: string;
 
   @IsString()
   @IsOptional()
   SMTP_HOST: string;
 
-  @IsString()
   @IsOptional()
-  SMTP_PORT: string;
+  @Min(0)
+  @Max(65535)
+  SMTP_PORT: number;
 
   @IsString()
   @IsOptional()
@@ -67,7 +60,7 @@ export default registerAs<AppConfig>('app', () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {
-    env: process.env.NODE_ENV || EnvironmentEnum.Developemnt,
+    env: process.env.NODE_ENV || EnvironmentEnum.Production,
     name: process.env.APP_NAME || 'Quick Learn',
     workingDirectory: process.env.PWD || process.cwd(),
     frontendDomain: process.env.FRONTEND_DOMAIN ?? 'http://localhost:3000',
@@ -76,11 +69,11 @@ export default registerAs<AppConfig>('app', () => {
       ? parseInt(process.env.APP_PORT, 10)
       : process.env.PORT
       ? parseInt(process.env.PORT, 10)
-      : 3000,
+      : 3001,
     apiPrefix: process.env.API_PREFIX || 'api',
     smtpEmail: process.env.SMTP_EMAIL,
     smtpHost: process.env.SMTP_HOST,
-    smtpPort: process.env.SMTP_PORT,
+    smtpPort: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587,
     smtpUser: process.env.SMTP_USER,
     smtpPass: process.env.SMTP_PASS,
   };
