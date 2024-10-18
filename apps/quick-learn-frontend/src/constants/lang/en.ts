@@ -53,8 +53,38 @@ export const en = {
     titleMaxLength: 'Title cannot exceed 50 characters',
     pendingApproval: 'Pending for approval',
   },
+  approvals: {
+    lessonsApprovals: 'Lessons Approvals',
+    subHeading: 'Manage all your existing team members or add a new one.',
+    approveThisLesson: 'Approve this lesson',
+  },
+  courseCategories: {
+    heading: 'Courses Categories',
+    subHeading:
+      'Courses can belong to a category. A category could be a way to group learning courses. For example, a you can create a learning course from a book, a blog, a video, for a software application or for any onboarding needs.',
+    inputlabel: 'Add new course category',
+    inputPlaceHolder: 'Engineering',
+    tableName: 'Category name',
+  },
+  primarySkills: {
+    inputLabel: 'Add new Skill',
+    inputPlaceHolder: 'iOS Developer',
+    heading: 'Primary Skills',
+    subHeading:
+      'Primary skill can be assigned to a person which tells the main trade of a candidate.',
+    tableName: 'skill name',
+  },
+  roadmapCategories: {
+    inputLabel: 'Add New Roadmap Category',
+    inputPlaceHolder: 'Engineering',
+    heading: 'Roadmap Categories',
+    subHeading:
+      'Roadmaps can belong to a category. A category could be a way to group learning roadmaps. For example, a department can have a category called "Engineering" and all the roadmaps related to engineering can be added to this category.',
+    tableName: 'Category name',
+  },
   common: {
     cancel: 'Cancel',
+    lesson: 'lesson',
     lessons: 'lessons',
     roadmaps: 'roadmaps',
     courses: 'courses',
@@ -66,6 +96,7 @@ export const en = {
     courseCategory: 'Course Category',
     selectCourses: 'Select Courses',
     save: 'Save',
+    saveAndPublish: 'Save & Publish',
     selectRoadmaps: 'Select Roadmaps',
     logoutConformation: 'Are you sure you want to Log out?',
     yes: 'Yes',

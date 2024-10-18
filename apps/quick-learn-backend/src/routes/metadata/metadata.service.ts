@@ -5,8 +5,8 @@ import { CourseCategoryService } from '../course-category/course-category.servic
 @Injectable()
 export class MetadataService {
   constructor(
-    private roadmapCategoryService: RoadmapCategoryService,
-    private courseCategoryService: CourseCategoryService,
+    private readonly roadmapCategoryService: RoadmapCategoryService,
+    private readonly courseCategoryService: CourseCategoryService,
   ) {}
 
   async getContentRepositoryMetadata() {
@@ -17,11 +17,7 @@ export class MetadataService {
         { name: 'ASC', created_at: 'DESC' },
         ['roadmaps'],
       ),
-      this.courseCategoryService.getMany(
-        {},
-        { name: 'ASC', created_at: 'DESC' },
-        ['courses'],
-      ),
+      this.courseCategoryService.getAllCourseCategoriesWithLessonsCount(),
     ]);
 
     // TODO: Enhance this to use a query builder or typeorm function to filter out archived roadmaps and courses

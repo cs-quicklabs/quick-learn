@@ -5,6 +5,7 @@ import { LessonEntity, UserEntity } from '@src/entities';
 import { CreateLessonDto, UpdateLessonDto } from './dto';
 import { CourseService } from '../course/course.service';
 import { en } from '@src/lang/en';
+import { UserTypeIdEnum } from '@quick-learn/shared';
 
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
@@ -22,19 +23,37 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the course doesn't exist
    * @returns The created lesson entity
    */
-  async createLesson(userId: number, payload: CreateLessonDto) {
+  async createLesson(user: UserEntity, payload: CreateLessonDto) {
     const course = await this.courseService.get({ id: +payload.course_id });
 
     if (!course) {
       throw new BadRequestException(en.invalidCourse);
     }
 
-    await this.repository.save({
+    let lesson: Partial<LessonEntity> = Object.assign(new LessonEntity(), {
       ...payload,
       new_content: payload.content,
       content: '',
-      created_by: userId,
+      created_by: user.id,
     });
+
+    // checking if the user is admin or not
+    // if user is admin then approve the lesson
+    if (
+      [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
+        user.user_type_id,
+      )
+    ) {
+      lesson = {
+        ...lesson,
+        approved: true,
+        approved_by: user.id,
+        content: payload.content,
+        new_content: '',
+      };
+    }
+
+    await this.repository.save(lesson);
   }
 
   /**
@@ -44,20 +63,41 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns nothing
    */
-  async updateLesson(id: LessonEntity['id'], updateLessonDto: UpdateLessonDto) {
+  async updateLesson(
+    user: UserEntity,
+    id: LessonEntity['id'],
+    updateLessonDto: UpdateLessonDto,
+  ) {
     const lesson = await this.get({ id });
+
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);
     }
+
+    let payload: Partial<LessonEntity> = {
+      name: updateLessonDto.name || lesson.name,
+      new_content: updateLessonDto.content,
+      approved: false,
+    };
+
+    // checking if the user is admin or not
+    // if user is admin then approve the lesson
+    if (
+      [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
+        user.user_type_id,
+      )
+    ) {
+      payload = {
+        ...payload,
+        approved: true,
+        approved_by: user.id,
+        content: updateLessonDto.content,
+        new_content: '',
+      };
+    }
+
     //  update the lesson and mark lesson as unapproved.
-    await this.update(
-      { id },
-      {
-        name: updateLessonDto.name,
-        new_content: updateLessonDto.content,
-        approved: false,
-      },
-    );
+    await this.update({ id }, payload);
   }
 
   /**
@@ -67,7 +107,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns nothing
    */
-  async approveLesson(userId: UserEntity['id'], lessonId: LessonEntity['id']) {
+  async approveLesson(lessonId: LessonEntity['id'], userId: UserEntity['id']) {
     const lesson = await this.get({ id: lessonId });
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);

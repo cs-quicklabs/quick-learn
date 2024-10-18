@@ -1,18 +1,6 @@
 import { PencilIcon } from '@heroicons/react/20/solid';
-import { CheckIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CheckIcon, EyeIcon } from '@heroicons/react/24/outline';
 import React, { FC } from 'react';
-
-// Modules object for setting up the Quill editor
-export const modules = {
-  toolbar: {
-    container: '#toolbar',
-  },
-  history: {
-    delay: 500,
-    maxStack: 100,
-    userOnly: true,
-  },
-};
 
 // Formats objects for setting up the Quill editor
 export const formats = [
@@ -31,15 +19,22 @@ interface Props {
   isEditing: boolean;
   setIsEditing: (value: boolean) => void;
   undo: () => void;
+  isUpdating: boolean;
+  isAdd: boolean;
 }
 
 // Quill Toolbar component
-const EditorToolbar: FC<Props> = ({ isEditing, setIsEditing, undo }) => {
+const EditorToolbar: FC<Props> = ({
+  isEditing,
+  setIsEditing,
+  undo,
+  isUpdating,
+  isAdd,
+}) => {
   return (
     <div
       className={
-        'mx-auto my-4 h-11 w-max px-4 sticky top-12 z-10 rounded-full flex flex-wrap items-center' +
-        ' ' +
+        'mx-auto my-4 h-11 w-max px-4 sticky top-12 z-10 rounded-full flex flex-wrap items-center ' +
         (isEditing ? 'bg-[#e2f0fe] ql-toolbar ql-snow' : 'bg-zinc-200 w-min')
       }
       id="toolbar"
@@ -75,9 +70,9 @@ const EditorToolbar: FC<Props> = ({ isEditing, setIsEditing, undo }) => {
       </div>
       <div
         className={
-          'items-center border-x-2 border-white gap-1 px-2 mx-2' +
-          ' ' +
-          (isEditing ? 'flex' : 'hidden')
+          'items-center border-l-2 border-l-white gap-1 px-2 mx-2 ' +
+          (isEditing ? 'flex ' : 'hidden ') +
+          (!isAdd ? 'border-r-2 border-r-white ' : ' ')
         }
       >
         <span className="ql-formats" style={{ margin: '0px' }}>
@@ -98,17 +93,25 @@ const EditorToolbar: FC<Props> = ({ isEditing, setIsEditing, undo }) => {
           <button className="ql-image" />
         </span>
       </div>
-      <div
-        className={
-          'flex items-center gap-2' + ' ' + (isEditing ? 'flex' : 'hidden')
-        }
-      >
-        {/* UnComment when the quill issues has beend fixed */}
-        {/* <button typeof="button" onClick={undo}>
+      {!isAdd && (
+        <div
+          className={
+            'flex items-center gap-2 text-white p-[4px] rounded-full ' +
+            (isEditing ? 'flex ' : 'hidden ') +
+            (isUpdating ? 'bg-amber-400 ' : 'bg-[#3070b9] ')
+          }
+        >
+          {/* UnComment when the quill issues has beend fixed */}
+          {/* <button typeof="button" onClick={undo}>
           <UndoWithTime className="h-5 w-5" />
         </button> */}
-        <CheckIcon height={20} width={20} strokeWidth={3} />
-      </div>
+          {isUpdating ? (
+            <ArrowPathIcon height={16} width={16} strokeWidth={3} />
+          ) : (
+            <CheckIcon height={16} width={16} strokeWidth={3} />
+          )}
+        </div>
+      )}
     </div>
   );
 };
