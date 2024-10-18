@@ -14,7 +14,7 @@ export class UserService {
     private readonly repository: Repository<UserEntity>,
     private readonly teamService: TeamService,
     private readonly skillService: SkillService,
-  ) { }
+  ) {}
 
   async run() {
     const team = await this.teamService.getTeam();
