@@ -36,3 +36,9 @@ export enum ContentRepositoryApiEnum {
   LESSON_UNAPPROVED = '/lesson/unapproved',
   LESSON_ARCHIVED = '/lesson/archived',
 }
+
+export enum ArchivedApiEnum {
+  ACTIVATE_USER = '/users/activate',
+  ARCHIVED_USERS = '/users/archived',
+  ARCHIVED_ROADMAPS = '/roadmap-categories',
+}

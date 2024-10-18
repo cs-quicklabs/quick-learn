@@ -97,4 +97,24 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => LessonEntity, (user) => user.archive_by)
   archive_by_lessons: LessonEntity[];
+
+  @Column({ nullable: true })
+  updated_by_id: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.updated_users)
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by: UserEntity;
+
+  @OneToMany(() => UserEntity, (user) => user.updated_by)
+  updated_users: UserEntity[];
+
+  @VirtualColumn({
+    type: 'varchar',
+    query: (alias) => `
+      SELECT CONCAT(u.first_name, ' ', u.last_name)
+      FROM user u
+      WHERE u.id = ${alias}.updated_by_id
+    `,
+  })
+  updater_full_name: string;
 }

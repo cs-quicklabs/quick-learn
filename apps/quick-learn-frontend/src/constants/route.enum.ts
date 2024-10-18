@@ -16,5 +16,8 @@ export enum RouteEnum {
   CONTENT = '/dashboard/content',
   APPROVALS = '/dashboard/approvals',
   COMMUNITY = '/dashboard/community',
-  ARCHIVE = '/dashboard/archive',
+  ARCHIVED_USERS = '/dashboard/archived/users',
+  ARCHIVED_ROADMAPS = '/dashboard/archived/roadmaps',
+  ARCHIVED_COURSES = '/dashboard/archived/courses',
+  ARCHIVED_LESSONS = '/dashboard/archived/lessons',
 }
