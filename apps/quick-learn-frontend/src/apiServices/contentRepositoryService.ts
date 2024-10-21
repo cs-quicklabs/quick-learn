@@ -152,7 +152,9 @@ export const getCommunityCourses = async () => {
   return response.data;
 };
 
-export const getCommunityCourse = async (id: string): Promise<AxiosSuccessResponse<TCourse>> => {
+export const getCommunityCourse = async (
+  id: string,
+): Promise<AxiosSuccessResponse<TCourse>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<TCourse>>(
     ContentRepositoryApiEnum.COURSE + `/community/${id}`,
   );

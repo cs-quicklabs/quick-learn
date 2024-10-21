@@ -55,7 +55,9 @@ const CommunityCourse = () => {
                     key={lesson.id}
                     className="col-span-1 hover:shadow-lg rounded-lg shadow-sm cursor-pointer"
                   >
-                    <Link href={`${RouteEnum.COMMUNITY}/${courseId}/${lesson.id}`}>
+                    <Link
+                      href={`${RouteEnum.COMMUNITY}/${courseId}/${lesson.id}`}
+                    >
                       <CourseCard
                         name={lesson.name}
                         title={lesson.content}

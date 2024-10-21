@@ -44,7 +44,7 @@ function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
 }
 export function limitSanitizedContent(content: string): string {
   const sanitizedContent = HTMLSanitizer(content);
-  return sanitizedContent.length > 250 
-    ? sanitizedContent.substring(0, 250) + '...' 
+  return sanitizedContent.length > 250
+    ? sanitizedContent.substring(0, 250) + '...'
     : sanitizedContent;
 }
