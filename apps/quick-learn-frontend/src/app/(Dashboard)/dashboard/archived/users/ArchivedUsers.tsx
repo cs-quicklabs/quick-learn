@@ -7,7 +7,7 @@ import {
 } from '@src/apiServices/archivedService';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
 import SearchBox from '@src/shared/components/SearchBox';
-import { Loader } from '@src/shared/components/UIElements';
+import { FullPageLoader } from '@src/shared/components/UIElements';
 import { TUser } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -97,14 +97,18 @@ const ArchivedUsers = () => {
           dataLength={usersList.length}
           next={getNextUsers}
           hasMore={hasMore}
-          loader={<Loader />}
+          loader={<FullPageLoader />}
         >
           {usersList.map((item) => (
             <ArchivedCell
               key={item.uuid}
-              title={item.full_name}
+              title={item.full_name || `${item.first_name} ${item.last_name}`}
               subtitle={item.skill.name}
-              deactivatedBy={item.updatedBy.full_name}
+              deactivatedBy={
+                item.updated_by
+                  ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
+                  : ''
+              }
               deactivationDate={item.updated_at}
               onClickDelete={() => console.log(item.uuid)}
               onClickRestore={() => restoreUser(item.uuid)}

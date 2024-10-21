@@ -22,7 +22,7 @@ const ArchivedCell: FC<Props> = ({
   alternateButton,
 }) => {
   return (
-    <div className="flex items-center mt-4">
+    <div className="flex items-center mt-4 justify-between">
       <td className="p-4">
         <div className="flex items-center gap-1">
           <div className="flex-1 min-w-0 sm:flex sm:items-center sm:justify-between">
@@ -68,7 +68,7 @@ const ArchivedCell: FC<Props> = ({
             className="text-gray-500 hover:underline text-sm mr-2"
             onClick={onClickRestore}
           >
-            {alternateButton ? 'Restore' : 'Activate'}
+            {!alternateButton ? 'Restore' : 'Activate'}
           </button>
           <button
             className="text-gray-500 hover:text-red-600 hover:underline text-sm"

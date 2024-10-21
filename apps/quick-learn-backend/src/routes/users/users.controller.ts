@@ -78,10 +78,6 @@ export class UsersController {
       ...filter,
       active: false,
     });
-    // const transformedUsers = users.map((user) => ({
-    //   ...user,
-    //   updater_full_name: user.updater_full_name,
-    // }));
     return new SuccessResponse('Successfully got users.', users);
   }
 
@@ -119,9 +115,13 @@ export class UsersController {
   })
   async update(
     @Param('uuid') uuid: string,
+    @CurrentUser() currentUser: UserEntity,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.updateUser(uuid, updateUserDto);
+    const user = await this.usersService.updateUser(uuid, {
+      ...updateUserDto,
+      updated_by: currentUser,
+    });
     return new SuccessResponse('Successfully updated user.', user);
   }
 
