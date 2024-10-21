@@ -6,6 +6,7 @@ import { getCommunityCourses } from '@src/apiServices/contentRepositoryService';
 import { useEffect, useState } from 'react';
 import { TCourse } from '@src/shared/types/contentRepository';
 import { FullPageLoader } from '@src/shared/components/UIElements';
+import Link from 'next/link';
 
 const CoummintyCourseRepository = () => {
   const [allCourses, setAllCourses] = useState<TCourse[]>([]);
@@ -49,14 +50,14 @@ const CoummintyCourseRepository = () => {
                   key={course.id}
                   className="col-span-1 hover:shadow-lg shadow-sm cursor-pointer rounded-lg"
                 >
-                  <a href={`${RouteEnum.COMMUNITY}/${course.id}`}>
+                  <Link href={`${RouteEnum.COMMUNITY}/${course.id}`}>
                     <CourseCard
                       name={course.name}
                       title={course.description}
                       publisher={course.created_by?.first_name}
                       lesson={course?.lessons_count}
                     />
-                  </a>
+                  </Link>
                 </li>
               );
             })}

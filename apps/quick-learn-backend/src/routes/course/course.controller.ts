@@ -40,7 +40,7 @@ export class CourseController {
   async getCommunityCourses() {
     const relation = ['created_by'];
     const data = await this.service.getMany(
-      { is_community_available: true },
+      { is_community_available: true ,archived:false },
       undefined,
       relation,
     );
@@ -67,6 +67,26 @@ export class CourseController {
     ]);
     return new SuccessResponse(en.GetCourseDetails, data);
   }
+
+  //get unarchived and approved lesson only
+  @Get('/community/:id')
+  @ApiParam({ name: 'id', description: 'course id', required: true })
+  @ApiOperation({ summary: 'Get course details' })
+  async getcourseDetails(@Param('id') id: string) {
+  const data = await this.service.getCourseDetails({ id: +id }, [
+    'lessons',
+    'lessons.created_by_user',
+  ]);
+
+  // Filter the lessons with archived: false and approved: true
+  if(data.lessons.length>0){
+    data.lessons = data.lessons.filter(
+      (lesson) => !lesson.archived && lesson.approved
+    );
+  }
+
+  return new SuccessResponse(en.GetCourseDetails, data);
+}
 
   @Patch(':id')
   @ApiParam({ name: 'id', description: 'course id', required: true })

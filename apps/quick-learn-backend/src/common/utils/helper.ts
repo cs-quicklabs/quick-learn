@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import sanitizeHtml from 'sanitize-html';
 import { EnvironmentEnum } from '../constants/constants';
 
 export default class Helpers {
@@ -21,4 +22,29 @@ export default class Helpers {
       path: '/',
     });
   }
+}
+
+function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
+  return sanitizeHtml(
+    value,
+    isDefaultTagsAllowed
+      ? {
+          allowedTags: ['b', 'i', 'em', 'strong', 'a'],
+          allowedAttributes: {
+            a: ['href'],
+          },
+          allowedIframeHostnames: ['www.youtube.com'],
+        }
+      : {
+          allowedTags: [],
+          allowedAttributes: {},
+          allowedIframeHostnames: [],
+        },
+  );
+}
+export function limitSanitizedContent(content: string): string {
+  const sanitizedContent = HTMLSanitizer(content);
+  return sanitizedContent.length > 250 
+    ? sanitizedContent.substring(0, 250) + '...' 
+    : sanitizedContent;
 }

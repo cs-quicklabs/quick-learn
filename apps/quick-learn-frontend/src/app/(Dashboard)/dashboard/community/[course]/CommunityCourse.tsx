@@ -2,11 +2,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import CourseCard from '../CourseCard';
-import { getCourse } from '@src/apiServices/contentRepositoryService';
+import { getCommunityCourse } from '@src/apiServices/contentRepositoryService';
 import { TCourse } from '@src/shared/types/contentRepository';
 import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import { FullPageLoader } from '@src/shared/components/UIElements';
+import { RouteEnum } from '@src/constants/route.enum';
+import { HTMLSanitizer } from '@src/utils/helpers';
+import Link from 'next/link';
 
 const CommunityCourse = () => {
   const [courseData, setcourseData] = useState<TCourse | undefined>();
@@ -16,7 +19,7 @@ const CommunityCourse = () => {
 
   const getCourseDetails = useCallback(() => {
     if (!courseId) return;
-    getCourse(courseId)
+    getCommunityCourse(courseId)
       .then((res) => {
         setcourseData(res.data);
         setIsLoading(false);
@@ -46,22 +49,22 @@ const CommunityCourse = () => {
           {/* display all courses */}
           <ul className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-4 2xl:grid-cols-5">
             {courseData.lessons && courseData.lessons?.length != 0 ? (
-              courseData.lessons.map((course) => {
+              courseData.lessons.map((lesson) => {
                 return (
                   <li
-                    key={course.id}
+                    key={lesson.id}
                     className="col-span-1 hover:shadow-lg rounded-lg shadow-sm cursor-pointer"
                   >
-                    <a href={`#`}>
+                    <Link href={`${RouteEnum.COMMUNITY}/${courseId}/${lesson.id}`}>
                       <CourseCard
-                        name={course.name}
-                        title={course.content}
+                        name={lesson.name}
+                        title={lesson.content}
                         createdDate={format(
-                          course.created_at,
+                          lesson.created_at,
                           DateFormats.shortDate,
                         )}
                       />
-                    </a>
+                    </Link>
                   </li>
                 );
               })
