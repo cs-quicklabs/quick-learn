@@ -11,9 +11,14 @@ import { DatabaseConfig } from './database-config.type';
 import validateConfig from '@src/common/utils/validate-config';
 
 class EnvironmentVariablesValidator {
+  @IsOptional()
+  @IsString()
+  DATABASE_TYPE: string;
+
   @IsString()
   DATABASE_HOST: string;
 
+  @IsOptional()
   @IsInt()
   @Min(0)
   @Max(65535)
@@ -65,7 +70,7 @@ export default registerAs<DatabaseConfig>('database', () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {
-    type: 'postgres',
+    type: process.env.DATABASE_TYPE || 'postgres',
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT
       ? parseInt(process.env.DATABASE_PORT, 10)
