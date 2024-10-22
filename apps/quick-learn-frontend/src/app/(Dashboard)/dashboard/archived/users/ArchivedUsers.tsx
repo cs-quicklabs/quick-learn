@@ -11,6 +11,7 @@ import { FullPageLoader } from '@src/shared/components/UIElements';
 import { TUser } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import ConformationModal from '@src/shared/modals/conformationModal';
 
 const ArchivedUsers = () => {
   const [searchValue, setSearchValue] = useState<string>('');
@@ -18,6 +19,8 @@ const ArchivedUsers = () => {
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [restoreId, setRestoreId] = useState<string | false>(false);
+  const [deleteId, setDeleteId] = useState<string | false>(false);
 
   const fetchUsers = useCallback(
     async (currentPage: number, search: string, resetList = false) => {
@@ -76,10 +79,26 @@ const ArchivedUsers = () => {
     fetchUsers(1, '', true);
   }, [fetchUsers]);
 
-  useEffect(() => console.log(usersList, page), [usersList]);
-
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
+      <ConformationModal
+        title={
+          restoreId
+            ? 'Are you sure you want to activate this user?'
+            : 'Are you sure you want to delete this user?'
+        }
+        subTitle={
+          restoreId
+            ? 'Once this user is activated, they will be able to access the system and perform actions based on their roles and permissions.'
+            : 'All the information regarding this user will be lost. If this user has created some content, it will be assigned to the super admin.'
+        }
+        open={Boolean(restoreId || deleteId)}
+        //@ts-expect-error will never be set true
+        setOpen={restoreId ? setRestoreId : setDeleteId}
+        onConfirm={() =>
+          restoreId ? restoreUser(restoreId) : console.log(deleteId)
+        }
+      />
       <h1 className="text-lg leading-6 font-medium text-gray-900">
         Archived Users
       </h1>
@@ -97,7 +116,7 @@ const ArchivedUsers = () => {
           dataLength={usersList.length}
           next={getNextUsers}
           hasMore={hasMore}
-          loader={<FullPageLoader />}
+          loader={isLoading && <FullPageLoader />}
         >
           {usersList.map((item) => (
             <ArchivedCell
@@ -110,8 +129,8 @@ const ArchivedUsers = () => {
                   : ''
               }
               deactivationDate={item.updated_at}
-              onClickDelete={() => console.log(item.uuid)}
-              onClickRestore={() => restoreUser(item.uuid)}
+              onClickDelete={() => setDeleteId(item.uuid)}
+              onClickRestore={() => setRestoreId(item.uuid)}
               alternateButton
             />
           ))}

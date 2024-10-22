@@ -40,5 +40,5 @@ export enum ContentRepositoryApiEnum {
 export enum ArchivedApiEnum {
   ACTIVATE_USER = '/users/activate',
   ARCHIVED_USERS = '/users/archived',
-  ARCHIVED_ROADMAPS = '/roadmap-categories',
+  ARCHIVED_ROADMAPS = '/roadmap/archived',
 }

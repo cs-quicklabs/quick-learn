@@ -107,14 +107,4 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => UserEntity, (user) => user.updated_by)
   updated_users: UserEntity[];
-
-  @VirtualColumn({
-    type: 'varchar',
-    query: (alias) => `
-      SELECT CONCAT(u.first_name, ' ', u.last_name)
-      FROM user u
-      WHERE u.id = ${alias}.updated_by_id
-    `,
-  })
-  updater_full_name: string;
 }

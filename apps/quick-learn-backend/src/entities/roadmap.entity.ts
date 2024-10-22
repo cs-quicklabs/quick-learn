@@ -5,6 +5,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { RoadmapCategoryEntity } from './roadmap-category.entity';
@@ -54,4 +55,14 @@ export class RoadmapEntity extends BaseEntity {
     },
   })
   courses: CourseEntity[];
+
+  @Column({ nullable: true })
+  updated_by_id: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.updated_users)
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by: UserEntity;
+
+  @OneToMany(() => UserEntity, (user) => user.updated_by)
+  updated_users: UserEntity[];
 }
