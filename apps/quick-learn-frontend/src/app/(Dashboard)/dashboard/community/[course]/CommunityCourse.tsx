@@ -8,8 +8,8 @@ import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import { RouteEnum } from '@src/constants/route.enum';
-import { HTMLSanitizer } from '@src/utils/helpers';
 import Link from 'next/link';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 
 const CommunityCourse = () => {
   const [courseData, setcourseData] = useState<TCourse | undefined>();
@@ -22,10 +22,10 @@ const CommunityCourse = () => {
     getCommunityCourse(courseId)
       .then((res) => {
         setcourseData(res.data);
-        setIsLoading(false);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [courseId]);
 

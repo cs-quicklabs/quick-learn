@@ -6,6 +6,7 @@ import { getLessonDetails } from '@src/apiServices/lessonsService';
 import ViewLesson from '@src/shared/components/ViewLesson';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { RouteEnum } from '@src/constants/route.enum';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: 'Community Repository', link: RouteEnum.COMMUNITY },
@@ -34,16 +35,13 @@ const Lesson = () => {
     getLessonDetails(lessonId)
       .then((res) => {
         setLessonData(res.data);
-        console.log(res.data);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => showApiErrorInToast(err));
   }, [lessonId]);
 
   useEffect(() => {
     getLessonData();
-  }, []);
+  }, [getLessonData]);
   return (
     <div>{lessonData && <ViewLesson lesson={lessonData} links={links} />}</div>
   );

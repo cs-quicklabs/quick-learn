@@ -37,7 +37,7 @@ const CourseCard: FC<CourseProps> = ({
       )}
       {createdDate ? (
         <div className="font-normal line-clamp-1 text-xs underline text-gray-500">
-          {createdDate ? `Added on ${createdDate}}` : `(Lesson 20)`}
+          {`Added on ${createdDate}}`}
         </div>
       ) : (
         <div className="font-normal line-clamp-1 text-xs underline text-gray-500">

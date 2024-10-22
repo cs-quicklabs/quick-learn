@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { TCourse } from '@src/shared/types/contentRepository';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import Link from 'next/link';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 
 const CoummintyCourseRepository = () => {
   const [allCourses, setAllCourses] = useState<TCourse[]>([]);
@@ -14,13 +15,16 @@ const CoummintyCourseRepository = () => {
 
   //check if data is fetched
   const getData = async () => {
-    const response = await getCommunityCourses();
-    if (Array.isArray(response.data)) {
-      setAllCourses(response.data);
-      setIsLoading(false);
-    } else {
-      console.error('Response data is not an array');
-    }
+    getCommunityCourses()
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          setAllCourses(res.data);
+        }
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
