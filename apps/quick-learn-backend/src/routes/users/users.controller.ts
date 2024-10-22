@@ -81,7 +81,7 @@ export class UsersController {
         ...filter,
         active: false,
       },
-      { includeUpdatedBy: true },
+      ['updated_by'],
     );
     return new SuccessResponse(en.successGotUsers, users);
   }

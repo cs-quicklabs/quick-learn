@@ -84,9 +84,7 @@ export class UsersService extends PaginationService<UserEntity> {
     user: UserEntity,
     paginationDto: PaginationDto,
     filter: ListFilterDto & { active: boolean },
-    options: {
-      includeUpdatedBy?: boolean;
-    } = { includeUpdatedBy: false },
+    extraRelations: string[] = [],
   ): Promise<UserEntity[] | PaginatedResult<UserEntity>> {
     const userTypeId = user.user_type_id;
     let conditions:
@@ -122,9 +120,7 @@ export class UsersService extends PaginationService<UserEntity> {
       conditions = queryConditions;
     }
 
-    const relations = options.includeUpdatedBy
-      ? [...userRelations, 'updated_by']
-      : [...userRelations];
+    const relations = [...userRelations, ...extraRelations];
 
     if (paginationDto.mode == 'paginate') {
       const results = await this.paginate(paginationDto, conditions, relations);
