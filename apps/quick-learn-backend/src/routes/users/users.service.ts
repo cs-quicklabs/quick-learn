@@ -83,7 +83,10 @@ export class UsersService extends PaginationService<UserEntity> {
   async findAll(
     user: UserEntity,
     paginationDto: PaginationDto,
-    filter: ListFilterDto,
+    filter: ListFilterDto & { active: boolean },
+    options: {
+      includeUpdatedBy?: boolean;
+    } = { includeUpdatedBy: false },
   ): Promise<UserEntity[] | PaginatedResult<UserEntity>> {
     const userTypeId = user.user_type_id;
     let conditions:
@@ -108,6 +111,7 @@ export class UsersService extends PaginationService<UserEntity> {
         { email: ILike(`%${paginationDto.q}%`), ...conditions },
         { first_name: ILike(`%${paginationDto.q}%`), ...conditions },
         { last_name: ILike(`%${paginationDto.q}%`), ...conditions },
+        { full_name: ILike(`%${paginationDto.q}%`), ...conditions },
         {
           ...conditions,
           user_type: {
@@ -118,17 +122,18 @@ export class UsersService extends PaginationService<UserEntity> {
       conditions = queryConditions;
     }
 
+    const relations = options.includeUpdatedBy
+      ? [...userRelations, 'updated_by']
+      : [...userRelations];
+
     if (paginationDto.mode == 'paginate') {
-      const results = await this.paginate(paginationDto, conditions, [
-        ...userRelations,
-        'updated_by',
-      ]);
+      const results = await this.paginate(paginationDto, conditions, relations);
       this.sortByLastLogin(results.items);
       return results;
     }
     const users = await this.userRepository.find({
       where: conditions,
-      relations: [...userRelations, 'updated_by'],
+      relations: relations,
     });
     this.sortByLastLogin(users);
     return users;

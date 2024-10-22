@@ -12,6 +12,7 @@ import { TUser } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ConformationModal from '@src/shared/modals/conformationModal';
+import { en } from '@src/constants/lang/en';
 
 const ArchivedUsers = () => {
   const [searchValue, setSearchValue] = useState<string>('');
@@ -84,13 +85,13 @@ const ArchivedUsers = () => {
       <ConformationModal
         title={
           restoreId
-            ? 'Are you sure you want to activate this user?'
-            : 'Are you sure you want to delete this user?'
+            ? en.archivedSection.confirmActivateUser
+            : en.archivedSection.confirmDeleteUser
         }
         subTitle={
           restoreId
-            ? 'Once this user is activated, they will be able to access the system and perform actions based on their roles and permissions.'
-            : 'All the information regarding this user will be lost. If this user has created some content, it will be assigned to the super admin.'
+            ? en.archivedSection.confirmActivateUserSubtext
+            : en.archivedSection.confirmDeleteUserSubtext
         }
         open={Boolean(restoreId || deleteId)}
         //@ts-expect-error will never be set true
@@ -100,10 +101,10 @@ const ArchivedUsers = () => {
         }
       />
       <h1 className="text-lg leading-6 font-medium text-gray-900">
-        Archived Users
+        {en.archivedSection.archivedUsers}
       </h1>
       <p className="text-gray-500 text-sm mb-6">
-        Following users have been deactivated.
+        {en.archivedSection.archivedUsersSubtext}
       </p>
       <SearchBox
         value={searchValue}

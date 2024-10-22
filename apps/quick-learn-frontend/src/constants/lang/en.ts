@@ -82,6 +82,16 @@ export const en = {
       'Roadmaps can belong to a category. A category could be a way to group learning roadmaps. For example, a department can have a category called "Engineering" and all the roadmaps related to engineering can be added to this category.',
     tableName: 'Category name',
   },
+  archivedSection: {
+    archivedUsers: 'Archived Users',
+    archivedUsersSubtext: ' Following users have been deactivated.',
+    confirmActivateUser: 'Are you sure you want to activate this user?',
+    confirmActivateUserSubtext:
+      'Once this user is activated, they will be able to access the system and perform actions based on their roles and permissions.',
+    confirmDeleteUser: 'Are you sure you want to delete this user?',
+    confirmDeleteUserSubtext:
+      'All the information regarding this user will be lost. If this user has created some content, it will be assigned to the super admin.',
+  },
   common: {
     cancel: 'Cancel',
     lesson: 'lesson',

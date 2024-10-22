@@ -64,7 +64,7 @@ export class UsersController {
       ...filter,
       active: true,
     });
-    return new SuccessResponse('Successfully got users.', users);
+    return new SuccessResponse(en.successGotUsers, users);
   }
 
   @Post('archived')
@@ -74,11 +74,16 @@ export class UsersController {
     @Body() paginationDto: PaginationDto,
     @Query() filter: ListFilterDto,
   ): Promise<SuccessResponse> {
-    const users = await this.usersService.findAll(user, paginationDto, {
-      ...filter,
-      active: false,
-    });
-    return new SuccessResponse('Successfully got users.', users);
+    const users = await this.usersService.findAll(
+      user,
+      paginationDto,
+      {
+        ...filter,
+        active: false,
+      },
+      { includeUpdatedBy: true },
+    );
+    return new SuccessResponse(en.successGotUsers, users);
   }
 
   @Post('activate')
@@ -103,7 +108,7 @@ export class UsersController {
   })
   async findOne(@Param('uuid') uuid: string): Promise<SuccessResponse> {
     const user = await this.usersService.findOne({ uuid });
-    return new SuccessResponse('Successfully got users.', user);
+    return new SuccessResponse(en.successGotUser, user);
   }
 
   @Patch(':uuid')
