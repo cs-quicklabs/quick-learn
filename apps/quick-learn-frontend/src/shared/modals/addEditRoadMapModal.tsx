@@ -1,19 +1,110 @@
-import { FC } from 'react';
+'use client';
+import { FC, useEffect } from 'react';
 import { Modal } from 'flowbite-react';
 import { CloseIcon } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
+import { z } from 'zod';
+import useDashboardStore from '@src/store/dashboard.store';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FieldConfig } from '../types/formTypes';
+import FormFieldsMapper from '../formElements/FormFieldsMapper';
 
 interface AddEditRoadMapProps {
   open: boolean;
   setOpen: (value: boolean) => void;
   isAdd?: boolean;
+  onSubmit: (data: AddEditRoadmapData) => void;
+  isloading?: boolean;
+  initialData?: AddEditRoadmapData;
 }
+
+const AddEditRoadmapSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, 'This field is mandatory')
+    .max(50, 'The value should not exceed 50 character')
+    .refine((value) => value.trim().length > 0, {
+      message: 'This field is mandatory and cannot contain only whitespace',
+    }),
+  description: z
+    .string()
+    .trim()
+    .min(1, 'This field is mandatory')
+    .max(5000, 'The value should not exceed 5000 character')
+    .refine((value) => value.trim().length > 0, {
+      message: 'This field is mandatory and cannot contain only whitespace',
+    }),
+  roadmap_category_id: z.string().min(1, 'This field is mandatory'),
+});
+
+export type AddEditRoadmapData = z.infer<typeof AddEditRoadmapSchema>;
 
 const AddEditRoadMapModal: FC<AddEditRoadMapProps> = ({
   open,
   setOpen,
   isAdd = true,
+  onSubmit,
+  isloading = false,
+  initialData,
 }) => {
+  const contentRepositoryMetadata = useDashboardStore(
+    (state) => state.metadata.contentRepository,
+  );
+
+  const addEditRoadmapFields: FieldConfig[] = [
+    {
+      label: 'Name',
+      name: 'name',
+      type: 'text',
+      placeholder: 'Type roadmap name',
+      className:
+        'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5',
+    },
+    {
+      label: 'Roadmap Category',
+      name: 'roadmap_category_id',
+      type: 'select',
+      placeholder: 'Select category',
+      options:
+        contentRepositoryMetadata?.roadmap_categories.map((category) => ({
+          value: category.id,
+          label: category.name,
+        })) || [],
+      className:
+        'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 capitalize',
+    },
+    {
+      label: 'Description',
+      name: 'description',
+      type: 'textarea',
+      placeholder: 'Write roadmap description here',
+      height: '105px',
+      width: '100%',
+      className:
+        'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700',
+    },
+  ];
+
+  const methods = useForm<AddEditRoadmapData>({
+    resolver: zodResolver(AddEditRoadmapSchema),
+    mode: 'onChange',
+  });
+
+  const { reset, setValue } = methods;
+
+  useEffect(() => {
+    if (!open) {
+      reset();
+    }
+    if (initialData) {
+      setValue('name', initialData.name);
+      setValue('description', initialData.description);
+      setValue('roadmap_category_id', `${initialData.roadmap_category_id}`);
+    }
+  }, [open, reset, setValue, initialData]);
+
   return (
     <Modal show={open} popup>
       <Modal.Body className="p-4 sm:p-5">
@@ -31,87 +122,22 @@ const AddEditRoadMapModal: FC<AddEditRoadMapProps> = ({
             <CloseIcon className="w-3 h-3" />
           </button>
         </div>
-        <form>
-          <div className="grid gap-4 mb-4 sm:grid-cols-1">
-            <div className="sm:col-span-2" data-svelte-h="svelte-1fknoi">
-              <label
-                htmlFor="name"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Type roadmap name"
-                required
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="category"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                data-svelte-h="svelte-1cqgnle"
-              >
-                Roadmap Category
-              </label>
-              <select
-                id="category"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              >
-                <option data-svelte-h="svelte-40radm" value="Select category">
-                  Select category
-                </option>
-                <option data-svelte-h="svelte-1h3e5om" value="TV">
-                  HR
-                </option>
-                <option data-svelte-h="svelte-1qgjo8v" value="PC">
-                  Sales
-                </option>
-                <option data-svelte-h="svelte-1t9m3hr" value="GA">
-                  Engineering
-                </option>
-                <option data-svelte-h="svelte-14ct8a" value="PH">
-                  Recruitment
-                </option>
-              </select>
-            </div>
-            <div className="sm:col-span-2" data-svelte-h="svelte-1xr4cp4">
-              <label
-                htmlFor="description"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Description
-              </label>
-              <textarea
-                id="description"
-                rows={4}
-                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Write roadmap description here"
-                spellCheck="false"
-                style={{ height: '149px' }}
-              ></textarea>
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            data-svelte-h="svelte-1kbr9d0"
-          >
-            {isAdd
-              ? en.addEditRoadMapModal.addRoadmap
-              : en.addEditRoadMapModal.editRoadmap}
-          </button>
-          <button
-            data-modal-toggle="defaultModal"
-            className="py-2.5 px-5 ml-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-            onClick={() => setOpen(false)}
-          >
-            {en.common.cancel}
-          </button>
-        </form>
+        <FormProvider {...methods}>
+          <FormFieldsMapper
+            fields={addEditRoadmapFields}
+            schema={AddEditRoadmapSchema}
+            onSubmit={onSubmit}
+            methods={methods}
+            isLoading={isloading}
+            buttonText={
+              isAdd
+                ? en.addEditRoadMapModal.addRoadmap
+                : en.addEditRoadMapModal.editRoadmap
+            }
+            cancelButton={() => setOpen(false)}
+            id="addRoadmapForm"
+          />
+        </FormProvider>
       </Modal.Body>
     </Modal>
   );

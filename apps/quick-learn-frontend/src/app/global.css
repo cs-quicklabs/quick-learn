@@ -4,9 +4,21 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
-    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Helvetica Neue,
+    Arial,
+    Noto Sans,
+    sans-serif,
+    Apple Color Emoji,
+    Segoe UI Emoji,
+    Segoe UI Symbol,
+    Noto Color Emoji;
   line-height: 1.5;
   tab-size: 4;
   scroll-behavior: smooth;
@@ -40,8 +52,15 @@ a {
   text-decoration: inherit;
 }
 pre {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    Liberation Mono, Courier New, monospace;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    Liberation Mono,
+    Courier New,
+    monospace;
 }
 svg {
   display: block;
@@ -55,3 +74,131 @@ input:-webkit-autofill:active {
   transition: background-color 5000s;
   -webkit-text-fill-color: #000000 !important;
 }
+
+/* Quill  toolbar and editor css */
+.ql-snow.ql-toolbar {
+  padding: 8px 16px !important;
+}
+
+.ql-snow.ql-toolbar button.custom-quill-button {
+  padding: 0 !important;
+}
+
+.ql-snow.ql-toolbar button:focus {
+  color: #000000 !important;
+}
+
+#toolbar:not(.ql-toolbar.ql-snow) .ql-image {
+  display: none !important;
+}
+
+.quill .ql-container {
+  border: none !important;
+}
+
+.quill .ql-container:focus {
+  border: 1px red solid !important;
+}
+
+.quill .ql-container .ql-editor {
+  min-height: 100vh;
+}
+
+.quill .ql-container .ql-editor:focus {
+  outline: solid;
+  outline-width: 1px;
+  outline-color: #1c64f2;
+}
+
+.quill .ql-container .ql-syntax {
+  background-color: #d3d3d3 !important;
+  color: #000000 !important;
+}
+/* Quill  toolbar and editor css */
+
+
+/* lesson viewer css */
+.quill .ql-container .ql-editor,
+.lesson-viewer {
+  font: 400 16px/28px 'Open Sans', sans-serif;
+}
+.quill .ql-container .ql-editor a,
+.quill .ql-container .ql-editor p,
+.lesson-viewer a,
+.lesson-viewer p {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.quill .ql-container .ql-editor a,
+.lesson-viewer a {
+  color: #1c64f2;
+}
+.quill .ql-container .ql-editor a:hover,
+.lesson-viewer a:hover {
+  text-decoration-color: #1c64f2;
+  text-decoration: underline;
+}
+.quill .ql-container .ql-editor strong,
+.lesson-viewer strong {
+  font-weight: 600;
+}
+.quill .ql-container .ql-editor h1,
+.lesson-viewer h1 {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+.quill .ql-container .ql-editor h2,
+.lesson-viewer h2 {
+  font-size: 1.75rem;
+  line-height: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.ql-snow .ql-editor blockquote,
+.lesson-viewer blockquote {
+  border-left: 4px solid #ccc;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding-left: 16px;
+  background-color: #eee;
+  max-width: 85%;
+  margin: 1rem auto;
+}
+.quill .ql-container .ql-syntax,
+.lesson-viewer .ql-syntax {
+  background-color: #dedede !important;
+  color: #000000 !important;
+  margin: 1rem auto;
+  font-size: 14px;
+  padding: 1rem 2rem;
+  line-height: 1.5;
+  letter-spacing: normal;
+  max-width: 85%;
+}
+.quill .ql-container ul,
+.quill .ql-container ol,
+.lesson-viewer ul ,
+.lesson-viewer ol {
+  padding-left: 2.5rem;
+  padding-right: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+.quill .ql-container ul,
+.lesson-viewer ul {
+  list-style-type: disc;
+}
+.quill .ql-container ol,
+.lesson-viewer ol {
+  list-style-type: decimal;
+}
+.quill .ql-container img,
+.lesson-viewer img {
+  max-width: 85% !important;
+  margin: 1rem auto;
+  max-height: 400px;
+}
+/* lesson viewer css */

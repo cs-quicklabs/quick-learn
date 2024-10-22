@@ -65,13 +65,4 @@ export class CreateUserDto {
   @IsNumber()
   @IsNotEmpty()
   skill_id: number;
-
-  @ApiProperty({ example: 1 })
-  @Transform(({ value }) => {
-    const transformed = parseInt(value, 10);
-    return isNaN(transformed) ? value : transformed;
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  team_id: number;
 }

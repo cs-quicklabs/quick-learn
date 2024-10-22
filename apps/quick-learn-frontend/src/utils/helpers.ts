@@ -3,6 +3,7 @@ import { showApiErrorInToast } from './toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 import { toast } from 'react-toastify';
 import { DebounceFunction } from '@src/shared/types/utilTypes';
+import sanitizeHtml from 'sanitize-html';
 
 export function showErrorMessage(error: unknown) {
   if (error instanceof AxiosError) {
@@ -57,4 +58,32 @@ export function removeEmptyValues(
   obj: Record<string, unknown>,
 ): Record<string, unknown> {
   return Object.fromEntries(Object.entries(obj).filter(([, value]) => !!value));
+}
+
+/**
+ * Sanitizes the given HTML string to remove malicious tags and attributes.
+ * By default, this only allows `p` tags. If `isDefaultTagsAllowed` is true,
+ * it will also allow `b`, `i`, `em`, `strong`, and `a` tags, as well as
+ * `href` attribute on `a` tags and `iframe` tags from `www.youtube.com`.
+ * @param value The HTML string to sanitize
+ * @param isDefaultTagsAllowed Whether to allow the default set of tags
+ * @returns The sanitized HTML string
+ */
+export function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
+  return sanitizeHtml(
+    value,
+    isDefaultTagsAllowed
+      ? {
+          allowedTags: ['b', 'i', 'em', 'strong', 'a'],
+          allowedAttributes: {
+            a: ['href'],
+          },
+          allowedIframeHostnames: ['www.youtube.com'],
+        }
+      : {
+          allowedTags: [],
+          allowedAttributes: {},
+          allowedIframeHostnames: [],
+        },
+  );
 }

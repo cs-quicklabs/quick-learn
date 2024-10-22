@@ -1,11 +1,14 @@
 import React, { FC, useState } from 'react';
+import Link from 'next/link';
 import { FieldType } from '../types/formTypes';
 import { OpenEyeIcon, ClosedEyeIcon } from '../components/UIElements';
 import { FieldValues, UseFormRegister } from 'react-hook-form';
+import { RouteEnum } from '@src/constants/route.enum';
 
 interface Props {
   label?: string;
   name: string;
+  sub_label?: string;
   type?: FieldType;
   className?: string;
   register: UseFormRegister<FieldValues>;
@@ -13,38 +16,109 @@ interface Props {
   placeholder: string;
   disabled?: boolean;
   id?: string;
+  options?: { value: string | number; label: string }[];
+  height?: string;
+  width?: string;
 }
 const InputField: FC<Props> = ({
   label,
   name,
+  sub_label,
   type = 'text',
   register,
   placeholder,
   errorMsg,
   disabled = false,
-  className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
+  className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5',
   id,
+  options,
+  height,
+  width,
 }) => {
   const isFieldPassword = type === 'password';
   const [showPassword, setShowPassword] = useState<boolean>(!isFieldPassword);
   if (type === 'checkbox') {
     return (
-      <div className="flex items-center space-x-2">
-        <input
-          id={`${id ? id : ''}_checkbox_${name}`}
-          type={type}
-          className="form-checkbox h-5 w-5 text-blue-600 rounded-full border-gray-300 focus:ring-blue-500"
-          {...register(name)}
-        />
-        <div className="ml-3 text-sm">
-          <label
-            htmlFor={`${id ? id : ''}_checkbox_${name}`}
-            className="text-gray-500 dark:text-gray-300"
-          >
-            {label}
-          </label>
+      <div className="flex justify-between items-center">
+        <div className="flex items-start space-x-2">
+          <input
+            id={`${id ? id : ''}_checkbox_${name}`}
+            type={type}
+            className="mt-0.5 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            {...register(name)}
+          />
+          <div className="ml-3 text-sm">
+            <label
+              htmlFor={`${id ? id : ''}_checkbox_${name}`}
+              className={
+                sub_label ? 'font-medium text-gray-900' : 'text-gray-500'
+              }
+            >
+              {label}
+            </label>
+            {sub_label && (
+              <div className="text-xs font-normal text-gray-400">
+                {sub_label}
+              </div>
+            )}
+          </div>
+          {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
         </div>
-        {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+        {/* TODO: Remove this and make independent component for login */}
+        {name === 'rememberMe' && (
+          <Link
+            href={RouteEnum.FORGOT_PASSWORD}
+            className="text-sm font-medium text-primary-600 hover:underline"
+          >
+            Forgot password?
+          </Link>
+        )}
+      </div>
+    );
+  } else if (type === 'select') {
+    return (
+      <div>
+        <label
+          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          htmlFor={`${id ? id : ''}_select_${name}`}
+        >
+          {label}
+        </label>
+        <select
+          id={`${id ? id : ''}_select_${name}`}
+          className={`${className} dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
+          {...register(name)}
+          defaultValue=""
+        >
+          <option value="" disabled hidden>
+            {placeholder}
+          </option>
+          {options?.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {errorMsg && <p className="mt-1 text-red-500 text-sm">{errorMsg}</p>}
+      </div>
+    );
+  } else if (type === 'textarea') {
+    return (
+      <div>
+        <label
+          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          htmlFor={`${id ? id : ''}_textarea_${name}`}
+        >
+          {label}
+        </label>
+        <textarea
+          id={`${id ? id : ''}_textarea_${name}`}
+          className={`${className} dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
+          placeholder={placeholder}
+          {...register(name)}
+          style={{ height: `${height ?? 'auto'}`, width: `${width ?? 'auto'}` }}
+        />
+        {errorMsg && <p className="mt-1 text-red-500 text-sm">{errorMsg}</p>}
       </div>
     );
   }
@@ -79,6 +153,7 @@ const InputField: FC<Props> = ({
             type="button"
             className="absolute inset-y-0 right-0 pr-3 flex items-center"
             onClick={() => setShowPassword(!showPassword)}
+            tabIndex={-1}
           >
             {showPassword ? <OpenEyeIcon /> : <ClosedEyeIcon />}
           </button>

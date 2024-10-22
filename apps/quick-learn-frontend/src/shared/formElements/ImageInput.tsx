@@ -1,15 +1,13 @@
 'use client';
-import { CameraIcon } from '@heroicons/react/24/outline';
+import { CameraIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
-import {
-  showApiErrorInToast,
-  showApiMessageInToast,
-} from '@src/utils/toastUtils';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { FilePathType } from 'lib/shared/src';
 import Image from 'next/image';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { z } from 'zod';
+import { Loader } from '../components/UIElements';
 
 interface Props {
   watch: UseFormWatch<z.TypeOf<z.ZodTypeAny>>;
@@ -28,6 +26,7 @@ const ImageInput: FC<Props> = ({
   src = null,
   imageType,
 }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imagePreview, setImagePreview] = useState<string | null>(src);
   const [error, setError] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -35,7 +34,19 @@ const ImageInput: FC<Props> = ({
   const watchProfileImage = watch(name);
 
   const handleImageClick = () => {
-    fileInputRef.current?.click();
+    if (isLoading) return;
+    if (!imagePreview) {
+      fileInputRef.current?.click();
+    } else {
+      setIsLoading(true);
+      setValue(name, '', {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+      setImagePreview(null);
+      setIsLoading(false);
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,12 +60,17 @@ const ImageInput: FC<Props> = ({
       setError(false);
       const formData = new FormData();
       formData.append('file', file);
+      setIsLoading(true);
       fileUploadApiCall(formData, imageType)
         .then((res) => {
-          setValue(name, res.data.file, { shouldValidate: true });
-          showApiMessageInToast(res);
+          setValue(name, res.data.file, {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true,
+          });
         })
-        .catch((err) => showApiErrorInToast(err));
+        .catch((err) => showApiErrorInToast(err))
+        .finally(() => setIsLoading(false));
     }
   };
 
@@ -91,8 +107,19 @@ const ImageInput: FC<Props> = ({
             style={{ objectFit: 'cover' }}
             sizes="(max-width: 5rem) 5rem, 5rem"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-            <CameraIcon className="text-white" width="50px" />
+          <div
+            className={
+              'absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity' +
+              (isLoading ? ' opacity-100' : '')
+            }
+          >
+            {isLoading ? (
+              <Loader className="w-6" />
+            ) : imagePreview ? (
+              <TrashIcon className="text-white" width="32px" />
+            ) : (
+              <CameraIcon className="text-white" width="32px" />
+            )}
           </div>
         </div>
         <input

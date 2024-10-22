@@ -2,7 +2,9 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getAccessToken } from './authService';
 import { authApiEnum } from '@src/constants/api.enum';
 
-const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${process.env.NEXT_PUBLIC_API_VERSION}`;
+const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${
+  process.env.NEXT_PUBLIC_API_VERSION || 'v1'
+}`;
 
 export type AxiosErrorObject = AxiosError & {
   response: {
@@ -61,6 +63,9 @@ axiosInstance.interceptors.response.use(
           return axios(originalRequest);
         } else throw new Error('Original request is undefined');
       } catch (err) {
+        setTimeout(() => {
+          window.location.replace('/');
+        }, 400);
         return Promise.reject(error);
       }
     }

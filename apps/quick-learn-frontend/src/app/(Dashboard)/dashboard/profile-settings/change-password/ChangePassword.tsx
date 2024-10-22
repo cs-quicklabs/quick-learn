@@ -1,5 +1,6 @@
 'use client';
 import { changePasswordService } from '@src/apiServices/profileService';
+import { en } from '@src/constants/lang/en';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
@@ -12,7 +13,7 @@ import { z } from 'zod';
 
 const changePasswordFormSchema = z
   .object({
-    oldPassword: z.string().min(1, { message: 'This field is necessary' }),
+    oldPassword: z.string().min(1, { message: en.common.fieldRequired }),
     newPassword: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters long' })

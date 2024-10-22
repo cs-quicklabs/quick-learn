@@ -22,7 +22,7 @@ export class ProfileController {
   @ApiOperation({ summary: 'checking the profile protected route.' })
   getProfile(@CurrentUser() user: UserEntity) {
     const { first_name, last_name, profile_image, email } = user;
-    return new SuccessResponse("Sucessfully got user's profile data", {
+    return new SuccessResponse("Successfully got user's profile data", {
       first_name,
       last_name,
       profile_image,

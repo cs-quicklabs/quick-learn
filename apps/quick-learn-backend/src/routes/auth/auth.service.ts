@@ -23,6 +23,7 @@ import { SessionService } from './session.service';
 import { SessionEntity } from '@src/entities';
 import { LoginDto } from './dto';
 import { ITokenData } from '@src/common/interfaces';
+import { en } from '@src/lang/en';
 @Injectable()
 export class AuthService {
   constructor(
@@ -44,15 +45,13 @@ export class AuthService {
     }
 
     if (!user.active) {
-      throw new ForbiddenException(
-        'your account is deactivated, please connect with your admin.',
-      );
+      throw new ForbiddenException(en.accountDeactiveMessage);
     }
 
     // Comparing password
     const isVerified = await bcrypt.compare(password, user.password);
     if (isVerified) {
-      await this.usersService.update(user.uuid, {
+      await this.usersService.updateUser(user.uuid, {
         last_login_timestamp: new Date(),
       });
       return user;
@@ -225,6 +224,11 @@ export class AuthService {
       },
     );
 
+    await this.userRepository.update(
+      { id: session.user.id },
+      { last_login_timestamp: new Date() },
+    );
+
     return {
       token,
       expires: tokenExpires,
@@ -283,6 +287,7 @@ export class AuthService {
       token,
       refreshToken,
       tokenExpires,
+      role: data.role,
     };
   }
 }

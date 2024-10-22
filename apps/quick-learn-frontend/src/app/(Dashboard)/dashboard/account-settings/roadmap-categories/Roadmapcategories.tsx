@@ -12,6 +12,8 @@ import {
 } from '@src/utils/toastUtils';
 import React, { useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
+import AccountSettingConformationModal from '@src/shared/modals/AccountSettiongConformationModal';
+import { en } from '@src/constants/lang/en';
 
 type formOutput = {
   name: string;
@@ -24,6 +26,7 @@ const Roadmapcategories = () => {
   const [roadmapCategories, setRoadmapCategories] = useState<
     TRoadmapCategories[]
   >([]);
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const onSubmit = (data: formOutput) => {
     setIsLoading(true);
@@ -32,7 +35,6 @@ const Roadmapcategories = () => {
       .then((res) => {
         showApiMessageInToast(res);
         setRoadmapCategories(res.data.categories);
-        console.log(res.data);
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
@@ -56,7 +58,13 @@ const Roadmapcategories = () => {
         setRoadmapCategories(data);
         showApiMessageInToast(res);
       })
-      .catch((err) => showApiErrorInToast(err))
+      .catch((err) => {
+        if (err.response.status === 400) {
+          setOpenModal(true);
+        } else {
+          showApiErrorInToast(err);
+        }
+      })
       .finally(() => setIsEditLoading(false));
   };
 
@@ -79,26 +87,34 @@ const Roadmapcategories = () => {
   };
 
   const inputPlaceHolder = {
-    label: 'Add New Roadmap Category',
-    placeholder: 'Engineering',
+    label: en.roadmapCategories.inputLabel,
+    placeholder: en.roadmapCategories.inputPlaceHolder,
   };
 
   return (
-    <BaseLayout
-      heading="Roadmap Categories"
-      subHeading='Roadmaps can belong to a category. A category could be a way to group learning roadmaps. For example, a department can have a category called "Engineering" and all the roadmaps related to engineering can be added to this category.'
-      isAddLoading={isLoading}
-      onAdd={onSubmit}
-      isEditLoading={isEditLoading}
-      onDelete={onDelete}
-      onEdit={onSubmitEditForm}
-      input={inputPlaceHolder}
-      tableColumnName="Category name"
-      data={roadmapCategories.map((item) => {
-        return { id: item.id, name: item.name };
-      })}
-      isPageLoading={isPageLoading}
-    />
+    <>
+      <AccountSettingConformationModal
+        open={openModal}
+        setOpen={setOpenModal}
+        title={en.accountSetting.RoadmapDeleteTitle}
+        description={en.accountSetting.RoadmapDeleteError}
+      />
+      <BaseLayout
+        heading={en.roadmapCategories.heading}
+        subHeading={en.roadmapCategories.subHeading}
+        isAddLoading={isLoading}
+        onAdd={onSubmit}
+        isEditLoading={isEditLoading}
+        onDelete={onDelete}
+        onEdit={onSubmitEditForm}
+        input={inputPlaceHolder}
+        tableColumnName={en.roadmapCategories.tableName}
+        data={roadmapCategories.map((item) => {
+          return { id: item.id, name: item.name };
+        })}
+        isPageLoading={isPageLoading}
+      />
+    </>
   );
 };
 

@@ -1,7 +1,13 @@
-export default function Approvals() {
-  return (
-    <div>
-      <h1>Approvals</h1>
-    </div>
-  );
-}
+import React from 'react';
+import ApprovalList from './approvalList';
+
+export const metadata = {
+  title: 'Approvals • Quick Learn',
+  description: 'Approvals quick learn',
+};
+
+const page = () => {
+  return <ApprovalList />;
+};
+
+export default page;

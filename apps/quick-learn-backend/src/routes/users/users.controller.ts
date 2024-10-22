@@ -21,6 +21,7 @@ import {
   UpdateUserDto,
 } from './dto';
 import { JwtAuthGuard } from '../auth/guards';
+import { en } from '@src/lang/en';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
@@ -41,9 +42,15 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Create new user' })
-  async create(@Body() createUserDto: CreateUserDto): Promise<SuccessResponse> {
-    const user = await this.usersService.create(createUserDto);
-    return new SuccessResponse('Successfully created user.', user);
+  async create(
+    @CurrentUser() loggedInUser: UserEntity,
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<SuccessResponse> {
+    const user = await this.usersService.create({
+      ...createUserDto,
+      team_id: loggedInUser.team_id,
+    });
+    return new SuccessResponse(en.successUserCreate, user);
   }
 
   @Post('list')
@@ -80,7 +87,7 @@ export class UsersController {
     @Param('uuid') uuid: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.update(uuid, updateUserDto);
+    const user = await this.usersService.updateUser(uuid, updateUserDto);
     return new SuccessResponse('Successfully updated user.', user);
   }
 
