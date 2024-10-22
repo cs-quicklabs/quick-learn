@@ -1,7 +1,7 @@
 
 class LoginPage {
     visit() {
-      cy.visit('/'); // Replace with your login page URL
+      cy.visit('/'); 
     }
   
     getUsernameInput() {
@@ -24,10 +24,8 @@ class LoginPage {
       return cy.get('.Toastify');
     }
   
-    login() {
-      let username="super.admin@yopmail.com"
-      let password="password@123P"
-      this.getUsernameInput().type(username);
+    login(mail,password) {
+      this.getUsernameInput().type(mail);
       this.getPasswordInput().type(password);
       this.getSubmitButton().click();
     }

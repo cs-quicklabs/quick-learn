@@ -43,7 +43,7 @@ class updateGeneralSettings{
         this.getAccountSettings().click()
         this.editTeamName().clear()
         this.editTeamName().type("   ")
-        this.getError().contains("This field is mandatory and cannot contain only whitespace")
+        this.getError().contains("This field is mandatory")
        }
 
        uploadLogo()

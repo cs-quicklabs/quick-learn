@@ -1,4 +1,5 @@
 import LoginPage = require("../test/Login");
+import { validCredentials } from '../fixtures/credential'
 
 describe('Login Test', () => {
   const loginPage = new LoginPage();
@@ -21,7 +22,7 @@ describe('Login Test', () => {
 
   it('should log in with valid credentials', () => {
 
-    loginPage.login();
+    loginPage.login(validCredentials.mail,validCredentials.password);
 
     cy.url().should('include', '/dashboard'); 
     loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.'); // Adjust selector and text as needed

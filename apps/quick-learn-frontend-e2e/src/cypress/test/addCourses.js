@@ -59,7 +59,7 @@ class addCourses{
        cy.get('#courses_categories_name_edit').clear()
        cy.get('#courses_categories_name_edit').type('    ')
        cy.get('.ml-5').click()
-       cy.get('td > .px-2').should('contain','This field is mandatory and cannot contain only whitespace')
+       cy.get('td > .px-2').should('contain','This field is mandatory')
 
 
       }

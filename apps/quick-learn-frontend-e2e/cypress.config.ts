@@ -1,15 +1,14 @@
-import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 
 import { defineConfig } from 'cypress';
 
-export default defineConfig({
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
+
+module.exports = defineConfig({
   e2e: {
-    // ...nxE2EPreset(__filename, {
-    //   cypressDir: 'src',
-    //   webServerCommands: { default: 'nx run quick-learn-frontend:start' },
-    //   ciWebServerCommand: 'nx run quick-learn-frontend:serve-static',
-    // }),
-   
+    baseUrl: process.env.NEXT_PUBLIC_APP_BASE_URL, 
   },
   viewportWidth: 1440,
   viewportHeight: 720,

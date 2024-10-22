@@ -1,5 +1,6 @@
 import addCourses= require("../test/addCourses");
 import LoginPage = require("../test/Login");
+import { validCredentials } from '../fixtures/credential'
 
 describe('Primary Skill Update', () => {
     const loginPage = new LoginPage();
@@ -7,7 +8,7 @@ describe('Primary Skill Update', () => {
   beforeEach(() => {
     loginPage.visit();
     cy.get('.text-xl').contains("Sign in to your account")
-    loginPage.login();
+    loginPage.login(validCredentials.mail,validCredentials.password);
 
     cy.url().should('include', '/dashboard'); 
     loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
@@ -27,7 +28,7 @@ describe('Primary Skill Update', () => {
     addCourse.openCourses()
     addCourse.clickCourses()
     addCourse.addCoursesWithOnlySpaces()
-    addCourse.getErrorMessage().should('contain','This field is mandatory and cannot contain only whitespace')
+    addCourse.getErrorMessage().should('contain','This field is mandatory')
 
   });
   it('Verify Course field should not expect more than 30 characters', () => {

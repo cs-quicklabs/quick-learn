@@ -1,5 +1,6 @@
 import LoginPage = require("../test/Login");
 import profile = require("../test/Profile");
+import { validCredentials } from '../fixtures/credential'
 
 describe('Primary Skill Update', () => {
     const loginPage = new LoginPage();
@@ -7,7 +8,7 @@ describe('Primary Skill Update', () => {
   beforeEach(() => {
     loginPage.visit();
     cy.get('.text-xl').contains("Sign in to your account")
-    loginPage.login();
+    loginPage.login(validCredentials.mail,validCredentials.password);
 
     cy.url().should('include', '/dashboard'); 
     loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');

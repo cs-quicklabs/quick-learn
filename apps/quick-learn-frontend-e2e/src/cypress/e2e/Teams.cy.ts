@@ -1,5 +1,6 @@
 import LoginPage = require("../test/Login");
 import TeamsPage = require("../test/Teams")
+import { validCredentials } from '../fixtures/credential'
 
 describe('Login Test', () => {
     const loginPage = new LoginPage();
@@ -7,7 +8,7 @@ describe('Login Test', () => {
   beforeEach(() => {
     loginPage.visit();
     cy.get('.text-xl').contains("Sign in to your account")
-    loginPage.login();
+    loginPage.login(validCredentials.mail,validCredentials.password);
 
     cy.url().should('include', '/dashboard'); 
     loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
