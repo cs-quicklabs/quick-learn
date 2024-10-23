@@ -74,17 +74,17 @@ export function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
     value,
     isDefaultTagsAllowed
       ? {
-        allowedTags: ['b', 'i', 'em', 'strong', 'a'],
-        allowedAttributes: {
-          a: ['href'],
-        },
-        allowedIframeHostnames: ['www.youtube.com'],
-      }
+          allowedTags: ['b', 'i', 'em', 'strong', 'a'],
+          allowedAttributes: {
+            a: ['href'],
+          },
+          allowedIframeHostnames: ['www.youtube.com'],
+        }
       : {
-        allowedTags: [],
-        allowedAttributes: {},
-        allowedIframeHostnames: [],
-      },
+          allowedTags: [],
+          allowedAttributes: {},
+          allowedIframeHostnames: [],
+        },
   );
 }
 
@@ -95,8 +95,15 @@ export function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
  * @example
  * mapQueryParams({ foo: 'bar', baz: 1 }) // 'foo=bar&baz=1'
  */
-export function mapQueryParams(params: Record<string, string | number | boolean>) {
-  return Object.keys(params).length > 0 && '?' + Object.entries(params)
-    .map(([key, value]) => `${key}=${value}`)
-    .join('&') || '';
+export function mapQueryParams(
+  params: Record<string, string | number | boolean>,
+) {
+  return (
+    (Object.keys(params).length > 0 &&
+      '?' +
+        Object.entries(params)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&')) ||
+    ''
+  );
 }

@@ -83,7 +83,7 @@ export const en = {
     tableName: 'Category name',
   },
   teamMemberDetails: {
-    assignNewRoadmap: "Assign New Roadmap",
+    assignNewRoadmap: 'Assign New Roadmap',
   },
   common: {
     cancel: 'Cancel',

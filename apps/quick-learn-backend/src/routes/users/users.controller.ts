@@ -23,6 +23,7 @@ import {
 import { JwtAuthGuard } from '../auth/guards';
 import { en } from '@src/lang/en';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
+import { GetUserQueryDto } from './dto/get-user-query.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
@@ -32,7 +33,7 @@ import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
   path: 'users',
 })
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('metadata')
   @ApiOperation({ summary: 'Metadata for the add/update user(s).' })
@@ -72,8 +73,18 @@ export class UsersController {
     type: 'string',
     required: true,
   })
-  async findOne(@Param('uuid') uuid: string): Promise<SuccessResponse> {
-    const user = await this.usersService.findOne({ uuid });
+  async findOne(
+    @Param('uuid') uuid: string,
+    @Query() getUserQueryDto: GetUserQueryDto,
+  ): Promise<SuccessResponse> {
+    const relations = [];
+    if (getUserQueryDto.is_load_assigned_roadmaps) {
+      relations.push('assigned_roadmaps');
+    }
+    if (getUserQueryDto.is_load_assigned_courses) {
+      relations.push('assigned_roadmaps.courses');
+    }
+    const user = await this.usersService.findOne({ uuid }, relations);
     return new SuccessResponse('Successfully got users.', user);
   }
 

@@ -151,9 +151,13 @@ export class UsersService extends PaginationService<UserEntity> {
     });
   }
 
-  async findOne(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
+  async findOne(
+    options: FindOptionsWhere<UserEntity>,
+    relations: string[] = [],
+  ): Promise<UserEntity> {
     return await this.userRepository.findOne({
       where: { ...options },
+      relations,
     });
   }
 
@@ -176,22 +180,28 @@ export class UsersService extends PaginationService<UserEntity> {
     return this.userRepository.update({ uuid }, payload);
   }
 
-  async assignRoadmaps(uuid: UserEntity['uuid'], assignRoadmapsToUserDto: AssignRoadmapsToUserDto) {
+  async assignRoadmaps(
+    uuid: UserEntity['uuid'],
+    assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
+  ) {
     const user = await this.findOne({ uuid });
 
     if (!user) {
       throw new BadRequestException(en.userNotFound);
     }
 
-    const roadmaps = await this.roadmapService.getMany(
-      { id: In(assignRoadmapsToUserDto.roadmaps) }
-    )
+    const roadmaps = await this.roadmapService.getMany({
+      id: In(assignRoadmapsToUserDto.roadmaps),
+    });
 
     if (roadmaps.length != assignRoadmapsToUserDto.roadmaps.length) {
       throw new BadRequestException(en.invalidRoadmaps);
     }
 
-    await this.userRepository.update({ uuid }, { assigned_roadmaps: roadmaps });
+    // TODO: delete updated_at column data for user.
+    delete user.updated_at;
+
+    await this.userRepository.save({ ...user, assigned_roadmaps: roadmaps });
   }
 
   async remove(uuid: UserEntity['uuid']): Promise<void> {

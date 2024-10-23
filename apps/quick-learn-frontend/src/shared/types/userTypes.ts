@@ -1,3 +1,5 @@
+import { TRoadmap } from './contentRepository';
+
 export type TUserType = {
   id?: number;
   code: string;
@@ -31,6 +33,7 @@ export type TUser = {
   last_login_timestamp: string;
   created_at: string;
   profile_image: string;
+  assigned_roadmaps?: TRoadmap[];
 };
 
 export type TUserMetadata = {

@@ -79,9 +79,7 @@ export const deleteRoadmapCategory = async (
 
 export const getRoadmapCategories = async (
   query: { is_courses?: boolean; is_roadmap?: boolean } = {},
-): Promise<
-  AxiosSuccessResponse<TRoadmapCategory>
-> => {
+): Promise<AxiosSuccessResponse<TRoadmapCategory>> => {
   const queryMapper = mapQueryParams(query);
   const response = await axiosInstance.get<
     AxiosSuccessResponse<TRoadmapCategory>

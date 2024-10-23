@@ -18,4 +18,4 @@ import { RoadmapModule } from '../roadmap/roadmap.module';
   ],
   exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}

@@ -30,7 +30,7 @@ import { RoadmapCategoryEntity } from '@src/entities';
 export class RoadmapCategoryController {
   constructor(
     private readonly roadmapCategoryService: RoadmapCategoryService,
-  ) { }
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Adding roadmap category' })
@@ -52,20 +52,24 @@ export class RoadmapCategoryController {
   async findAll(@Query() listRoadmapQueryDto: ListRoadmapQueryDto) {
     console.log(listRoadmapQueryDto);
     const relations = [];
-    let conditions: FindOptionsWhere<RoadmapCategoryEntity> | FindOptionsWhere<RoadmapCategoryEntity>[] = {};
+    let conditions:
+      | FindOptionsWhere<RoadmapCategoryEntity>
+      | FindOptionsWhere<RoadmapCategoryEntity>[] = {};
     if (listRoadmapQueryDto.is_roadmap) {
       conditions = [{ roadmaps: { archived: false } }];
       relations.push('roadmaps');
     }
     if (listRoadmapQueryDto.is_courses) {
-      conditions = [{
-        roadmaps: {
-          archived: false, courses: {
+      conditions = [
+        {
+          roadmaps: {
             archived: false,
-
-          }
-        }
-      }];
+            courses: {
+              archived: false,
+            },
+          },
+        },
+      ];
       relations.push('roadmaps.courses');
     }
     const roadmapCategories = await this.roadmapCategoryService.getMany(

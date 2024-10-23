@@ -100,7 +100,9 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => LessonEntity, (user) => user.archive_by)
   archive_by_lessons: LessonEntity[];
 
-  @ManyToMany(() => RoadmapEntity, (roadmap) => roadmap.users)
+  @ManyToMany(() => RoadmapEntity, (roadmap) => roadmap.users, {
+    cascade: true,
+  })
   @JoinTable({
     name: 'user_roadmaps',
     joinColumn: {
