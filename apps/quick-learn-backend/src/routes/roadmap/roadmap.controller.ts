@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RoadmapService } from './roadmap.service';
-import { PaginationDto, SuccessResponse } from '@src/common/dto';
+import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { JwtAuthGuard } from '../auth/guards';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -19,7 +19,7 @@ import { UpdateRoadmapDto } from './dto/update-roadmap.dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
-import { ListFilterDto } from '../users/dto';
+import { PaginationDto } from '../users/dto'; // You'll need to import this
 
 @ApiTags('Roadmap')
 @Controller({
@@ -37,20 +37,6 @@ export class RoadmapController {
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
 
-  // @Post('archived')
-  // @ApiOperation({ summary: 'Get all Archived roadmaps' })
-  // async findAllArchivedUser(
-  //   @CurrentUser() user: UserEntity,
-  //   @Body() paginationDto: PaginationDto,
-  //   @Query() filter: ListFilterDto,
-  // ): Promise<SuccessResponse> {
-  //   const roadmaps = await this.service.getAllRoadmaps(user, paginationDto, {
-  //     ...filter,
-  //     active: false,
-  //   });
-  //   return new SuccessResponse('Successfully got users.', users);
-  // }
-
   @Post()
   @ApiOperation({ summary: 'Create a new roadmap' })
   async createRoadmap(
@@ -59,6 +45,29 @@ export class RoadmapController {
   ) {
     const roadmap = await this.service.createRoadmap(createRoadmapDto, user);
     return new SuccessResponse(en.CreateRoadmap, roadmap);
+  }
+
+  @Post('archived')
+  @ApiOperation({ summary: 'Get Archived Roadmaps' })
+  async findAllArchivedRoadmaps(
+    @CurrentUser() user: UserEntity,
+    @Body() paginationDto: PaginationDto,
+  ) {
+    const roadmaps = await this.service.findAllArchived(user, paginationDto);
+    return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
+  }
+
+  @Post('activate')
+  @ApiOperation({ summary: 'Activate or archive roadmap' })
+  async activateRoadmap(
+    @Body() body: { id: number; active: boolean },
+  ): Promise<SuccessResponse> {
+    const { active, id } = body;
+    const updatedRoadmap = await this.service.updateRoadmap(id, { active });
+    return new SuccessResponse(
+      'Roadmap status updated successfully.',
+      updatedRoadmap,
+    );
   }
 
   @Get(':id')

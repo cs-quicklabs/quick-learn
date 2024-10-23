@@ -91,6 +91,14 @@ export const en = {
     confirmDeleteUser: 'Are you sure you want to delete this user?',
     confirmDeleteUserSubtext:
       'All the information regarding this user will be lost. If this user has created some content, it will be assigned to the super admin.',
+    archivedRoadmaps: 'Archived Roadmaps',
+    archivedRoadmapsSubtext: 'Following roadmaps have been archived.',
+    confirmActivateRoadmap: 'Are you sure you want to activate this roadmap?',
+    confirmActivateRoadmapSubtext:
+      'Once this roadmaps is restored, users will be able to see it and if they made some progress on it in the past, that will also be restored.',
+    confirmDeleteRoadmap: 'Are you sure you want to delete this roadmap?',
+    confirmDeleteRoadmapSubtext:
+      'All the information regarding this roadmap will be lost. If this was assigned to any user, they will not be able to access this roadmap anymore.',
   },
   CommunityCouse: {
     heading: 'Community Courses',
@@ -134,5 +142,6 @@ export const en = {
     approvalPendingExclamation: 'Approval Pending!',
     approvalPendingInfo:
       'This lesson is awaiting approval from the team. After approval this will be available to all the team members.',
+    somethingWentWrong: 'Something went wrong',
   },
 };

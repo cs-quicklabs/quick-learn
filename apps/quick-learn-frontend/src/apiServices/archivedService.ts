@@ -16,6 +16,17 @@ export const activateUser = async (payload: {
   return response.data;
 };
 
+export const activateRoadmap = async (payload: {
+  active: boolean;
+  id: number;
+}): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    ArchivedApiEnum.ACTIVATE_ROADMAP,
+    payload,
+  );
+  return response.data;
+};
+
 export const getArchivedUsers = async (
   page: number,
   q = '',
@@ -25,7 +36,6 @@ export const getArchivedUsers = async (
     page,
     q,
   };
-
   const response = await axiosInstance.post<
     AxiosSuccessResponse<PaginateWrapper<TUser[]>>
   >(ArchivedApiEnum.ARCHIVED_USERS, body);

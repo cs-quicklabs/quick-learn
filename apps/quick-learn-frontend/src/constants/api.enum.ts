@@ -43,4 +43,5 @@ export enum ArchivedApiEnum {
   ACTIVATE_USER = '/users/activate',
   ARCHIVED_USERS = '/users/archived',
   ARCHIVED_ROADMAPS = '/roadmap/archived',
+  ACTIVATE_ROADMAP = '/roadmap/activate',
 }
