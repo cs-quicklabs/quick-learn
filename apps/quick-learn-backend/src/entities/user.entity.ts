@@ -115,4 +115,14 @@ export class UserEntity extends BaseEntity {
     },
   })
   assigned_roadmaps: RoadmapEntity[];
+
+  @Column({ nullable: true })
+  updated_by_id: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.updated_users)
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by: UserEntity;
+
+  @OneToMany(() => UserEntity, (user) => user.updated_by)
+  updated_users: UserEntity[];
 }

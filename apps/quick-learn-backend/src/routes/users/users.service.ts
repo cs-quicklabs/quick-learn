@@ -87,12 +87,14 @@ export class UsersService extends PaginationService<UserEntity> {
   async findAll(
     user: UserEntity,
     paginationDto: PaginationDto,
-    filter: ListFilterDto,
+    filter: ListFilterDto & { active: boolean },
+    extraRelations: string[] = [],
   ): Promise<UserEntity[] | PaginatedResult<UserEntity>> {
     const userTypeId = user.user_type_id;
     let conditions:
       | FindOptionsWhere<UserEntity>
       | FindOptionsWhere<UserEntity>[] = {
+      ...filter,
       user_type_id: Or(Equal(userTypeId), MoreThan(userTypeId)),
     };
 
@@ -122,16 +124,16 @@ export class UsersService extends PaginationService<UserEntity> {
       conditions = queryConditions;
     }
 
+    const relations = [...userRelations, ...extraRelations];
+
     if (paginationDto.mode == 'paginate') {
-      const results = await this.paginate(paginationDto, conditions, [
-        ...userRelations,
-      ]);
+      const results = await this.paginate(paginationDto, conditions, relations);
       this.sortByLastLogin(results.items);
       return results;
     }
     const users = await this.userRepository.find({
       where: conditions,
-      relations: [...userRelations],
+      relations: relations,
     });
     this.sortByLastLogin(users);
     return users;

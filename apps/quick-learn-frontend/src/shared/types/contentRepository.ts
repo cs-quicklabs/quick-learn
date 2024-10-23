@@ -31,6 +31,7 @@ export interface TRoadmap extends TCreateRoadmap {
   created_by?: TUser;
   created_at: string;
   updated_at: string;
+  updated_by?: TUser;
 }
 
 export interface TCourse extends TCreateCourse {

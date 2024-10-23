@@ -62,8 +62,43 @@ export class UsersController {
     @Body() paginationDto: PaginationDto,
     @Query() filter: ListFilterDto,
   ): Promise<SuccessResponse> {
-    const users = await this.usersService.findAll(user, paginationDto, filter);
-    return new SuccessResponse('Successfully got users.', users);
+    const users = await this.usersService.findAll(user, paginationDto, {
+      ...filter,
+      active: true,
+    });
+    return new SuccessResponse(en.successGotUsers, users);
+  }
+
+  @Post('archived')
+  @ApiOperation({ summary: 'Get Archived Users' })
+  async findAllArchivedUser(
+    @CurrentUser() user: UserEntity,
+    @Body() paginationDto: PaginationDto,
+    @Query() filter: ListFilterDto,
+  ): Promise<SuccessResponse> {
+    const users = await this.usersService.findAll(
+      user,
+      paginationDto,
+      {
+        ...filter,
+        active: false,
+      },
+      ['updated_by'],
+    );
+    return new SuccessResponse(en.successGotUsers, users);
+  }
+
+  @Post('activate')
+  @ApiOperation({ summary: 'Activate or archive user' })
+  async activateUser(
+    @Body() body: { uuid: string; active: boolean },
+  ): Promise<SuccessResponse> {
+    const { active, uuid } = body; // Destructure the active property from the request body
+    const updatedUser = await this.usersService.update({ uuid }, { active });
+    return new SuccessResponse(
+      'User status updated successfully.',
+      updatedUser,
+    );
   }
 
   @Get(':uuid')
@@ -85,7 +120,7 @@ export class UsersController {
       relations.push('assigned_roadmaps.courses');
     }
     const user = await this.usersService.findOne({ uuid }, relations);
-    return new SuccessResponse('Successfully got users.', user);
+    return new SuccessResponse(en.successGotUser, user);
   }
 
   @Patch(':uuid')
@@ -97,9 +132,13 @@ export class UsersController {
   })
   async update(
     @Param('uuid') uuid: string,
+    @CurrentUser() currentUser: UserEntity,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.updateUser(uuid, updateUserDto);
+    const user = await this.usersService.updateUser(uuid, {
+      ...updateUserDto,
+      updated_by: currentUser,
+    });
     return new SuccessResponse('Successfully updated user.', user);
   }
 

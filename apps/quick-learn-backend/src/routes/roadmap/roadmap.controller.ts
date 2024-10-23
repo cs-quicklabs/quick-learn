@@ -19,6 +19,7 @@ import { UpdateRoadmapDto } from './dto/update-roadmap.dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
+// import { ListFilterDto } from '../users/dto';
 
 @ApiTags('Roadmap')
 @Controller({
@@ -35,6 +36,20 @@ export class RoadmapController {
     const roadmaps = await this.service.getAllRoadmaps();
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
+
+  // @Post('archived')
+  // @ApiOperation({ summary: 'Get all Archived roadmaps' })
+  // async findAllArchivedUser(
+  //   @CurrentUser() user: UserEntity,
+  //   @Body() paginationDto: PaginationDto,
+  //   @Query() filter: ListFilterDto,
+  // ): Promise<SuccessResponse> {
+  //   const roadmaps = await this.service.getAllRoadmaps(user, paginationDto, {
+  //     ...filter,
+  //     active: false,
+  //   });
+  //   return new SuccessResponse('Successfully got users.', users);
+  // }
 
   @Post()
   @ApiOperation({ summary: 'Create a new roadmap' })

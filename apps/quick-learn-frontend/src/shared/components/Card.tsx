@@ -23,7 +23,7 @@ const Card: FC<CardProps> = ({ id, title, description, stats, link = '#' }) => {
         >
           {title}
         </h1>
-        <p className="font-normal text-sm text-gray-500 line-clamp-2 mt-2">
+        <p className="font-normal text-sm text-gray-500 line-clamp-2 h-[38px] mt-2">
           {description}
         </p>
         {stats && (

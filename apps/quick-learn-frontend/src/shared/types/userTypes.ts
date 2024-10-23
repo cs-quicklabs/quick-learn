@@ -34,6 +34,9 @@ export type TUser = {
   created_at: string;
   profile_image: string;
   assigned_roadmaps?: TRoadmap[];
+  updated_at: string;
+  updated_by: TUser;
+  updated_by_id: number;
 };
 
 export type TUserMetadata = {

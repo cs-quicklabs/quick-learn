@@ -43,4 +43,7 @@ export const en = {
   archiveLesson: 'Successfully archived a lesson.',
   successUserUpdated: 'Successfully updated user details.',
   userNotFound: 'User details not found.',
+  successGotUsers: 'Successfully got users.',
+  successGotUser: 'Successfully got user.',
+  getCommunityCourse: 'Get all community courses',
 };

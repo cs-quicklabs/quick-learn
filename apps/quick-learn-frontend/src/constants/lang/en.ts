@@ -85,6 +85,22 @@ export const en = {
   teamMemberDetails: {
     assignNewRoadmap: 'Assign New Roadmap',
   },
+  archivedSection: {
+    archivedUsers: 'Archived Users',
+    archivedUsersSubtext: ' Following users have been deactivated.',
+    confirmActivateUser: 'Are you sure you want to activate this user?',
+    confirmActivateUserSubtext:
+      'Once this user is activated, they will be able to access the system and perform actions based on their roles and permissions.',
+    confirmDeleteUser: 'Are you sure you want to delete this user?',
+    confirmDeleteUserSubtext:
+      'All the information regarding this user will be lost. If this user has created some content, it will be assigned to the super admin.',
+  },
+  CommunityCouse: {
+    heading: 'Community Courses',
+    description:
+      'Following courses have been made public by community members. You can copy these courses to your organization and make changes as per your requirements.',
+    course: 'Courses',
+  },
   common: {
     cancel: 'Cancel',
     lesson: 'lesson',
