@@ -22,29 +22,30 @@ export default class Helpers {
       path: '/',
     });
   }
-}
 
-function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
-  return sanitizeHtml(
-    value,
-    isDefaultTagsAllowed
-      ? {
-          allowedTags: ['b', 'i', 'em', 'strong', 'a'],
-          allowedAttributes: {
-            a: ['href'],
+  static HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
+    return sanitizeHtml(
+      value,
+      isDefaultTagsAllowed
+        ? {
+            allowedTags: ['b', 'i', 'em', 'strong', 'a'],
+            allowedAttributes: {
+              a: ['href'],
+            },
+            allowedIframeHostnames: ['www.youtube.com'],
+          }
+        : {
+            allowedTags: [],
+            allowedAttributes: {},
+            allowedIframeHostnames: [],
           },
-          allowedIframeHostnames: ['www.youtube.com'],
-        }
-      : {
-          allowedTags: [],
-          allowedAttributes: {},
-          allowedIframeHostnames: [],
-        },
-  );
-}
-export function limitSanitizedContent(content: string): string {
-  const sanitizedContent = HTMLSanitizer(content);
-  return sanitizedContent.length > 250
-    ? sanitizedContent.substring(0, 250) + '...'
-    : sanitizedContent;
+    );
+  }
+  static limitSanitizedContent(content: string): string {
+    const sanitizedContent = this.HTMLSanitizer(content);
+    return sanitizedContent.length > 250
+      ? sanitizedContent.substring(0, 250) + '...'
+      : sanitizedContent;
+  }
+
 }

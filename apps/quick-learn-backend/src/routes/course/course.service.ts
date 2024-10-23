@@ -13,7 +13,7 @@ import { CourseCategoryService } from '../course-category/course-category.servic
 import { RoadmapService } from '../roadmap/roadmap.service';
 import { en } from '@src/lang/en';
 import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
-import { limitSanitizedContent } from '@src/common/utils/helper';
+import Helpers from '@src/common/utils/helper';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -98,7 +98,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
     course.lessons = course.lessons.map((lesson) => ({
       ...lesson,
-      content: limitSanitizedContent(lesson.content),
+      content: Helpers.limitSanitizedContent(lesson.content),
     })) as LessonEntity[];
 
     return course;

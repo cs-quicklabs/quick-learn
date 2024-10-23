@@ -43,7 +43,7 @@ export class CourseController {
       undefined,
       ['created_by'],
     );
-    return new SuccessResponse('Get all community courses', data);
+    return new SuccessResponse(en.getCommunityCourse, data);
   }
 
   @Post()
