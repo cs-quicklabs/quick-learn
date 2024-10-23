@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CreateRoadmapCategoryDto } from './dto/create-roadmap-category.dto';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -15,6 +16,9 @@ import { JwtAuthGuard } from '../auth/guards';
 import { RoadmapCategoryService } from './roadmap-category.service';
 import { UpdateRoadmapCategoryDto } from './dto/update-roadmap-category.dto';
 import { en } from '@src/lang/en';
+import { ListRoadmapQueryDto } from './dto/list-roadmap-query.dto';
+import { FindOptionsWhere } from 'typeorm';
+import { RoadmapCategoryEntity } from '@src/entities';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/roadmap-categories
 @ApiTags('Roadmap Category')
@@ -26,7 +30,7 @@ import { en } from '@src/lang/en';
 export class RoadmapCategoryController {
   constructor(
     private readonly roadmapCategoryService: RoadmapCategoryService,
-  ) {}
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Adding roadmap category' })
@@ -45,10 +49,29 @@ export class RoadmapCategoryController {
 
   @Get()
   @ApiOperation({ summary: 'Get all roadmap categories' })
-  async findAll() {
+  async findAll(@Query() listRoadmapQueryDto: ListRoadmapQueryDto) {
+    console.log(listRoadmapQueryDto);
+    const relations = [];
+    let conditions: FindOptionsWhere<RoadmapCategoryEntity> | FindOptionsWhere<RoadmapCategoryEntity>[] = {};
+    if (listRoadmapQueryDto.is_roadmap) {
+      conditions = [{ roadmaps: { archived: false } }];
+      relations.push('roadmaps');
+    }
+    if (listRoadmapQueryDto.is_courses) {
+      conditions = [{
+        roadmaps: {
+          archived: false, courses: {
+            archived: false,
+
+          }
+        }
+      }];
+      relations.push('roadmaps.courses');
+    }
     const roadmapCategories = await this.roadmapCategoryService.getMany(
-      {},
+      conditions,
       { name: 'ASC' },
+      relations,
     );
     return new SuccessResponse('Successfully retreived roadmap categories.', {
       categories: roadmapCategories,

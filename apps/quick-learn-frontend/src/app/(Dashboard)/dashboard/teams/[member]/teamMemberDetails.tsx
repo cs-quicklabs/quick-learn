@@ -4,11 +4,20 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { getRoadmapCategories } from '@src/apiServices/accountService';
+import { getRoadmaps } from '@src/apiServices/contentRepositoryService';
 import { getUserDetails, updateUser } from '@src/apiServices/teamService';
+import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
+import CreateNewCard from '@src/shared/components/CreateNewCard';
 import { FullPageLoader } from '@src/shared/components/UIElements';
+import AssignDataModal from '@src/shared/modals/assignDataModal';
 import ConformationModal from '@src/shared/modals/conformationModal';
+import {
+  TRoadmapCategories,
+  TRoadmapCategory,
+} from '@src/shared/types/accountTypes';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TUser } from '@src/shared/types/userTypes';
 import {
@@ -18,7 +27,7 @@ import {
 import { Tooltip } from 'flowbite-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
@@ -30,6 +39,25 @@ const TeamMemberDetails = () => {
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [showConformationModal, setShowConformationModal] =
     useState<boolean>(false);
+  const [openAssignModal, setOpenAssignModal] = useState<boolean>(false);
+  const [allRoadmapCategories, setAllRoadmapCategories] = useState<
+    TRoadmapCategories[]
+  >([]);
+
+  useEffect(() => {
+    setIsPageLoading(true);
+    getRoadmapCategories({
+      is_roadmap: true,
+      is_courses: true,
+    })
+      .then((res) => {
+        setAllRoadmapCategories(res.data.categories);
+      })
+      .catch((err) => {
+        showApiErrorInToast(err);
+      })
+      .finally(() => setIsPageLoading(false));
+  }, []);
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -65,6 +93,8 @@ const TeamMemberDetails = () => {
       .finally(() => setIsPageLoading(false));
   };
 
+  const assignCourses = (data: string[]) => {};
+
   return (
     <>
       {isPageLoading && <FullPageLoader />}
@@ -75,6 +105,25 @@ const TeamMemberDetails = () => {
         setOpen={setShowConformationModal}
         onConfirm={onDeactivateUser}
       />
+      <AssignDataModal
+        show={openAssignModal}
+        setShow={setOpenAssignModal}
+        heading={en.teamMemberDetails.assignNewRoadmap}
+        sub_heading={en.common.selectRoadmaps}
+        data={allRoadmapCategories.map((item) => ({
+          name: item.name,
+          list: item.roadmaps.map((roadmap) => ({
+            name: roadmap.name,
+            value: +roadmap.id,
+          })),
+        }))}
+        initialValues={{ selected: [] }}
+        onSubmit={assignCourses}
+      />
+      {/* isLoading={isloading}
+        initialValues={{
+          selected: roadmapData?.courses.map((item) => String(item.id)) || [],
+        }} */}
       <div>
         <Breadcrumb links={links} />
         <div className="items-baseline">
@@ -128,6 +177,28 @@ const TeamMemberDetails = () => {
                 <CursorArrowRippleIcon className="h-4 w-4" />
               </button>
             </Tooltip>
+          </div>
+        </div>
+        <div className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
+            <h1 className="text-3xl font-bold leading-tight capitalize">
+              {en.common.roadmaps}
+            </h1>
+            <p className="mt-1 ml-1 text-sm text-gray-500 truncate lowercase">
+              (0 {en.common.roadmaps})
+            </p>
+          </div>
+        </div>
+        <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
+          <div id="created-spaces">
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
+              <li>
+                <CreateNewCard
+                  title={en.teamMemberDetails.assignNewRoadmap}
+                  onAdd={() => setOpenAssignModal(true)}
+                />
+              </li>
+            </ul>
           </div>
         </div>
       </div>

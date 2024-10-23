@@ -22,6 +22,7 @@ import {
 } from './dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { en } from '@src/lang/en';
+import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
@@ -31,7 +32,7 @@ import { en } from '@src/lang/en';
   path: 'users',
 })
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Get('metadata')
   @ApiOperation({ summary: 'Metadata for the add/update user(s).' })
@@ -89,6 +90,21 @@ export class UsersController {
   ): Promise<SuccessResponse> {
     const user = await this.usersService.updateUser(uuid, updateUserDto);
     return new SuccessResponse('Successfully updated user.', user);
+  }
+
+  @Patch(':uuid/assign-roadmaps')
+  @ApiOperation({ summary: 'Assign roadmaps to user' })
+  @ApiParam({
+    name: 'uuid',
+    type: 'string',
+    required: true,
+  })
+  async assignRoadmaps(
+    @Param('uuid') uuid: string,
+    @Body() assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
+  ): Promise<SuccessResponse> {
+    await this.usersService.assignRoadmaps(uuid, assignRoadmapsToUserDto);
+    return new SuccessResponse(en.successUserUpdated);
   }
 
   @Delete(':uuid')

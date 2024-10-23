@@ -74,16 +74,29 @@ export function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
     value,
     isDefaultTagsAllowed
       ? {
-          allowedTags: ['b', 'i', 'em', 'strong', 'a'],
-          allowedAttributes: {
-            a: ['href'],
-          },
-          allowedIframeHostnames: ['www.youtube.com'],
-        }
-      : {
-          allowedTags: [],
-          allowedAttributes: {},
-          allowedIframeHostnames: [],
+        allowedTags: ['b', 'i', 'em', 'strong', 'a'],
+        allowedAttributes: {
+          a: ['href'],
         },
+        allowedIframeHostnames: ['www.youtube.com'],
+      }
+      : {
+        allowedTags: [],
+        allowedAttributes: {},
+        allowedIframeHostnames: [],
+      },
   );
+}
+
+/**
+ * Maps a record of query parameters to a query string.
+ * @param params A record with string or number values
+ * @returns A query string
+ * @example
+ * mapQueryParams({ foo: 'bar', baz: 1 }) // 'foo=bar&baz=1'
+ */
+export function mapQueryParams(params: Record<string, string | number | boolean>) {
+  return Object.keys(params).length > 0 && '?' + Object.entries(params)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&') || '';
 }

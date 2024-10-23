@@ -41,4 +41,6 @@ export const en = {
   lessonNotFound: 'Invalid lesson is provided.',
   approveLesson: 'Successfully approved a lesson.',
   archiveLesson: 'Successfully archived a lesson.',
+  successUserUpdated: 'Successfully updated user details.',
+  userNotFound: 'User details not found.',
 };

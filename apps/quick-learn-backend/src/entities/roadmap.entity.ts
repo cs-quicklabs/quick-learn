@@ -54,4 +54,7 @@ export class RoadmapEntity extends BaseEntity {
     },
   })
   courses: CourseEntity[];
+
+  @ManyToMany(() => UserEntity, (user) => user.assigned_roadmaps)
+  users: UserEntity[];
 }

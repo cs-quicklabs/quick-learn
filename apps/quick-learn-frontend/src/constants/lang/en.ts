@@ -82,6 +82,9 @@ export const en = {
       'Roadmaps can belong to a category. A category could be a way to group learning roadmaps. For example, a department can have a category called "Engineering" and all the roadmaps related to engineering can be added to this category.',
     tableName: 'Category name',
   },
+  teamMemberDetails: {
+    assignNewRoadmap: "Assign New Roadmap",
+  },
   common: {
     cancel: 'Cancel',
     lesson: 'lesson',
