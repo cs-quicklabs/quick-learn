@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useEffect, useCallback, useState, ChangeEvent } from 'react';
+import React, {
+  useEffect,
+  useCallback,
+  useState,
+  ChangeEvent,
+  useMemo,
+} from 'react';
 import {
   activateUser,
   getArchivedUsers,
@@ -13,6 +19,7 @@ import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { en } from '@src/constants/lang/en';
+import { toast } from 'react-toastify';
 
 const ArchivedUsers = () => {
   const [searchValue, setSearchValue] = useState<string>('');
@@ -39,7 +46,7 @@ const ArchivedUsers = () => {
             res.data.page !== res.data.total_pages,
         );
       } catch (error) {
-        console.error('Error fetching users:', error);
+        toast.error('Error fetching users');
       } finally {
         setIsLoading(false);
       }
@@ -67,12 +74,19 @@ const ArchivedUsers = () => {
     [fetchUsers, searchValue],
   );
 
-  const handleQueryChange = useCallback(
-    debounce((value: string) => {
-      setSearchValue(value);
-      setPage(1);
-      fetchUsers(1, value, true);
-    }, 300),
+  const handleQueryChange = useMemo(
+    () =>
+      debounce(async (value: string) => {
+        const _value = value || '';
+        try {
+          setIsLoading(true);
+          setSearchValue(_value);
+          setPage(1);
+          fetchUsers(1, _value, true).finally(() => setIsLoading(false));
+        } catch (err) {
+          console.log('Something went wrong!', err);
+        }
+      }, 300),
     [fetchUsers],
   );
 
@@ -82,6 +96,7 @@ const ArchivedUsers = () => {
 
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
+      {isLoading && <FullPageLoader />}
       <ConformationModal
         title={
           restoreId
