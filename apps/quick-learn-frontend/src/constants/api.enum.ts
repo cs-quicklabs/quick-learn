@@ -35,4 +35,6 @@ export enum ContentRepositoryApiEnum {
   LESSON = '/lesson',
   LESSON_UNAPPROVED = '/lesson/unapproved',
   LESSON_ARCHIVED = '/lesson/archived',
+  COMMUNITY_COURSES = 'course/community-course', // to fetch only community courses is true
+  COMMUNITY = 'course/community', //to fetch courses which are community course , unarchived, unapproved
 }

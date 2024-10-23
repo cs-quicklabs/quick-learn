@@ -35,6 +35,17 @@ export class CourseController {
     return new SuccessResponse(en.GetAllCourses, data);
   }
 
+  @Get('/community-course')
+  @ApiOperation({ summary: 'Get all community courses' })
+  async getCommunityCourses() {
+    const data = await this.service.getMany(
+      { is_community_available: true, archived: false },
+      undefined,
+      ['created_by'],
+    );
+    return new SuccessResponse(en.getCommunityCourse, data);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create a new course' })
   async createRoadmap(
@@ -53,6 +64,22 @@ export class CourseController {
       'lessons',
       'lessons.created_by_user',
     ]);
+    return new SuccessResponse(en.GetCourseDetails, data);
+  }
+
+  //get unarchived and approved lesson only
+  @Get('/community/:id')
+  @ApiParam({ name: 'id', description: 'course id', required: true })
+  @ApiOperation({ summary: 'Get course details' })
+  async getcourseDetails(@Param('id') id: string) {
+    const data = await this.service.getCourseDetails(
+      {
+        id: +id,
+        lessons: { archived: false, approved: true },
+        is_community_available: true,
+      },
+      ['lessons', 'lessons.created_by_user'],
+    );
     return new SuccessResponse(en.GetCourseDetails, data);
   }
 

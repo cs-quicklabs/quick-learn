@@ -7,12 +7,13 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsOrder, FindOptionsWhere, ILike, In } from 'typeorm';
 import { BasicCrudService } from '@src/common/services';
-import { CourseEntity, UserEntity } from '@src/entities';
+import { CourseEntity, UserEntity, LessonEntity } from '@src/entities';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CourseCategoryService } from '../course-category/course-category.service';
 import { RoadmapService } from '../roadmap/roadmap.service';
 import { en } from '@src/lang/en';
 import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
+import Helpers from '@src/common/utils/helper';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -94,6 +95,12 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     if (!course) {
       throw new BadRequestException(en.CourseNotFound);
     }
+
+    course.lessons = course.lessons.map((lesson) => ({
+      ...lesson,
+      content: Helpers.limitSanitizedContent(lesson.content),
+    })) as LessonEntity[];
+
     return course;
   }
 

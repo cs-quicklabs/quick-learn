@@ -6,6 +6,8 @@ import {
   updateCourseCategory,
 } from '@src/apiServices/accountService';
 import { TCourseCategories } from '@src/shared/types/accountTypes';
+import { en } from '@src/constants/lang/en';
+
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -14,7 +16,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
 import { UserContext } from '@src/context/userContext';
 import AccountSettingConformationModal from '@src/shared/modals/AccountSettiongConformationModal';
-import { en } from '@src/constants/lang/en';
 
 type formOutput = {
   name: string;
