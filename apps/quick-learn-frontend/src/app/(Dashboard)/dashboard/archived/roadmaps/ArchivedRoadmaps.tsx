@@ -67,11 +67,13 @@ const ArchivedRoadmaps = () => {
   );
 
   const handleQueryChange = useCallback(
-    debounce((value: string) => {
-      setSearchValue(value);
-      setPage(1);
-      fetchRoadmaps(1, value, true);
-    }, 300),
+    (value: string) => {
+      debounce(() => {
+        setSearchValue(value);
+        setPage(1);
+        fetchRoadmaps(1, value, true);
+      }, 300);
+    },
     [fetchRoadmaps],
   );
 

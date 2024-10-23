@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RoadmapService } from './roadmap.service';
-import { PaginationDto, SuccessResponse } from '@src/common/dto';
+import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { JwtAuthGuard } from '../auth/guards';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -19,7 +19,7 @@ import { UpdateRoadmapDto } from './dto/update-roadmap.dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
-import { ListFilterDto } from '../users/dto';
+// import { ListFilterDto } from '../users/dto';
 
 @ApiTags('Roadmap')
 @Controller({
@@ -28,7 +28,7 @@ import { ListFilterDto } from '../users/dto';
 })
 @UseGuards(JwtAuthGuard)
 export class RoadmapController {
-  constructor(private readonly service: RoadmapService) {}
+  constructor(private readonly service: RoadmapService) { }
 
   @Get()
   @ApiOperation({ summary: 'Get all roadmaps' })

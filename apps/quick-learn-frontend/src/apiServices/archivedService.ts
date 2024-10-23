@@ -1,4 +1,3 @@
-import { TRoadmapCategory } from '@src/shared/types/accountTypes';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { ArchivedApiEnum } from '@src/constants/api.enum';
 import { TUser } from '@src/shared/types/userTypes';

@@ -43,5 +43,5 @@ export const en = {
   archiveLesson: 'Successfully archived a lesson.',
   successGotUsers: 'Successfully got users.',
   successGotUser: 'Successfully got user.',
-  getCommunityCourse:'Get all community courses',
+  getCommunityCourse: 'Get all community courses',
 };
