@@ -31,6 +31,9 @@ export type TUser = {
   last_login_timestamp: string;
   created_at: string;
   profile_image: string;
+  updated_at: string;
+  updated_by: TUser;
+  updated_by_id: number;
 };
 
 export type TUserMetadata = {

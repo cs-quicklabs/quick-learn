@@ -13,7 +13,7 @@ const LOGIN_ROUTE = RouteEnum.LOGIN;
 const ADMIN_ROUTES = [
   RouteEnum.TEAM,
   RouteEnum.ACCOUNT_SETTINGS,
-  RouteEnum.ARCHIVE,
+  RouteEnum.ARCHIVED_USERS,
 ];
 const EDITOR_ROUTES = [RouteEnum.CONTENT];
 

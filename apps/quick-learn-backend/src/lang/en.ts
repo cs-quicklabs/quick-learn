@@ -41,5 +41,7 @@ export const en = {
   lessonNotFound: 'Invalid lesson is provided.',
   approveLesson: 'Successfully approved a lesson.',
   archiveLesson: 'Successfully archived a lesson.',
+  successGotUsers: 'Successfully got users.',
+  successGotUser: 'Successfully got user.',
   getCommunityCourse:'Get all community courses',
 };
