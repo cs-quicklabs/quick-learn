@@ -22,6 +22,8 @@ import {
 } from './dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { en } from '@src/lang/en';
+import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
+import { GetUserQueryDto } from './dto/get-user-query.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
@@ -106,8 +108,18 @@ export class UsersController {
     type: 'string',
     required: true,
   })
-  async findOne(@Param('uuid') uuid: string): Promise<SuccessResponse> {
-    const user = await this.usersService.findOne({ uuid });
+  async findOne(
+    @Param('uuid') uuid: string,
+    @Query() getUserQueryDto: GetUserQueryDto,
+  ): Promise<SuccessResponse> {
+    const relations = [];
+    if (getUserQueryDto.is_load_assigned_roadmaps) {
+      relations.push('assigned_roadmaps');
+    }
+    if (getUserQueryDto.is_load_assigned_courses) {
+      relations.push('assigned_roadmaps.courses');
+    }
+    const user = await this.usersService.findOne({ uuid }, relations);
     return new SuccessResponse(en.successGotUser, user);
   }
 
@@ -128,6 +140,21 @@ export class UsersController {
       updated_by: currentUser,
     });
     return new SuccessResponse('Successfully updated user.', user);
+  }
+
+  @Patch(':uuid/assign-roadmaps')
+  @ApiOperation({ summary: 'Assign roadmaps to user' })
+  @ApiParam({
+    name: 'uuid',
+    type: 'string',
+    required: true,
+  })
+  async assignRoadmaps(
+    @Param('uuid') uuid: string,
+    @Body() assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
+  ): Promise<SuccessResponse> {
+    await this.usersService.assignRoadmaps(uuid, assignRoadmapsToUserDto);
+    return new SuccessResponse(en.successUserUpdated);
   }
 
   @Delete(':uuid')
