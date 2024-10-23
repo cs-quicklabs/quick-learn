@@ -92,6 +92,12 @@ export const en = {
     confirmDeleteUserSubtext:
       'All the information regarding this user will be lost. If this user has created some content, it will be assigned to the super admin.',
   },
+  CommunityCouse: {
+    heading: 'Community Courses',
+    description:
+      'Following courses have been made public by community members. You can copy these courses to your organization and make changes as per your requirements.',
+    course: 'Courses',
+  },
   common: {
     cancel: 'Cancel',
     lesson: 'lesson',
