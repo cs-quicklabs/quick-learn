@@ -47,5 +47,4 @@ export default class Helpers {
       ? sanitizedContent.substring(0, 250) + '...'
       : sanitizedContent;
   }
-
 }
