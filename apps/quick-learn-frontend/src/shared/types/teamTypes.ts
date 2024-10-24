@@ -20,6 +20,15 @@ export type TAddUserPayload = {
   team_id: number | undefined;
 };
 
+export type TGetUserParams = {
+  is_load_assigned_roadmaps?: boolean;
+  is_load_assigned_courses?: boolean;
+};
+
+export type TAssignRoadmapsPayload = {
+  roadmaps: string[];
+};
+
 export type TTeamListingReponse = AxiosSuccessResponse<TList>;
 export type TUserMetadataResponse = AxiosSuccessResponse<TUserMetadata>;
 export type TUserDetailsResponse = AxiosSuccessResponse<TUser>;

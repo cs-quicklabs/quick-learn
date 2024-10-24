@@ -6,6 +6,7 @@ import {
   Repository,
   Equal,
   Or,
+  In,
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
@@ -17,6 +18,8 @@ import { emailSubjects } from '@src/common/constants/email-subject';
 import { UserEntity, UserTypeEntity } from '@src/entities';
 import { SessionService } from '../auth/session.service';
 import { en } from '@src/lang/en';
+import { RoadmapService } from '../roadmap/roadmap.service';
+import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 
 const userRelations = ['user_type', 'skill', 'team'];
 @Injectable()
@@ -30,6 +33,7 @@ export class UsersService extends PaginationService<UserEntity> {
     private skillRepository: Repository<SkillEntity>,
     private emailService: EmailService,
     private sessionService: SessionService,
+    private roadmapService: RoadmapService,
   ) {
     super(userRepository);
   }
@@ -149,9 +153,13 @@ export class UsersService extends PaginationService<UserEntity> {
     });
   }
 
-  async findOne(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
+  async findOne(
+    options: FindOptionsWhere<UserEntity>,
+    relations: string[] = [],
+  ): Promise<UserEntity> {
     return await this.userRepository.findOne({
       where: { ...options },
+      relations,
     });
   }
 
@@ -172,6 +180,30 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     return this.userRepository.update({ uuid }, payload);
+  }
+
+  async assignRoadmaps(
+    uuid: UserEntity['uuid'],
+    assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
+  ) {
+    const user = await this.findOne({ uuid });
+
+    if (!user) {
+      throw new BadRequestException(en.userNotFound);
+    }
+
+    const roadmaps = await this.roadmapService.getMany({
+      id: In(assignRoadmapsToUserDto.roadmaps),
+    });
+
+    if (roadmaps.length != assignRoadmapsToUserDto.roadmaps.length) {
+      throw new BadRequestException(en.invalidRoadmaps);
+    }
+
+    // TODO: delete updated_at column data for user.
+    delete user.updated_at;
+
+    await this.userRepository.save({ ...user, assigned_roadmaps: roadmaps });
   }
 
   async remove(uuid: UserEntity['uuid']): Promise<void> {

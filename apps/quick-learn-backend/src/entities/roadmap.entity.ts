@@ -56,6 +56,9 @@ export class RoadmapEntity extends BaseEntity {
   })
   courses: CourseEntity[];
 
+  @ManyToMany(() => UserEntity, (user) => user.assigned_roadmaps)
+  users: UserEntity[];
+
   @Column({ nullable: true })
   updated_by_id: number;
 

@@ -15,6 +15,7 @@ export enum userApiEnum {
   GET_USER_PROFILE = '/profile',
   CHANGE_PASSWORD = '/profile/change-password',
   USER_PREFERENCES = '/profile/user-preferences',
+  ASSIGN_ROADMAPS = 'users/:uuid/assign-roadmaps',
 }
 
 export enum accountApiEnum {

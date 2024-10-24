@@ -184,6 +184,9 @@ export const en = {
   /**
    * Archived items section
    */
+  teamMemberDetails: {
+    assignNewRoadmap: 'Assign New Roadmap',
+  },
   archivedSection: {
     // Archived users
     archivedUsers: 'Archived Users',

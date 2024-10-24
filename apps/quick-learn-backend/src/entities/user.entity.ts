@@ -8,6 +8,8 @@ import {
   BeforeInsert,
   OneToMany,
   VirtualColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { UserTypeEntity } from './user-type.entity';
@@ -98,6 +100,22 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => LessonEntity, (user) => user.archive_by)
   archive_by_lessons: LessonEntity[];
+
+  @ManyToMany(() => RoadmapEntity, (roadmap) => roadmap.users, {
+    cascade: true,
+  })
+  @JoinTable({
+    name: 'user_roadmaps',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'roadmap_id',
+      referencedColumnName: 'id',
+    },
+  })
+  assigned_roadmaps: RoadmapEntity[];
 
   @Column({ nullable: true })
   updated_by_id: number;
