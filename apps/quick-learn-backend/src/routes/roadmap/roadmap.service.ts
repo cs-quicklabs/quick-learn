@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { RoadmapEntity, UserEntity } from '@src/entities';
 import { CreateRoadmapDto } from './dto/create-roadmap.dto';

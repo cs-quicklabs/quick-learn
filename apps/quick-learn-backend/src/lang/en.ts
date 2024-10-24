@@ -46,6 +46,9 @@ export const en = {
   successUpdateCourse: 'Course category is updated.',
   invalidCourse: 'Invalid course is provided.',
   getCommunityCourse: 'Get all community courses',
+  successGotArchivedCourses: 'Successfully retrieved archived courses.',
+  successCourseStatusUpdate: 'Course status updated successfully.',
+  unarchiveCourse: 'Successfully unarchived course.',
 
   // Lesson related messages
   getLessons: 'Successfully got all lessons.',
