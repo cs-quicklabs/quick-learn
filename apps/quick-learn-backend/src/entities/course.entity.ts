@@ -32,6 +32,14 @@ export class CourseEntity extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   created_by_user_id: number;
 
+  // Added updated_by tracking
+  @Column({ type: 'int', nullable: true })
+  updated_by_id: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.updated_courses)
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by: UserEntity;
+
   @ManyToOne(() => UserEntity, (user) => user.roadmaps)
   @JoinColumn({ name: 'created_by_user_id' })
   created_by: UserEntity;

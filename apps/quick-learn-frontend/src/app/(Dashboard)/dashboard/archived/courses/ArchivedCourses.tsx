@@ -8,8 +8,8 @@ import React, {
   useMemo,
 } from 'react';
 import {
-  activateRoadmap,
-  getArchivedRoadmaps,
+  activateCourse,
+  getArchivedCourses,
 } from '@src/apiServices/archivedService';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
 import SearchBox from '@src/shared/components/SearchBox';
@@ -17,28 +17,28 @@ import { FullPageLoader } from '@src/shared/components/UIElements';
 import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ConformationModal from '@src/shared/modals/conformationModal';
-import { TRoadmap } from '@src/shared/types/contentRepository';
+import { TCourse } from '@src/shared/types/contentRepository';
 import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 
-const ArchivedRoadmaps = () => {
+const ArchivedCourses = () => {
   const [searchValue, setSearchValue] = useState<string>('');
-  const [roadmapsList, setRoadmapsList] = useState<TRoadmap[]>([]);
+  const [coursesList, setCoursesList] = useState<TCourse[]>([]);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [restoreId, setRestoreId] = useState<string | false>(false);
   const [deleteId, setDeleteId] = useState<string | false>(false);
 
-  const fetchRoadmaps = useCallback(
+  const fetchCourses = useCallback(
     async (currentPage: number, search: string, resetList = false) => {
       setIsLoading(true);
       try {
-        const res = await getArchivedRoadmaps(currentPage, search);
+        const res = await getArchivedCourses(currentPage, search);
         if (resetList || currentPage === 1) {
-          setRoadmapsList(res.data.items);
+          setCoursesList(res.data.items);
         } else {
-          setRoadmapsList((prev) => [...prev, ...res.data.items]);
+          setCoursesList((prev) => [...prev, ...res.data.items]);
         }
         setPage(res.data.page + 1);
         setHasMore(
@@ -54,25 +54,25 @@ const ArchivedRoadmaps = () => {
     [],
   );
 
-  const getNextRoadmaps = useCallback(() => {
+  const getNextCourses = useCallback(() => {
     if (!isLoading && hasMore) {
-      fetchRoadmaps(page, searchValue);
+      fetchCourses(page, searchValue);
     }
-  }, [fetchRoadmaps, hasMore, isLoading, page, searchValue]);
+  }, [fetchCourses, hasMore, isLoading, page, searchValue]);
 
-  const restoreRoadmap = useCallback(
+  const restoreCourse = useCallback(
     async (id: string) => {
       try {
-        await activateRoadmap({ active: true, id: parseInt(id, 10) });
+        await activateCourse({ active: true, id: parseInt(id, 10) });
         // Reset the list and fetch from the first page
         setPage(1);
-        await fetchRoadmaps(1, searchValue, true);
+        await fetchCourses(1, searchValue, true);
         setRestoreId(false);
       } catch (error) {
         toast.error(en.common.noResultFound);
       }
     },
-    [fetchRoadmaps, searchValue],
+    [fetchCourses, searchValue],
   );
 
   const handleQueryChange = useMemo(
@@ -83,17 +83,17 @@ const ArchivedRoadmaps = () => {
           setIsLoading(true);
           setSearchValue(_value);
           setPage(1);
-          fetchRoadmaps(1, _value, true).finally(() => setIsLoading(false));
+          fetchCourses(1, _value, true).finally(() => setIsLoading(false));
         } catch (err) {
           toast.error(en.common.somethingWentWrong);
         }
       }, 300),
-    [fetchRoadmaps],
+    [fetchCourses],
   );
 
   useEffect(() => {
-    fetchRoadmaps(1, '', true);
-  }, [fetchRoadmaps]);
+    fetchCourses(1, '', true);
+  }, [fetchCourses]);
 
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
@@ -101,26 +101,26 @@ const ArchivedRoadmaps = () => {
       <ConformationModal
         title={
           restoreId
-            ? en.archivedSection.confirmActivateRoadmap
-            : en.archivedSection.confirmDeleteRoadmap
+            ? en.archivedSection.confirmActivateCourse
+            : en.archivedSection.confirmDeleteCourse
         }
         subTitle={
           restoreId
-            ? en.archivedSection.confirmActivateRoadmapSubtext
-            : en.archivedSection.confirmDeleteRoadmapSubtext
+            ? en.archivedSection.confirmActivateCourseSubtext
+            : en.archivedSection.confirmDeleteCourseSubtext
         }
         open={Boolean(restoreId || deleteId)}
         //@ts-expect-error will never be set true
         setOpen={restoreId ? setRestoreId : setDeleteId}
         onConfirm={() =>
-          restoreId ? restoreRoadmap(restoreId) : console.log(deleteId)
+          restoreId ? restoreCourse(restoreId) : console.log(deleteId)
         }
       />
       <h1 className="text-lg leading-6 font-medium text-gray-900">
-        {en.archivedSection.archivedRoadmaps}
+        {en.archivedSection.archivedCourses}
       </h1>
       <p className="text-gray-500 text-sm mb-6">
-        {en.archivedSection.archivedRoadmapsSubtext}
+        {en.archivedSection.archivedCoursesSubtext}
       </p>
       <SearchBox
         value={searchValue}
@@ -130,16 +130,16 @@ const ArchivedRoadmaps = () => {
       />
       <div className="flex">
         <InfiniteScroll
-          dataLength={roadmapsList.length}
-          next={getNextRoadmaps}
+          dataLength={coursesList.length}
+          next={getNextCourses}
           hasMore={hasMore}
           loader={isLoading && <FullPageLoader />}
         >
-          {roadmapsList.map((item) => (
+          {coursesList.map((item) => (
             <ArchivedCell
               key={item.id}
               title={item.name}
-              subtitle={item.roadmap_category.name}
+              subtitle={item.course_category.name}
               deactivatedBy={
                 item.updated_by
                   ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
@@ -157,4 +157,4 @@ const ArchivedRoadmaps = () => {
   );
 };
 
-export default ArchivedRoadmaps;
+export default ArchivedCourses;
