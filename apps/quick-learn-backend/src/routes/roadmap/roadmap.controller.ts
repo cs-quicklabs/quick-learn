@@ -19,7 +19,8 @@ import { UpdateRoadmapDto } from './dto/update-roadmap.dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
-import { PaginationDto } from '../users/dto'; // You'll need to import this
+import { PaginationDto } from '../users/dto';
+import { ActivateRoadmapDto } from './dto/activate-roadmap.dto';
 
 @ApiTags('Roadmap')
 @Controller({
@@ -60,14 +61,11 @@ export class RoadmapController {
   @Post('activate')
   @ApiOperation({ summary: 'Activate or archive roadmap' })
   async activateRoadmap(
-    @Body() body: { id: number; active: boolean },
+    @Body() activateRoadmapDto: ActivateRoadmapDto,
   ): Promise<SuccessResponse> {
-    const { active, id } = body;
+    const { active, id } = activateRoadmapDto;
     const updatedRoadmap = await this.service.updateRoadmap(id, { active });
-    return new SuccessResponse(
-      'Roadmap status updated successfully.',
-      updatedRoadmap,
-    );
+    return new SuccessResponse(en.RoadmapStatusUpdated, updatedRoadmap);
   }
 
   @Get(':id')
@@ -98,13 +96,13 @@ export class RoadmapController {
 
   @Patch(':id/assign')
   @ApiParam({ name: 'id', description: 'Roadmap ID', required: true })
-  @ApiOperation({ summary: 'Assign a courses to roadmap' })
+  @ApiOperation({ summary: 'Assign courses to roadmap' })
   async assignCoursesRoadmap(
     @Param('id') id: string,
     @Body() assignCoursesToRoadmapDto: AssignCoursesToRoadmapDto,
   ) {
     await this.service.assignRoadmap(+id, assignCoursesToRoadmapDto);
-    return new SuccessResponse(en.updateRoadmap);
+    return new SuccessResponse(en.RoadmapCoursesAssigned);
   }
 
   @Delete(':id')

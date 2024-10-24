@@ -23,7 +23,6 @@ import {
 import { JwtAuthGuard } from '../auth/guards';
 import { en } from '@src/lang/en';
 
-// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -37,7 +36,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Metadata for the add/update user(s).' })
   async metadata(@CurrentUser() user: UserEntity): Promise<SuccessResponse> {
     const metadata = await this.usersService.getMetadata(user);
-    return new SuccessResponse(`Successfully got user's metadata.`, metadata);
+    return new SuccessResponse(en.successUserMetadata, metadata);
   }
 
   @Post()
@@ -91,12 +90,9 @@ export class UsersController {
   async activateUser(
     @Body() body: { uuid: string; active: boolean },
   ): Promise<SuccessResponse> {
-    const { active, uuid } = body; // Destructure the active property from the request body
+    const { active, uuid } = body;
     const updatedUser = await this.usersService.update({ uuid }, { active });
-    return new SuccessResponse(
-      'User status updated successfully.',
-      updatedUser,
-    );
+    return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
   }
 
   @Get(':uuid')
@@ -112,7 +108,7 @@ export class UsersController {
   }
 
   @Patch(':uuid')
-  @ApiOperation({ summary: 'Update specific user by  uuid' })
+  @ApiOperation({ summary: 'Update specific user by uuid' })
   @ApiParam({
     name: 'uuid',
     type: 'string',
@@ -127,7 +123,7 @@ export class UsersController {
       ...updateUserDto,
       updated_by: currentUser,
     });
-    return new SuccessResponse('Successfully updated user.', user);
+    return new SuccessResponse(en.successUserUpdate, user);
   }
 
   @Delete(':uuid')
@@ -139,6 +135,6 @@ export class UsersController {
   })
   async remove(@Param('uuid') uuid: string) {
     await this.usersService.remove(uuid);
-    return new SuccessResponse('Successfully deleted user.');
+    return new SuccessResponse(en.successUserDelete);
   }
 }
