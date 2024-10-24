@@ -28,9 +28,40 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     super(repo);
   }
 
-  async getAllCourses(): Promise<CourseEntity[]> {
-    return await this.getMany();
+  async getAllCourses(
+    options: FindOptionsWhere<CourseEntity>, // filter conditions
+    relations: string[] = [], // additional relations to include
+  ): Promise<CourseEntity[]> {
+    const queryBuilder = this.repository.createQueryBuilder('courses');
+  
+    // Apply filters from options
+    if (options) {
+      Object.keys(options).forEach((key) => {
+        queryBuilder.andWhere(`courses.${key} = :${key}`, { [key]: options[key] });
+      });
+    }
+  
+    // Dynamically include relations
+    relations.forEach((relation) => {
+      queryBuilder.leftJoinAndSelect(`courses.${relation}`, relation);
+    });
+  
+    // Join course_category and count lessons
+    queryBuilder
+      .leftJoinAndSelect('courses.course_category', 'course_category')
+      .leftJoin('courses.lessons', 'lessons')
+      .loadRelationCountAndMap(
+        'courses.lessons_count',
+        'courses.lessons',
+        'lessons',
+        (qb) => qb.andWhere('lessons.archived = :archivedLessons', { archivedLessons: options.archived })
+      )
+      .orderBy('courses.created_at', 'DESC')
+      .addOrderBy('course_category.created_at', 'DESC');
+  
+    return await queryBuilder.getMany();
   }
+  
 
   /**
    * Creates a new course.

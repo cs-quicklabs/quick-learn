@@ -15,7 +15,7 @@ const CreateNewCard: FC<Props> = ({
 }) => {
   return (
     <button type="button" className={className} onClick={() => onAdd(true)}>
-      <div className=" flex justify-center flex-col h-40 text-center content-center ">
+      <div className=" flex justify-center flex-col h-[188px] text-center content-center ">
         <Repository className="mx-auto h-12 w-12 text-indigo-400" />
         <h3 className="mt-2 text-sm font-semibold text-gray-900">{title}</h3>
       </div>
