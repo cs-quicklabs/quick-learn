@@ -44,7 +44,7 @@ const CommunityCourse = () => {
             <div className="text-sm text-gray-500">
               {courseData.description}
             </div>
-            <div className="text-sm  text-gray-500">{`(${courseData.lessons?.length} Courses)`}</div>
+            <div className="text-sm  text-gray-500">{`(${courseData?.lessons_count} Courses)`}</div>
           </div>
           {/* display all courses */}
           <ul className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-4 2xl:grid-cols-5">
