@@ -178,10 +178,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @param userId - The id of the user unarchiving the lesson
    * @throws BadRequestException if the lesson doesn't exist
    */
-  async unarchiveLesson(
-    lessonId: LessonEntity['id'],
-    userId: UserEntity['id'],
-  ) {
+  async unarchiveLesson(lessonId: LessonEntity['id']) {
     const lesson = await this.get({ id: lessonId });
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);

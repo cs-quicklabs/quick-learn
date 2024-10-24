@@ -92,9 +92,9 @@ const ViewLesson: FC<Props> = ({
             <InformationCircleIcon className="flex-shrink-0 inline w-4 h-4 me-3" />
             <div className="text-xl">
               <span className="font-medium text-lg">
-                {en.common.approvalPendingExclamation}
+                {en.approvals.approvalPendingExclamation}
               </span>{' '}
-              {en.common.approvalPendingInfo}
+              {en.approvals.approvalPendingInfo}
             </div>
           </div>
         </div>

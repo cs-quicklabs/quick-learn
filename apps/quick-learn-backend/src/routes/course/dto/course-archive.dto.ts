@@ -8,5 +8,5 @@ export class CourseArchiveDto {
 
   @ApiProperty({ example: true })
   @IsBoolean()
-  archived: boolean;
+  active: boolean;
 }

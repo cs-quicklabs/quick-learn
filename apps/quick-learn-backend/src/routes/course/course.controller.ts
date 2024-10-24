@@ -122,7 +122,7 @@ export class CourseController {
   @Post('activate')
   @ApiOperation({ summary: 'Activate or archive course' })
   async activateCourse(
-    @Body() body: { id: number; active: boolean },
+    @Body() body: CourseArchiveDto,
     @CurrentUser() currentUser: UserEntity,
   ): Promise<SuccessResponse> {
     await this.service.updateCourseArchiveStatus(
@@ -135,7 +135,6 @@ export class CourseController {
     );
   }
 
-  // And update the archive endpoint to match
   @Delete(':id')
   @ApiParam({ name: 'id', description: 'Course id', required: true })
   @ApiOperation({ summary: 'Archive a course' })

@@ -149,6 +149,9 @@ export const en = {
     lessonsApprovals: 'Lessons Approvals',
     subHeading: 'Manage all your existing team members or add a new one.',
     approveThisLesson: 'Approve this lesson',
+    approvalPendingExclamation: 'Approval pending!',
+    approvalPendingInfo:
+      'This lesson is awaiting approval from the team. After approval this will be available to all the team members.',
   },
 
   /**

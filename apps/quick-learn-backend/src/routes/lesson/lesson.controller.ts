@@ -170,7 +170,7 @@ export class LessonController {
       return new SuccessResponse(en.archiveLesson);
     }
 
-    await this.service.unarchiveLesson(body.id, user.id);
+    await this.service.unarchiveLesson(body.id);
     return new SuccessResponse(en.unarchiveLesson);
   }
 }
