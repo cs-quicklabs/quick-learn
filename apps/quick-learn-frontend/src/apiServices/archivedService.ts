@@ -2,7 +2,11 @@ import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { ArchivedApiEnum } from '@src/constants/api.enum';
 import { TUser } from '@src/shared/types/userTypes';
 import { PaginateWrapper } from '@src/shared/types/utilTypes';
-import { TRoadmap, TCourse } from '@src/shared/types/contentRepository';
+import {
+  TRoadmap,
+  TCourse,
+  TLesson,
+} from '@src/shared/types/contentRepository';
 
 /**
  * User activation service
@@ -96,5 +100,31 @@ export const getArchivedCourses = async (
   const response = await axiosInstance.post<
     AxiosSuccessResponse<PaginateWrapper<TCourse[]>>
   >(ArchivedApiEnum.ARCHIVED_COURSES, body);
+  return response.data;
+};
+
+export const activateLesson = async (payload: {
+  active: boolean;
+  id: number;
+}): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    ArchivedApiEnum.ACTIVATE_LESSON,
+    payload,
+  );
+  return response.data;
+};
+
+export const getArchivedLessons = async (
+  page: number,
+  q = '',
+): Promise<AxiosSuccessResponse<PaginateWrapper<TLesson[]>>> => {
+  const body = {
+    mode: 'paginate',
+    page,
+    q,
+  };
+  const response = await axiosInstance.post<
+    AxiosSuccessResponse<PaginateWrapper<TLesson[]>>
+  >(ArchivedApiEnum.ARCHIVED_LESSONS, body);
   return response.data;
 };

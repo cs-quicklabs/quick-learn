@@ -38,6 +38,7 @@ export enum ContentRepositoryApiEnum {
   COMMUNITY_COURSES = 'course/community-course', // to fetch only community courses is true
   COMMUNITY = 'course/community', //to fetch courses which are community course , unarchived, unapproved
 }
+
 export enum ArchivedApiEnum {
   // User-related endpoints
   ACTIVATE_USER = '/users/activate',
@@ -50,4 +51,8 @@ export enum ArchivedApiEnum {
   // Course-related endpoints
   ARCHIVED_COURSES = '/course/archived',
   ACTIVATE_COURSE = '/course/activate',
+
+  // Lesson-related endpoints
+  ARCHIVED_LESSONS = '/lesson/archived',
+  ACTIVATE_LESSON = '/lesson/activate',
 }

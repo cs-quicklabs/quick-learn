@@ -74,4 +74,5 @@ export type TLesson = {
   updated_at: string;
   course_id: number;
   course: TCourse;
+  updated_by: TUser;
 };

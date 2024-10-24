@@ -229,7 +229,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     items: CourseEntity[];
     total: number;
     page: number;
-    pages: number;
+    total_pages: number;
   }> {
     const { page = 1, limit = 10, q = '' } = paginationDto;
     const skip = (page - 1) * limit;
@@ -267,7 +267,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       items,
       total,
       page,
-      pages: Math.ceil(total / limit),
+      total_pages: Math.ceil(total / limit),
     };
   }
 }

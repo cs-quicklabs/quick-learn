@@ -58,6 +58,8 @@ export const en = {
   lessonNotFound: 'Invalid lesson is provided.',
   approveLesson: 'Successfully approved a lesson.',
   archiveLesson: 'Successfully archived a lesson.',
+  unarchiveLesson: 'Successfully unarchived lesson.',
+  getArchivedLessons: 'Successfully retrieved archived lessons.',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',

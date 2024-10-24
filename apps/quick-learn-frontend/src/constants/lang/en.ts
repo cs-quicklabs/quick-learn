@@ -214,6 +214,16 @@ export const en = {
     confirmDeleteCourse: 'Are you sure you want to delete this course?',
     confirmDeleteCourseSubtext:
       'All the information regarding this course will be lost. Users will not be able to see it, if they made any progress on it in past, that information will also be lost. This action is not reversible.',
+
+    // Archived lessons
+    archivedLessons: 'Archived Lessons',
+    archivedLessonsSubtext: 'Following lessons have been archived.',
+    confirmActivateLesson: 'Are you sure you want to activate this lesson?',
+    confirmActivateLessonSubtext:
+      'Once this lesson is restored, users will be able to see it and access its content.',
+    confirmDeleteLesson: 'Are you sure you want to delete this lesson?',
+    confirmDeleteLessonSubtext:
+      'All the information regarding this lesson will be lost. This action cannot be undone.',
   },
 
   /**
