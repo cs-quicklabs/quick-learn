@@ -19,6 +19,7 @@ import * as bcrypt from 'bcryptjs';
 import { SkillEntity } from './skill.entity';
 import { RoadmapEntity } from './roadmap.entity';
 import { LessonEntity } from './lesson.entity';
+import { CourseEntity } from './course.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -125,4 +126,7 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => UserEntity, (user) => user.updated_by)
   updated_users: UserEntity[];
+
+  @OneToMany(() => CourseEntity, (course) => course.updated_by)
+  updated_courses: CourseEntity[];
 }
