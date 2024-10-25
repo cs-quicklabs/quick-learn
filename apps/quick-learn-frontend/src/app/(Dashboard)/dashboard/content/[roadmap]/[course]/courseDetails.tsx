@@ -328,9 +328,9 @@ const CourseDetails = () => {
                       <p className="inline-flex align-center font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
                         {approved ? (
                           'Added by ' +
-                          created_by_user.first_name +
+                          created_by_user?.first_name +
                           ' ' +
-                          created_by_user.last_name +
+                          created_by_user?.last_name +
                           ' on ' +
                           format(created_at, DateFormats.shortDate)
                         ) : (

@@ -29,7 +29,7 @@ export const deleteUser = async (
   uuid: string,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    `/${ArchivedApiEnum.USERS}/${uuid}/permanent`,
+    `/${ArchivedApiEnum.USERS}/${uuid}`,
   );
   return response.data;
 };

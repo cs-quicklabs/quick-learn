@@ -26,7 +26,7 @@ export class RoadmapEntity extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   archived: boolean;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   created_by_user_id: number;
 
   @ManyToOne(() => UserEntity, (user) => user.roadmaps, {
