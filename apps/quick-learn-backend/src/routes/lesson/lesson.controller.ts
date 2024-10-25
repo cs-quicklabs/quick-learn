@@ -18,6 +18,7 @@ import { JwtAuthGuard } from '../auth/guards';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
 import { PaginationDto } from '../users/dto';
+import { CourseArchiveDto } from '../course/dto/course-archive.dto';
 
 @ApiTags('Lessons')
 @Controller({
@@ -162,7 +163,7 @@ export class LessonController {
   @ApiOperation({ summary: 'Activate or deactivate a lesson.' })
   @Post('activate')
   async activateLesson(
-    @Body() body: { id: number; active: boolean },
+    @Body() body: CourseArchiveDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
     if (!body.active) {

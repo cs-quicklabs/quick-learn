@@ -54,7 +54,6 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   }
 
   async findAllArchived(
-    user: UserEntity,
     paginationDto: PaginationDto,
   ): Promise<PaginatedResult<RoadmapEntity>> {
     const queryBuilder = this.roadmapRepository
@@ -62,7 +61,6 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
       .leftJoinAndSelect('roadmap.created_by', 'created_by')
       .leftJoinAndSelect('roadmap.updated_by', 'updated_by')
-      .leftJoinAndSelect('roadmap.courses', 'courses')
       .loadRelationCountAndMap(
         'roadmap.courses_count',
         'roadmap.courses',

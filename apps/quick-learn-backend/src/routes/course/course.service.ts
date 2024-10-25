@@ -15,6 +15,7 @@ import { en } from '@src/lang/en';
 import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 import Helpers from '@src/common/utils/helper';
 import { PaginationDto } from '../users/dto';
+import { PaginatedResult } from '@src/common/interfaces';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -225,12 +226,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
   async getArchivedCourses(
     paginationDto: PaginationDto,
     relations: string[] = [],
-  ): Promise<{
-    items: CourseEntity[];
-    total: number;
-    page: number;
-    total_pages: number;
-  }> {
+  ): Promise<PaginatedResult<CourseEntity>> {
     const { page = 1, limit = 10, q = '' } = paginationDto;
     const skip = (page - 1) * limit;
 
@@ -268,6 +264,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       total,
       page,
       total_pages: Math.ceil(total / limit),
+      limit,
     };
   }
 }

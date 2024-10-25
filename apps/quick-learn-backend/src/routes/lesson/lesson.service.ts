@@ -7,6 +7,7 @@ import { CourseService } from '../course/course.service';
 import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
+import { PaginatedResult } from '@src/common/interfaces';
 
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
@@ -133,12 +134,7 @@ export class LessonService extends PaginationService<LessonEntity> {
   async getArchivedLessons(
     paginationDto: PaginationDto,
     relations: string[] = [],
-  ): Promise<{
-    items: LessonEntity[];
-    total: number;
-    page: number;
-    total_pages: number;
-  }> {
+  ): Promise<PaginatedResult<LessonEntity>> {
     const { page = 1, limit = 10, q = '' } = paginationDto;
     const skip = (page - 1) * limit;
 
@@ -169,6 +165,7 @@ export class LessonService extends PaginationService<LessonEntity> {
       total,
       page,
       total_pages: Math.ceil(total / limit),
+      limit,
     };
   }
 

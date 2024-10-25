@@ -54,7 +54,7 @@ export class RoadmapController {
     @CurrentUser() user: UserEntity,
     @Body() paginationDto: PaginationDto,
   ) {
-    const roadmaps = await this.service.findAllArchived(user, paginationDto);
+    const roadmaps = await this.service.findAllArchived(paginationDto);
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
 
