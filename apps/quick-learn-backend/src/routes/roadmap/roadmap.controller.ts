@@ -107,9 +107,9 @@ export class RoadmapController {
 
   @Delete(':id')
   @ApiParam({ name: 'id', description: 'Roadmap id', required: true })
-  @ApiOperation({ summary: 'Delete a roadmap' })
-  async archiveRoadmap(@Param('id') id: string) {
-    await this.service.archiveRoadmap(+id);
-    return new SuccessResponse(en.archiveRoadmap);
+  @ApiOperation({ summary: 'Permanently delete roadmap' })
+  async deleteRoadmap(@Param('id') id: string) {
+    await this.service.delete({ id: +id });
+    return new SuccessResponse(en.successDeleteRoadmap);
   }
 }

@@ -13,13 +13,30 @@ import {
 } from '@src/apiServices/archivedService';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
 import SearchBox from '@src/shared/components/SearchBox';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TLesson } from '@src/shared/types/contentRepository';
 import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
+import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
+
+const LoadingSkeleton = () => (
+  <>
+    {[1, 2, 3].map((i) => (
+      <ArchivedCell
+        key={i}
+        isLoading={true}
+        title=""
+        subtitle=""
+        deactivatedBy=""
+        deactivationDate=""
+        onClickDelete={() => null}
+        onClickRestore={() => null}
+      />
+    ))}
+  </>
+);
 
 const ArchivedLessons = () => {
   const [searchValue, setSearchValue] = useState<string>('');
@@ -27,6 +44,7 @@ const ArchivedLessons = () => {
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
   const [restoreId, setRestoreId] = useState<number | false>(false);
   const [deleteId, setDeleteId] = useState<number | false>(false);
 
@@ -46,6 +64,7 @@ const ArchivedLessons = () => {
         toast.error(en.common.noResultFound);
       } finally {
         setIsLoading(false);
+        setIsInitialLoad(false);
       }
     },
     [],
@@ -61,7 +80,6 @@ const ArchivedLessons = () => {
     async (id: number) => {
       try {
         await activateLesson({ active: true, id });
-        // Reset the list and fetch from the first page
         setPage(1);
         await fetchLessons(1, searchValue, true);
         setRestoreId(false);
@@ -80,7 +98,7 @@ const ArchivedLessons = () => {
           setIsLoading(true);
           setSearchValue(_value);
           setPage(1);
-          fetchLessons(1, _value, true).finally(() => setIsLoading(false));
+          fetchLessons(1, _value, true);
         } catch (err) {
           toast.error(en.common.somethingWentWrong);
         }
@@ -94,7 +112,6 @@ const ArchivedLessons = () => {
 
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
-      {isLoading && <FullPageLoader />}
       <ConformationModal
         title={
           restoreId
@@ -125,34 +142,40 @@ const ArchivedLessons = () => {
           handleQueryChange(e.target.value)
         }
       />
-      <div className="flex flex-col w-full" style={{ minHeight: '200px' }}>
-        <InfiniteScroll
-          dataLength={lessonsList.length}
-          next={getNextLessons}
-          hasMore={hasMore}
-          loader={isLoading && <FullPageLoader />}
-          scrollThreshold={0.8}
-          style={{ overflow: 'visible' }}
-        >
-          {lessonsList.map((item) => (
-            <ArchivedCell
-              key={item.id}
-              title={item.name}
-              subtitle={item.course?.name || ''}
-              deactivatedBy={
-                item.updated_by
-                  ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
-                  : item.archive_by_user
-                  ? `${item.archive_by_user.first_name} ${item.archive_by_user.last_name}`
-                  : ''
-              }
-              deactivationDate={item.updated_at}
-              onClickDelete={() => setDeleteId(item.id)}
-              onClickRestore={() => setRestoreId(item.id)}
-              alternateButton
-            />
-          ))}
-        </InfiniteScroll>
+      <div className="flex flex-col w-full min-h-[200px]">
+        {isInitialLoad ? (
+          <LoadingSkeleton />
+        ) : lessonsList.length === 0 ? (
+          <EmptyState type="lessons" searchValue={searchValue} />
+        ) : (
+          <InfiniteScroll
+            dataLength={lessonsList.length}
+            next={getNextLessons}
+            hasMore={hasMore}
+            loader={<LoadingSkeleton />}
+            scrollThreshold={0.8}
+            style={{ overflow: 'visible' }}
+          >
+            {lessonsList.map((item) => (
+              <ArchivedCell
+                key={item.id}
+                title={item.name}
+                subtitle={item.course?.name || ''}
+                deactivatedBy={
+                  item.updated_by
+                    ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
+                    : item.archive_by_user
+                    ? `${item.archive_by_user.first_name} ${item.archive_by_user.last_name}`
+                    : ''
+                }
+                deactivationDate={item.updated_at}
+                onClickDelete={() => setDeleteId(item.id)}
+                onClickRestore={() => setRestoreId(item.id)}
+                alternateButton
+              />
+            ))}
+          </InfiniteScroll>
+        )}
       </div>
     </div>
   );

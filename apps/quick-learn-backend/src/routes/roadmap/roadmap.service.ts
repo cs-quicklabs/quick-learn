@@ -1,6 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import {
+  DeleteResult,
+  FindOperator,
+  FindOptionsWhere,
+  In,
+  Repository,
+} from 'typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { RoadmapEntity, UserEntity } from '@src/entities';
 import { CreateRoadmapDto } from './dto/create-roadmap.dto';
@@ -277,5 +283,73 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
 
     roadmap.courses = courses;
     await this.roadmapRepository.save(roadmap);
+  }
+
+  private getIdFromCondition(
+    condition: FindOptionsWhere<RoadmapEntity>,
+  ): number | null {
+    if (!condition || !('id' in condition)) {
+      return null;
+    }
+
+    const idCondition = condition.id;
+
+    if (typeof idCondition === 'number') {
+      return idCondition;
+    }
+
+    if (idCondition instanceof FindOperator) {
+      const value = idCondition.value;
+      return typeof value === 'number' ? value : null;
+    }
+
+    return null;
+  }
+
+  async delete(
+    condition: FindOptionsWhere<RoadmapEntity>,
+  ): Promise<DeleteResult> {
+    const id = this.getIdFromCondition(condition);
+
+    if (!id) {
+      throw new BadRequestException(en.invalidDeleteCondition);
+    }
+
+    const roadmap = await this.getRoadmapById(id);
+
+    if (!roadmap) {
+      throw new BadRequestException(en.RoadmapNotFound);
+    }
+
+    // Start a transaction to ensure data consistency
+    const result = await this.roadmapRepository.manager.transaction(
+      async (transactionalEntityManager) => {
+        // Remove roadmap-course associations
+        await transactionalEntityManager
+          .createQueryBuilder()
+          .delete()
+          .from('roadmap_courses')
+          .where('roadmap_id = :id', { id: roadmap.id })
+          .execute();
+
+        // Remove user-roadmap associations
+        await transactionalEntityManager
+          .createQueryBuilder()
+          .delete()
+          .from('user_roadmaps')
+          .where('roadmap_id = :id', { id: roadmap.id })
+          .execute();
+
+        // Delete the roadmap
+        return await transactionalEntityManager
+          .createQueryBuilder()
+          .delete()
+          .from(RoadmapEntity)
+          .where(condition)
+          .execute();
+      },
+    );
+
+    return result;
   }
 }

@@ -11,6 +11,11 @@ export const en = {
     ok: 'ok',
     yes: 'Yes',
     no: 'No',
+    activate: 'Activate',
+    restore: 'Restore',
+    delete: 'Delete',
+    deactivatedOn: 'Deactivated on',
+    by: 'by',
 
     // Content types
     lesson: 'lesson',
@@ -190,8 +195,36 @@ export const en = {
   teamMemberDetails: {
     assignNewRoadmap: 'Assign New Roadmap',
   },
+
+  // Success messages
+  successUserStatusUpdate: 'User status has been updated successfully',
+  successUserDelete: 'User has been permanently deleted',
+  successGotUsers: 'Users retrieved successfully',
+  successGotUser: 'User retrieved successfully',
+  successUserMetadata: 'User metadata retrieved successfully',
+  successUserCreate: 'User created successfully',
+  successUserUpdate: 'User updated successfully',
+  successUserActivate: 'User has been activated successfully',
+
+  // Error messages
+  errorDeletingUser: 'Failed to delete user',
+  errorActivatingUser: 'Failed to activate user',
+  invalidSkill: 'Invalid skill selected',
+  deactiveUserAddError: 'This email is associated with an inactive user',
+  userNotFound: 'User not found',
+
+  // Archived
   archivedSection: {
     // Archived users
+    inactiveUsers: 'Inactive Users',
+    inactiveUsersSubtext: 'Following users have been deactivated.',
+    noResults: 'No results found',
+    noResultsDescription:
+      'We couldn\'t find any {type} matching "{searchTerm}"',
+
+    noInactiveUsers: 'No inactive users',
+    noInactiveUsersDescription:
+      "When users are deactivated, they'll appear here",
     archivedUsers: 'Archived Users',
     archivedUsersSubtext: ' Following users have been deactivated.',
     confirmActivateUser: 'Are you sure you want to activate this user?',
@@ -230,6 +263,21 @@ export const en = {
     confirmDeleteLesson: 'Are you sure you want to delete this lesson?',
     confirmDeleteLessonSubtext:
       'All the information regarding this lesson will be lost. This action cannot be undone.',
+
+    noArchivedUsers: 'No archived users',
+    noArchivedUsersDescription: "When users are archived, they'll appear here",
+
+    noArchivedRoadmaps: 'No archived roadmaps',
+    noArchivedRoadmapsDescription:
+      "When roadmaps are archived, they'll appear here",
+
+    noArchivedCourses: 'No archived courses',
+    noArchivedCoursesDescription:
+      "When courses are archived, they'll appear here",
+
+    noArchivedLessons: 'No archived lessons',
+    noArchivedLessonsDescription:
+      "When lessons are archived, they'll appear here",
   },
 
   /**
