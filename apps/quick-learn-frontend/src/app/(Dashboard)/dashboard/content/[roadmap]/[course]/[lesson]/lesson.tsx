@@ -68,7 +68,7 @@ const Lesson = () => {
     };
   }, [setHideNavbar]);
 
-  const [isEditing, setIsEditing] = useState<boolean>(true);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const [loading, setLoading] = useState<boolean>(false);
