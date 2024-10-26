@@ -1,12 +1,11 @@
 'use client';
 import ReactQuill from 'react-quill';
-import { FC, useCallback, useEffect, useRef } from 'react';
-// quill snow theme css
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import { toast } from 'react-toastify';
 import 'react-quill/dist/quill.snow.css';
 import EditorToolbar, { formats } from './EditorToolbar';
 import { en } from '@src/constants/lang/en';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
 
 interface Props {
   isEditing: boolean;
@@ -29,7 +28,29 @@ const Editor: FC<Props> = ({
 }) => {
   const quillRef = useRef<ReactQuill | null>(null);
 
-  // Reference to the Quill editor
+  // Common function to handle image upload
+  const handleImageUpload = async (file: File) => {
+    if (!quillRef.current) return;
+    const quill = quillRef.current.getEditor();
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fileUploadApiCall(formData, 'lesson');
+
+      // Prevent automatic scroll by using preservePosition option
+      const range = quill.getSelection(true);
+      if (range) {
+        quill.insertEmbed(range.index, 'image', res.data.file, 'user');
+        quill.setSelection(range.index + 1, 0, 'silent');
+      }
+    } catch (err) {
+      toast.error('Something went wrong!, please try again');
+    }
+  };
+
+  // Handle image upload from toolbar
   const imageHandler = useCallback(() => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
@@ -38,47 +59,87 @@ const Editor: FC<Props> = ({
     input.onchange = async () => {
       const files = input.files;
       if (files === null || files.length === 0) return;
-      const file = files[0];
-      const formData = new FormData();
-      formData.append('file', file);
-
-      // uploading image for the quill editor
-      // TODO: Replace this and find some efficient way
-      fileUploadApiCall(formData, 'lesson')
-        .then((res) => {
-          if (!quillRef.current) return;
-          const quill = quillRef.current.getEditor();
-          const range = quill.getSelection(true);
-          quill.insertEmbed(range.index, 'image', res.data.file);
-          console.log(quill.getText());
-        })
-        .catch((err) => showApiErrorInToast(err));
+      await handleImageUpload(files[0]);
     };
-  }, [quillRef]);
+  }, []);
+
+  // Setup paste handler
+  useEffect(() => {
+    if (!quillRef.current || !isEditing) return;
+
+    const quill = quillRef.current.getEditor();
+    const handlePaste = async (e: ClipboardEvent) => {
+      const clipboard = e.clipboardData;
+      if (!clipboard?.items) return;
+
+      // Check if any pasted item is an image
+      const items = Array.from(clipboard.items);
+      const imageItem = items.find((item) => item.type.indexOf('image') !== -1);
+
+      if (imageItem) {
+        e.preventDefault();
+        e.stopPropagation();
+        const file = imageItem.getAsFile();
+        if (file) {
+          await handleImageUpload(file);
+        }
+      } else {
+        // Allow default paste behavior
+        e.preventDefault();
+        e.stopPropagation();
+        const text = clipboard.getData('text/plain');
+        quill.insertText(quill.getSelection()?.index ?? 0, text, 'user');
+      }
+    };
+
+    // Add event listeners to the Quill editor element
+    const editorContainer = quill.root;
+    editorContainer.addEventListener('paste', handlePaste, { capture: true });
+
+    // Cleanup
+    return () => {
+      editorContainer.removeEventListener('paste', handlePaste, {
+        capture: true,
+      });
+    };
+  }, [isEditing]);
 
   // Modules object for setting up the Quill editor
-  const modules = {
-    toolbar: {
-      container: '#toolbar',
-      history: {
-        delay: 500,
-        maxStack: 100,
-        userOnly: true,
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: '#toolbar',
+        history: {
+          delay: 500,
+          maxStack: 100,
+          userOnly: true,
+        },
+        handlers: {
+          image: imageHandler,
+        },
       },
-      handlers: {
-        image: imageHandler,
+      clipboard: {
+        matchVisual: false,
       },
-    },
-    clipboard: {
-      matchVisual: false,
-    },
-  };
+      keyboard: {
+        bindings: {
+          // Prevent default paste behavior
+          paste: {
+            key: 'V',
+            shortKey: true,
+            handler: (range: unknown, context: unknown) => {
+              // Let our paste handler handle it
+              return true;
+            },
+          },
+        },
+      },
+    }),
+    [imageHandler],
+  );
 
   useEffect(() => {
-    // Set body background color when the component mounts
     document.body.style.backgroundColor = 'white';
-
-    // Cleanup function: Change background when leaving the page
     return () => {
       document.body.style.backgroundColor = '';
     };
@@ -91,7 +152,7 @@ const Editor: FC<Props> = ({
   }
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <EditorToolbar
         isEditing={isEditing}
         setIsEditing={setIsEditing}
@@ -99,17 +160,20 @@ const Editor: FC<Props> = ({
         isUpdating={isUpdating}
         isAdd={isAdd}
       />
-      <ReactQuill
-        ref={quillRef}
-        value={value}
-        onChange={setValue}
-        theme="snow"
-        modules={modules}
-        formats={formats}
-        readOnly={!isEditing}
-        placeholder={placeholder}
-      />
-    </>
+      <div className="flex-grow relative">
+        <ReactQuill
+          ref={quillRef}
+          value={value}
+          onChange={setValue}
+          theme="snow"
+          modules={modules}
+          formats={formats}
+          readOnly={!isEditing}
+          placeholder={placeholder}
+          className="h-full"
+        />
+      </div>
+    </div>
   );
 };
 
