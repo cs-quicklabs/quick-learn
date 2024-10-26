@@ -13,10 +13,10 @@ export class ResetPasswordDto {
   resetToken: string;
 
   @ApiProperty({ example: 'password' })
-  @IsNotEmpty()
+  @IsNotEmpty({message:"Password should not be empty"})
   @IsString()
   @MinLength(8)
-  @MaxLength(15)
+  @MaxLength(32,{message:"Password must be less than 32 character"})
   @IsStrongPassword({
     minLength: 8,
     minLowercase: 1,
