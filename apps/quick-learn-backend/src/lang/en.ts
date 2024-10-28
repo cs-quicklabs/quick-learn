@@ -50,6 +50,7 @@ export const en = {
   successGotArchivedCourses: 'Successfully retrieved archived courses.',
   successCourseStatusUpdate: 'Course status updated successfully.',
   unarchiveCourse: 'Successfully unarchived course.',
+  CourseDeleted: 'Course has been permanently deleted',
 
   // Lesson related messages
   getLessons: 'Successfully got all lessons.',

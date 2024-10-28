@@ -117,7 +117,7 @@ export const deleteCourse = async (
   id: number,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    `/course/${id}/permanent`,
+    `/course/${id}`,
   );
   return response.data;
 };
@@ -161,7 +161,7 @@ export const deleteLesson = async (
   id: number,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    `/lesson/${id}/permanent`,
+    `/lesson/${id}`,
   );
   return response.data;
 };

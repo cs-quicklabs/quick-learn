@@ -10,6 +10,7 @@ import React, {
 import {
   activateCourse,
   getArchivedCourses,
+  deleteCourse,
 } from '@src/apiServices/archivedService';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
 import SearchBox from '@src/shared/components/SearchBox';
@@ -86,8 +87,24 @@ const ArchivedCourses = () => {
         setPage(1);
         await fetchCourses(1, searchValue, true);
         setRestoreId(false);
+        toast.success(en.archivedSection.courseRestored);
       } catch (error) {
-        toast.error(en.common.noResultFound);
+        toast.error(en.common.somethingWentWrong);
+      }
+    },
+    [fetchCourses, searchValue],
+  );
+
+  const handleDeleteCourse = useCallback(
+    async (id: string) => {
+      try {
+        await deleteCourse(parseInt(id, 10));
+        setPage(1);
+        await fetchCourses(1, searchValue, true);
+        setDeleteId(false);
+        toast.success(en.archivedSection.courseDeleted);
+      } catch (error) {
+        toast.error(en.common.somethingWentWrong);
       }
     },
     [fetchCourses, searchValue],
@@ -130,7 +147,9 @@ const ArchivedCourses = () => {
         //@ts-expect-error will never be set true
         setOpen={restoreId ? setRestoreId : setDeleteId}
         onConfirm={() =>
-          restoreId ? restoreCourse(restoreId) : console.log(deleteId)
+          restoreId
+            ? restoreCourse(restoreId)
+            : deleteId && handleDeleteCourse(deleteId)
         }
       />
       <h1 className="text-lg leading-6 font-medium text-gray-900">

@@ -246,6 +246,8 @@ export const en = {
 
     // Archived courses
     archivedCourses: 'Archived Courses',
+    courseDeleted: 'Course has been permanently deleted',
+    courseRestored: 'Course has been restored successfully',
     archivedCoursesSubtext: 'Following courses have been archived.',
     confirmActivateCourse: 'Are you sure you want to activate this course?',
     confirmActivateCourseSubtext:

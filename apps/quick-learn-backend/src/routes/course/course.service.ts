@@ -267,4 +267,15 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       limit,
     };
   }
+
+  async deleteCourse(id: number): Promise<void> {
+    const course = await this.getCourseDetails({ id }, []); // Get course without lessons to verify existence
+
+    if (!course) {
+      throw new BadRequestException(en.CourseNotFound);
+    }
+
+    // Using the repository's delete method for hard delete
+    await this.repository.delete({ id });
+  }
 }
