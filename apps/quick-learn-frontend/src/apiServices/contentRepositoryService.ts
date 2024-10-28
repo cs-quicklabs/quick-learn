@@ -124,15 +124,6 @@ export const archiveRoadmap = async (
   return response.data;
 };
 
-export const archiveCourse = async (
-  id: string,
-): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    ContentRepositoryApiEnum.COURSE + `/${id}`,
-  );
-  return response.data;
-};
-
 export const createLesson = async (payload: {
   name: string;
   content: string;

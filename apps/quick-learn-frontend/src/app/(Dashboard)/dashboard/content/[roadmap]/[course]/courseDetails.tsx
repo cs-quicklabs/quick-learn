@@ -5,8 +5,8 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { activateCourse } from '@src/apiServices/archivedService';
 import {
-  archiveCourse,
   assignRoadmapsToCourse,
   getCourse,
   updateCourse,
@@ -155,7 +155,7 @@ const CourseDetails = () => {
 
   function onArchive() {
     setIsLoading(true);
-    archiveCourse(courseId)
+    activateCourse({ id: Number(courseId), active: false })
       .then((res) => {
         showApiMessageInToast(res);
         allCourseCategories.forEach((item) => {

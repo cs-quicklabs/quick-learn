@@ -62,6 +62,7 @@ export const en = {
   archiveLesson: 'Successfully archived a lesson.',
   unarchiveLesson: 'Successfully unarchived lesson.',
   getArchivedLessons: 'Successfully retrieved archived lessons.',
+  lessonDeleted: 'Lesson has been permanently deleted.',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',

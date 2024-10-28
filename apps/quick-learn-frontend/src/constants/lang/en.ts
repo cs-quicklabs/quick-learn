@@ -280,6 +280,8 @@ export const en = {
     noArchivedLessons: 'No archived lessons',
     noArchivedLessonsDescription:
       "When lessons are archived, they'll appear here",
+    lessonDeletedSuccess: 'Lesson has been permanently deleted',
+    lessonRestoredSuccess: 'Lesson has been successfully restored',
   },
 
   /**

@@ -109,7 +109,6 @@ export class CourseController {
   @Post('archived')
   @ApiOperation({ summary: 'Get Archived Courses' })
   async findAllArchivedCourses(
-    @CurrentUser() user: UserEntity,
     @Body() paginationDto: PaginationDto,
   ): Promise<SuccessResponse> {
     const courses = await this.service.getArchivedCourses(paginationDto, [
