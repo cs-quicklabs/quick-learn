@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { And, FindOptionsOrder, FindOptionsWhere, ILike, In } from 'typeorm';
+import { FindOptionsOrder, FindOptionsWhere, ILike, In } from 'typeorm';
 import { BasicCrudService } from '@src/common/services';
 import { CourseEntity, UserEntity, LessonEntity } from '@src/entities';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -126,12 +126,15 @@ export class CourseService extends BasicCrudService<CourseEntity> {
         },
       };
     }
-    const { lessons, ...baseOptions } = options;
     const course = await this.repository.findOne({
-      where: { ...baseOptions },
+      where: { ...options },
       relations: [...courseRelations, ...relations],
       order: sort,
     });
+
+    if (!course) {
+      throw new BadRequestException(en.invalidCourse);
+    }
 
     if (!course.lessons) {
       course.lessons = [];

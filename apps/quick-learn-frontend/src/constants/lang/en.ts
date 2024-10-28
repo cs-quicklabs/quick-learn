@@ -99,7 +99,7 @@ export const en = {
     description:
       'Following courses have been made public by community members. You can copy these courses to your organization and make changes as per your requirements.',
     course: 'Courses',
-    notfound: 'no courses found',
+    notfound: 'No Courses found',
   },
   common: {
     cancel: 'Cancel',

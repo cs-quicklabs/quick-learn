@@ -66,7 +66,7 @@ const CoummintyCourseRepository = () => {
             })
           ) : (
             <li className="flex justify-center  col-span-5 text-gray-500">
-              {en.lesson.notfound}
+              {en.CommunityCouse.notfound}
             </li>
           )}
         </ul>
