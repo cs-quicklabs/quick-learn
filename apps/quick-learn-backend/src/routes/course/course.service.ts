@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsOrder, FindOptionsWhere, ILike, In } from 'typeorm';
+import { And, FindOptionsOrder, FindOptionsWhere, ILike, In } from 'typeorm';
 import { BasicCrudService } from '@src/common/services';
 import { CourseEntity, UserEntity, LessonEntity } from '@src/entities';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -33,19 +33,21 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     relations: string[] = [], // additional relations to include
   ): Promise<CourseEntity[]> {
     const queryBuilder = this.repository.createQueryBuilder('courses');
-  
+
     // Apply filters from options
     if (options) {
       Object.keys(options).forEach((key) => {
-        queryBuilder.andWhere(`courses.${key} = :${key}`, { [key]: options[key] });
+        queryBuilder.andWhere(`courses.${key} = :${key}`, {
+          [key]: options[key],
+        });
       });
     }
-  
+
     // Dynamically include relations
     relations.forEach((relation) => {
       queryBuilder.leftJoinAndSelect(`courses.${relation}`, relation);
     });
-  
+
     // Join course_category and count lessons
     queryBuilder
       .leftJoinAndSelect('courses.course_category', 'course_category')
@@ -54,14 +56,20 @@ export class CourseService extends BasicCrudService<CourseEntity> {
         'courses.lessons_count',
         'courses.lessons',
         'lessons',
-        (qb) => qb.andWhere('lessons.archived = :archivedLessons', { archivedLessons: options.archived })
+        (qb) =>
+          qb
+            .andWhere('lessons.archived = :archivedLessons', {
+              archivedLessons: false,
+            })
+            .andWhere('lessons.approved = :approvedLessons', {
+              approvedLessons: true,
+            }),
       )
       .orderBy('courses.created_at', 'DESC')
       .addOrderBy('course_category.created_at', 'DESC');
-  
+
     return await queryBuilder.getMany();
   }
-  
 
   /**
    * Creates a new course.
@@ -118,19 +126,24 @@ export class CourseService extends BasicCrudService<CourseEntity> {
         },
       };
     }
+    const { lessons, ...baseOptions } = options;
     const course = await this.repository.findOne({
-      where: { ...options },
+      where: { ...baseOptions },
       relations: [...courseRelations, ...relations],
       order: sort,
     });
-    if (!course) {
-      throw new BadRequestException(en.CourseNotFound);
-    }
 
-    course.lessons = course.lessons.map((lesson) => ({
-      ...lesson,
-      content: Helpers.limitSanitizedContent(lesson.content),
-    })) as LessonEntity[];
+    if (!course.lessons) {
+      course.lessons = [];
+    } else {
+      // Filter lessons if they exist
+      course.lessons = course.lessons
+        .filter((lesson) => !lesson.archived && lesson.approved)
+        .map((lesson) => ({
+          ...lesson,
+          content: Helpers.limitSanitizedContent(lesson.content),
+        })) as LessonEntity[];
+    }
 
     return course;
   }

@@ -74,7 +74,6 @@ export class CourseController {
     const data = await this.service.getCourseDetails(
       {
         id: +id,
-        lessons: { archived: false, approved: true },
         is_community_available: true,
       },
       ['lessons', 'lessons.created_by_user'],
