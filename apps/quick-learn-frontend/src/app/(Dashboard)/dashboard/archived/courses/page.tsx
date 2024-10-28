@@ -1,4 +1,5 @@
 import React from 'react';
+import ArchivedCourses from './ArchivedCourses';
 
 export const metadata = {
   title: 'Primary Skills • Quick Learn',
@@ -6,7 +7,7 @@ export const metadata = {
 };
 
 const page = () => {
-  return <div>Courses</div>;
+  return <ArchivedCourses />;
 };
 
 export default page;

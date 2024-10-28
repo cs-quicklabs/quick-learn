@@ -22,8 +22,9 @@ import {
 } from './dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { en } from '@src/lang/en';
+import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
+import { GetUserQueryDto } from './dto/get-user-query.dto';
 
-// using the global prefix from main file (api) and putting versioning here as v1 /api/v1/users
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -37,7 +38,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Metadata for the add/update user(s).' })
   async metadata(@CurrentUser() user: UserEntity): Promise<SuccessResponse> {
     const metadata = await this.usersService.getMetadata(user);
-    return new SuccessResponse(`Successfully got user's metadata.`, metadata);
+    return new SuccessResponse(en.successUserMetadata, metadata);
   }
 
   @Post()
@@ -91,12 +92,9 @@ export class UsersController {
   async activateUser(
     @Body() body: { uuid: string; active: boolean },
   ): Promise<SuccessResponse> {
-    const { active, uuid } = body; // Destructure the active property from the request body
+    const { active, uuid } = body;
     const updatedUser = await this.usersService.update({ uuid }, { active });
-    return new SuccessResponse(
-      'User status updated successfully.',
-      updatedUser,
-    );
+    return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
   }
 
   @Get(':uuid')
@@ -106,13 +104,23 @@ export class UsersController {
     type: 'string',
     required: true,
   })
-  async findOne(@Param('uuid') uuid: string): Promise<SuccessResponse> {
-    const user = await this.usersService.findOne({ uuid });
+  async findOne(
+    @Param('uuid') uuid: string,
+    @Query() getUserQueryDto: GetUserQueryDto,
+  ): Promise<SuccessResponse> {
+    const relations = [];
+    if (getUserQueryDto.is_load_assigned_roadmaps) {
+      relations.push('assigned_roadmaps');
+    }
+    if (getUserQueryDto.is_load_assigned_courses) {
+      relations.push('assigned_roadmaps.courses');
+    }
+    const user = await this.usersService.findOne({ uuid }, relations);
     return new SuccessResponse(en.successGotUser, user);
   }
 
   @Patch(':uuid')
-  @ApiOperation({ summary: 'Update specific user by  uuid' })
+  @ApiOperation({ summary: 'Update specific user by uuid' })
   @ApiParam({
     name: 'uuid',
     type: 'string',
@@ -127,7 +135,22 @@ export class UsersController {
       ...updateUserDto,
       updated_by: currentUser,
     });
-    return new SuccessResponse('Successfully updated user.', user);
+    return new SuccessResponse(en.successUserUpdate, user);
+  }
+
+  @Patch(':uuid/assign-roadmaps')
+  @ApiOperation({ summary: 'Assign roadmaps to user' })
+  @ApiParam({
+    name: 'uuid',
+    type: 'string',
+    required: true,
+  })
+  async assignRoadmaps(
+    @Param('uuid') uuid: string,
+    @Body() assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
+  ): Promise<SuccessResponse> {
+    await this.usersService.assignRoadmaps(uuid, assignRoadmapsToUserDto);
+    return new SuccessResponse(en.successUserUpdated);
   }
 
   @Delete(':uuid')
@@ -139,6 +162,6 @@ export class UsersController {
   })
   async remove(@Param('uuid') uuid: string) {
     await this.usersService.remove(uuid);
-    return new SuccessResponse('Successfully deleted user.');
+    return new SuccessResponse(en.successUserDelete);
   }
 }

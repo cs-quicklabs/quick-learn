@@ -18,6 +18,8 @@ import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
+import { PaginationDto } from '../users/dto';
+import { CourseArchiveDto } from './dto/course-archive.dto';
 
 @ApiTags('Course')
 @Controller({
@@ -66,7 +68,6 @@ export class CourseController {
     return new SuccessResponse(en.GetCourseDetails, data);
   }
 
-  //get unarchived and approved lesson only
   @Get('/community/:id')
   @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Get course details' })
@@ -103,11 +104,43 @@ export class CourseController {
     return new SuccessResponse(en.UpdateCourse);
   }
 
+  @Post('archived')
+  @ApiOperation({ summary: 'Get Archived Courses' })
+  async findAllArchivedCourses(
+    @CurrentUser() user: UserEntity,
+    @Body() paginationDto: PaginationDto,
+  ): Promise<SuccessResponse> {
+    const courses = await this.service.getArchivedCourses(paginationDto, [
+      'updated_by',
+      'course_category',
+    ]);
+    return new SuccessResponse(en.successGotArchivedCourses, courses);
+  }
+
+  @Post('activate')
+  @ApiOperation({ summary: 'Activate or archive course' })
+  async activateCourse(
+    @Body() body: CourseArchiveDto,
+    @CurrentUser() currentUser: UserEntity,
+  ): Promise<SuccessResponse> {
+    await this.service.updateCourseArchiveStatus(
+      body.id,
+      !body.active, // Convert active to archived
+      currentUser,
+    );
+    return new SuccessResponse(
+      body.active ? en.unarchiveCourse : en.archiveCourse,
+    );
+  }
+
   @Delete(':id')
   @ApiParam({ name: 'id', description: 'Course id', required: true })
-  @ApiOperation({ summary: 'Delete a course' })
-  async archiveCourse(@Param('id') id: string) {
-    await this.service.archiveCourse(+id);
+  @ApiOperation({ summary: 'Archive a course' })
+  async archiveCourse(
+    @Param('id') id: string,
+    @CurrentUser() currentUser: UserEntity,
+  ) {
+    await this.service.archiveCourse(+id, currentUser);
     return new SuccessResponse(en.archiveCourse);
   }
 }

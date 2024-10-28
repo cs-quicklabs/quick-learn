@@ -15,6 +15,7 @@ export enum userApiEnum {
   GET_USER_PROFILE = '/profile',
   CHANGE_PASSWORD = '/profile/change-password',
   USER_PREFERENCES = '/profile/user-preferences',
+  ASSIGN_ROADMAPS = 'users/:uuid/assign-roadmaps',
 }
 
 export enum accountApiEnum {
@@ -40,7 +41,19 @@ export enum ContentRepositoryApiEnum {
 }
 
 export enum ArchivedApiEnum {
+  // User-related endpoints
   ACTIVATE_USER = '/users/activate',
   ARCHIVED_USERS = '/users/archived',
+
+  // Roadmap-related endpoints
   ARCHIVED_ROADMAPS = '/roadmap/archived',
+  ACTIVATE_ROADMAP = '/roadmap/activate',
+
+  // Course-related endpoints
+  ARCHIVED_COURSES = '/course/archived',
+  ACTIVATE_COURSE = '/course/activate',
+
+  // Lesson-related endpoints
+  ARCHIVED_LESSONS = '/lesson/archived',
+  ACTIVATE_LESSON = '/lesson/activate',
 }
