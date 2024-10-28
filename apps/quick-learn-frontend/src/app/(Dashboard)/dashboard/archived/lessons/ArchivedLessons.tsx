@@ -77,17 +77,20 @@ const ArchivedLessons = () => {
     }
   }, [fetchLessons, hasMore, isLoading, page, searchValue]);
 
-  const handleDeleteLesson = useCallback(async (id: number) => {
-    try {
-      await deleteLesson(id);
-      setPage(1);
-      await fetchLessons(1, searchValue, true);
-      setDeleteId(false);
-      toast.success(en.archivedSection.lessonDeletedSuccess);
-    } catch (error) {
-      toast.error(en.common.somethingWentWrong);
-    }
-  }, [fetchLessons, searchValue]);
+  const handleDeleteLesson = useCallback(
+    async (id: number) => {
+      try {
+        await deleteLesson(id);
+        setPage(1);
+        await fetchLessons(1, searchValue, true);
+        setDeleteId(false);
+        toast.success(en.archivedSection.lessonDeletedSuccess);
+      } catch (error) {
+        toast.error(en.common.somethingWentWrong);
+      }
+    },
+    [fetchLessons, searchValue],
+  );
 
   const restoreLesson = useCallback(
     async (id: number) => {
@@ -138,9 +141,12 @@ const ArchivedLessons = () => {
             : en.archivedSection.confirmDeleteLessonSubtext
         }
         open={Boolean(restoreId || deleteId)}
+        //@ts-expect-error will never be true
         setOpen={restoreId ? setRestoreId : setDeleteId}
         onConfirm={() =>
-          restoreId ? restoreLesson(restoreId) : handleDeleteLesson(deleteId as number)
+          restoreId
+            ? restoreLesson(restoreId)
+            : handleDeleteLesson(deleteId as number)
         }
       />
       <h1 className="text-lg leading-6 font-medium text-gray-900">
