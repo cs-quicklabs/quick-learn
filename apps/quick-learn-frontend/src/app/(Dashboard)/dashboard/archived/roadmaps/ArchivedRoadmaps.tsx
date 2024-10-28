@@ -21,7 +21,6 @@ import { TRoadmap } from '@src/shared/types/contentRepository';
 import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
-import { showApiMessageInToast } from '@src/utils/toastUtils';
 
 const LoadingSkeleton = () => (
   <>
@@ -47,8 +46,8 @@ const ArchivedRoadmaps = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
-  const [restoreId, setRestoreId] = useState<string | false>(false);
-  const [deleteId, setDeleteId] = useState<string | false>(false);
+  const [restoreId, setRestoreId] = useState<number | false>(false);
+  const [deleteId, setDeleteId] = useState<number | false>(false);
 
   const fetchRoadmaps = useCallback(
     async (currentPage: number, search: string, resetList = false) => {
@@ -61,10 +60,7 @@ const ArchivedRoadmaps = () => {
           setRoadmapsList((prev) => [...prev, ...res.data.items]);
         }
         setPage(res.data.page + 1);
-        setHasMore(
-          Boolean(res.data.total_pages) &&
-            res.data.page !== res.data.total_pages,
-        );
+        setHasMore(res.data.page < res.data.total_pages);
       } catch (error) {
         toast.error(en.common.noResultFound);
       } finally {
@@ -81,34 +77,31 @@ const ArchivedRoadmaps = () => {
     }
   }, [fetchRoadmaps, hasMore, isLoading, page, searchValue]);
 
-  const restoreRoadmap = useCallback(
-    async (id: string) => {
+  const handleDeleteRoadmap = useCallback(
+    async (id: number) => {
       try {
-        await activateRoadmap({ active: true, id: parseInt(id, 10) });
+        await deleteRoadmap(id);
         setPage(1);
         await fetchRoadmaps(1, searchValue, true);
-        toast.success(en.common.somethingWentWrong);
+        setDeleteId(false);
+        toast.success(en.archivedSection.roadmapDeletedSuccess);
       } catch (error) {
         toast.error(en.common.somethingWentWrong);
-      } finally {
-        setRestoreId(false);
       }
     },
     [fetchRoadmaps, searchValue],
   );
 
-  const handleDelete = useCallback(
-    async (id: string) => {
+  const restoreRoadmap = useCallback(
+    async (id: number) => {
       try {
-        await deleteRoadmap(parseInt(id, 10)).then((res) =>
-          showApiMessageInToast(res),
-        );
+        await activateRoadmap({ active: true, id });
         setPage(1);
         await fetchRoadmaps(1, searchValue, true);
+        setRestoreId(false);
+        toast.success(en.archivedSection.roadmapRestoredSuccess);
       } catch (error) {
         toast.error(en.common.somethingWentWrong);
-      } finally {
-        setDeleteId(false);
       }
     },
     [fetchRoadmaps, searchValue],
@@ -136,7 +129,6 @@ const ArchivedRoadmaps = () => {
 
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
-      {isLoading && <FullPageLoader />}
       <ConformationModal
         title={
           restoreId
@@ -149,14 +141,12 @@ const ArchivedRoadmaps = () => {
             : en.archivedSection.confirmDeleteRoadmapSubtext
         }
         open={Boolean(restoreId || deleteId)}
-        //@ts-expect-error will never be set true
+        //@ts-expect-error will never be 'true'
         setOpen={restoreId ? setRestoreId : setDeleteId}
         onConfirm={() =>
           restoreId
             ? restoreRoadmap(restoreId)
-            : deleteId
-            ? handleDelete(deleteId)
-            : null
+            : handleDeleteRoadmap(deleteId as number)
         }
       />
       <h1 className="text-lg leading-6 font-medium text-gray-900">
@@ -171,7 +161,7 @@ const ArchivedRoadmaps = () => {
           handleQueryChange(e.target.value)
         }
       />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full min-h-[200px]">
         {isInitialLoad ? (
           <LoadingSkeleton />
         ) : roadmapsList.length === 0 ? (
@@ -182,6 +172,8 @@ const ArchivedRoadmaps = () => {
             next={getNextRoadmaps}
             hasMore={hasMore}
             loader={<LoadingSkeleton />}
+            scrollThreshold={0.8}
+            style={{ overflow: 'visible' }}
           >
             {roadmapsList.map((item) => (
               <ArchivedCell
@@ -194,8 +186,8 @@ const ArchivedRoadmaps = () => {
                     : ''
                 }
                 deactivationDate={item.updated_at}
-                onClickDelete={() => setDeleteId(item.id)}
-                onClickRestore={() => setRestoreId(item.id)}
+                onClickDelete={() => setDeleteId(Number(item.id))}
+                onClickRestore={() => setRestoreId(Number(item.id))}
                 alternateButton
               />
             ))}

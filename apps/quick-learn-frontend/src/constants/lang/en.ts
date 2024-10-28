@@ -243,6 +243,8 @@ export const en = {
     confirmDeleteRoadmap: 'Are you sure you want to delete this roadmap?',
     confirmDeleteRoadmapSubtext:
       'All the information regarding this roadmap will be lost. If this was assigned to any user, they will not be able to access this roadmap anymore.',
+    roadmapDeletedSuccess: 'Roadmap has been permanently deleted',
+    roadmapRestoredSuccess: 'Roadmap has been successfully restored',
 
     // Archived courses
     archivedCourses: 'Archived Courses',
