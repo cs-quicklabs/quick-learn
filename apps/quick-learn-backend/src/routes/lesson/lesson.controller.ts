@@ -17,6 +17,8 @@ import { CreateLessonDto, UpdateLessonDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
+import { PaginationDto } from '../users/dto';
+import { CourseArchiveDto } from '../course/dto/course-archive.dto';
 
 @ApiTags('Lessons')
 @Controller({
@@ -141,5 +143,35 @@ export class LessonController {
   ): Promise<SuccessResponse> {
     await this.service.archiveLesson(+id, user.id);
     return new SuccessResponse(en.archiveLesson);
+  }
+
+  @ApiOperation({ summary: 'Get all archived lessons.' })
+  @Post('archived')
+  async findAllArchivedLessons(
+    @CurrentUser() user: UserEntity,
+    @Body() paginationDto: PaginationDto,
+  ): Promise<SuccessResponse> {
+    const lessons = await this.service.getArchivedLessons(paginationDto, [
+      'course',
+      'created_by_user',
+      'archive_by_user',
+      'approved_by_user',
+    ]);
+    return new SuccessResponse(en.getLessons, lessons);
+  }
+
+  @ApiOperation({ summary: 'Activate or deactivate a lesson.' })
+  @Post('activate')
+  async activateLesson(
+    @Body() body: CourseArchiveDto,
+    @CurrentUser() user: UserEntity,
+  ): Promise<SuccessResponse> {
+    if (!body.active) {
+      await this.service.archiveLesson(user.id, body.id);
+      return new SuccessResponse(en.archiveLesson);
+    }
+
+    await this.service.unarchiveLesson(body.id);
+    return new SuccessResponse(en.unarchiveLesson);
   }
 }

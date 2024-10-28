@@ -14,6 +14,8 @@ import { RoadmapService } from '../roadmap/roadmap.service';
 import { en } from '@src/lang/en';
 import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 import Helpers from '@src/common/utils/helper';
+import { PaginationDto } from '../users/dto';
+import { PaginatedResult } from '@src/common/interfaces';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -114,7 +116,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     });
   }
 
-  async getCourseDetails(
+  /**
+   * Gets course details with specified relations
+   */ async getCourseDetails(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
   ): Promise<CourseEntity> {
@@ -209,11 +213,101 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     await this.repository.save({ ...course, roadmaps });
   }
 
-  async archiveCourse(id: number): Promise<void> {
-    const course = await this.getCourseDetails({ id });
+  /**
+   * Updates the archive status of a course
+   */
+  async updateCourseArchiveStatus(
+    id: number,
+    archived: boolean,
+    currentUser: UserEntity,
+  ): Promise<void> {
+    // For status update, we don't need lessons
+    const course = await this.repository.findOne({
+      where: { id },
+      relations: ['course_category'], // Only include necessary relations
+    });
+
     if (!course) {
       throw new BadRequestException(en.CourseNotFound);
     }
-    await this.update({ id }, { archived: true });
+
+    await this.update(
+      { id },
+      {
+        archived,
+        updated_by_id: currentUser.id,
+      },
+    );
+  }
+
+  /**
+   * Archives a course
+   */
+  async archiveCourse(id: number, currentUser: UserEntity): Promise<void> {
+    // For archiving, we don't need lessons
+    const course = await this.repository.findOne({
+      where: { id },
+      relations: ['course_category'], // Only include necessary relations
+    });
+
+    if (!course) {
+      throw new BadRequestException(en.CourseNotFound);
+    }
+
+    await this.update(
+      { id },
+      {
+        archived: true,
+        updated_by_id: currentUser.id,
+      },
+    );
+  }
+
+  /**
+   * Gets archived courses with pagination
+   */
+  async getArchivedCourses(
+    paginationDto: PaginationDto,
+    relations: string[] = [],
+  ): Promise<PaginatedResult<CourseEntity>> {
+    const { page = 1, limit = 10, q = '' } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    const allRelations = [...new Set([...courseRelations, ...relations])];
+
+    const baseWhere: FindOptionsWhere<CourseEntity> = { archived: true };
+
+    const whereConditions: FindOptionsWhere<CourseEntity>[] = [];
+
+    if (q) {
+      whereConditions.push(
+        { ...baseWhere, name: ILike(`%${q}%`) },
+        { ...baseWhere, description: ILike(`%${q}%`) },
+        {
+          ...baseWhere,
+          course_category: {
+            name: ILike(`%${q}%`),
+          },
+        },
+      );
+    }
+
+    const [items, total] = await this.repository.findAndCount({
+      where: q ? whereConditions : baseWhere,
+      relations: allRelations,
+      skip,
+      take: limit,
+      order: {
+        updated_at: 'DESC',
+      },
+    });
+
+    return {
+      items,
+      total,
+      page,
+      total_pages: Math.ceil(total / limit),
+      limit,
+    };
   }
 }

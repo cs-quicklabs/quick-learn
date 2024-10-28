@@ -46,6 +46,7 @@ export interface TCourse extends TCreateCourse {
   created_at: string;
   updated_at: string;
   lessons?: TLesson[];
+  updated_by?: TUser;
 }
 
 export type TAssignModalMetadata = {
@@ -73,4 +74,5 @@ export type TLesson = {
   updated_at: string;
   course_id: number;
   course: TCourse;
+  updated_by: TUser;
 };

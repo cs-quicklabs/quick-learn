@@ -8,6 +8,8 @@ import {
   BeforeInsert,
   OneToMany,
   VirtualColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { UserTypeEntity } from './user-type.entity';
@@ -17,6 +19,7 @@ import * as bcrypt from 'bcryptjs';
 import { SkillEntity } from './skill.entity';
 import { RoadmapEntity } from './roadmap.entity';
 import { LessonEntity } from './lesson.entity';
+import { CourseEntity } from './course.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -98,6 +101,22 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => LessonEntity, (user) => user.archive_by)
   archive_by_lessons: LessonEntity[];
 
+  @ManyToMany(() => RoadmapEntity, (roadmap) => roadmap.users, {
+    cascade: true,
+  })
+  @JoinTable({
+    name: 'user_roadmaps',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'roadmap_id',
+      referencedColumnName: 'id',
+    },
+  })
+  assigned_roadmaps: RoadmapEntity[];
+
   @Column({ nullable: true })
   updated_by_id: number;
 
@@ -107,4 +126,7 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => UserEntity, (user) => user.updated_by)
   updated_users: UserEntity[];
+
+  @OneToMany(() => CourseEntity, (course) => course.updated_by)
+  updated_courses: CourseEntity[];
 }
