@@ -21,7 +21,7 @@ export class CreateUserDto {
   first_name: string;
 
   @ApiProperty({ example: 'Doe' })
-  @IsNotEmpty({message:"Password should not be empty"})
+  @IsNotEmpty({ message: 'Password should not be empty' })
   @IsString()
   @MaxLength(50)
   last_name: string;
@@ -34,10 +34,10 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({ example: 'password' })
-  @IsNotEmpty({message:"Password should not be empty"})
+  @IsNotEmpty({ message: 'Password should not be empty' })
   @IsString()
   @MinLength(8)
-  @MaxLength(32,{message:"Password must be less than 32 character"})
+  @MaxLength(32, { message: 'Password must be less than 32 character' })
   @IsStrongPassword({
     minLength: 8,
     minLowercase: 1,

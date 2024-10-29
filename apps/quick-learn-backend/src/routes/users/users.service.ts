@@ -95,7 +95,6 @@ export class UsersService extends PaginationService<UserEntity> {
     let conditions:
       | FindOptionsWhere<UserEntity>
       | FindOptionsWhere<UserEntity>[] = {
-      ...filter,
       team_id: user.team_id,
       user_type_id: Or(Equal(userTypeId), MoreThan(userTypeId)),
     };
