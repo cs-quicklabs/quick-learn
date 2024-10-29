@@ -42,6 +42,8 @@ export enum ContentRepositoryApiEnum {
 
 export enum ArchivedApiEnum {
   // User-related endpoints
+  USERS = 'users',
+  INACTIVE_USERS = '/users/inactive',
   ACTIVATE_USER = '/users/activate',
   ARCHIVED_USERS = '/users/archived',
 

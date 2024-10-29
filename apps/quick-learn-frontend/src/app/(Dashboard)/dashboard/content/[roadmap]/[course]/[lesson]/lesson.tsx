@@ -32,6 +32,12 @@ const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
+type CreateLessonPayload = {
+  name: string;
+  content: string;
+  course_id: string;
+};
+
 const lessonSchema = z.object({
   name: z
     .string()
@@ -136,7 +142,11 @@ const Lesson = () => {
 
   function onAdd(data: LessonSchemaType) {
     setIsEditing(false);
-    createLesson({ ...data, course_id: courseId })
+
+    createLesson({
+      ...data,
+      course_id: courseId,
+    } as CreateLessonPayload)
       .then((res) => {
         showApiMessageInToast(res);
         router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);

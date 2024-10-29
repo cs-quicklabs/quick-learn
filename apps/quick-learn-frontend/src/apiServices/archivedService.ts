@@ -23,32 +23,17 @@ export const activateUser = async (payload: {
 };
 
 /**
- * Roadmap activation service
+ * Delete user permanently
  */
-export const activateRoadmap = async (payload: {
-  active: boolean;
-  id: number;
-}): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.post<AxiosSuccessResponse>(
-    ArchivedApiEnum.ACTIVATE_ROADMAP,
-    payload,
+export const deleteUser = async (
+  uuid: string,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.delete<AxiosSuccessResponse>(
+    `/${ArchivedApiEnum.USERS}/${uuid}`,
   );
   return response.data;
 };
 
-/**
- * Course activation service
- */
-export const activateCourse = async (payload: {
-  active: boolean;
-  id: number;
-}): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.post<AxiosSuccessResponse>(
-    ArchivedApiEnum.ACTIVATE_COURSE,
-    payload,
-  );
-  return response.data;
-};
 /**
  * Get archived users with pagination
  */
@@ -64,6 +49,32 @@ export const getArchivedUsers = async (
   const response = await axiosInstance.post<
     AxiosSuccessResponse<PaginateWrapper<TUser[]>>
   >(ArchivedApiEnum.ARCHIVED_USERS, body);
+  return response.data;
+};
+
+/**
+ * Roadmap activation service
+ */
+export const activateRoadmap = async (payload: {
+  active: boolean;
+  id: number;
+}): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    ArchivedApiEnum.ACTIVATE_ROADMAP,
+    payload,
+  );
+  return response.data;
+};
+
+/**
+ * Delete roadmap permanently
+ */
+export const deleteRoadmap = async (
+  id: number,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.delete<AxiosSuccessResponse>(
+    `/roadmap/${id}`,
+  );
   return response.data;
 };
 
@@ -86,6 +97,32 @@ export const getArchivedRoadmaps = async (
 };
 
 /**
+ * Course activation service
+ */
+export const activateCourse = async (payload: {
+  active: boolean;
+  id: number;
+}): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    ArchivedApiEnum.ACTIVATE_COURSE,
+    payload,
+  );
+  return response.data;
+};
+
+/**
+ * Delete course permanently
+ */
+export const deleteCourse = async (
+  id: number,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.delete<AxiosSuccessResponse>(
+    `/course/${id}`,
+  );
+  return response.data;
+};
+
+/**
  * Get archived courses with pagination
  */
 export const getArchivedCourses = async (
@@ -103,6 +140,9 @@ export const getArchivedCourses = async (
   return response.data;
 };
 
+/**
+ * Lesson activation service
+ */
 export const activateLesson = async (payload: {
   active: boolean;
   id: number;
@@ -114,6 +154,21 @@ export const activateLesson = async (payload: {
   return response.data;
 };
 
+/**
+ * Delete lesson permanently
+ */
+export const deleteLesson = async (
+  id: number,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.delete<AxiosSuccessResponse>(
+    `/lesson/${id}`,
+  );
+  return response.data;
+};
+
+/**
+ * Get archived lessons with pagination
+ */
 export const getArchivedLessons = async (
   page: number,
   q = '',

@@ -25,10 +25,11 @@ export const en = {
   invalidRoadmaps: 'Roadmaps does not exist.',
   roadmapCategriesHasData: 'Roadmap category has roadmap(s) assigned.',
   successUpdateRoadmap: 'Roadmap category is updated.',
-  successDeleteRoadmap: 'Roadmap category is deleted.',
+  successDeleteRoadmap: 'Roadmap is deleted.',
   InvalidRoadmapCategory: 'Roadmap category does not exist.',
   RoadmapStatusUpdated: 'Roadmap status updated successfully.',
   RoadmapCoursesAssigned: 'Successfully assigned courses to roadmap.',
+  invalidDeleteCondition: 'Invalid delete condition. An ID is required.',
 
   // Course related messages
   GetAllCourses: 'Successfully got all courses.',
@@ -49,6 +50,7 @@ export const en = {
   successGotArchivedCourses: 'Successfully retrieved archived courses.',
   successCourseStatusUpdate: 'Course status updated successfully.',
   unarchiveCourse: 'Successfully unarchived course.',
+  CourseDeleted: 'Course has been permanently deleted',
 
   // Lesson related messages
   getLessons: 'Successfully got all lessons.',
@@ -60,6 +62,7 @@ export const en = {
   archiveLesson: 'Successfully archived a lesson.',
   unarchiveLesson: 'Successfully unarchived lesson.',
   getArchivedLessons: 'Successfully retrieved archived lessons.',
+  lessonDeleted: 'Lesson has been permanently deleted.',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',

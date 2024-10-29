@@ -70,7 +70,7 @@ export class UsersController {
 
   @Post('archived')
   @ApiOperation({ summary: 'Get Archived Users' })
-  async findAllArchivedUser(
+  async findAllInactiveUsers(
     @CurrentUser() user: UserEntity,
     @Body() paginationDto: PaginationDto,
     @Query() filter: ListFilterDto,
@@ -88,7 +88,7 @@ export class UsersController {
   }
 
   @Post('activate')
-  @ApiOperation({ summary: 'Activate or archive user' })
+  @ApiOperation({ summary: 'Activate or deactivate user' })
   async activateUser(
     @Body() body: { uuid: string; active: boolean },
   ): Promise<SuccessResponse> {
@@ -154,14 +154,14 @@ export class UsersController {
   }
 
   @Delete(':uuid')
-  @ApiOperation({ summary: 'Delete specific user by uuid' })
+  @ApiOperation({ summary: 'Permanently delete user by uuid' })
   @ApiParam({
     name: 'uuid',
     type: 'string',
     required: true,
   })
   async remove(@Param('uuid') uuid: string) {
-    await this.usersService.remove(uuid);
+    await this.usersService.delete({ uuid });
     return new SuccessResponse(en.successUserDelete);
   }
 }

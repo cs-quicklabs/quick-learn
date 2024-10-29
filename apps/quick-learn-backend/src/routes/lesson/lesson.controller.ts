@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -10,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LessonService } from './lesson.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { CreateLessonDto, UpdateLessonDto } from './dto';
@@ -173,5 +174,17 @@ export class LessonController {
 
     await this.service.unarchiveLesson(body.id);
     return new SuccessResponse(en.unarchiveLesson);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Permanently delete a lesson' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the lesson to delete',
+    required: true,
+  })
+  async deleteLesson(@Param('id') id: string): Promise<SuccessResponse> {
+    await this.service.deleteLesson(+id);
+    return new SuccessResponse(en.lessonDeleted);
   }
 }

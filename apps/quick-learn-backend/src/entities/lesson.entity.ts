@@ -23,28 +23,36 @@ export class LessonEntity extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   course_id: number;
 
-  @ManyToOne(() => CourseEntity, (course) => course.lessons)
+  @ManyToOne(() => CourseEntity, (course) => course.lessons, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'course_id' })
   course: CourseEntity;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   created_by: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.created_by_lessons)
+  @ManyToOne(() => UserEntity, (user) => user.created_by_lessons, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'created_by' })
   created_by_user: UserEntity;
 
   @Column({ type: 'int', nullable: true })
   approved_by: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.approved_by_lessons)
+  @ManyToOne(() => UserEntity, (user) => user.approved_by_lessons, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'approved_by' })
   approved_by_user: UserEntity;
 
   @Column({ type: 'int', nullable: true })
   archive_by: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.archive_by_lessons)
+  @ManyToOne(() => UserEntity, (user) => user.archive_by_lessons, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'archive_by' })
   archive_by_user: UserEntity;
 }
