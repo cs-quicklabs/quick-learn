@@ -8,16 +8,13 @@ import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
   constructor(
-    @InjectRepository(LessonEntity) repo,
+    @InjectRepository(LessonEntity) repo: Repository<LessonEntity>,
     private courseService: CourseService,
-    @InjectRepository(LessonEntity)
-    private lessonRepository: Repository<LessonEntity>,
-    private readonly dataSource: DataSource,
   ) {
     super(repo);
   }

@@ -1,3 +1,5 @@
+import ArchivedCell from './ArchivedCell';
+
 export const ClosedEyeIcon = () => {
   return (
     <svg
@@ -292,6 +294,43 @@ export const OpenBookIcon = ({ className }: { className?: string }) => {
         stroke-linecap="round"
         stroke-linejoin="round"
         d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
+      />
+    </svg>
+  );
+};
+
+export const LoadingSkeleton = () => (
+  <>
+    {[1, 2, 3].map((i) => (
+      <ArchivedCell
+        key={i}
+        isLoading={true}
+        title=""
+        subtitle=""
+        deactivatedBy=""
+        deactivationDate=""
+        onClickDelete={() => null}
+        onClickRestore={() => null}
+      />
+    ))}
+  </>
+);
+
+export const SearchIcon = () => {
+  return (
+    <svg
+      className="w-4 h-4 text-gray-500 dark:text-gray-400"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 20 20"
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
       />
     </svg>
   );

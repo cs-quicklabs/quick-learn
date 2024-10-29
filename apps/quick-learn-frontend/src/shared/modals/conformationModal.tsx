@@ -28,12 +28,7 @@ export default function ConformationModal({
   };
 
   return (
-    <Modal
-      show={open}
-      size="md"
-      popup
-      className="fixed inset-x-0 top-0 z-50 h-screen !align-content-center"
-    >
+    <Modal show={open} size="md" popup>
       <Modal.Body className="p-0">
         <div className="relative bg-white rounded-lg shadow">
           <button

@@ -21,23 +21,7 @@ import ConformationModal from '@src/shared/modals/conformationModal';
 import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
-
-const LoadingSkeleton = () => (
-  <>
-    {[1, 2, 3].map((i) => (
-      <ArchivedCell
-        key={i}
-        isLoading={true}
-        title=""
-        subtitle=""
-        deactivatedBy=""
-        deactivationDate=""
-        onClickDelete={() => null}
-        onClickRestore={() => null}
-      />
-    ))}
-  </>
-);
+import { LoadingSkeleton } from '@src/shared/components/UIElements';
 
 const InactiveUsers = () => {
   const [searchValue, setSearchValue] = useState<string>('');
