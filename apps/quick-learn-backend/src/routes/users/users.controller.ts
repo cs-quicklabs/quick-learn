@@ -9,7 +9,7 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { SuccessResponse } from '@src/common/dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
@@ -24,7 +24,6 @@ import { JwtAuthGuard } from '../auth/guards';
 import { en } from '@src/lang/en';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 import { GetUserQueryDto } from './dto/get-user-query.dto';
-
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -39,6 +38,26 @@ export class UsersController {
   async metadata(@CurrentUser() user: UserEntity): Promise<SuccessResponse> {
     const metadata = await this.usersService.getMetadata(user);
     return new SuccessResponse(en.successUserMetadata, metadata);
+  }
+
+  // Add this route BEFORE the :uuid route
+  @Get('my-roadmaps')
+  @ApiOperation({ summary: "Get current user's assigned roadmaps" })
+  @ApiQuery({
+    name: 'include_courses',
+    required: false,
+    type: Boolean,
+    description: 'Include associated courses in the response',
+  })
+  async getCurrentUserRoadmaps(
+    @CurrentUser() user: UserEntity,
+    @Query('include_courses') includeCourses?: boolean,
+  ): Promise<SuccessResponse> {
+    const roadmaps = await this.usersService.getUserRoadmaps(
+      user.id,
+      includeCourses,
+    );
+    return new SuccessResponse(en.successGotUserRoadmaps, roadmaps);
   }
 
   @Post()
@@ -93,10 +112,11 @@ export class UsersController {
     @Body() body: { uuid: string; active: boolean },
   ): Promise<SuccessResponse> {
     const { active, uuid } = body;
-    const updatedUser = await this.usersService.update({ uuid }, { active });
+    const updatedUser = await this.usersService.updateUser(uuid, { active });
     return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
   }
 
+  // This should come AFTER all the specific routes
   @Get(':uuid')
   @ApiOperation({ summary: 'Get specific user by uuid' })
   @ApiParam({

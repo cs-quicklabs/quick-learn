@@ -23,6 +23,7 @@ import { RoadmapService } from '../roadmap/roadmap.service';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 
 const userRelations = ['user_type', 'skill', 'team'];
+
 @Injectable()
 export class UsersService extends PaginationService<UserEntity> {
   constructor(
@@ -139,6 +140,45 @@ export class UsersService extends PaginationService<UserEntity> {
     });
     this.sortByLastLogin(users);
     return users;
+  }
+
+  async getUserRoadmaps(userId: number, includeCourses = false) {
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.assigned_roadmaps', 'roadmap')
+      .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
+      .where('user.id = :userId', { userId })
+      .andWhere('roadmap.archived = :archived', { archived: false });
+
+    if (includeCourses) {
+      queryBuilder
+        .leftJoinAndSelect('roadmap.courses', 'course')
+        .andWhere('course.archived = :courseArchived', {
+          courseArchived: false,
+        });
+    }
+
+    const user = await queryBuilder.getOne();
+
+    if (!user?.assigned_roadmaps) {
+      return [];
+    }
+
+    // Map the results to include hardcoded percentage
+    const roadmapsWithProgress = user.assigned_roadmaps.map((roadmap) => {
+      Object.assign(roadmap, { percentage: 100 });
+
+      if (includeCourses && roadmap.courses) {
+        roadmap.courses = roadmap.courses.map((course) => {
+          Object.assign(course, { percentage: 100 });
+          return course;
+        });
+      }
+
+      return roadmap;
+    });
+
+    return roadmapsWithProgress;
   }
 
   sortByLastLogin(users: UserEntity[]) {

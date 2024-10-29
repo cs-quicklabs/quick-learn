@@ -76,3 +76,26 @@ export type TLesson = {
   course: TCourse;
   updated_by: TUser;
 };
+
+export type TUserRoadmap = {
+  id: number;
+  name: string;
+  description: string;
+  percentage?: number;
+  courses?: TUserCourse[];
+};
+
+export type TUserCourse = {
+  id: number;
+  name: string;
+  description: string;
+  percentage?: number;
+  lessons?: TUserLesson[];
+};
+
+export type TUserLesson = {
+  id: number;
+  name: string;
+  content: string;
+  completed: boolean;
+};
