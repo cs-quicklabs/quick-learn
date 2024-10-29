@@ -63,7 +63,7 @@ const Lesson = () => {
   // get User
   const { user } = useContext(UserContext);
   const isAdmin = [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
-    user?.user_type_id || -1,
+    user?.user_type_id ?? -1,
   );
 
   // For hidding navbar
@@ -75,7 +75,7 @@ const Lesson = () => {
     };
   }, [setHideNavbar]);
 
-  const [isEditing, setIsEditing] = useState<boolean>(true);
+  const [isEditing, setIsEditing] = useState<boolean>(lessonId === 'add');
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const [loading, setLoading] = useState<boolean>(false);

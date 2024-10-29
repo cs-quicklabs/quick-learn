@@ -65,11 +65,7 @@ export default registerAs<AppConfig>('app', () => {
     workingDirectory: process.env.PWD || process.cwd(),
     frontendDomain: process.env.FRONTEND_DOMAIN ?? 'http://localhost:3000',
     backendDomain: process.env.BACKEND_DOMAIN ?? 'http://localhost',
-    port: process.env.APP_PORT
-      ? parseInt(process.env.APP_PORT, 10)
-      : process.env.PORT
-      ? parseInt(process.env.PORT, 10)
-      : 3001,
+    port: process.env.APP_PORT ? parseInt(process.env.APP_PORT, 10) : 3001,
     apiPrefix: process.env.API_PREFIX || 'api',
     smtpEmail: process.env.SMTP_EMAIL,
     smtpHost: process.env.SMTP_HOST,

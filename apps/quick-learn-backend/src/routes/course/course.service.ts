@@ -185,12 +185,14 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       }
     }
 
-    await this.save({
-      ...course,
-      ...updateCourseDto,
-      course_category_id:
-        +updateCourseDto.course_category_id || course.course_category_id,
-    });
+    await this.repository.update(
+      { id },
+      {
+        ...updateCourseDto,
+        course_category_id:
+          +updateCourseDto.course_category_id || course.course_category_id,
+      },
+    );
   }
 
   async assignRoadmapCourse(

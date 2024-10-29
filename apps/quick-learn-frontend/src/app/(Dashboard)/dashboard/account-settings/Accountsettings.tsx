@@ -65,7 +65,7 @@ const AccountSettings = () => {
     getTeamDetails()
       .then((res) => {
         setValue('name', res.data.name);
-        setValue('logo', res.data.logo);
+        setValue('logo', res.data.logo ?? '');
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsPageLoading(false));
