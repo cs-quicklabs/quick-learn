@@ -5,7 +5,7 @@ import { BaseEntity } from './BaseEntity';
 
 @Entity('lesson')
 export class LessonEntity extends BaseEntity {
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 80 })
   name: string;
 
   @Column({ type: 'varchar', nullable: true })

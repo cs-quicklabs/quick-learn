@@ -143,7 +143,7 @@ export const en = {
     // Validation messages
     titleRequired: 'Title is required',
     contentRequired: 'Content is required',
-    titleMaxLength: 'Title cannot exceed 50 characters',
+    titleMaxLength: 'Title cannot exceed 80 characters',
     pendingApproval: 'Pending for approval',
     lesson: 'lessons',
     notfound: 'No Lessons found',

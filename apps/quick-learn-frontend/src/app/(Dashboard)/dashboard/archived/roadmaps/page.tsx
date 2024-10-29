@@ -2,8 +2,8 @@ import React from 'react';
 import ArchivedRoadmaps from './ArchivedRoadmaps';
 
 export const metadata = {
-  title: 'Roadmap Categories • Quick Learn',
-  description: 'Roadmap Categories quick learn',
+  title: 'Archived Roadmaps • Quick Learn',
+  description: 'Archived roadmaps quick learn',
 };
 
 const page = () => {
