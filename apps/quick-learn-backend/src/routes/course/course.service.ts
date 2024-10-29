@@ -185,12 +185,14 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       }
     }
 
-    await this.save({
-      ...course,
-      ...updateCourseDto,
-      course_category_id:
-        +updateCourseDto.course_category_id || course.course_category_id,
-    });
+    await this.repository.update(
+      { id },
+      {
+        ...updateCourseDto,
+        course_category_id:
+          +updateCourseDto.course_category_id || course.course_category_id,
+      },
+    );
   }
 
   async assignRoadmapCourse(
@@ -309,5 +311,16 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       total_pages: Math.ceil(total / limit),
       limit,
     };
+  }
+
+  async deleteCourse(id: number): Promise<void> {
+    const course = await this.getCourseDetails({ id }, []); // Get course without lessons to verify existence
+
+    if (!course) {
+      throw new BadRequestException(en.CourseNotFound);
+    }
+
+    // Using the repository's delete method for hard delete
+    await this.repository.delete({ id });
   }
 }

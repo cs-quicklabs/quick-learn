@@ -5,6 +5,7 @@ import { RouteEnum } from '@src/constants/route.enum';
 import { ChildrenProp } from '@src/shared/interfaces/propInterface';
 import {
   ClipboardWithTick,
+  DocumentTextIcon,
   OpenBookIcon,
   ProfileIdentificationCard,
 } from '@src/shared/components/UIElements';
@@ -29,15 +30,12 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
     {
       title: 'Archived Lessons',
       linkTo: RouteEnum.ARCHIVED_LESSONS,
-      icon: <ProfileIdentificationCard />,
+      icon: <DocumentTextIcon />,
     },
   ];
 
   useEffect(() => {
-    // Set body background color when the component mounts
     document.body.style.backgroundColor = 'white';
-
-    // Cleanup function: Change background when leaving the page
     return () => {
       document.body.style.backgroundColor = '';
     };
@@ -46,12 +44,12 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
   return (
     <div className="max-w-7xl mx-auto pb-10 lg:py-6 lg:px-8">
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
-        {/* Sidebar */}
-        <aside className="px-2 py-6 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
+        <aside className="px-2 py-4 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
           <Sidebar navLinks={navLinks} />
         </aside>
-        {/* Main Section */}
-        <main className="max-w-xl pb-12 px-4 lg:col-span-6">{children} </main>
+        <main className="max-w-xl px-4 pb-12 lg:col-span-8">
+          <div className="overflow-hidden bg-white">{children}</div>
+        </main>
       </div>
     </div>
   );

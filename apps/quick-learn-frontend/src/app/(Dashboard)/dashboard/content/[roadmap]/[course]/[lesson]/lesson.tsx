@@ -11,6 +11,7 @@ import {
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import { UserContext } from '@src/context/userContext';
+import AutoResizingTextarea from '@src/shared/components/AutoResizingTextArea';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import Editor from '@src/shared/components/Editor';
 import { FullPageLoader } from '@src/shared/components/UIElements';
@@ -32,12 +33,18 @@ const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
+type CreateLessonPayload = {
+  name: string;
+  content: string;
+  course_id: string;
+};
+
 const lessonSchema = z.object({
   name: z
     .string()
     .trim()
     .min(1, en.lesson.titleRequired)
-    .max(50, en.lesson.titleMaxLength),
+    .max(80, en.lesson.titleMaxLength),
   content: z.string().trim().min(1, en.lesson.contentRequired),
 });
 
@@ -56,7 +63,7 @@ const Lesson = () => {
   // get User
   const { user } = useContext(UserContext);
   const isAdmin = [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
-    user?.user_type_id || -1,
+    user?.user_type_id ?? -1,
   );
 
   // For hidding navbar
@@ -68,7 +75,7 @@ const Lesson = () => {
     };
   }, [setHideNavbar]);
 
-  const [isEditing, setIsEditing] = useState<boolean>(true);
+  const [isEditing, setIsEditing] = useState<boolean>(lessonId === 'add');
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -136,7 +143,11 @@ const Lesson = () => {
 
   function onAdd(data: LessonSchemaType) {
     setIsEditing(false);
-    createLesson({ ...data, course_id: courseId })
+
+    createLesson({
+      ...data,
+      course_id: courseId,
+    } as CreateLessonPayload)
       .then((res) => {
         showApiMessageInToast(res);
         router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
@@ -194,15 +205,12 @@ const Lesson = () => {
             control={control}
             render={({ field, fieldState: { error } }) => (
               <>
-                <textarea
-                  {...field}
-                  className={
-                    'w-full text-3xl md:text-5xl font-bold text-center md:h-20 h-10 border-none overflow-y-auto resize-none md:p-4 focus:outline-none' +
-                    (!isEditing ? ' focus:ring-0' : '')
-                  }
-                  placeholder={en.common.addTitlePlaceholder}
-                  readOnly={!isEditing}
+                <AutoResizingTextarea
+                  value={field.value}
                   onChange={(e) => onChange(field.name, e.target.value)}
+                  isEditing={isEditing}
+                  placeholder={en.common.addTitlePlaceholder}
+                  maxLength={80} // Matches your zod schema validation
                 />
                 {error && (
                   <p className="mt-1 text-red-500 text-sm">{error.message}</p>

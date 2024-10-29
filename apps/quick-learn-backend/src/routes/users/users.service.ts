@@ -7,6 +7,7 @@ import {
   Equal,
   Or,
   In,
+  DeleteResult,
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
@@ -94,7 +95,8 @@ export class UsersService extends PaginationService<UserEntity> {
     let conditions:
       | FindOptionsWhere<UserEntity>
       | FindOptionsWhere<UserEntity>[] = {
-      ...filter,
+      active: filter.active ?? false,
+      team_id: user.team_id,
       user_type_id: Or(Equal(userTypeId), MoreThan(userTypeId)),
     };
 
@@ -166,6 +168,10 @@ export class UsersService extends PaginationService<UserEntity> {
   async updateUser(uuid: UserEntity['uuid'], payload: Partial<UserEntity>) {
     const user = await this.findOne({ uuid });
 
+    if (!user) {
+      throw new BadRequestException(en.userNotFound);
+    }
+
     if (payload.email) {
       const userByEmail = await this.findOne({ email: payload.email });
       if (userByEmail && user.id != userByEmail.id) {
@@ -200,14 +206,21 @@ export class UsersService extends PaginationService<UserEntity> {
       throw new BadRequestException(en.invalidRoadmaps);
     }
 
-    // TODO: delete updated_at column data for user.
-    delete user.updated_at;
-
     await this.userRepository.save({ ...user, assigned_roadmaps: roadmaps });
   }
 
-  async remove(uuid: UserEntity['uuid']): Promise<void> {
-    await this.userRepository.delete(uuid);
+  async delete(condition: FindOptionsWhere<UserEntity>): Promise<DeleteResult> {
+    const user = await this.findOne(condition);
+
+    if (!user) {
+      throw new BadRequestException(en.userNotFound);
+    }
+
+    // Delete associated sessions first
+    await this.sessionService.delete({ user: { id: user.id } });
+
+    // Delete the user
+    return this.userRepository.delete(condition);
   }
 
   async findByEmailOrUUID(email: string, uuid: string): Promise<UserEntity[]> {

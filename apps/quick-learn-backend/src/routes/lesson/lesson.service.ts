@@ -8,11 +8,12 @@ import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
   constructor(
-    @InjectRepository(LessonEntity) repo,
+    @InjectRepository(LessonEntity) repo: Repository<LessonEntity>,
     private courseService: CourseService,
   ) {
     super(repo);
@@ -203,5 +204,20 @@ export class LessonService extends PaginationService<LessonEntity> {
         archived: true,
       },
     );
+  }
+
+  /**
+   * Permanently deletes a lesson
+   * @param id - The id of the lesson to delete
+   * @throws BadRequestException if the lesson doesn't exist
+   */
+  async deleteLesson(id: number): Promise<void> {
+    const lesson = await this.get({ id });
+
+    if (!lesson) {
+      throw new BadRequestException(en.lessonNotFound);
+    }
+
+    await this.repository.delete({ id });
   }
 }

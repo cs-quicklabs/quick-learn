@@ -24,7 +24,7 @@ const ForgotPassword = () => {
   type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
   const handleForgotPassword = async (data: ForgotPasswordFormData) => {
-    forgotPasswordApiCall(data)
+    forgotPasswordApiCall({ email: data.email })
       .then((res) => {
         toast.success(res.message);
         router.push(RouteEnum.LOGIN);

@@ -107,7 +107,6 @@ export class CourseController {
   @Post('archived')
   @ApiOperation({ summary: 'Get Archived Courses' })
   async findAllArchivedCourses(
-    @CurrentUser() user: UserEntity,
     @Body() paginationDto: PaginationDto,
   ): Promise<SuccessResponse> {
     const courses = await this.service.getArchivedCourses(paginationDto, [
@@ -134,13 +133,10 @@ export class CourseController {
   }
 
   @Delete(':id')
-  @ApiParam({ name: 'id', description: 'Course id', required: true })
-  @ApiOperation({ summary: 'Archive a course' })
-  async archiveCourse(
-    @Param('id') id: string,
-    @CurrentUser() currentUser: UserEntity,
-  ) {
-    await this.service.archiveCourse(+id, currentUser);
-    return new SuccessResponse(en.archiveCourse);
+  @ApiParam({ name: 'id', description: 'course id', required: true })
+  @ApiOperation({ summary: 'Delete a course permanently' })
+  async deleteCourse(@Param('id') id: string): Promise<SuccessResponse> {
+    await this.service.deleteCourse(+id);
+    return new SuccessResponse(en.CourseDeleted);
   }
 }

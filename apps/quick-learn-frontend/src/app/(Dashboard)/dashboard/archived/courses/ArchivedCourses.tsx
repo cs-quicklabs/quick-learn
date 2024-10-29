@@ -10,16 +10,18 @@ import React, {
 import {
   activateCourse,
   getArchivedCourses,
+  deleteCourse,
 } from '@src/apiServices/archivedService';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
 import SearchBox from '@src/shared/components/SearchBox';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TCourse } from '@src/shared/types/contentRepository';
 import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
+import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
+import { LoadingSkeleton } from '@src/shared/components/UIElements';
 
 const ArchivedCourses = () => {
   const [searchValue, setSearchValue] = useState<string>('');
@@ -27,6 +29,7 @@ const ArchivedCourses = () => {
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
   const [restoreId, setRestoreId] = useState<string | false>(false);
   const [deleteId, setDeleteId] = useState<string | false>(false);
 
@@ -49,6 +52,7 @@ const ArchivedCourses = () => {
         toast.error(en.common.noResultFound);
       } finally {
         setIsLoading(false);
+        setIsInitialLoad(false);
       }
     },
     [],
@@ -64,12 +68,27 @@ const ArchivedCourses = () => {
     async (id: string) => {
       try {
         await activateCourse({ active: true, id: parseInt(id, 10) });
-        // Reset the list and fetch from the first page
         setPage(1);
         await fetchCourses(1, searchValue, true);
         setRestoreId(false);
+        toast.success(en.archivedSection.courseRestored);
       } catch (error) {
-        toast.error(en.common.noResultFound);
+        toast.error(en.common.somethingWentWrong);
+      }
+    },
+    [fetchCourses, searchValue],
+  );
+
+  const handleDeleteCourse = useCallback(
+    async (id: string) => {
+      try {
+        await deleteCourse(parseInt(id, 10));
+        setPage(1);
+        await fetchCourses(1, searchValue, true);
+        setDeleteId(false);
+        toast.success(en.archivedSection.courseDeleted);
+      } catch (error) {
+        toast.error(en.common.somethingWentWrong);
       }
     },
     [fetchCourses, searchValue],
@@ -83,7 +102,7 @@ const ArchivedCourses = () => {
           setIsLoading(true);
           setSearchValue(_value);
           setPage(1);
-          fetchCourses(1, _value, true).finally(() => setIsLoading(false));
+          fetchCourses(1, _value, true);
         } catch (err) {
           toast.error(en.common.somethingWentWrong);
         }
@@ -97,7 +116,6 @@ const ArchivedCourses = () => {
 
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
-      {isLoading && <FullPageLoader />}
       <ConformationModal
         title={
           restoreId
@@ -113,7 +131,9 @@ const ArchivedCourses = () => {
         //@ts-expect-error will never be set true
         setOpen={restoreId ? setRestoreId : setDeleteId}
         onConfirm={() =>
-          restoreId ? restoreCourse(restoreId) : console.log(deleteId)
+          restoreId
+            ? restoreCourse(restoreId)
+            : deleteId && handleDeleteCourse(deleteId)
         }
       />
       <h1 className="text-lg leading-6 font-medium text-gray-900">
@@ -123,35 +143,42 @@ const ArchivedCourses = () => {
         {en.archivedSection.archivedCoursesSubtext}
       </p>
       <SearchBox
-        value={searchValue}
         handleChange={(e: ChangeEvent<HTMLInputElement>) =>
           handleQueryChange(e.target.value)
         }
       />
-      <div className="flex">
-        <InfiniteScroll
-          dataLength={coursesList.length}
-          next={getNextCourses}
-          hasMore={hasMore}
-          loader={isLoading && <FullPageLoader />}
-        >
-          {coursesList.map((item) => (
-            <ArchivedCell
-              key={item.id}
-              title={item.name}
-              subtitle={item.course_category.name}
-              deactivatedBy={
-                item.updated_by
-                  ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
-                  : ''
-              }
-              deactivationDate={item.updated_at}
-              onClickDelete={() => setDeleteId(item.id)}
-              onClickRestore={() => setRestoreId(item.id)}
-              alternateButton
-            />
-          ))}
-        </InfiniteScroll>
+      <div className="flex flex-col w-full min-h-[200px]">
+        {isInitialLoad ? (
+          <LoadingSkeleton />
+        ) : coursesList.length === 0 ? (
+          <EmptyState type="courses" searchValue={searchValue} />
+        ) : (
+          <InfiniteScroll
+            dataLength={coursesList.length}
+            next={getNextCourses}
+            hasMore={hasMore}
+            loader={<LoadingSkeleton />}
+            scrollThreshold={0.8}
+            style={{ overflow: 'visible' }}
+          >
+            {coursesList.map((item) => (
+              <ArchivedCell
+                key={item.id}
+                title={item.name}
+                subtitle={item.course_category.name}
+                deactivatedBy={
+                  item.updated_by
+                    ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
+                    : ''
+                }
+                deactivationDate={item.updated_at}
+                onClickDelete={() => setDeleteId(item.id)}
+                onClickRestore={() => setRestoreId(item.id)}
+                alternateButton
+              />
+            ))}
+          </InfiniteScroll>
+        )}
       </div>
     </div>
   );
