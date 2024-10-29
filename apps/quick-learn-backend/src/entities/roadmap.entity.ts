@@ -5,6 +5,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { RoadmapCategoryEntity } from './roadmap-category.entity';
@@ -25,22 +26,28 @@ export class RoadmapEntity extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   archived: boolean;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   created_by_user_id: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.roadmaps)
+  @ManyToOne(() => UserEntity, (user) => user.roadmaps, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'created_by_user_id' })
   created_by: UserEntity;
 
   @ManyToOne(
     () => RoadmapCategoryEntity,
     (roadmapCategory) => roadmapCategory.roadmaps,
+    {
+      onDelete: 'SET NULL',
+    },
   )
   @JoinColumn({ name: 'roadmap_category_id' })
   roadmap_category: RoadmapCategoryEntity;
 
   @ManyToMany(() => CourseEntity, (course) => course.roadmaps, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinTable({
     name: 'roadmap_courses',
@@ -54,4 +61,21 @@ export class RoadmapEntity extends BaseEntity {
     },
   })
   courses: CourseEntity[];
+
+  @ManyToMany(() => UserEntity, (user) => user.assigned_roadmaps, {
+    onDelete: 'CASCADE',
+  })
+  users: UserEntity[];
+
+  @Column({ nullable: true })
+  updated_by_id: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.updated_users, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by: UserEntity;
+
+  @OneToMany(() => UserEntity, (user) => user.updated_by)
+  updated_users: UserEntity[];
 }

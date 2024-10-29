@@ -15,6 +15,7 @@ export enum userApiEnum {
   GET_USER_PROFILE = '/profile',
   CHANGE_PASSWORD = '/profile/change-password',
   USER_PREFERENCES = '/profile/user-preferences',
+  ASSIGN_ROADMAPS = 'users/:uuid/assign-roadmaps',
 }
 
 export enum accountApiEnum {
@@ -35,4 +36,26 @@ export enum ContentRepositoryApiEnum {
   LESSON = '/lesson',
   LESSON_UNAPPROVED = '/lesson/unapproved',
   LESSON_ARCHIVED = '/lesson/archived',
+  COMMUNITY_COURSES = 'course/community-course', // to fetch only community courses is true
+  COMMUNITY = 'course/community', //to fetch courses which are community course , unarchived, unapproved
+}
+
+export enum ArchivedApiEnum {
+  // User-related endpoints
+  USERS = 'users',
+  INACTIVE_USERS = '/users/inactive',
+  ACTIVATE_USER = '/users/activate',
+  ARCHIVED_USERS = '/users/archived',
+
+  // Roadmap-related endpoints
+  ARCHIVED_ROADMAPS = '/roadmap/archived',
+  ACTIVATE_ROADMAP = '/roadmap/activate',
+
+  // Course-related endpoints
+  ARCHIVED_COURSES = '/course/archived',
+  ACTIVATE_COURSE = '/course/activate',
+
+  // Lesson-related endpoints
+  ARCHIVED_LESSONS = '/lesson/archived',
+  ACTIVATE_LESSON = '/lesson/activate',
 }

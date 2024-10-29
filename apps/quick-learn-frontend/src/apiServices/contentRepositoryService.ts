@@ -115,24 +115,6 @@ export const assignRoadmapsToCourse = async (
   return response.data;
 };
 
-export const archiveRoadmap = async (
-  id: string,
-): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    ContentRepositoryApiEnum.ROADMAP + `/${id}`,
-  );
-  return response.data;
-};
-
-export const archiveCourse = async (
-  id: string,
-): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    ContentRepositoryApiEnum.COURSE + `/${id}`,
-  );
-  return response.data;
-};
-
 export const createLesson = async (payload: {
   name: string;
   content: string;
@@ -141,6 +123,22 @@ export const createLesson = async (payload: {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     ContentRepositoryApiEnum.LESSON,
     payload,
+  );
+  return response.data;
+};
+
+export const getCommunityCourses = async () => {
+  const response = await axiosInstance.get<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.COMMUNITY_COURSES,
+  );
+  return response.data;
+};
+
+export const getCommunityCourse = async (
+  id: string,
+): Promise<AxiosSuccessResponse<TCourse>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<TCourse>>(
+    ContentRepositoryApiEnum.COMMUNITY + `/${id}`,
   );
   return response.data;
 };

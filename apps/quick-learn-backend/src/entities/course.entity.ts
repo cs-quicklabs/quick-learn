@@ -29,23 +29,41 @@ export class CourseEntity extends BaseEntity {
   @Column({ type: 'bool', default: false })
   is_community_available: boolean;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   created_by_user_id: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.roadmaps)
+  @Column({ type: 'int', nullable: true })
+  updated_by_id: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.updated_courses, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by: UserEntity;
+
+  @ManyToOne(() => UserEntity, (user) => user.roadmaps, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'created_by_user_id' })
   created_by: UserEntity;
 
   @ManyToOne(
     () => CourseCategoryEntity,
     (courseCategory) => courseCategory.courses,
+    {
+      onDelete: 'SET NULL',
+    },
   )
   @JoinColumn({ name: 'course_category_id' })
   course_category: CourseCategoryEntity;
 
-  @ManyToMany(() => RoadmapEntity, (roadmap) => roadmap.courses)
+  @ManyToMany(() => RoadmapEntity, (roadmap) => roadmap.courses, {
+    onDelete: 'CASCADE',
+  })
   roadmaps: RoadmapEntity[];
 
-  @OneToMany(() => LessonEntity, (lesson) => lesson.course)
+  @OneToMany(() => LessonEntity, (lesson) => lesson.course, {
+    cascade: true,
+  })
   lessons: LessonEntity[];
 }

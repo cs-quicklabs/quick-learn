@@ -6,6 +6,8 @@ import {
   Repository,
   Equal,
   Or,
+  In,
+  DeleteResult,
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
@@ -17,6 +19,8 @@ import { emailSubjects } from '@src/common/constants/email-subject';
 import { UserEntity, UserTypeEntity } from '@src/entities';
 import { SessionService } from '../auth/session.service';
 import { en } from '@src/lang/en';
+import { RoadmapService } from '../roadmap/roadmap.service';
+import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 
 const userRelations = ['user_type', 'skill', 'team'];
 @Injectable()
@@ -30,6 +34,7 @@ export class UsersService extends PaginationService<UserEntity> {
     private skillRepository: Repository<SkillEntity>,
     private emailService: EmailService,
     private sessionService: SessionService,
+    private roadmapService: RoadmapService,
   ) {
     super(userRepository);
   }
@@ -83,12 +88,15 @@ export class UsersService extends PaginationService<UserEntity> {
   async findAll(
     user: UserEntity,
     paginationDto: PaginationDto,
-    filter: ListFilterDto,
+    filter: ListFilterDto & { active: boolean },
+    extraRelations: string[] = [],
   ): Promise<UserEntity[] | PaginatedResult<UserEntity>> {
     const userTypeId = user.user_type_id;
     let conditions:
       | FindOptionsWhere<UserEntity>
       | FindOptionsWhere<UserEntity>[] = {
+      ...filter,
+      team_id: user.team_id,
       user_type_id: Or(Equal(userTypeId), MoreThan(userTypeId)),
     };
 
@@ -118,16 +126,16 @@ export class UsersService extends PaginationService<UserEntity> {
       conditions = queryConditions;
     }
 
+    const relations = [...userRelations, ...extraRelations];
+
     if (paginationDto.mode == 'paginate') {
-      const results = await this.paginate(paginationDto, conditions, [
-        ...userRelations,
-      ]);
+      const results = await this.paginate(paginationDto, conditions, relations);
       this.sortByLastLogin(results.items);
       return results;
     }
     const users = await this.userRepository.find({
       where: conditions,
-      relations: [...userRelations],
+      relations: relations,
     });
     this.sortByLastLogin(users);
     return users;
@@ -147,14 +155,22 @@ export class UsersService extends PaginationService<UserEntity> {
     });
   }
 
-  async findOne(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
+  async findOne(
+    options: FindOptionsWhere<UserEntity>,
+    relations: string[] = [],
+  ): Promise<UserEntity> {
     return await this.userRepository.findOne({
       where: { ...options },
+      relations,
     });
   }
 
   async updateUser(uuid: UserEntity['uuid'], payload: Partial<UserEntity>) {
     const user = await this.findOne({ uuid });
+
+    if (!user) {
+      throw new BadRequestException(en.userNotFound);
+    }
 
     if (payload.email) {
       const userByEmail = await this.findOne({ email: payload.email });
@@ -172,8 +188,39 @@ export class UsersService extends PaginationService<UserEntity> {
     return this.userRepository.update({ uuid }, payload);
   }
 
-  async remove(uuid: UserEntity['uuid']): Promise<void> {
-    await this.userRepository.delete(uuid);
+  async assignRoadmaps(
+    uuid: UserEntity['uuid'],
+    assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
+  ) {
+    const user = await this.findOne({ uuid });
+
+    if (!user) {
+      throw new BadRequestException(en.userNotFound);
+    }
+
+    const roadmaps = await this.roadmapService.getMany({
+      id: In(assignRoadmapsToUserDto.roadmaps),
+    });
+
+    if (roadmaps.length != assignRoadmapsToUserDto.roadmaps.length) {
+      throw new BadRequestException(en.invalidRoadmaps);
+    }
+
+    await this.userRepository.save({ ...user, assigned_roadmaps: roadmaps });
+  }
+
+  async delete(condition: FindOptionsWhere<UserEntity>): Promise<DeleteResult> {
+    const user = await this.findOne(condition);
+
+    if (!user) {
+      throw new BadRequestException(en.userNotFound);
+    }
+
+    // Delete associated sessions first
+    await this.sessionService.delete({ user: { id: user.id } });
+
+    // Delete the user
+    return this.userRepository.delete(condition);
   }
 
   async findByEmailOrUUID(email: string, uuid: string): Promise<UserEntity[]> {

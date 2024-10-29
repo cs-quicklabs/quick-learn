@@ -5,8 +5,8 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { activateCourse } from '@src/apiServices/archivedService';
 import {
-  archiveCourse,
   assignRoadmapsToCourse,
   getCourse,
   updateCourse,
@@ -155,7 +155,7 @@ const CourseDetails = () => {
 
   function onArchive() {
     setIsLoading(true);
-    archiveCourse(courseId)
+    activateCourse({ id: Number(courseId), active: false })
       .then((res) => {
         showApiMessageInToast(res);
         allCourseCategories.forEach((item) => {
@@ -227,7 +227,11 @@ const CourseDetails = () => {
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
             <span className="capitalize">
-              {courseData?.created_by?.full_name ?? 'Admin'}
+              {courseData?.created_by
+                ? courseData?.created_by?.first_name +
+                  ' ' +
+                  courseData?.created_by?.last_name
+                : 'Admin'}
             </span>
             &nbsp;{en.contentRepository.createdThisRoadmapOn}&nbsp;
             {courseData?.created_at &&
@@ -324,7 +328,9 @@ const CourseDetails = () => {
                       <p className="inline-flex align-center font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
                         {approved ? (
                           'Added by ' +
-                          created_by_user.full_name +
+                          created_by_user?.first_name +
+                          ' ' +
+                          created_by_user?.last_name +
                           ' on ' +
                           format(created_at, DateFormats.shortDate)
                         ) : (

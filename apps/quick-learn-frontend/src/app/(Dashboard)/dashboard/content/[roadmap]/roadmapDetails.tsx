@@ -4,8 +4,8 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { activateRoadmap } from '@src/apiServices/archivedService';
 import {
-  archiveRoadmap,
   assignCoursesToRoadmap,
   createCourse,
   getRoadmap,
@@ -150,7 +150,7 @@ const RoadmapDetails = () => {
 
   function onArchive() {
     setIsLoading(true);
-    archiveRoadmap(roadmap)
+    activateRoadmap({ id: +roadmap, active: false })
       .then((res) => {
         showApiMessageInToast(res);
         const coursesId = roadmapData?.courses.map((item) => item.id) || [];
@@ -220,7 +220,11 @@ const RoadmapDetails = () => {
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
             <span className="capitalize">
-              {roadmapData?.created_by?.full_name ?? 'Admin'}
+              {roadmapData?.created_by
+                ? roadmapData?.created_by?.first_name +
+                  ' ' +
+                  roadmapData?.created_by?.last_name
+                : 'Admin'}
             </span>
             &nbsp;{en.contentRepository.createdThisRoadmapOn}&nbsp;
             {roadmapData?.created_at &&

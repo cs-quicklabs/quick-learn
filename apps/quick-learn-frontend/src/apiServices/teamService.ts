@@ -1,12 +1,15 @@
 import {
   TAddUserPayload,
   TAddUserResponse,
+  TAssignRoadmapsPayload,
+  TGetUserParams,
   TTeamListingReponse,
   TUserDetailsResponse,
   TUserMetadataResponse,
 } from '@src/shared/types/teamTypes';
 import axiosInstance from './axios';
 import { userApiEnum } from '@src/constants/api.enum';
+import { mapQueryParams } from '@src/utils/helpers';
 
 export const teamListApiCall = async (
   page: number,
@@ -34,9 +37,11 @@ export const getUserMetadataCall = async (): Promise<TUserMetadataResponse> => {
 
 export const getUserDetails = async (
   uuid: string,
+  params: TGetUserParams = {},
 ): Promise<TUserDetailsResponse> => {
+  const mappedParams = mapQueryParams(params);
   const response = await axiosInstance.get<TUserDetailsResponse>(
-    userApiEnum.GET_USER.replace(':uuid', uuid),
+    userApiEnum.GET_USER.replace(':uuid', uuid) + mappedParams,
   );
   return response.data;
 };
@@ -57,6 +62,17 @@ export const updateUser = async (
 ): Promise<TAddUserResponse> => {
   const response = await axiosInstance.patch<TAddUserResponse>(
     userApiEnum.GET_USER.replace(':uuid', uuid),
+    body,
+  );
+  return response.data;
+};
+
+export const assignRoadmapsToUser = async (
+  uuid: string,
+  body: TAssignRoadmapsPayload,
+): Promise<TAddUserResponse> => {
+  const response = await axiosInstance.patch<TAddUserResponse>(
+    userApiEnum.ASSIGN_ROADMAPS.replace(':uuid', uuid),
     body,
   );
   return response.data;
