@@ -19,19 +19,15 @@ type NoArchivedKeys =
   | 'noArchivedLessons'
   | 'noArchivedLessonsDescription';
 
-const getIconByType = (type: EmptyStateType) => {
-  switch (type) {
-    case 'users':
-      return EmptyStateIcons.inbox;
-    case 'roadmaps':
-      return EmptyStateIcons.document;
-    case 'courses':
-      return EmptyStateIcons.courses;
-    case 'lessons':
-      return EmptyStateIcons.book;
-    default:
-      return EmptyStateIcons.document;
-  }
+const EMPTY_STATE_ICON_MAP: Record<EmptyStateType, React.ReactNode> = {
+  users: EmptyStateIcons.inbox,
+  roadmaps: EmptyStateIcons.book,
+  courses: EmptyStateIcons.courses,
+  lessons: EmptyStateIcons.document,
+} as const;
+
+const getIconByType = (type: EmptyStateType): React.ReactNode => {
+  return EMPTY_STATE_ICON_MAP[type] ?? EmptyStateIcons.document;
 };
 
 const getTextByType = (type: EmptyStateType, searchValue?: string) => {

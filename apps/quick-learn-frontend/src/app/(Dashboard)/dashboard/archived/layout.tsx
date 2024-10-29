@@ -5,6 +5,7 @@ import { RouteEnum } from '@src/constants/route.enum';
 import { ChildrenProp } from '@src/shared/interfaces/propInterface';
 import {
   ClipboardWithTick,
+  DocumentTextIcon,
   OpenBookIcon,
   ProfileIdentificationCard,
 } from '@src/shared/components/UIElements';
@@ -29,7 +30,7 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
     {
       title: 'Archived Lessons',
       linkTo: RouteEnum.ARCHIVED_LESSONS,
-      icon: <ProfileIdentificationCard />,
+      icon: <DocumentTextIcon />,
     },
   ];
 
