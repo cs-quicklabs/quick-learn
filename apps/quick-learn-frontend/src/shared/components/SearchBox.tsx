@@ -7,7 +7,7 @@ interface Props {
 
 const SearchBox: FC<Props> = ({ value, handleChange }) => {
   return (
-    <form className="flex-1 min-w-0 ">
+    <form className="flex-1 min-w-0 mb-6">
       <label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -25,9 +25,9 @@ const SearchBox: FC<Props> = ({ value, handleChange }) => {
           >
             <path
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
             />
           </svg>
@@ -35,9 +35,9 @@ const SearchBox: FC<Props> = ({ value, handleChange }) => {
         <input
           type="search"
           id="default-search"
-          className="pl-10 w-full border-gray-300 bg-gray-50"
+          className="block w-full rounded-md border-gray-300 bg-gray-50 py-1.5 pl-10 text-sm focus:border-blue-500 focus:ring-blue-500"
           placeholder="Search"
-          // value={value}
+          value={value}
           onChange={handleChange}
         />
       </div>

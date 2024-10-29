@@ -2,6 +2,10 @@
 @import '../../../../node_modules/tailwindcss/components.css';
 @import '../../../../node_modules/tailwindcss/utilities.css';
 
+div[role="dialog"] {
+  align-content: center !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   font-family:
