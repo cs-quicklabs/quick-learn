@@ -39,7 +39,7 @@ export class EmailService {
     const emailText = data.body;
     const emailBody = await this.compileMjmlTemplate(emailText);
     try {
-      await this.emailService.send({ ...data, body: emailBody, subject: 'Quick Learn: ' });
+      await this.emailService.send({ ...data, body: emailBody, subject: 'Quick Learn: ' + data.subject });
     } catch (err) {
       this.logger.error('Something went wrong./n', JSON.stringify(err));
     }
