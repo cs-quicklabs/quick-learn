@@ -19,28 +19,28 @@ const CourseCard: FC<CourseProps> = ({
   return (
     <div
       id="courseCarousel"
-      className="flex flex-col gap-2 h-40 px-6 py-4 group"
+      className="inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full px-6 py-4 group"
     >
       <h1
         id="courseCarouseltitle"
-        className="text-gray-900 line-clamp-1 font-medium group-hover:underline"
+        className="text-gray-900 h-[48px] line-clamp-2 font-medium group-hover:underline"
       >
         {name}
       </h1>
-      <div className="font-normal line-clamp-2 h-[38px] text-sm  text-gray-500">
+      <div className="font-normal line-clamp-3 text-sm h-[60px] text-gray-500">
         {title}
       </div>
       {publisher && (
-        <p className="font-medium line-clamp-1 text-sm text-gray-500 ">
+        <p className="font-medium line-clamp-1 mt-2 text-sm text-gray-500 ">
           Published by {publisher}
         </p>
       )}
       {createdDate ? (
-        <div className="font-normal line-clamp-1 text-xs underline text-gray-500">
-          {`Added on ${createdDate}}`}
+        <div className="font-normal line-clamp-1 mt-4 text-xs text-gray-500">
+          {`Added on ${createdDate}`}
         </div>
       ) : (
-        <div className="font-normal line-clamp-1 text-xs underline text-gray-500">
+        <div className="font-normal line-clamp-1 text-xs mt-2  text-gray-500">
           Lesson ({lesson})
         </div>
       )}

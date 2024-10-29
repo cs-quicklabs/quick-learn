@@ -46,8 +46,7 @@ const CoummintyCourseRepository = () => {
         </div>
         {/* display all courses */}
         <ul className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-4 2xl:grid-cols-5">
-          {allCourses &&
-            allCourses.length > 0 &&
+          {allCourses && allCourses.length > 0 ? (
             allCourses.map((course) => {
               return (
                 <li
@@ -64,7 +63,12 @@ const CoummintyCourseRepository = () => {
                   </Link>
                 </li>
               );
-            })}
+            })
+          ) : (
+            <li className="flex justify-center  col-span-5 text-gray-500">
+              {en.CommunityCouse.notfound}
+            </li>
+          )}
         </ul>
       </div>
     </>
