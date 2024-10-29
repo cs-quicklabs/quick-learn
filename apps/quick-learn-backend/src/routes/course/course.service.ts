@@ -30,8 +30,47 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     super(repo);
   }
 
-  async getAllCourses(): Promise<CourseEntity[]> {
-    return await this.getMany();
+  async getAllCourses(
+    options: FindOptionsWhere<CourseEntity>, // filter conditions
+    relations: string[] = [], // additional relations to include
+  ): Promise<CourseEntity[]> {
+    const queryBuilder = this.repository.createQueryBuilder('courses');
+
+    // Apply filters from options
+    if (options) {
+      Object.keys(options).forEach((key) => {
+        queryBuilder.andWhere(`courses.${key} = :${key}`, {
+          [key]: options[key],
+        });
+      });
+    }
+
+    // Dynamically include relations
+    relations.forEach((relation) => {
+      queryBuilder.leftJoinAndSelect(`courses.${relation}`, relation);
+    });
+
+    // Join course_category and count lessons
+    queryBuilder
+      .leftJoinAndSelect('courses.course_category', 'course_category')
+      .leftJoin('courses.lessons', 'lessons')
+      .loadRelationCountAndMap(
+        'courses.lessons_count',
+        'courses.lessons',
+        'lessons',
+        (qb) =>
+          qb
+            .andWhere('lessons.archived = :archivedLessons', {
+              archivedLessons: false,
+            })
+            .andWhere('lessons.approved = :approvedLessons', {
+              approvedLessons: true,
+            }),
+      )
+      .orderBy('courses.created_at', 'DESC')
+      .addOrderBy('course_category.created_at', 'DESC');
+
+    return await queryBuilder.getMany();
   }
 
   /**
@@ -98,15 +137,19 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     });
 
     if (!course) {
-      throw new BadRequestException(en.CourseNotFound);
+      throw new BadRequestException(en.invalidCourse);
     }
 
-    // Only map lessons if they exist
-    if (course.lessons) {
-      course.lessons = course.lessons.map((lesson) => ({
-        ...lesson,
-        content: Helpers.limitSanitizedContent(lesson.content),
-      })) as LessonEntity[];
+    if (!course.lessons) {
+      course.lessons = [];
+    } else {
+      // Filter lessons if they exist
+      course.lessons = course.lessons
+        .filter((lesson) => !lesson.archived && lesson.approved)
+        .map((lesson) => ({
+          ...lesson,
+          content: Helpers.limitSanitizedContent(lesson.content),
+        })) as LessonEntity[];
     }
 
     return course;

@@ -33,16 +33,15 @@ export class CourseController {
   @Get()
   @ApiOperation({ summary: 'Get all courses' })
   async getRoadmap(): Promise<SuccessResponse> {
-    const data = await this.service.getAllCourses();
+    const data = await this.service.getMany();
     return new SuccessResponse(en.GetAllCourses, data);
   }
 
   @Get('/community-course')
   @ApiOperation({ summary: 'Get all community courses' })
   async getCommunityCourses() {
-    const data = await this.service.getMany(
+    const data = await this.service.getAllCourses(
       { is_community_available: true, archived: false },
-      undefined,
       ['created_by'],
     );
     return new SuccessResponse(en.getCommunityCourse, data);
@@ -76,7 +75,6 @@ export class CourseController {
     const data = await this.service.getCourseDetails(
       {
         id: +id,
-        lessons: { archived: false, approved: true },
         is_community_available: true,
       },
       ['lessons', 'lessons.created_by_user'],

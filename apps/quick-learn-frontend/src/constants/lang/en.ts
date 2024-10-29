@@ -140,6 +140,8 @@ export const en = {
     contentRequired: 'Content is required',
     titleMaxLength: 'Title cannot exceed 50 characters',
     pendingApproval: 'Pending for approval',
+    lesson: 'lessons',
+    notfound: 'No Lessons found',
   },
 
   /**
@@ -240,5 +242,6 @@ export const en = {
     description:
       'Following courses have been made public by community members. You can copy these courses to your organization and make changes as per your requirements.',
     course: 'Courses',
+    notfound: 'No Courses found',
   },
 };
