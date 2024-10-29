@@ -1,11 +1,10 @@
 import React, { ChangeEvent, FC } from 'react';
 
 interface Props {
-  value: string;
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const SearchBox: FC<Props> = ({ value, handleChange }) => {
+const SearchBox: FC<Props> = ({ handleChange }) => {
   return (
     <form className="flex-1 min-w-0 mb-6">
       <label
@@ -37,7 +36,6 @@ const SearchBox: FC<Props> = ({ value, handleChange }) => {
           id="default-search"
           className="block w-full rounded-md border-gray-300 bg-gray-50 py-1.5 pl-10 text-sm focus:border-blue-500 focus:ring-blue-500"
           placeholder="Search"
-          value={value}
           onChange={handleChange}
         />
       </div>

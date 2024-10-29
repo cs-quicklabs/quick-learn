@@ -215,26 +215,12 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    */
   async deleteLesson(id: number): Promise<void> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    const lesson = await this.get({ id });
 
-    try {
-      const lesson = await this.get({ id });
-
-      if (!lesson) {
-        throw new BadRequestException(en.lessonNotFound);
-      }
-
-      // Delete the lesson
-      await queryRunner.manager.delete(LessonEntity, { id });
-
-      await queryRunner.commitTransaction();
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-      throw err;
-    } finally {
-      await queryRunner.release();
+    if (!lesson) {
+      throw new BadRequestException(en.lessonNotFound);
     }
+
+    await this.repository.delete({ id });
   }
 }

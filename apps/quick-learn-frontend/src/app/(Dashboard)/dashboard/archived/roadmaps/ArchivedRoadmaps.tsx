@@ -156,7 +156,6 @@ const ArchivedRoadmaps = () => {
         {en.archivedSection.archivedRoadmapsSubtext}
       </p>
       <SearchBox
-        value={searchValue}
         handleChange={(e: ChangeEvent<HTMLInputElement>) =>
           handleQueryChange(e.target.value)
         }

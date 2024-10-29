@@ -20,7 +20,7 @@ export class CourseEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 5000 })
   description: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'int', nullable: false })
   course_category_id: number;
 
   @Column({ type: 'bool', default: false })

@@ -163,7 +163,6 @@ const InactiveUsers = () => {
         {en.archivedSection.inactiveUsersSubtext}
       </p>
       <SearchBox
-        value={searchValue}
         handleChange={(e: ChangeEvent<HTMLInputElement>) =>
           handleQueryChange(e.target.value)
         }

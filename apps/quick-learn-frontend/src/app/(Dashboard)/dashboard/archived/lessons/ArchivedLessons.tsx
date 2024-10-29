@@ -156,7 +156,6 @@ const ArchivedLessons = () => {
         {en.archivedSection.archivedLessonsSubtext}
       </p>
       <SearchBox
-        value={searchValue}
         handleChange={(e: ChangeEvent<HTMLInputElement>) =>
           handleQueryChange(e.target.value)
         }

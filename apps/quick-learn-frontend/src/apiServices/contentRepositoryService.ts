@@ -115,15 +115,6 @@ export const assignRoadmapsToCourse = async (
   return response.data;
 };
 
-export const archiveRoadmap = async (
-  id: string,
-): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    ContentRepositoryApiEnum.ROADMAP + `/${id}`,
-  );
-  return response.data;
-};
-
 export const createLesson = async (payload: {
   name: string;
   content: string;

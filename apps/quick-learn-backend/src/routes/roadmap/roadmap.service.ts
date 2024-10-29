@@ -305,51 +305,63 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
 
     return null;
   }
-
   async delete(
     condition: FindOptionsWhere<RoadmapEntity>,
   ): Promise<DeleteResult> {
-    const id = this.getIdFromCondition(condition);
+    // Get the queryRunner instance
+    const queryRunner =
+      this.roadmapRepository.manager.connection.createQueryRunner();
 
-    if (!id) {
-      throw new BadRequestException(en.invalidDeleteCondition);
+    // Start transaction
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const id = this.getIdFromCondition(condition);
+      if (!id) {
+        throw new BadRequestException(en.invalidDeleteCondition);
+      }
+
+      const roadmap = await this.getRoadmapById(id);
+      if (!roadmap) {
+        throw new BadRequestException(en.RoadmapNotFound);
+      }
+
+      // Remove roadmap-course associations
+      await queryRunner.manager
+        .createQueryBuilder()
+        .delete()
+        .from('roadmap_courses')
+        .where('roadmap_id = :id', { id: roadmap.id })
+        .execute();
+
+      // Remove user-roadmap associations
+      await queryRunner.manager
+        .createQueryBuilder()
+        .delete()
+        .from('user_roadmaps')
+        .where('roadmap_id = :id', { id: roadmap.id })
+        .execute();
+
+      // Delete the roadmap
+      const result = await queryRunner.manager
+        .createQueryBuilder()
+        .delete()
+        .from(RoadmapEntity)
+        .where(condition)
+        .execute();
+
+      // Commit transaction
+      await queryRunner.commitTransaction();
+
+      return result;
+    } catch (error) {
+      // Rollback transaction on error
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      // Release queryRunner
+      await queryRunner.release();
     }
-
-    const roadmap = await this.getRoadmapById(id);
-
-    if (!roadmap) {
-      throw new BadRequestException(en.RoadmapNotFound);
-    }
-
-    // Start a transaction to ensure data consistency
-    const result = await this.roadmapRepository.manager.transaction(
-      async (transactionalEntityManager) => {
-        // Remove roadmap-course associations
-        await transactionalEntityManager
-          .createQueryBuilder()
-          .delete()
-          .from('roadmap_courses')
-          .where('roadmap_id = :id', { id: roadmap.id })
-          .execute();
-
-        // Remove user-roadmap associations
-        await transactionalEntityManager
-          .createQueryBuilder()
-          .delete()
-          .from('user_roadmaps')
-          .where('roadmap_id = :id', { id: roadmap.id })
-          .execute();
-
-        // Delete the roadmap
-        return await transactionalEntityManager
-          .createQueryBuilder()
-          .delete()
-          .from(RoadmapEntity)
-          .where(condition)
-          .execute();
-      },
-    );
-
-    return result;
   }
 }
