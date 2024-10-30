@@ -125,7 +125,7 @@ const Dashboard = () => {
                 id={roadmap.id}
                 name={roadmap.name}
                 title={roadmap.description}
-                percentage={roadmap.percentage || 0}
+                // percentage={roadmap.percentage || 0}
                 type="roadmap"
               />
             ))}
@@ -157,7 +157,7 @@ const Dashboard = () => {
                 id={course.id}
                 name={course.name}
                 title={course.description}
-                percentage={course.percentage || 0}
+                // percentage={course.percentage || 0}
                 type="course"
               />
             ))}

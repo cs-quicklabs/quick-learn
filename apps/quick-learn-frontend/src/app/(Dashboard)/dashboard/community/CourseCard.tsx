@@ -44,6 +44,7 @@ const CourseCard: FC<CourseProps> = ({
           Lesson ({lesson})
         </div>
       )}
+      <div className="h-[42px]" />
     </div>
   );
 };
