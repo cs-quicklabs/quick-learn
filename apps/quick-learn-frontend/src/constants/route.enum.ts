@@ -20,4 +20,6 @@ export enum RouteEnum {
   ARCHIVED_ROADMAPS = '/dashboard/archived/roadmaps',
   ARCHIVED_COURSES = '/dashboard/archived/courses',
   ARCHIVED_LESSONS = '/dashboard/archived/lessons',
+  CHANGE_LOGS = 'https://release.quicklabs.in/quick-learn/changelogs',
+  FEATURE_LOGS = 'https://release.quicklabs.in/quick-learn/roadmap',
 }

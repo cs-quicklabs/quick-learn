@@ -21,7 +21,7 @@ import { UserTypeIdEnum } from 'lib/shared/src';
 import ConformationModal from '../modals/conformationModal';
 import { en } from '@src/constants/lang/en';
 
-type TLink = { name: string; link: string };
+type TLink = { name: string; link: string; isExtended?: boolean };
 
 const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
 const myLearningPath: TLink = {
@@ -55,6 +55,16 @@ const menuItems: TLink[] = [
   {
     name: 'Archive',
     link: RouteEnum.ARCHIVED_USERS,
+  },
+  {
+    name: 'Change-log',
+    link: RouteEnum.CHANGE_LOGS,
+    isExtended: true,
+  },
+  {
+    name: 'Feature Roadmaps',
+    link: RouteEnum.FEATURE_LOGS,
+    isExtended: true,
   },
 ];
 
@@ -212,17 +222,20 @@ const Navbar = () => {
                     </div>
                     <div>
                       {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
-                        menuItems.map((item, index) => (
-                          <MenuItem key={item.link + item.name}>
-                            <Link
-                              href={item.link}
-                              id={`profileMenu${index}`}
-                              className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                            >
-                              {item.name}
-                            </Link>
-                          </MenuItem>
-                        ))}
+                        menuItems.map(
+                          (item, index) =>
+                            item.isExtended === undefined && (
+                              <MenuItem key={item.link + item.name}>
+                                <Link
+                                  href={item.link}
+                                  id={`profileMenu${index}`}
+                                  className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                                >
+                                  {item.name}
+                                </Link>
+                              </MenuItem>
+                            ),
+                        )}
                       {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
                         <MenuItem>
                           <Link
@@ -237,6 +250,24 @@ const Navbar = () => {
                         ''
                       )}
                     </div>
+                    <div className="border-y-2">
+                      {menuItems.map(
+                        (item, index) =>
+                          item.isExtended && (
+                            <MenuItem key={item.link + item.name}>
+                              <a
+                                href={item.link}
+                                id={`profileMenu${index}`}
+                                target="_blank"
+                                className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                              >
+                                {item.name}
+                              </a>
+                            </MenuItem>
+                          ),
+                      )}
+                    </div>
+
                     <MenuItem>
                       <Link
                         href="#"
@@ -303,17 +334,20 @@ const Navbar = () => {
             </div>
             <div className="mt-3 space-y-1 px-2">
               {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
-                menuItems.map((item, index) => (
-                  <DisclosureButton
-                    as="a"
-                    id={`profileMenuMobile${index}`}
-                    key={item.link + item.name}
-                    href={item.link}
-                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                  >
-                    {item.name}
-                  </DisclosureButton>
-                ))}
+                menuItems.map(
+                  (item, index) =>
+                    item.isExtended === undefined && (
+                      <DisclosureButton
+                        as="a"
+                        id={`profileMenuMobile${index}`}
+                        key={item.link + item.name}
+                        href={item.link}
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                      >
+                        {item.name}
+                      </DisclosureButton>
+                    ),
+                )}
               {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
                 <DisclosureButton
                   as="a"
@@ -326,6 +360,22 @@ const Navbar = () => {
               ) : (
                 ''
               )}
+              <div className="border-y border-gray-700">
+                {menuItems.map(
+                  (item, index) =>
+                    item.isExtended && (
+                      <a
+                        id={`profileMenuMobile${index}`}
+                        key={item.link + item.name}
+                        href={item.link}
+                        target="_blank"
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                      >
+                        {item.name}
+                      </a>
+                    ),
+                )}
+              </div>
               <DisclosureButton
                 as="a"
                 id="signOutMobile"
