@@ -4,7 +4,6 @@ import ProgressCard from '@src/shared/components/ProgressCard';
 import { TUserCourse, TUserRoadmap } from '@src/shared/types/contentRepository';
 import { getUserRoadmapsService } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
-import CardSkeleton from '@src/shared/components/CardSkeleton';
 import DashboardSkeleton from './components/DashboardSkeleton';
 
 const Dashboard = () => {
