@@ -1,7 +1,7 @@
-'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import ProgressBar from './ProgressBar';
+import { en } from '@src/constants/lang/en';
 
 interface ProgressCardProps {
   id: number;
@@ -23,8 +23,8 @@ const ProgressCard = ({
   const handleClick = () => {
     const route =
       type === 'course'
-        ? `/dashboard/content/courses/${id}` // Course route
-        : `/dashboard/content/${id}`; // Roadmap route
+        ? `/dashboard/content/courses/${id}`
+        : `/dashboard/content/${id}`;
 
     router.push(route);
   };
@@ -38,7 +38,7 @@ const ProgressCard = ({
         <h3 className="text-gray-900 font-medium mb-2 line-clamp-2">{name}</h3>
         <p className="text-gray-500 text-sm mb-4 line-clamp-2">{title}</p>
         <div className="flex items-center text-sm text-gray-500 mb-2 font-bold">
-          {percentage}% Complete
+          {percentage}% {en.common.complete}
         </div>
         <ProgressBar percentage={percentage} />
       </div>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ProgressCard from '@src/shared/components/ProgressCard';
 import { TUserCourse, TUserRoadmap } from '@src/shared/types/contentRepository';
 import { getUserRoadmapsService } from '@src/apiServices/contentRepositoryService';
+import { en } from '@src/constants/lang/en';
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +34,7 @@ const Dashboard = () => {
           setCourses(uniqueCourses);
         }
       } catch (err) {
-        setError('Failed to load your learning content');
+        setError(en.common.somethingWentWrong);
       } finally {
         setIsLoading(false);
       }
@@ -44,7 +45,7 @@ const Dashboard = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
-        Loading...
+        {en.common.loading}
       </div>
     );
   }
@@ -62,16 +63,21 @@ const Dashboard = () => {
       {/* Roadmaps Section */}
       <div className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <h1 className="text-3xl font-bold leading-tight">My Roadmaps</h1>
+          <h1 className="text-3xl font-bold leading-tight">
+            {en.common.myRoadmaps}
+          </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
-            ({roadmaps.length} roadmaps)
+            ({roadmaps.length} {en.common.roadmaps})
           </p>
         </div>
       </div>
 
-      <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
-        <div id="created-spaces">
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
+      <div className="relative px-6 grid gap-10 pb-4">
+        <div>
+          <ul
+            role="list"
+            className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8"
+          >
             {roadmaps.map((roadmap) => (
               <ProgressCard
                 key={roadmap.id}
@@ -82,23 +88,28 @@ const Dashboard = () => {
                 type="roadmap"
               />
             ))}
-          </div>
+          </ul>
         </div>
       </div>
 
       {/* Courses Section */}
       <div className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <h1 className="text-3xl font-bold leading-tight">My Courses</h1>
+          <h1 className="text-3xl font-bold leading-tight">
+            {en.common.myCourses}
+          </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
-            ({courses.length} courses)
+            ({courses.length} {en.common.courses})
           </p>
         </div>
       </div>
 
-      <div className="relative px-6 grid gap-10 pb-16" id="release_notes">
-        <div id="created-spaces">
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
+      <div className="relative px-6 grid gap-10 pb-16">
+        <div>
+          <ul
+            role="list"
+            className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8"
+          >
             {courses.map((course) => (
               <ProgressCard
                 key={course.id}
@@ -109,7 +120,7 @@ const Dashboard = () => {
                 type="course"
               />
             ))}
-          </div>
+          </ul>
         </div>
       </div>
     </div>
