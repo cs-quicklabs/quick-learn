@@ -40,7 +40,6 @@ export class UsersController {
     return new SuccessResponse(en.successUserMetadata, metadata);
   }
 
-  // Add this route BEFORE the :uuid route
   @Get('my-roadmaps')
   @ApiOperation({ summary: "Get current user's assigned roadmaps" })
   @ApiQuery({

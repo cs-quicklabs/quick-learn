@@ -159,26 +159,11 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     const user = await queryBuilder.getOne();
-
     if (!user?.assigned_roadmaps) {
       return [];
     }
 
-    // Map the results to include hardcoded percentage
-    const roadmapsWithProgress = user.assigned_roadmaps.map((roadmap) => {
-      Object.assign(roadmap, { percentage: 100 });
-
-      if (includeCourses && roadmap.courses) {
-        roadmap.courses = roadmap.courses.map((course) => {
-          Object.assign(course, { percentage: 100 });
-          return course;
-        });
-      }
-
-      return roadmap;
-    });
-
-    return roadmapsWithProgress;
+    return user.assigned_roadmaps;
   }
 
   sortByLastLogin(users: UserEntity[]) {
