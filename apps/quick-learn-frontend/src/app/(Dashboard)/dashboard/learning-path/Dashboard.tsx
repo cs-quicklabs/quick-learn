@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import ContentCard from '@src/shared/components/ContentCard';
+import ProgressCard from '@src/shared/components/ProgressCard';
 import { TUserCourse, TUserRoadmap } from '@src/shared/types/contentRepository';
 import { getUserRoadmapsService } from '@src/apiServices/contentRepositoryService';
 
@@ -15,12 +15,9 @@ const Dashboard = () => {
       try {
         setIsLoading(true);
         const response = await getUserRoadmapsService();
-
         if (response.success) {
           const userRoadmaps = response.data;
           setRoadmaps(userRoadmaps);
-
-          // Extract all courses from roadmaps
           const allCourses = userRoadmaps.reduce<TUserCourse[]>(
             (acc, roadmap) => {
               if (roadmap.courses) {
@@ -30,28 +27,23 @@ const Dashboard = () => {
             },
             [],
           );
-
-          // Remove duplicate courses (if a course belongs to multiple roadmaps)
           const uniqueCourses = Array.from(
             new Map(allCourses.map((course) => [course.id, course])).values(),
           );
-
           setCourses(uniqueCourses);
         }
       } catch (err) {
         setError('Failed to load your learning content');
-        console.error('Error fetching user content:', err);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchUserContent();
   }, []);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center h-screen bg-gray-50">
         Loading...
       </div>
     );
@@ -59,53 +51,67 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center h-screen bg-gray-50">
         <p className="text-red-500">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="py-8">
+    <div className="bg-gray-50 relative z-0 flex-1 overflow-x-scroll focus:outline-none h-screen">
       {/* Roadmaps Section */}
-      <section className="mb-8">
-        <div className="flex items-center gap-2 mb-6">
-          <h2 className="text-xl font-medium">My Roadmaps</h2>
-          <span className="text-sm text-gray-500">
+      <div className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
+          <h1 className="text-3xl font-bold leading-tight">My Roadmaps</h1>
+          <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
             ({roadmaps.length} roadmaps)
-          </span>
+          </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          {roadmaps.map((roadmap) => (
-            <ContentCard
-              key={roadmap.id}
-              name={roadmap.name}
-              title={roadmap.description}
-              percentage={roadmap.percentage || 0}
-            />
-          ))}
+      </div>
+
+      <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
+        <div id="created-spaces">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
+            {roadmaps.map((roadmap) => (
+              <ProgressCard
+                key={roadmap.id}
+                id={roadmap.id}
+                name={roadmap.name}
+                title={roadmap.description}
+                percentage={roadmap.percentage || 0}
+                type="roadmap"
+              />
+            ))}
+          </div>
         </div>
-      </section>
+      </div>
 
       {/* Courses Section */}
-      <section>
-        <div className="flex items-center gap-2 mb-6">
-          <h2 className="text-xl font-medium">My Courses</h2>
-          <span className="text-sm text-gray-500">
+      <div className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
+          <h1 className="text-3xl font-bold leading-tight">My Courses</h1>
+          <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
             ({courses.length} courses)
-          </span>
+          </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          {courses.map((course) => (
-            <ContentCard
-              key={course.id}
-              name={course.name}
-              title={course.description}
-              percentage={course.percentage || 0}
-            />
-          ))}
+      </div>
+
+      <div className="relative px-6 grid gap-10 pb-16" id="release_notes">
+        <div id="created-spaces">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
+            {courses.map((course) => (
+              <ProgressCard
+                key={course.id}
+                id={course.id}
+                name={course.name}
+                title={course.description}
+                percentage={course.percentage || 0}
+                type="course"
+              />
+            ))}
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };
