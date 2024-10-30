@@ -8,7 +8,6 @@ import DashboardSkeleton from './components/DashboardSkeleton';
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [roadmaps, setRoadmaps] = useState<TUserRoadmap[]>([]);
   const [courses, setCourses] = useState<TUserCourse[]>([]);
 
@@ -34,8 +33,6 @@ const Dashboard = () => {
           );
           setCourses(uniqueCourses);
         }
-      } catch (err) {
-        setError(en.common.somethingWentWrong);
       } finally {
         setIsLoading(false);
       }
@@ -45,14 +42,6 @@ const Dashboard = () => {
 
   if (isLoading) {
     return <DashboardSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
   }
 
   return (
