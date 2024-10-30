@@ -255,14 +255,14 @@ const Navbar = () => {
                         (item, index) =>
                           item.isExtended && (
                             <MenuItem key={item.link + item.name}>
-                              <a
+                              <Link
                                 href={item.link}
                                 id={`profileMenu${index}`}
                                 target="_blank"
                                 className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                               >
                                 {item.name}
-                              </a>
+                              </Link>
                             </MenuItem>
                           ),
                       )}
@@ -364,7 +364,7 @@ const Navbar = () => {
                 {menuItems.map(
                   (item, index) =>
                     item.isExtended && (
-                      <a
+                      <Link
                         id={`profileMenuMobile${index}`}
                         key={item.link + item.name}
                         href={item.link}
@@ -372,7 +372,7 @@ const Navbar = () => {
                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     ),
                 )}
               </div>
