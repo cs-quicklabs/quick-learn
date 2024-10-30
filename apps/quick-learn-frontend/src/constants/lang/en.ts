@@ -17,6 +17,16 @@ export const en = {
     deactivatedOn: 'Deactivated on',
     by: 'by',
 
+    //dashboard
+    loading: 'Loading...',
+    error: 'Error',
+    myRoadmaps: 'My Roadmaps',
+    myCourses: 'My Courses',
+    complete: 'Complete',
+    progress: '% Complete',
+    roadmapsCount: '({count} roadmaps)',
+    coursesCount: '({count} courses)',
+
     // Content types
     lesson: 'lesson',
     lessons: 'lessons',
@@ -59,6 +69,15 @@ export const en = {
     logoutConformation: 'Are you sure you want to Log out?',
   },
 
+  dashboard: {
+    title: 'My Learning Path',
+    description: 'My Learning Path quick learn',
+    failedToLoad: 'Failed to load your learning content',
+    noRoadmaps: 'No roadmaps available',
+    noCourses: 'No courses available',
+    viewRoadmap: 'View Roadmap',
+    viewCourse: 'View Course',
+  },
   /**
    * Content Repository section strings
    */

@@ -31,6 +31,7 @@ const Card: FC<CardProps> = ({ id, title, description, stats, link = '#' }) => {
             {stats}
           </p>
         )}
+        <div className="h-[42px]" />
       </div>
     </Link>
   );

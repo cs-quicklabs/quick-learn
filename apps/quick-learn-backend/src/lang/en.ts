@@ -12,6 +12,7 @@ export const en = {
   successUserDelete: 'User successfully deleted.',
   successUserMetadata: 'Successfully got user metadata.',
   successUserStatusUpdate: 'User status updated successfully.',
+  successGotUserRoadmaps: "Successfully retrieved user's roadmaps",
 
   // Roadmap related messages
   GetAllRoapmaps: 'Successfully got all roadmaps.',

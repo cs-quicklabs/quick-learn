@@ -4,6 +4,7 @@ import {
   TCreateCourse,
   TCreateRoadmap,
   TRoadmap,
+  TUserRoadmap,
 } from '@src/shared/types/contentRepository';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { ContentRepositoryApiEnum } from '@src/constants/api.enum';
@@ -140,5 +141,14 @@ export const getCommunityCourse = async (
   const response = await axiosInstance.get<AxiosSuccessResponse<TCourse>>(
     ContentRepositoryApiEnum.COMMUNITY + `/${id}`,
   );
+  return response.data;
+};
+
+export const getUserRoadmapsService = async (): Promise<
+  AxiosSuccessResponse<TUserRoadmap[]>
+> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<TUserRoadmap[]>
+  >(`${ContentRepositoryApiEnum.GET_USER_ROADMAPS}?include_courses=true`);
   return response.data;
 };
