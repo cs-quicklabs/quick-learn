@@ -145,7 +145,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     } else {
       // Filter lessons if they exist
       course.lessons = course.lessons
-        .filter((lesson) => !lesson.archived && lesson.approved)
+        .filter((lesson) => !lesson.archived)
         .map((lesson) => ({
           ...lesson,
           content: Helpers.limitSanitizedContent(lesson.content),
