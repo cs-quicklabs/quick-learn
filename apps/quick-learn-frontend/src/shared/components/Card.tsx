@@ -9,7 +9,7 @@ interface CardProps {
   id: string;
   link?: string;
   className?: string;
-  showWarning?: boolean; // New prop for warning state
+  showWarning?: boolean;
 }
 
 const Card: FC<CardProps> = ({
@@ -27,28 +27,36 @@ const Card: FC<CardProps> = ({
       href={link}
       className={`inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full ${className}`}
     >
-      <div className="flex flex-col h-full py-4 px-6 text-gray-900">
+      <div className="flex flex-col h-56 py-4 px-6 text-gray-900">
+        {' '}
+        {/* Added fixed height h-56 */}
         <div>
           <h1
             id="message-heading"
-            className="font-medium text-gray-900 line-clamp-2 h-[48px] group-hover:underline capitalize"
+            className="font-medium text-gray-900 line-clamp-2 group-hover:underline capitalize"
           >
             {title}
           </h1>
-          <p className="font-normal text-sm text-gray-500 line-clamp-3 h-[60px] mt-2">
+          <p className="font-normal text-sm text-gray-500 line-clamp-4 mt-2">
+            {' '}
+            {/* Changed to line-clamp-4 */}
             {description}
           </p>
         </div>
         {stats && (
           <p className="font-normal text-xs text-gray-500 line-clamp-2 mt-auto pt-4 capitalize">
-            {showWarning && (
-              <ExclamationTriangleIcon
-                className="inline text-yellow-500 mr-1"
-                height={16}
-                width={16}
-              />
+            {showWarning ? (
+              <span className="inline-flex items-center">
+                <ExclamationTriangleIcon
+                  className="text-yellow-500 mr-1"
+                  height={16}
+                  width={16}
+                />
+                {stats}
+              </span>
+            ) : (
+              stats
             )}
-            {stats}
           </p>
         )}
       </div>
