@@ -26,12 +26,13 @@ const Card: FC<CardProps> = ({ id, title, description, stats, link = '#' }) => {
         <p className="font-normal text-sm text-gray-500 line-clamp-3 h-[60px] mt-2">
           {description}
         </p>
-        {stats && (
+        {stats ? (
           <p className="font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
             {stats}
           </p>
+        ) : (
+          <div className="h-[42px]" />
         )}
-        <div className="h-[42px]" />
       </div>
     </Link>
   );

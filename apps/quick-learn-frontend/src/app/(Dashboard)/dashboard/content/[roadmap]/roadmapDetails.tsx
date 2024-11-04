@@ -147,7 +147,6 @@ const RoadmapDetails = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   }
-
   function onArchive() {
     setIsLoading(true);
     activateRoadmap({ id: +roadmap, active: false })
@@ -169,7 +168,7 @@ const RoadmapDetails = () => {
         });
         setShowConformationModal(false);
         router.replace(RouteEnum.CONTENT);
-        getRoadmapData();
+        // Removed getRoadmapData() call since we're redirecting anyway
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
