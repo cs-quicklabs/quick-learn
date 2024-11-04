@@ -323,4 +323,31 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     // Using the repository's delete method for hard delete
     await this.repository.delete({ id });
   }
+
+  async getUserCourseDetails(userId: number, id: number, roadmap?: number) {
+    const course = this.repository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.course_category', 'course_category')
+      .leftJoin('course.lessons', 'lessons')
+      .addSelect(['lessons.id', 'lessons.name', 'lessons.content'])
+      .leftJoin('course.roadmaps', 'roadmaps')
+      .innerJoin('roadmaps.users', 'users')
+      .where('course.id = :id', { id })
+      .andWhere('users.id = :userId', { userId });
+
+    if (roadmap) {
+      course
+        .addSelect('roadmaps')
+        .andWhere('roadmaps.id = :roadmapId', { roadmapId: roadmap });
+    }
+
+    const courseDetails = await course.getOne();
+    if (courseDetails && courseDetails.lessons) {
+      courseDetails.lessons = courseDetails.lessons.map((lesson) => ({
+        ...lesson,
+        content: Helpers.limitSanitizedContent(lesson.content),
+      })) as LessonEntity[];
+    }
+    return courseDetails;
+  }
 }

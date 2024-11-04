@@ -6,6 +6,7 @@ import { getUserRoadmapsService } from '@src/apiServices/contentRepositoryServic
 import { en } from '@src/constants/lang/en';
 import DashboardSkeleton from './components/DashboardSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
+import { RouteEnum } from '@src/constants/route.enum';
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -66,18 +67,15 @@ const Dashboard = () => {
           <EmptyState type="roadmaps" />
         ) : (
           <div>
-            <ul
-              role="list"
-              className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8"
-            >
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
               {roadmaps.map((roadmap) => (
                 <ProgressCard
                   key={roadmap.id}
                   id={roadmap.id}
                   name={roadmap.name}
                   title={roadmap.description}
+                  link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap.id}`}
                   // percentage={roadmap.percentage || 0}
-                  type="roadmap"
                 />
               ))}
             </ul>
@@ -108,18 +106,15 @@ const Dashboard = () => {
           <EmptyState type="courses" />
         ) : (
           <div>
-            <ul
-              role="list"
-              className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8"
-            >
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
               {courses.map((course) => (
                 <ProgressCard
                   key={course.id}
                   id={course.id}
                   name={course.name}
                   title={course.description}
+                  link={`${RouteEnum.MY_LEARNING_PATH}/courses/${course.id}`}
                   // percentage={course.percentage || 0}
-                  type="course"
                 />
               ))}
             </ul>

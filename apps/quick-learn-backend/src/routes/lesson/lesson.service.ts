@@ -220,4 +220,31 @@ export class LessonService extends PaginationService<LessonEntity> {
 
     await this.repository.delete({ id });
   }
+
+  async getUserLessonDetails(
+    userId: number,
+    id: number,
+    courseId: number,
+    roadmap?: number,
+  ) {
+    const queryBuilder = this.repository
+      .createQueryBuilder('lesson')
+      .leftJoinAndSelect('lesson.course', 'course')
+      .leftJoin('course.roadmaps', 'roadmaps')
+      .innerJoin('roadmaps.users', 'users')
+      .where('lesson.id = :id', { id })
+      .andWhere('course.id = :courseId', { courseId })
+      .andWhere('lesson.archived = :archived', { archived: false })
+      .andWhere('lesson.approved = :approved', { approved: true })
+      .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .andWhere('users.id = :userId', { userId });
+
+    if (roadmap) {
+      queryBuilder
+        .addSelect('roadmaps')
+        .andWhere('roadmaps.id = :roadmapId', { roadmapId: roadmap });
+    }
+
+    return await queryBuilder.getOne();
+  }
 }

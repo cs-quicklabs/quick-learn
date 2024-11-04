@@ -319,4 +319,11 @@ export const en = {
     course: 'Courses',
     notfound: 'No Courses found',
   },
+
+  /**
+   * My Learning path
+   */
+  myLearningPath: {
+    heading: 'My Learning Path',
+  },
 };

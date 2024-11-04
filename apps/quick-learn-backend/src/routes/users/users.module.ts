@@ -6,6 +6,8 @@ import { EmailModule } from '@src/common/modules';
 import { SkillEntity, UserEntity, UserTypeEntity } from '@src/entities';
 import { AuthModule } from '../auth/auth.module';
 import { RoadmapModule } from '../roadmap/roadmap.module';
+import { CourseModule } from '../course/course.module';
+import { LessonModule } from '../lesson/lesson.module';
 
 @Module({
   controllers: [UsersController],
@@ -15,6 +17,8 @@ import { RoadmapModule } from '../roadmap/roadmap.module';
     EmailModule,
     AuthModule,
     RoadmapModule,
+    CourseModule,
+    LessonModule,
   ],
   exports: [UsersService],
 })
