@@ -168,7 +168,6 @@ const RoadmapDetails = () => {
         });
         setShowConformationModal(false);
         router.replace(RouteEnum.CONTENT);
-        // Removed getRoadmapData() call since we're redirecting anyway
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
