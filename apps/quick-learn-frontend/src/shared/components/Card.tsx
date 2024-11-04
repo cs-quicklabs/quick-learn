@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { FC } from 'react';
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 
 interface CardProps {
   title: string;
@@ -7,8 +8,10 @@ interface CardProps {
   stats?: string;
   id: string;
   link?: string;
-  className?: string; // Add this line
+  className?: string;
+  showWarning?: boolean; // New prop for warning state
 }
+
 const Card: FC<CardProps> = ({
   id,
   title,
@@ -16,12 +19,13 @@ const Card: FC<CardProps> = ({
   stats,
   link = '#',
   className = '',
+  showWarning = false,
 }) => {
   return (
     <Link
       id={id}
       href={link}
-      className={`inline-block col-span-1 rounded-lg shadow-sm hover:shadow-lg border-gray-100 group w-full ${className}`}
+      className={`inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full ${className}`}
     >
       <div className="flex flex-col h-full py-4 px-6 text-gray-900">
         <div>
@@ -35,12 +39,17 @@ const Card: FC<CardProps> = ({
             {description}
           </p>
         </div>
-        {stats ? (
+        {stats && (
           <p className="font-normal text-xs text-gray-500 line-clamp-2 mt-auto pt-4 capitalize">
+            {showWarning && (
+              <ExclamationTriangleIcon
+                className="inline text-yellow-500 mr-1"
+                height={16}
+                width={16}
+              />
+            )}
             {stats}
           </p>
-        ) : (
-          <div className="mt-auto" />
         )}
       </div>
     </Link>

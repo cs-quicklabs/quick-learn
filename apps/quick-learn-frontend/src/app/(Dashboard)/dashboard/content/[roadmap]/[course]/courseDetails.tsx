@@ -1,5 +1,4 @@
 'use client';
-import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import {
   ArrowRightEndOnRectangleIcon,
   PencilIcon,
@@ -181,15 +180,6 @@ const CourseDetails = () => {
     router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/add`);
   }
 
-  function onEditLesson(id: number) {
-    const lesson = courseData?.lessons?.find((ele) => ele.id === id);
-    if (!lesson) return;
-    const url =
-      `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/` +
-      (lesson.approved ? id : `view/${id}`);
-    router.push(url);
-  }
-
   return (
     <>
       {isPageLoading && <FullPageLoader />}
@@ -323,6 +313,7 @@ const CourseDetails = () => {
                         : en.lesson.pendingApproval
                     }
                     className={approved ? '' : 'bg-gray-100'}
+                    showWarning={!approved} // Show warning icon for unapproved lessons
                   />
                 </li>
               ),
