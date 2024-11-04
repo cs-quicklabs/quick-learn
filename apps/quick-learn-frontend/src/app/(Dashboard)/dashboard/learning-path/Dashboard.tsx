@@ -45,7 +45,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="bg-gray-50 relative z-0 flex-1 overflow-x-scroll focus:outline-none h-screen">
+    <div className="bg-gray-50 relative z-0 flex-1 min-h-0 focus:outline-none">
       {/* Roadmaps Section */}
       <div className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">

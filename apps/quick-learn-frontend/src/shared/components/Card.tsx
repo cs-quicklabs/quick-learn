@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { FC } from 'react';
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 
 interface CardProps {
   title: string;
@@ -7,31 +8,57 @@ interface CardProps {
   stats?: string;
   id: string;
   link?: string;
+  className?: string;
+  showWarning?: boolean;
 }
 
-const Card: FC<CardProps> = ({ id, title, description, stats, link = '#' }) => {
+const Card: FC<CardProps> = ({
+  id,
+  title,
+  description,
+  stats,
+  link = '#',
+  className = '',
+  showWarning = false,
+}) => {
   return (
     <Link
       id={id}
       href={link}
-      className="inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full"
+      className={`inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full ${className}`}
     >
-      <div className="flex-wrap py-4 px-6 text-gray-900">
-        <h1
-          id="message-heading"
-          className="font-medium text-gray-900 line-clamp-2 h-[48px] group-hover:underline capitalize"
-        >
-          {title}
-        </h1>
-        <p className="font-normal text-sm text-gray-500 line-clamp-3 h-[60px] mt-2">
-          {description}
-        </p>
+      <div className="flex flex-col h-56 py-4 px-6 text-gray-900">
+        {' '}
+        {/* Added fixed height h-56 */}
+        <div>
+          <h1
+            id="message-heading"
+            className="font-medium text-gray-900 line-clamp-2 group-hover:underline capitalize"
+          >
+            {title}
+          </h1>
+          <p className="font-normal text-sm text-gray-500 line-clamp-4 mt-2">
+            {' '}
+            {/* Changed to line-clamp-4 */}
+            {description}
+          </p>
+        </div>
         {stats && (
-          <p className="font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
-            {stats}
+          <p className="font-normal text-xs text-gray-500 line-clamp-2 mt-auto pt-4 capitalize">
+            {showWarning ? (
+              <span className="inline-flex items-center">
+                <ExclamationTriangleIcon
+                  className="text-yellow-500 mr-1"
+                  height={16}
+                  width={16}
+                />
+                {stats}
+              </span>
+            ) : (
+              stats
+            )}
           </p>
         )}
-        <div className="h-[42px]" />
       </div>
     </Link>
   );

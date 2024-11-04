@@ -235,8 +235,7 @@ const TeamMemberDetails = () => {
                     id={item.id.toString()}
                     title={item.name}
                     description={HTMLSanitizer(item.description, false)}
-                    // link={`${RouteEnum.TEAM}/${userUUID}/${item.id}`}
-                    link="#"
+                    link={`/dashboard/content/${item.id}`}
                   />
                 </li>
               ))}
@@ -262,8 +261,7 @@ const TeamMemberDetails = () => {
                     id={item.id}
                     title={item.name}
                     description={item.description}
-                    // link={`${RouteEnum.TEAM}/${userUUID}/courses/${item.id}`}
-                    link="#"
+                    link={`/dashboard/content/courses/${item.id}`}
                   />
                 </li>
               ))}

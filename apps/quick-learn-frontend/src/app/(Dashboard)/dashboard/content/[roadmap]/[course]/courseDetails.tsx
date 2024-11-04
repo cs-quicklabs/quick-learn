@@ -1,5 +1,4 @@
 'use client';
-import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import {
   ArrowRightEndOnRectangleIcon,
   PencilIcon,
@@ -15,6 +14,7 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
+import Card from '@src/shared/components/Card';
 import CreateNewCard from '@src/shared/components/CreateNewCard';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import AddEditCourseModal from '@src/shared/modals/addEditCourseModal';
@@ -180,15 +180,6 @@ const CourseDetails = () => {
     router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/add`);
   }
 
-  function onEditLesson(id: number) {
-    const lesson = courseData?.lessons?.find((ele) => ele.id === id);
-    if (!lesson) return;
-    const url =
-      `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/` +
-      (lesson.approved ? id : `view/${id}`);
-    router.push(url);
-  }
-
   return (
     <>
       {isPageLoading && <FullPageLoader />}
@@ -305,47 +296,25 @@ const CourseDetails = () => {
                 id,
               }) => (
                 <li key={id}>
-                  <button
-                    type="button"
-                    onClick={() => onEditLesson(id)}
-                    className={
-                      'text-left inline-block col-span-1 rounded-lg shadow-sm hover:shadow-lg border-gray-100 group w-full h-56' +
-                      (approved ? ' bg-white' : ' bg-gray-100')
+                  <Card
+                    id={id.toString()}
+                    title={name}
+                    description={HTMLSanitizer(
+                      (approved && content) || new_content || content,
+                    )}
+                    link={`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${
+                      approved ? id : `view/${id}`
+                    }`}
+                    stats={
+                      approved
+                        ? `Added by ${created_by_user?.first_name} ${
+                            created_by_user?.last_name
+                          } on ${format(created_at, DateFormats.shortDate)}`
+                        : en.lesson.pendingApproval
                     }
-                  >
-                    <div className="flex-wrap py-4 px-6 text-gray-900 h-full">
-                      <h1
-                        id="message-heading"
-                        className="font-medium text-gray-900 group-hover:underline capitalize break-all line-clamp-2"
-                      >
-                        {name}
-                      </h1>
-                      <p className="font-normal text-sm text-gray-500 line-clamp-4 mt-2">
-                        {HTMLSanitizer(
-                          (approved && content) || new_content || content,
-                        )}
-                      </p>
-                      <p className="inline-flex align-center font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
-                        {approved ? (
-                          'Added by ' +
-                          created_by_user?.first_name +
-                          ' ' +
-                          created_by_user?.last_name +
-                          ' on ' +
-                          format(created_at, DateFormats.shortDate)
-                        ) : (
-                          <>
-                            <ExclamationTriangleIcon
-                              className="text-yellow-500 mr-1"
-                              height={16}
-                              width={16}
-                            />{' '}
-                            {en.lesson.pendingApproval}
-                          </>
-                        )}
-                      </p>
-                    </div>
-                  </button>
+                    className={approved ? '' : 'bg-gray-100'}
+                    showWarning={!approved} // Show warning icon for unapproved lessons
+                  />
                 </li>
               ),
             )}
