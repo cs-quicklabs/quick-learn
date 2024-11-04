@@ -10,6 +10,10 @@ interface CardProps {
   link?: string;
   className?: string;
   showWarning?: boolean;
+  metadata?: {
+    addedBy?: string;
+    date?: string;
+  };
 }
 
 const Card: FC<CardProps> = ({
@@ -20,6 +24,7 @@ const Card: FC<CardProps> = ({
   link = '#',
   className = '',
   showWarning = false,
+  metadata,
 }) => {
   return (
     <Link
@@ -39,22 +44,35 @@ const Card: FC<CardProps> = ({
             {description}
           </p>
         </div>
-        {stats && (
-          <p className="font-normal text-xs text-gray-500 line-clamp-2 mt-auto pt-4 capitalize">
-            {showWarning ? (
-              <span className="inline-flex items-center">
-                <ExclamationTriangleIcon
-                  className="text-yellow-500 mr-1"
-                  height={16}
-                  width={16}
-                />
-                {stats}
-              </span>
-            ) : (
-              stats
-            )}
-          </p>
-        )}
+        <div className="mt-auto">
+          {stats && (
+            <p className="font-normal text-xs text-gray-500 capitalize mb-1">
+              {showWarning ? (
+                <span className="inline-flex items-center">
+                  <ExclamationTriangleIcon
+                    className="text-yellow-500 mr-1"
+                    height={16}
+                    width={16}
+                  />
+                  {stats}
+                </span>
+              ) : (
+                stats
+              )}
+            </p>
+          )}
+          {metadata && (
+            <p className="text-xs text-gray-500">
+              Added By {metadata.addedBy}
+              {metadata.date && (
+                <>
+                  <span className="mx-1">On</span>
+                  {metadata.date}
+                </>
+              )}
+            </p>
+          )}
+        </div>
       </div>
     </Link>
   );
