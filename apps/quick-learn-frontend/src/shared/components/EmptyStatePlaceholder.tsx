@@ -9,16 +9,6 @@ interface EmptyStateProps {
   searchValue?: string;
 }
 
-type NoArchivedKeys =
-  | 'noArchivedUsers'
-  | 'noArchivedUsersDescription'
-  | 'noArchivedRoadmaps'
-  | 'noArchivedRoadmapsDescription'
-  | 'noArchivedCourses'
-  | 'noArchivedCoursesDescription'
-  | 'noArchivedLessons'
-  | 'noArchivedLessonsDescription';
-
 const EMPTY_STATE_ICON_MAP: Record<EmptyStateType, React.ReactNode> = {
   users: EmptyStateIcons.inbox,
   roadmaps: EmptyStateIcons.book,
@@ -31,24 +21,35 @@ const getIconByType = (type: EmptyStateType): React.ReactNode => {
 };
 
 const getTextByType = (type: EmptyStateType, searchValue?: string) => {
-  const titleKey = `noArchived${
-    type.charAt(0).toUpperCase() + type.slice(1)
-  }` as NoArchivedKeys;
-  const descriptionKey = `noArchived${
-    type.charAt(0).toUpperCase() + type.slice(1)
-  }Description` as NoArchivedKeys;
+  if (searchValue) {
+    return {
+      title: en.archivedSection.noResults,
+      description: en.archivedSection.noResultsDescription
+        .replace('{type}', type)
+        .replace('{searchTerm}', searchValue),
+    };
+  }
 
-  const texts = {
-    title: searchValue
-      ? en.archivedSection.noResults
-      : en.archivedSection[titleKey],
-    description: searchValue
-      ? en.archivedSection.noResultsDescription
-          .replace('{type}', type)
-          .replace('{searchTerm}', searchValue)
-      : en.archivedSection[descriptionKey],
-  };
-  return texts;
+  // Regular empty state
+  switch (type) {
+    case 'roadmaps':
+      return {
+        title: en.dashboard.noRoadmaps,
+        description:
+          en.dashboard.noRoadmapsDescription || 'No roadmaps available', // TODO: Add to en.ts
+      };
+    case 'courses':
+      return {
+        title: en.dashboard.noCourses,
+        description:
+          en.dashboard.noCoursesDescription || 'No courses available', // TODO: Add to en.ts
+      };
+    default:
+      return {
+        title: `No ${type}`,
+        description: `No ${type} available`,
+      };
+  }
 };
 
 const EmptyState: React.FC<EmptyStateProps> = ({ type, searchValue }) => {
