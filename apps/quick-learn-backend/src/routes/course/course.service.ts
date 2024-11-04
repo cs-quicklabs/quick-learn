@@ -342,11 +342,15 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
 
     const courseDetails = await course.getOne();
-    if (courseDetails && courseDetails.lessons) {
-      courseDetails.lessons = courseDetails.lessons.map((lesson) => ({
-        ...lesson,
-        content: Helpers.limitSanitizedContent(lesson.content),
-      })) as LessonEntity[];
+    if (courseDetails && courseDetails.lessons.length > 0) {
+      courseDetails.lessons = courseDetails.lessons
+        .filter((lesson) => !lesson.archived && lesson.approved)
+        .map((lesson) => ({
+          ...lesson,
+          content: Helpers.limitSanitizedContent(lesson.content),
+        })) as LessonEntity[];
+    } else if (courseDetails) {
+      courseDetails.lessons = [];
     }
     return courseDetails;
   }
