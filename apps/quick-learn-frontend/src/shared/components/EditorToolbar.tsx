@@ -1,8 +1,7 @@
-import { PencilIcon } from '@heroicons/react/20/solid';
+import { PencilIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { ArrowPathIcon, CheckIcon, EyeIcon } from '@heroicons/react/24/outline';
 import React, { FC } from 'react';
 
-// Formats objects for setting up the Quill editor
 export const formats = [
   'header',
   'bold',
@@ -21,15 +20,16 @@ interface Props {
   undo: () => void;
   isUpdating: boolean;
   isAdd: boolean;
+  onArchive?: () => void;
 }
 
-// Quill Toolbar component
 const EditorToolbar: FC<Props> = ({
   isEditing,
   setIsEditing,
   undo,
   isUpdating,
   isAdd,
+  onArchive,
 }) => {
   return (
     <div
@@ -67,6 +67,16 @@ const EditorToolbar: FC<Props> = ({
         >
           <PencilIcon height={24} width={24} />
         </button>
+        {!isEditing && !isAdd && onArchive && (
+          <button
+            type="button"
+            className="custom-quill-button text-red-500 hover:text-red-600 transition-colors"
+            onClick={onArchive}
+            title="Archive lesson"
+          >
+            <TrashIcon height={24} width={24} />
+          </button>
+        )}
       </div>
       <div
         className={
@@ -101,10 +111,6 @@ const EditorToolbar: FC<Props> = ({
             (isUpdating ? 'bg-amber-400 ' : 'bg-[#3070b9] ')
           }
         >
-          {/* UnComment when the quill issues has beend fixed */}
-          {/* <button typeof="button" onClick={undo}>
-          <UndoWithTime className="h-5 w-5" />
-        </button> */}
           {isUpdating ? (
             <ArrowPathIcon height={16} width={16} strokeWidth={3} />
           ) : (
