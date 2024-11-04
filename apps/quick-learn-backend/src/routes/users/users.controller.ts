@@ -24,6 +24,7 @@ import { JwtAuthGuard } from '../auth/guards';
 import { en } from '@src/lang/en';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 import { GetUserQueryDto } from './dto/get-user-query.dto';
+import { GetLessonByIdQueryDto } from './dto/get-lesson-by-id.dto';
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -57,6 +58,71 @@ export class UsersController {
       includeCourses,
     );
     return new SuccessResponse(en.successGotUserRoadmaps, roadmaps);
+  }
+
+  @Get('my-roadmaps/:id')
+  @ApiOperation({ summary: "Get current user's roadmap by id" })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'Get the roadmap by id',
+  })
+  @ApiQuery({
+    name: 'roadmapId',
+    required: false,
+    type: String,
+    description: 'Also get the roadmap with the given id',
+  })
+  async getCurrentUserRoadmapsById(
+    @CurrentUser() user: UserEntity,
+    @Param('id') id: string,
+  ): Promise<SuccessResponse> {
+    const roadmaps = await this.usersService.getRoadmapDetails(user.id, +id);
+    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
+  }
+
+  @Get('my-roadmaps/courses/:id')
+  @ApiOperation({ summary: "Get current user's course by id" })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'Get the course by id',
+  })
+  async getCurrentUserCoursesById(
+    @CurrentUser() user: UserEntity,
+    @Param('id') id: string,
+    @Query('roadmapId') roadmapId?: string,
+  ): Promise<SuccessResponse> {
+    const roadmaps = await this.usersService.getCourseDetails(
+      user.id,
+      +id,
+      roadmapId ? +roadmapId : undefined,
+    );
+    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
+  }
+
+  @Get('my-roadmaps/lessons/:id')
+  @ApiOperation({ summary: "Get current user's lesson by id" })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'Get the lesson by id',
+  })
+  async getCurrentUserLessonsById(
+    @CurrentUser() user: UserEntity,
+    @Param('id') id: string,
+    @Query() query: GetLessonByIdQueryDto,
+  ): Promise<SuccessResponse> {
+    const roadmaps = await this.usersService.getLessonDetails(
+      user.id,
+      +id,
+      +query.courseId,
+      query.roadmapId ? +query.roadmapId : undefined,
+    );
+    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
   @Post()

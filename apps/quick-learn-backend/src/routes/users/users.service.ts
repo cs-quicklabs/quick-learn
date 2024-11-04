@@ -21,6 +21,8 @@ import { SessionService } from '../auth/session.service';
 import { en } from '@src/lang/en';
 import { RoadmapService } from '../roadmap/roadmap.service';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
+import { CourseService } from '../course/course.service';
+import { LessonService } from '../lesson/lesson.service';
 
 const userRelations = ['user_type', 'skill', 'team'];
 
@@ -36,6 +38,8 @@ export class UsersService extends PaginationService<UserEntity> {
     private emailService: EmailService,
     private sessionService: SessionService,
     private roadmapService: RoadmapService,
+    private courseService: CourseService,
+    private lessonService: LessonService,
   ) {
     super(userRepository);
   }
@@ -164,6 +168,50 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     return user.assigned_roadmaps;
+  }
+
+  async getRoadmapDetails(userId: number, id: number) {
+    const roadmap = await this.roadmapService.getUserRoadmapDetails(userId, id);
+
+    if (!roadmap) {
+      throw new BadRequestException(en.RoadmapNotFound);
+    }
+
+    return roadmap;
+  }
+
+  async getCourseDetails(userId: number, id: number, roadmap?: number) {
+    const course = await this.courseService.getUserCourseDetails(
+      userId,
+      id,
+      roadmap,
+    );
+
+    if (!course) {
+      throw new BadRequestException(en.CourseNotFound);
+    }
+
+    return course;
+  }
+
+  async getLessonDetails(
+    userId: number,
+    id: number,
+    courseId: number,
+    roadmap?: number,
+  ) {
+    const lesson = await this.lessonService.getUserLessonDetails(
+      userId,
+      id,
+      courseId,
+      roadmap,
+    );
+
+    if (!lesson) {
+      throw new BadRequestException(en.lessonNotFound);
+    }
+
+    return lesson;
   }
 
   sortByLastLogin(users: UserEntity[]) {
