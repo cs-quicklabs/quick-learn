@@ -1,3 +1,4 @@
+'use client';
 import ReactQuill from 'react-quill';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -41,6 +42,8 @@ const Editor: FC<Props> = ({
       setIsArchiving(true);
       await onArchive();
       setShowArchiveModal(false);
+    } catch (err) {
+      toast.error(en.common.somethingWentWrong);
     } finally {
       setIsArchiving(false);
     }
@@ -57,6 +60,7 @@ const Editor: FC<Props> = ({
     try {
       const res = await fileUploadApiCall(formData, 'lesson');
 
+      // Prevent automatic scroll by using preservePosition option
       const range = quill.getSelection(true);
       if (range) {
         quill.insertEmbed(range.index, 'image', res.data.file, 'user');
@@ -89,6 +93,7 @@ const Editor: FC<Props> = ({
       const clipboard = e.clipboardData;
       if (!clipboard?.items) return;
 
+      // Check if any pasted item is an image
       const items = Array.from(clipboard.items);
       const imageItem = items.find((item) => item.type.indexOf('image') !== -1);
 
@@ -100,6 +105,7 @@ const Editor: FC<Props> = ({
           await handleImageUpload(file);
         }
       } else {
+        // Allow default paste behavior
         e.preventDefault();
         e.stopPropagation();
         const text = clipboard.getData('text/plain');
@@ -107,9 +113,11 @@ const Editor: FC<Props> = ({
       }
     };
 
+    // Add event listeners to the Quill editor element
     const editorContainer = quill.root;
     editorContainer.addEventListener('paste', handlePaste, { capture: true });
 
+    // Cleanup
     return () => {
       editorContainer.removeEventListener('paste', handlePaste, {
         capture: true,
@@ -136,10 +144,14 @@ const Editor: FC<Props> = ({
       },
       keyboard: {
         bindings: {
+          // Prevent default paste behavior
           paste: {
             key: 'V',
             shortKey: true,
-            handler: () => true,
+            handler: (range: unknown, context: unknown) => {
+              // Let our paste handler handle it
+              return true;
+            },
           },
         },
       },
@@ -156,11 +168,12 @@ const Editor: FC<Props> = ({
 
   function onUndo() {
     if (!quillRef.current) return;
+    // const editor = quillRef.current.getEditor();
+    // (editor as any).history.redo();
   }
 
   return (
     <div className="flex flex-col h-full">
-      {isArchiving && <FullPageLoader />}
       <EditorToolbar
         isEditing={isEditing}
         setIsEditing={setIsEditing}
@@ -185,11 +198,12 @@ const Editor: FC<Props> = ({
 
       <ConformationModal
         title={en.lesson.archiveConfirmHeading}
-        subTitle={en.lesson.archiveConfirmSubHeading}
+        subTitle={en.lesson.archiveConfirmDescription}
         open={showArchiveModal}
         setOpen={setShowArchiveModal}
         onConfirm={handleArchiveConfirm}
       />
+      {isArchiving && <FullPageLoader />}
     </div>
   );
 };
