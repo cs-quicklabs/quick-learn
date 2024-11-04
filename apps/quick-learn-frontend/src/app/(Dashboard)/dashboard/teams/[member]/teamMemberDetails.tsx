@@ -162,7 +162,8 @@ const TeamMemberDetails = () => {
             {member?.first_name} {member?.last_name}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate sm:flex sm:items-center sm:justify-center">
-            (10 Roadmaps, 20 Courses)
+            ({allRoadmapCategories.length} {en.common.roadmaps},{' '}
+            {allCourses.length} {en.common.courses})
           </p>
           <div className="sm:flex sm:items-center sm:justify-center gap-2 mt-2">
             <Tooltip
