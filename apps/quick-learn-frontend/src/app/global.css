@@ -205,4 +205,11 @@ input:-webkit-autofill:active {
   margin: 1rem auto;
   max-height: 400px;
 }
+.ql-clipboard {
+  position: fixed !important;
+  display: none !important;
+
+  left: 50% !important;
+  top: 50% !important;
+}
 /* lesson viewer css */

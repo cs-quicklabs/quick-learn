@@ -23,7 +23,7 @@ export const formats = [
 interface Props {
   isEditing: boolean;
   setIsEditing: (value: boolean) => void;
-  undo: () => void;
+  undo?: () => void;
   isUpdating: boolean;
   isAdd: boolean;
   onArchive?: () => void;
