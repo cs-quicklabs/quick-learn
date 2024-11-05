@@ -1,12 +1,13 @@
 'use client';
+import React, { useEffect, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
 import { en } from '@src/constants/lang/en';
 import { getCommunityCourses } from '@src/apiServices/contentRepositoryService';
-import { useEffect, useState } from 'react';
 import { TCourse } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import Card from '@src/shared/components/Card';
 import CommunityCoursesSkeleton from './CommunityCardSkeleton';
+import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 
 const CommunityCourseRepository = () => {
   const [allCourses, setAllCourses] = useState<TCourse[]>([]);
@@ -34,41 +35,48 @@ const CommunityCourseRepository = () => {
   }
 
   return (
-    <div>
+    <div className="container mx-auto px-4">
       {/* Heading */}
-      <div className="flex flex-col gap-4 text-center">
-        <div className="text-5xl font-bold">{en.CommunityCouse.heading}</div>
-        <div className="text-sm text-gray-500">
-          {en.CommunityCouse.description}
-        </div>
-        <div className="text-sm text-gray-500">
-          ({allCourses.length} {en.CommunityCouse.course})
-        </div>
+      <div className="flex flex-col gap-4 text-center mb-10">
+        <h1 className="text-4xl md:text-5xl font-bold">
+          {en.CommunityCouse.heading}
+        </h1>
+        {allCourses.length > 0 && (
+          <>
+            <p className="text-sm text-gray-500">
+              {en.CommunityCouse.description}
+            </p>
+            <p className="text-sm text-gray-500">
+              ({allCourses.length} {en.CommunityCouse.course})
+            </p>
+          </>
+        )}
       </div>
 
-      {/* Display all courses */}
-      <ul className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-4 2xl:grid-cols-5">
-        {allCourses.length > 0 ? (
-          allCourses.map((course) => (
-            <li key={course.id}>
-              <Card
-                id={course.id}
-                title={course.name}
-                description={course.description}
-                stats={`${course?.lessons_count} ${en.lesson.lesson}`}
-                link={`${RouteEnum.COMMUNITY}/${course.id}`}
-                metadata={{
-                  addedBy: course.created_by?.first_name,
-                }}
-              />
-            </li>
-          ))
-        ) : (
-          <li className="flex justify-center col-span-5 text-gray-500">
-            {en.CommunityCouse.notfound}
-          </li>
-        )}
-      </ul>
+      {/* Courses Grid */}
+      {allCourses.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+          {allCourses.map((course) => (
+            <Card
+              key={course.id}
+              id={course.id}
+              title={course.name}
+              description={course.description}
+              stats={`${course?.lessons_count} ${en.lesson.lesson}`}
+              link={`${RouteEnum.COMMUNITY}/${course.id}`}
+              metadata={{
+                addedBy: course.created_by?.first_name,
+              }}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          type="courses"
+          customTitle={en.CommunityCouse.noCommunityCoursesTitle}
+          customDescription={en.CommunityCouse.noCommunityCoursesDescription}
+        />
+      )}
     </div>
   );
 };
