@@ -168,6 +168,10 @@ export const en = {
     pendingApproval: 'Pending for approval',
     lesson: 'lessons',
     notfound: 'No Lessons found',
+    archiveConfirmHeading: 'Archive Lesson',
+    archiveConfirmSubHeading: 'Are you sure you want to archive this lesson?',
+    archiveConfirmDescription:
+      'When this lesson is archived, it will be moved to archived lessons. Users will not be able to access this lesson anymore.',
   },
 
   /**
@@ -303,6 +307,7 @@ export const en = {
       "When courses are archived, they'll appear here",
 
     noArchivedLessons: 'No archived lessons',
+    lessonArchivedSuccessfully: 'Lesson has been archived successfully',
     noArchivedLessonsDescription:
       "When lessons are archived, they'll appear here",
     lessonDeletedSuccess: 'Lesson has been permanently deleted',

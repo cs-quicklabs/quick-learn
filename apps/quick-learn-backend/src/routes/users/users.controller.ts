@@ -201,6 +201,14 @@ export class UsersController {
       relations.push('assigned_roadmaps.courses');
     }
     const user = await this.usersService.findOne({ uuid }, relations);
+    user.assigned_roadmaps = (user.assigned_roadmaps || []).filter(
+      (roadmap) => roadmap.archived === false,
+    );
+    user.assigned_roadmaps.forEach((roadmap) => {
+      roadmap.courses = (roadmap.courses || []).filter(
+        (course) => course.archived === false,
+      );
+    });
     return new SuccessResponse(en.successGotUser, user);
   }
 
