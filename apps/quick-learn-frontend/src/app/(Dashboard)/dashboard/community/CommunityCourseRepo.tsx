@@ -1,19 +1,17 @@
 'use client';
-import CourseCard from './CourseCard';
 import { RouteEnum } from '@src/constants/route.enum';
 import { en } from '@src/constants/lang/en';
 import { getCommunityCourses } from '@src/apiServices/contentRepositoryService';
 import { useEffect, useState } from 'react';
 import { TCourse } from '@src/shared/types/contentRepository';
 import { FullPageLoader } from '@src/shared/components/UIElements';
-import Link from 'next/link';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
+import Card from '@src/shared/components/Card';
 
-const CoummintyCourseRepository = () => {
+const CommunityCoursesRepository = () => {
   const [allCourses, setAllCourses] = useState<TCourse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  //check if data is fetched
   const getData = async () => {
     getCommunityCourses()
       .then((res) => {
@@ -30,6 +28,7 @@ const CoummintyCourseRepository = () => {
   useEffect(() => {
     getData();
   }, []);
+
   return (
     <>
       {isLoading && <FullPageLoader />}
@@ -49,23 +48,22 @@ const CoummintyCourseRepository = () => {
           {allCourses && allCourses.length > 0 ? (
             allCourses.map((course) => {
               return (
-                <li
-                  key={course.id}
-                  className="col-span-1 hover:shadow-lg shadow-sm cursor-pointer rounded-lg"
-                >
-                  <Link href={`${RouteEnum.COMMUNITY}/${course.id}`}>
-                    <CourseCard
-                      name={course.name}
-                      title={course.description}
-                      publisher={course.created_by?.first_name}
-                      lesson={course?.lessons_count}
-                    />
-                  </Link>
+                <li key={course.id}>
+                  <Card
+                    id={course.id}
+                    title={course.name}
+                    description={course.description}
+                    stats={`${course?.lessons_count} ${en.lesson.lesson}`}
+                    link={`${RouteEnum.COMMUNITY}/${course.id}`}
+                    metadata={{
+                      addedBy: course.created_by?.first_name,
+                    }}
+                  />
                 </li>
               );
             })
           ) : (
-            <li className="flex justify-center  col-span-5 text-gray-500">
+            <li className="flex justify-center col-span-5 text-gray-500">
               {en.CommunityCouse.notfound}
             </li>
           )}
@@ -75,4 +73,4 @@ const CoummintyCourseRepository = () => {
   );
 };
 
-export default CoummintyCourseRepository;
+export default CommunityCoursesRepository;

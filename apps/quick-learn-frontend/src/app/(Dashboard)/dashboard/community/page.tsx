@@ -1,4 +1,4 @@
-import CoummintyCourseRepository from './CommunityCourseRepo';
+import CommunityCoursesRepository from './CommunityCourseRepo';
 
 export const metadata = {
   title: 'Free Courses, Community course',
@@ -8,7 +8,7 @@ export const metadata = {
 export default function Community() {
   return (
     <div>
-      <CoummintyCourseRepository />
+      <CommunityCoursesRepository />
     </div>
   );
 }
