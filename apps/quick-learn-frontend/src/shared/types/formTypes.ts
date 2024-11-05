@@ -1,4 +1,5 @@
 import { FilePathType } from 'lib/shared/src';
+import { ReactNode } from 'react';
 
 export type FieldType =
   | 'text'
@@ -21,4 +22,5 @@ export interface FieldConfig {
   className?: string;
   height?: string;
   width?: string;
+  customPreview?: ReactNode; // Add custom preview for any field (especially useful for images)
 }
