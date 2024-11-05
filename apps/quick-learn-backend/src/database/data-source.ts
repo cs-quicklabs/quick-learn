@@ -1,3 +1,4 @@
+import { Entities } from '@src/entities';
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
@@ -14,7 +15,7 @@ export const AppDataSource = new DataSource({
   dropSchema: false,
   keepConnectionAlive: true,
   logging: process.env.DATABASE_LOG === 'true',
-  // entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  entities: [...Entities],
   autoLoadEntities: true,
   subscribers: [__dirname + '/../**/*.subscriber{.ts,.js}'],
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
@@ -38,11 +39,6 @@ export const AppDataSource = new DataSource({
             key: process.env.DATABASE_KEY ?? undefined,
             cert: process.env.DATABASE_CERT ?? undefined,
           }
-        : (process.env.DATABASE_HOST || '').includes('localhost')
-        ? 'undefined'
-        : {
-            rejectUnauthorized:
-              process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
-          },
+        : undefined,
   },
 } as DataSourceOptions);
