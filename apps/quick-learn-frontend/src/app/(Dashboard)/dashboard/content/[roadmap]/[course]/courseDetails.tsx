@@ -318,7 +318,7 @@ const CourseDetails = () => {
             <EmptyState
               type="lessons"
               customTitle={en.lesson.notfound}
-              customDescription="Create your first lesson to get started"
+              customDescription="Create first lesson to get started"
               actionButton={{
                 label: en.lesson.createNewLesson,
                 onClick: onAddLesson,
