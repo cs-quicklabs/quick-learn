@@ -22,5 +22,6 @@ export interface FieldConfig {
   className?: string;
   height?: string;
   width?: string;
-  customPreview?: ReactNode; // Add custom preview for any field (especially useful for images)
+  firstName?: string;
+  lastName?: string;
 }

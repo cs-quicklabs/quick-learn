@@ -7,7 +7,7 @@ import Image from 'next/image';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { z } from 'zod';
-import { Loader } from '../components/UIElements';
+import { getInitials } from '@src/utils/helpers';
 
 interface Props {
   watch: UseFormWatch<z.TypeOf<z.ZodTypeAny>>;
@@ -16,6 +16,8 @@ interface Props {
   name: string;
   label: string;
   imageType: FilePathType;
+  firstName?: string;
+  lastName?: string;
 }
 
 const ImageInput: FC<Props> = ({
@@ -25,6 +27,8 @@ const ImageInput: FC<Props> = ({
   label,
   src = null,
   imageType,
+  firstName,
+  lastName,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imagePreview, setImagePreview] = useState<string | null>(src);
@@ -61,6 +65,7 @@ const ImageInput: FC<Props> = ({
       const formData = new FormData();
       formData.append('file', file);
       setIsLoading(true);
+      // Note: You'll need to implement fileUploadApiCall
       fileUploadApiCall(formData, imageType)
         .then((res) => {
           setValue(name, res.data.file, {
@@ -100,39 +105,46 @@ const ImageInput: FC<Props> = ({
           className="relative w-20 h-20 rounded-full overflow-hidden cursor-pointer"
           onClick={handleImageClick}
         >
-          <Image
-            src={imagePreview || '/placeholder.png'}
-            alt="Image"
-            fill={true}
-            style={{ objectFit: 'cover' }}
-            sizes="(max-width: 5rem) 5rem, 5rem"
-          />
+          {imagePreview ? (
+            <Image
+              src={imagePreview}
+              alt="Profile"
+              fill
+              className="object-cover"
+              sizes="(max-width: 5rem) 5rem, 5rem"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+              <span className="text-xl font-semibold text-gray-600 dark:text-gray-300">
+                {getInitials(firstName, lastName)}
+              </span>
+            </div>
+          )}
           <div
-            className={
-              'absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity' +
-              (isLoading ? ' opacity-100' : '')
-            }
+            className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity ${
+              isLoading ? 'opacity-100' : ''
+            }`}
           >
             {isLoading ? (
-              <Loader className="w-6" />
+              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : imagePreview ? (
-              <TrashIcon className="text-white" width="32px" />
+              <TrashIcon className="text-white w-8 h-8" />
             ) : (
-              <CameraIcon className="text-white" width="32px" />
+              <CameraIcon className="text-white w-8 h-8" />
             )}
           </div>
         </div>
         <input
           type="file"
           ref={fileInputRef}
-          style={{ display: 'none' }}
+          className="hidden"
           onChange={handleFileChange}
           accept="image/*"
           id={'file_' + name}
         />
       </div>
       {error && (
-        <p className="mt-1 text-red-500 text-sm">
+        <p className="mt-1 text-sm text-red-500">
           File should be less than 1MB.
         </p>
       )}

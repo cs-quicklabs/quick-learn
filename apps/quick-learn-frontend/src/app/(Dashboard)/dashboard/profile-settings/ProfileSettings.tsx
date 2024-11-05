@@ -74,6 +74,8 @@ const ProfileSettings = () => {
       type: 'image',
       placeholder: '',
       image_type: 'profile',
+      firstName: user?.first_name,
+      lastName: user?.last_name,
     },
     {
       label: 'First Name',
