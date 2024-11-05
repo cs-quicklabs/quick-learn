@@ -10,6 +10,7 @@ import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { en } from '@src/constants/lang/en';
 import Card from '@src/shared/components/Card';
 import CommunityCourseDetailsSkeleton from './CommunityCourseDetailSkeleton';
+import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 
 const CommunityCourse = () => {
   const [courseData, setCourseData] = useState<TCourse | undefined>();
@@ -41,45 +42,54 @@ const CommunityCourse = () => {
     return null;
   }
 
+  const hasLessons = courseData.lessons && courseData.lessons.length > 0;
+
   return (
-    <div className="w-full">
+    <div className="container mx-auto px-4">
       {/* Heading */}
-      <div className="flex flex-col gap-4 text-center">
-        <div className="text-5xl font-bold">{courseData.name}</div>
-        <div className="text-sm text-gray-500">{courseData.description}</div>
-        <div className="text-sm text-gray-500">
-          {`(${courseData?.lessons?.length} ${en.lesson.lesson})`}
-        </div>
+      <div className="flex flex-col gap-4 text-center mb-10">
+        <h1 className="text-4xl md:text-5xl font-bold">{courseData.name}</h1>
+        {hasLessons && (
+          <>
+            <p className="text-sm text-gray-500">{courseData.description}</p>
+            <p className="text-sm text-gray-500">
+              ({courseData.lessons?.length} {en.lesson.lesson})
+            </p>
+          </>
+        )}
       </div>
 
-      {/* Display all lessons */}
-      <ul className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-4 2xl:grid-cols-5">
-        {courseData.lessons && courseData.lessons.length > 0 ? (
-          courseData.lessons.map((lesson) => {
+      {/* Lessons Grid */}
+      {hasLessons ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+          {courseData.lessons?.map((lesson) => {
             const formattedDate = format(
               lesson.created_at,
               DateFormats.shortDate,
             );
             return (
-              <li key={lesson.id}>
-                <Card
-                  id={String(lesson.id)}
-                  title={lesson.name}
-                  description={lesson.content}
-                  link={`${RouteEnum.COMMUNITY}/${courseId}/${lesson.id}`}
-                  metadata={{
-                    date: formattedDate,
-                  }}
-                />
-              </li>
+              <Card
+                key={lesson.id}
+                id={String(lesson.id)}
+                title={lesson.name}
+                description={lesson.content}
+                link={`${RouteEnum.COMMUNITY}/${courseId}/${lesson.id}`}
+                metadata={{
+                  addedBy:
+                    `${lesson.created_by_user.first_name} ${lesson.created_by_user.last_name}`.trim(),
+                  date: formattedDate,
+                }}
+              />
             );
-          })
-        ) : (
-          <li className="flex justify-center col-span-5 text-gray-500">
-            {en.lesson.notfound}
-          </li>
-        )}
-      </ul>
+          })}
+        </div>
+      ) : (
+        <EmptyState
+          type="lessons"
+          customTitle={en.lesson.notfound}
+          customDescription="No lessons have been added to this course yet."
+        />
+      )}
     </div>
   );
 };
