@@ -10,7 +10,6 @@ import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Card from '@src/shared/components/Card';
 import CreateNewCard from '@src/shared/components/CreateNewCard';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import AddEditRoadMapModal, {
   AddEditRoadmapData,
 } from '@src/shared/modals/addEditRoadMapModal';
@@ -20,6 +19,7 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
+import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 
 const ContentRepository = () => {
   const router = useRouter();
@@ -28,26 +28,21 @@ const ContentRepository = () => {
   );
   const allCourseCategories = metadata.contentRepository.course_categories;
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [isModalLoading, setIsModalLoading] = useState(false);
   const [roadmaps, setRoadmaps] = useState<TRoadmap[]>([]);
   const [courses, setCourses] = useState<TCourse[]>([]);
 
   useEffect(() => {
-    setIsPageLoading(true);
-    getContentRepositoryMetadata()
-      .then((response) => setContentRepositoryMetadata(response.data))
-      .catch((error) => showApiErrorInToast(error))
-      .finally(() => setIsPageLoading(false));
+    Promise.all([
+      getContentRepositoryMetadata()
+        .then((response) => setContentRepositoryMetadata(response.data))
+        .catch((error) => showApiErrorInToast(error)),
+      getRoadmaps()
+        .then((res) => setRoadmaps(res.data))
+        .catch((err) => showApiErrorInToast(err)),
+    ]).finally(() => setIsPageLoading(false));
   }, [setContentRepositoryMetadata]);
-
-  useEffect(() => {
-    getRoadmaps()
-      .then((res) => {
-        setRoadmaps(res.data);
-      })
-      .catch((err) => showApiErrorInToast(err));
-  }, []);
 
   useEffect(() => {
     const data: TCourse[] = [];
@@ -59,7 +54,7 @@ const ContentRepository = () => {
   }, [allCourseCategories]);
 
   function onSubmit(data: AddEditRoadmapData) {
-    setIsLoading(true);
+    setIsModalLoading(true);
     createRoadmap(data)
       .then((res) => {
         setRoadmaps((prev) => [res.data, ...prev]);
@@ -68,17 +63,20 @@ const ContentRepository = () => {
         showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsModalLoading(false));
+  }
+
+  if (isPageLoading) {
+    return <ContentRepositorySkeleton />;
   }
 
   return (
     <>
-      {isPageLoading && <FullPageLoader />}
       <AddEditRoadMapModal
         open={openAddModal}
         setOpen={setOpenAddModal}
         onSubmit={onSubmit}
-        isloading={isLoading}
+        isloading={isModalLoading}
       />
       <div className="px-4 mb-8 sm:flex sm:items-center sm:justify-center sm:px-6 lg:px-8">
         <div className="items-baseline">
@@ -86,8 +84,8 @@ const ContentRepository = () => {
             {en.contentRepository.contentRepository}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate sm:flex sm:items-center sm:justify-center capitalize text-center">
-            ({roadmaps.length} {en.contentRepository.roadmaps},{' '}
-            {courses.length ?? 0} {en.contentRepository.courses})
+            ({roadmaps.length} {en.contentRepository.roadmaps}, {courses.length}{' '}
+            {en.contentRepository.courses})
           </p>
         </div>
       </div>

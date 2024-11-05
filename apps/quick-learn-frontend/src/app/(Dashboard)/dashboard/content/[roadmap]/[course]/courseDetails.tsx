@@ -16,7 +16,6 @@ import { RouteEnum } from '@src/constants/route.enum';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import Card from '@src/shared/components/Card';
 import CreateNewCard from '@src/shared/components/CreateNewCard';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import AddEditCourseModal from '@src/shared/modals/addEditCourseModal';
 import AssignDataModal from '@src/shared/modals/assignDataModal';
 import ConformationModal from '@src/shared/modals/conformationModal';
@@ -36,6 +35,7 @@ import { format } from 'date-fns';
 import { Tooltip } from 'flowbite-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import CourseDetailsSkeleton from './CourseDetailsSkeleton';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
@@ -179,10 +179,11 @@ const CourseDetails = () => {
   function onAddLesson() {
     router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/add`);
   }
-
+  if (isPageLoading) {
+    return <CourseDetailsSkeleton />;
+  }
   return (
     <>
-      {isPageLoading && <FullPageLoader />}
       <AddEditCourseModal
         open={openAddModal}
         setOpen={setOpenAddModal}
