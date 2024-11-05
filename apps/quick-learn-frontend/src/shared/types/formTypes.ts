@@ -1,4 +1,5 @@
 import { FilePathType } from 'lib/shared/src';
+import { ReactNode } from 'react';
 
 export type FieldType =
   | 'text'
