@@ -92,6 +92,10 @@ export const en = {
     editRoadmap: 'Edit Roadmap',
     createdThisRoadmapOn: 'created this roadmap on',
     archiveRoadmap: 'Archive Roadmap',
+    noRoadmaps: 'No roadmaps available',
+    noRoadmapsDescription: 'There are no roadmaps yet',
+    noCourses: 'No courses available',
+    noCoursesDescription: 'There are no courses yet',
 
     // Courses
     courses: 'courses',
@@ -167,6 +171,8 @@ export const en = {
     titleMaxLength: 'Title cannot exceed 80 characters',
     pendingApproval: 'Pending for approval',
     lesson: 'lessons',
+    noLessonsTitle: 'No lessons available',
+    noLessonsDescription: 'No lessons have been added to this course yet.',
     notfound: 'No Lessons found',
     archiveConfirmHeading: 'Archive Lesson',
     archiveConfirmSubHeading: 'Are you sure you want to archive this lesson?',
@@ -323,6 +329,9 @@ export const en = {
       'Following courses have been made public by community members. You can copy these courses to your organization and make changes as per your requirements.',
     course: 'Courses',
     notfound: 'No Courses found',
+    noCommunityCoursesTitle: 'No community courses available',
+    noCommunityCoursesDescription:
+      'There are no community courses available at the moment. Check back later for shared courses from the community.',
   },
 
   /**
