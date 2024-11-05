@@ -78,7 +78,7 @@ const EditorToolbar: FC<Props> = ({
         {!isAdd && onArchive && (
           <button
             type="button"
-            className="custom-quill-button text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            className="custom-quill-button text-red-500 hover:text-red-600 focus:outline-none  "
             onClick={onArchive}
             title="Archive lesson"
           >
