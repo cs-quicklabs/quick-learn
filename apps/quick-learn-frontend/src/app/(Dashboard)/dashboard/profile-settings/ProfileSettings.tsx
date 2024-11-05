@@ -1,5 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosErrorObject } from '@src/apiServices/axios';
 import { updateUserProfileService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
 import { UserContext } from '@src/context/userContext';
@@ -14,6 +15,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+// Define the service input type
+interface ProfileUpdateServiceInput {
+  first_name: string;
+  last_name: string;
+  profile_image: string;
+}
+
+// Schema for form data
 const profileSchema = z.object({
   first_name: z
     .string()
@@ -33,7 +42,10 @@ const profileSchema = z.object({
       onlyAlphabeticValidation,
       'Last name should only contain alphabetic characters',
     ),
-  profile_image: z.union([z.instanceof(File), z.string()]).optional(),
+  profile_image: z
+    .union([z.instanceof(File), z.string()])
+    .optional()
+    .default(''),
   email: z.string().email('Invalid email address').optional(),
 });
 
@@ -45,8 +57,16 @@ const ProfileSettings = () => {
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     mode: 'onChange',
+    defaultValues: {
+      first_name: '',
+      last_name: '',
+      profile_image: '',
+      email: '',
+    },
   });
-  const { setValue } = methods;
+
+  const { reset } = methods;
+
   const profileSettingsFields: FieldConfig[] = [
     {
       label: 'Upload avatar',
@@ -76,36 +96,49 @@ const ProfileSettings = () => {
     },
   ];
 
-  const onSubmit = (data: ProfileFormData) => {
+  const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true);
-    const { first_name, last_name, profile_image } = data;
-    updateUserProfileService({
-      first_name,
-      last_name,
-      profile_image: profile_image ?? '',
-    })
-      .then((res) => {
-        if (user) {
-          setUser({
-            ...user,
-            ...data,
-            profile_image: data.profile_image as string,
-          });
-        }
-        showApiMessageInToast(res);
-      })
-      .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+    try {
+      const { first_name, last_name, profile_image } = data;
+
+      // Convert form data to service input type
+      const serviceInput: ProfileUpdateServiceInput = {
+        first_name,
+        last_name,
+        profile_image:
+          typeof profile_image === 'string'
+            ? profile_image
+            : user?.profile_image || '',
+      };
+
+      const response = await updateUserProfileService(serviceInput);
+
+      if (user) {
+        setUser({
+          ...user,
+          first_name,
+          last_name,
+          profile_image: serviceInput.profile_image,
+        });
+      }
+      showApiMessageInToast(response);
+    } catch (err) {
+      showApiErrorInToast(err as AxiosErrorObject);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
     if (user) {
-      setValue('first_name', user.first_name);
-      setValue('last_name', user.last_name);
-      setValue('profile_image', user.profile_image);
-      setValue('email', user.email);
+      reset({
+        first_name: user.first_name,
+        last_name: user.last_name,
+        profile_image: user.profile_image || '',
+        email: user.email,
+      });
     }
-  }, [setValue, user]);
+  }, [user, reset]);
 
   return (
     <div>
