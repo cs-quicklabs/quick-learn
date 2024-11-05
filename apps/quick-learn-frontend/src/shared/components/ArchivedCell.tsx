@@ -50,25 +50,29 @@ const ArchivedCell: FC<Props> = ({
 
   return (
     <div className="flex items-center p-4">
-      <div className="flex-1 min-w-0 sm:flex sm:items-center sm:justify-between">
-        <div>
-          <div className="flex text-sm font-medium text-gray-600 truncate">
-            <p className="truncate max-w-[200px] capitalize">{title}</p>
-            <p className="ml-1 font-normal text-gray-500">{subtitle}</p>
-          </div>
-          <div className="mt-2">
-            <div className="flex items-center text-sm text-gray-500">
-              <CalenderIcon />
-              <p>
-                {en.common.deactivatedOn}{' '}
-                {format(deactivationDate, DateFormats.shortDate)} {en.common.by}{' '}
+      <div className="flex-1 min-w-0">
+        <div className="flex text-sm font-medium text-gray-600">
+          <p className="truncate max-w-[200px] capitalize">{title}</p>
+          {subtitle && (
+            <p className="ml-1 font-normal text-gray-500 truncate max-w-[150px]">
+              {subtitle}
+            </p>
+          )}
+        </div>
+        <div className="mt-2">
+          <div className="flex items-center text-sm text-gray-500">
+            <CalenderIcon />
+            <p className="truncate ml-1.5">
+              {en.common.deactivatedOn}{' '}
+              {format(deactivationDate, DateFormats.shortDate)} {en.common.by}{' '}
+              <span className="max-w-[150px] inline-block truncate align-bottom">
                 {deactivatedBy}
-              </p>
-            </div>
+              </span>
+            </p>
           </div>
         </div>
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-end shrink-0">
         <button
           className="text-sm text-gray-500 hover:text-red-600 hover:underline"
           onClick={onClickRestore}
