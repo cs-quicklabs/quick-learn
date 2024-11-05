@@ -112,16 +112,17 @@ const Navbar = () => {
         className="bg-gray-800 text-white shadow fixed z-10 w-full top-0"
       >
         <div className="mx-auto px-2 sm:px-4 lg:px-8">
-          <div className="flex py-2 justify-between">
+          <div className="flex py-1 justify-between">
             <div className="flex px-2 lg:px-0">
-              <div className="flex flex-shrink-0 items-center">
+              <div className="flex-shrink-0 flex items-center">
                 <Link
                   id="homeLogo"
                   href={RouteEnum.MY_LEARNING_PATH}
-                  className="font-mono px-3 hidden lg:block tracking-wider"
+                  className="text-white font-extrabold font-mono px-3 hidden lg:block tracking-wider"
                 >
                   Quick Learn
                 </Link>
+                <span className="text-white font-medium px-3 block lg:hidden"></span>
               </div>
               <div className="hidden lg:ml-6 lg:flex lg:space-x-4">
                 {links.map((item, index) => (
