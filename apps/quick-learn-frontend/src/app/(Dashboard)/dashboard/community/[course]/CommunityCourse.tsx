@@ -75,6 +75,8 @@ const CommunityCourse = () => {
                 description={lesson.content}
                 link={`${RouteEnum.COMMUNITY}/${courseId}/${lesson.id}`}
                 metadata={{
+                  addedBy:
+                    `${lesson.created_by_user.first_name} ${lesson.created_by_user.last_name}`.trim(),
                   date: formattedDate,
                 }}
               />

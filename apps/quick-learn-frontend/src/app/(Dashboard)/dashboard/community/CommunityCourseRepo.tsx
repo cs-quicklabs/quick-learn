@@ -8,6 +8,8 @@ import { showApiErrorInToast } from '@src/utils/toastUtils';
 import Card from '@src/shared/components/Card';
 import CommunityCoursesSkeleton from './CommunityCardSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
+import { format } from 'date-fns';
+import { DateFormats } from '@src/constants/dateFormats';
 
 const CommunityCourseRepository = () => {
   const [allCourses, setAllCourses] = useState<TCourse[]>([]);
@@ -56,19 +58,27 @@ const CommunityCourseRepository = () => {
       {/* Courses Grid */}
       {allCourses.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
-          {allCourses.map((course) => (
-            <Card
-              key={course.id}
-              id={course.id}
-              title={course.name}
-              description={course.description}
-              stats={`${course?.lessons_count} ${en.lesson.lesson}`}
-              link={`${RouteEnum.COMMUNITY}/${course.id}`}
-              metadata={{
-                addedBy: course.created_by?.first_name,
-              }}
-            />
-          ))}
+          {allCourses.map((course) => {
+            const formattedDate = format(
+              course.created_at,
+              DateFormats.shortDate,
+            );
+            return (
+              <Card
+                key={course.id}
+                id={course.id}
+                title={course.name}
+                description={course.description}
+                stats={`${course?.lessons_count} ${en.lesson.lesson}`}
+                link={`${RouteEnum.COMMUNITY}/${course.id}`}
+                metadata={{
+                  addedBy:
+                    `${course.created_by?.first_name} ${course.created_by?.last_name}`.trim(),
+                  date: formattedDate,
+                }}
+              />
+            );
+          })}
         </div>
       ) : (
         <EmptyState
