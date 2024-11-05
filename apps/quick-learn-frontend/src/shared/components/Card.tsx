@@ -61,12 +61,12 @@ const Card: FC<CardProps> = ({
               )}
             </p>
           )}
-          {metadata && (
+          {metadata && (metadata.addedBy || metadata.date) && (
             <p className="text-xs text-gray-500">
-              Added By {metadata.addedBy}
+              {metadata.addedBy ? <>Added By {metadata.addedBy}</> : <>Added</>}
               {metadata.date && (
                 <>
-                  <span className="mx-1">On</span>
+                  <span className="mx-1">on</span>
                   {metadata.date}
                 </>
               )}
