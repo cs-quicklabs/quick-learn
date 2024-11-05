@@ -31,10 +31,12 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { Tooltip } from 'flowbite-react';
+import { useRouter } from 'next/navigation';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
 const TeamMemberDetails = () => {
+  const router = useRouter();
   const param = useParams<{ member: string }>();
   const userUUID = param.member;
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
@@ -106,11 +108,11 @@ const TeamMemberDetails = () => {
           ...res,
           message: 'User deactivated successfully',
         });
+        router.back(); // Add this line to navigate back
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsPageLoading(false));
   };
-
   const assignCourses = (data: string[]) => {
     setIsPageLoading(true);
     assignRoadmapsToUser(userUUID, { roadmaps: data })

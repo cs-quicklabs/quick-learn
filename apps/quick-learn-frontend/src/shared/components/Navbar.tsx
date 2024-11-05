@@ -20,6 +20,7 @@ import { UserContext } from '@src/context/userContext';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import ConformationModal from '../modals/conformationModal';
 import { en } from '@src/constants/lang/en';
+import { getInitials } from '@src/utils/helpers';
 
 type TLink = { name: string; link: string; isExtended?: boolean };
 
@@ -57,7 +58,7 @@ const menuItems: TLink[] = [
     link: RouteEnum.ARCHIVED_USERS,
   },
   {
-    name: 'Change-log',
+    name: 'Change-Logs',
     link: RouteEnum.CHANGE_LOGS,
     isExtended: true,
   },
@@ -72,6 +73,8 @@ const Navbar = () => {
   const [links, setLinks] = useState<TLink[]>([]);
   const [showConformationModal, setShowConformationModal] = useState(false);
   const { user } = useContext(UserContext);
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
@@ -85,10 +88,6 @@ const Navbar = () => {
     }
   }, [user]);
 
-  const pathname = usePathname();
-  const router = useRouter();
-
-  //User Logout
   async function doLogout() {
     try {
       await logoutApiCall();
@@ -97,6 +96,7 @@ const Navbar = () => {
       console.log(error);
     }
   }
+
   return (
     <>
       <ConformationModal
@@ -112,16 +112,17 @@ const Navbar = () => {
         className="bg-gray-800 text-white shadow fixed z-10 w-full top-0"
       >
         <div className="mx-auto px-2 sm:px-4 lg:px-8">
-          <div className="flex py-2 justify-between">
+          <div className="flex py-1 justify-between">
             <div className="flex px-2 lg:px-0">
-              <div className="flex flex-shrink-0 items-center">
+              <div className="flex-shrink-0 flex items-center">
                 <Link
                   id="homeLogo"
                   href={RouteEnum.MY_LEARNING_PATH}
-                  className="font-mono px-3 hidden lg:block tracking-wider"
+                  className="text-white font-extrabold font-mono px-3 hidden lg:block tracking-wider"
                 >
                   Quick Learn
                 </Link>
+                <span className="text-white font-medium px-3 block lg:hidden"></span>
               </div>
               <div className="hidden lg:ml-6 lg:flex lg:space-x-4">
                 {links.map((item, index) => (
@@ -144,7 +145,6 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Desktop view search box */}
             <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
               <div className="w-full max-w-lg lg:max-w-xs">
                 <label htmlFor="search" className="sr-only">
@@ -153,8 +153,8 @@ const Navbar = () => {
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <MagnifyingGlassIcon
-                      aria-hidden="true"
                       className="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
                     />
                   </div>
                   <input
@@ -168,18 +168,17 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Mobile menu button */}
             <div className="flex lg:hidden">
               <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 <span className="absolute -inset-0.5" />
                 <span className="sr-only">Open main menu</span>
                 <Bars3Icon
-                  aria-hidden="true"
                   className="block h-6 w-6 group-data-[open]:hidden"
+                  aria-hidden="true"
                 />
                 <XMarkIcon
-                  aria-hidden="true"
                   className="hidden h-6 w-6 group-data-[open]:block"
+                  aria-hidden="true"
                 />
               </DisclosureButton>
             </div>
@@ -192,74 +191,78 @@ const Navbar = () => {
                 >
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">View notifications</span>
-                  <BellIcon aria-hidden="true" className="h-6 w-6" />
+                  <BellIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
 
-                {/* Profile dropdown */}
-                <Menu as="div" className="relative ml-4 flex-shrink-0">
-                  <div>
-                    <MenuButton className="relative flex rounded-full bg-gray-800 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">Open user menu</span>
-                      <Image
-                        alt=""
-                        src={user?.profile_image || '/placeholder.png'}
-                        className="h-8 w-8 rounded-full object-cover"
-                        height={24}
-                        width={24}
-                      />
-                    </MenuButton>
-                  </div>
-                  <MenuItems
-                    transition
-                    className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in divide-y divide-gray-100"
-                  >
+                {/* Updated Profile Menu */}
+                <Menu as="div" className="relative ml-4">
+                  <MenuButton className="flex items-center">
+                    <div className="h-10 w-10 bg-gray-400 rounded-full flex items-center justify-center">
+                      {user?.profile_image ? (
+                        <Image
+                          alt=""
+                          src={user.profile_image}
+                          className="h-10 w-10 rounded-full object-cover"
+                          width={40}
+                          height={40}
+                        />
+                      ) : (
+                        <span className="text-lg font-medium">
+                          {getInitials(user?.first_name, user?.last_name)}
+                        </span>
+                      )}
+                    </div>
+                  </MenuButton>
+
+                  <MenuItems className="absolute right-0 mt-2 w-64 divide-y divide-gray-100 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    {/* User Info Section */}
                     <div className="px-4 py-3">
-                      <p className="text-sm text-black">{user?.email}</p>
-                      <p className="text-xs text-gray-700">
+                      <p className="text-base text-gray-900 font-medium">
+                        {user?.first_name} {user?.last_name}
+                      </p>
+                      <p className="text-sm text-gray-500">{user?.email}</p>
+                      <p className="text-xs text-gray-500 mt-1">
                         {user?.team?.name}
                       </p>
                     </div>
-                    <div>
+
+                    {/* Main Menu Items */}
+                    <div className="py-1">
                       {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
                         menuItems.map(
                           (item, index) =>
                             item.isExtended === undefined && (
-                              <MenuItem key={item.link + item.name}>
+                              <MenuItem key={item.link}>
                                 <Link
                                   href={item.link}
-                                  id={`profileMenu${index}`}
-                                  className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                                 >
                                   {item.name}
                                 </Link>
                               </MenuItem>
                             ),
                         )}
-                      {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
+                      {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN && (
                         <MenuItem>
                           <Link
-                            id="myProfile"
                             href={RouteEnum.PROFILE_SETTINGS}
-                            className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             My Profile
                           </Link>
                         </MenuItem>
-                      ) : (
-                        ''
                       )}
                     </div>
-                    <div className="border-y-2">
+
+                    {/* Extended Menu Items */}
+                    <div className="py-1">
                       {menuItems.map(
-                        (item, index) =>
+                        (item) =>
                           item.isExtended && (
-                            <MenuItem key={item.link + item.name}>
+                            <MenuItem key={item.link}>
                               <Link
                                 href={item.link}
-                                id={`profileMenu${index}`}
-                                target="_blank"
-                                className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                               >
                                 {item.name}
                               </Link>
@@ -268,16 +271,17 @@ const Navbar = () => {
                       )}
                     </div>
 
-                    <MenuItem>
-                      <Link
-                        href="#"
-                        id="signOut"
-                        onClick={() => setShowConformationModal(true)}
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 divide-y divide-gray-100"
-                      >
-                        Sign out
-                      </Link>
-                    </MenuItem>
+                    {/* Sign Out */}
+                    <div className="py-1">
+                      <MenuItem>
+                        <button
+                          onClick={() => setShowConformationModal(true)}
+                          className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          Sign out
+                        </button>
+                      </MenuItem>
+                    </div>
                   </MenuItems>
                 </Menu>
               </div>
