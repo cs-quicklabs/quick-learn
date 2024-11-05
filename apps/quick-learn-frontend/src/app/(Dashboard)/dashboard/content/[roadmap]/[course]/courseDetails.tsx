@@ -277,7 +277,7 @@ const CourseDetails = () => {
       </div>
       <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
         <div id="created-spaces">
-          <ul className="grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-6 xl:gap-x-6">
+          <ul className="grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-5 xl:gap-x-6">
             <li>
               <CreateNewCard
                 className="col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group content-center w-full h-full"
@@ -295,7 +295,7 @@ const CourseDetails = () => {
                 created_at,
                 id,
               }) => (
-                <li key={id}>
+                <li className="h-52" key={id}>
                   <Card
                     id={id.toString()}
                     title={name}

@@ -2,7 +2,7 @@ import CardSkeleton from '@src/shared/components/CardSkeleton';
 import React from 'react';
 
 const DashboardSkeleton = () => (
-  <div className="bg-gray-50 relative z-0 flex-1 overflow-x-scroll focus:outline-none h-screen">
+  <div className="bg-gray-50 relative z-0 flex-1 focus:outline-none h-screen">
     {/* Roadmaps Section Skeleton */}
     <div className="px-8 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-baseline -mt-2 -ml-2">

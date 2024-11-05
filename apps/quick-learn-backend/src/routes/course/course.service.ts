@@ -329,7 +329,13 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       .createQueryBuilder('course')
       .leftJoinAndSelect('course.course_category', 'course_category')
       .leftJoin('course.lessons', 'lessons')
-      .addSelect(['lessons.id', 'lessons.name', 'lessons.content'])
+      .addSelect([
+        'lessons.id',
+        'lessons.name',
+        'lessons.content',
+        'lessons.archived',
+        'lessons.approved',
+      ])
       .leftJoin('course.roadmaps', 'roadmaps')
       .innerJoin('roadmaps.users', 'users')
       .where('course.id = :id', { id })
