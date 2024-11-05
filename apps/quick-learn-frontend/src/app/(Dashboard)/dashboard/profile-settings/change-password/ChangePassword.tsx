@@ -1,7 +1,6 @@
 'use client';
 import { changePasswordService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import {
@@ -10,6 +9,7 @@ import {
 } from '@src/utils/toastUtils';
 import React, { useState } from 'react';
 import { z } from 'zod';
+import ChangePasswordSkeleton from './ChangePasswordSkeleton';
 
 const changePasswordFormSchema = z
   .object({
@@ -70,9 +70,9 @@ const ChangePassword = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };
+  if (isLoading) return <ChangePasswordSkeleton />;
   return (
     <>
-      {isLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold dark:text-white">
           Change Password
