@@ -1,5 +1,5 @@
 'use client';
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-quill/dist/quill.snow.css';
@@ -8,6 +8,8 @@ import { en } from '@src/constants/lang/en';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { FullPageLoader } from './UIElements';
+
+const Delta = Quill.import('delta');
 
 interface Props {
   isEditing: boolean;
@@ -60,9 +62,12 @@ const Editor: FC<Props> = ({
     try {
       const res = await fileUploadApiCall(formData, 'lesson');
 
-      // Prevent automatic scroll by using preservePosition option
       const range = quill.getSelection(true);
       if (range) {
+        // If there's a selection, delete it first
+        if (range.length > 0) {
+          quill.deleteText(range.index, range.length, 'silent');
+        }
         quill.insertEmbed(range.index, 'image', res.data.file, 'user');
         quill.setSelection(range.index + 1, 0, 'silent');
       }
@@ -93,35 +98,78 @@ const Editor: FC<Props> = ({
       const clipboard = e.clipboardData;
       if (!clipboard?.items) return;
 
-      // Check if any pasted item is an image
       const items = Array.from(clipboard.items);
-      const imageItem = items.find((item) => item.type.indexOf('image') !== -1);
+      const hasImage = items.some((item) => item.type.indexOf('image') !== -1);
+      const hasHtml = clipboard.types.includes('text/html');
+      const hasText = clipboard.types.includes('text/plain');
+      const range = quill.getSelection(true);
 
-      if (imageItem) {
+      // If there's HTML content and no images, let Quill handle it by default
+      if (hasHtml && !hasImage) {
         e.preventDefault();
-        e.stopPropagation();
-        const file = imageItem.getAsFile();
-        if (file) {
-          await handleImageUpload(file);
+        const html = clipboard.getData('text/html');
+        const delta = quill.clipboard.convert(html);
+
+        if (range) {
+          // If there's a selection, delete it first
+          if (range.length > 0) {
+            quill.deleteText(range.index, range.length, 'silent');
+          }
+
+          // Insert the new content
+          quill.updateContents(
+            new Delta().retain(range.index).concat(delta),
+            'silent',
+          );
+
+          // Set the selection after the inserted content
+          quill.setSelection(range.index + delta.length(), 0, 'silent');
         }
-      } else {
-        // Allow default paste behavior
-        e.preventDefault();
-        e.stopPropagation();
+        return;
+      }
+
+      e.preventDefault();
+
+      // Handle image files
+      for (const item of items) {
+        if (item.type.indexOf('image') !== -1) {
+          const file = item.getAsFile();
+          if (file) {
+            await handleImageUpload(file);
+          }
+        }
+      }
+
+      // After handling images, insert any text content
+      if (hasText && range) {
         const text = clipboard.getData('text/plain');
-        quill.insertText(quill.getSelection()?.index ?? 0, text, 'user');
+        const urlRegex = /^(https?:\/\/[^\s]+)$/;
+
+        // If there's a selection, delete it first
+        if (range.length > 0) {
+          quill.deleteText(range.index, range.length, 'silent');
+        }
+
+        if (urlRegex.test(text.trim())) {
+          // Insert as a link
+          quill.insertText(range.index, text, 'link', text, 'silent');
+        } else {
+          // Insert as plain text
+          quill.insertText(range.index, text, 'silent');
+        }
+
+        // Set the selection after the inserted content
+        quill.setSelection(range.index + text.length, 0, 'silent');
       }
     };
 
     // Add event listeners to the Quill editor element
     const editorContainer = quill.root;
-    editorContainer.addEventListener('paste', handlePaste, { capture: true });
+    editorContainer.addEventListener('paste', handlePaste);
 
     // Cleanup
     return () => {
-      editorContainer.removeEventListener('paste', handlePaste, {
-        capture: true,
-      });
+      editorContainer.removeEventListener('paste', handlePaste);
     };
   }, [isEditing]);
 
@@ -142,19 +190,6 @@ const Editor: FC<Props> = ({
       clipboard: {
         matchVisual: false,
       },
-      keyboard: {
-        bindings: {
-          // Prevent default paste behavior
-          paste: {
-            key: 'V',
-            shortKey: true,
-            handler: (range: unknown, context: unknown) => {
-              // Let our paste handler handle it
-              return true;
-            },
-          },
-        },
-      },
     }),
     [imageHandler],
   );
@@ -166,18 +201,11 @@ const Editor: FC<Props> = ({
     };
   }, []);
 
-  function onUndo() {
-    if (!quillRef.current) return;
-    // const editor = quillRef.current.getEditor();
-    // (editor as any).history.redo();
-  }
-
   return (
     <div className="flex flex-col h-full">
       <EditorToolbar
         isEditing={isEditing}
         setIsEditing={setIsEditing}
-        undo={onUndo}
         isUpdating={isUpdating}
         isAdd={isAdd}
         onArchive={() => setShowArchiveModal(true)}
