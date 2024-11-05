@@ -289,7 +289,106 @@ const Navbar = () => {
         </div>
 
         <DisclosurePanel className="lg:hidden">
-          {/* Keep the existing mobile menu panel code */}
+          <div className="space-y-1 px-2 pb-3 pt-2">
+            {links.map((item, index) => (
+              <DisclosureButton
+                key={item.link}
+                as="a"
+                id={`navMobile${index}`}
+                href={item.link}
+                className={
+                  'block rounded-md px-3 py-2 text-base font-medium ' +
+                  (pathname === item.link
+                    ? 'text-white bg-gray-900'
+                    : 'text-gray-300 hover:bg-gray-700 hover:text-white')
+                }
+              >
+                {item.name}
+              </DisclosureButton>
+            ))}
+          </div>
+          <div className="border-t border-gray-700 pb-3 pt-4">
+            <div className="flex items-center px-5">
+              <div className="flex-shrink-0">
+                <Image
+                  alt=""
+                  src={user?.profile_image || '/placeholder.png'}
+                  className="h-10 w-10 rounded-full object-cover"
+                  height={40}
+                  width={40}
+                />
+              </div>
+              <div className="ml-3">
+                <div className="text-base font-medium text-white">
+                  {user?.first_name} {user?.last_name}
+                </div>
+                <div className="text-sm font-medium text-gray-400">
+                  {user?.email}
+                </div>
+              </div>
+              <button
+                type="button"
+                className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+              >
+                <span className="absolute -inset-1.5" />
+                <span className="sr-only">View notifications</span>
+                <BellIcon aria-hidden="true" className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="mt-3 space-y-1 px-2">
+              {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
+                menuItems.map(
+                  (item, index) =>
+                    item.isExtended === undefined && (
+                      <DisclosureButton
+                        as="a"
+                        id={`profileMenuMobile${index}`}
+                        key={item.link + item.name}
+                        href={item.link}
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                      >
+                        {item.name}
+                      </DisclosureButton>
+                    ),
+                )}
+              {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
+                <DisclosureButton
+                  as="a"
+                  href={RouteEnum.PROFILE_SETTINGS}
+                  id="myProfileMobile"
+                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  My Profile
+                </DisclosureButton>
+              ) : (
+                ''
+              )}
+              <div className="border-y border-gray-700">
+                {menuItems.map(
+                  (item, index) =>
+                    item.isExtended && (
+                      <Link
+                        id={`profileMenuMobile${index}`}
+                        key={item.link + item.name}
+                        href={item.link}
+                        target="_blank"
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                      >
+                        {item.name}
+                      </Link>
+                    ),
+                )}
+              </div>
+              <DisclosureButton
+                as="a"
+                id="signOutMobile"
+                onClick={doLogout}
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+              >
+                Sign out
+              </DisclosureButton>
+            </div>
+          </div>
         </DisclosurePanel>
       </Disclosure>
     </>
