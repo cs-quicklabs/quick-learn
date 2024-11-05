@@ -13,6 +13,7 @@ export const en = {
   successUserMetadata: 'Successfully got user metadata.',
   successUserStatusUpdate: 'User status updated successfully.',
   successGotUserRoadmaps: "Successfully retrieved user's roadmaps",
+  successGotUserRoadmapDetail: "Successfully retrieved user's roadmap details",
 
   // Roadmap related messages
   GetAllRoapmaps: 'Successfully got all roadmaps.',

@@ -30,13 +30,13 @@ const Card: FC<CardProps> = ({
     <Link
       id={id}
       href={link}
-      className={`inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full ${className}`}
+      className={`inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full h-full ${className}`}
     >
       <div className="flex flex-col h-48 py-4 px-6 text-gray-900">
         <div>
           <h1
             id="message-heading"
-            className="font-medium text-gray-900 line-clamp-2 group-hover:underline capitalize"
+            className="font-medium text-gray-900 line-clamp-3 group-hover:underline capitalize"
           >
             {title}
           </h1>

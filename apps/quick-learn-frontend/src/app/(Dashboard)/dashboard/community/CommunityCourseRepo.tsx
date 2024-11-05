@@ -41,7 +41,7 @@ const CoummintyCourseRepository = () => {
             {en.CommunityCouse.description}
           </div>
           <div className="text-sm  text-gray-500">
-            ({allCourses && allCourses.length} {en.CommunityCouse.course} )
+            ({allCourses && allCourses.length} {en.CommunityCouse.course})
           </div>
         </div>
         {/* display all courses */}
