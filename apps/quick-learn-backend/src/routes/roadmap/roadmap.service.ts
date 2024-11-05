@@ -384,6 +384,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       .where('users.id = :userId', { userId })
       .andWhere('roadmap.id = :id', { id })
       .andWhere('roadmap.archived = :archived', { archived: false })
+      .andWhere('courses.archived = :courseArchived', { courseArchived: false })
       .getOne();
   }
 }
