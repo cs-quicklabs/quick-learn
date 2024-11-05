@@ -5,12 +5,14 @@ const CourseDetailsSkeleton = () => {
   return (
     <div className="animate-pulse">
       {/* Breadcrumb Skeleton */}
-      <div className="mb-4 flex items-center space-x-2">
-        <div className="h-4 bg-gray-200 rounded w-32"></div>
-        <div className="h-4 bg-gray-200 rounded w-2">/</div>
-        <div className="h-4 bg-gray-200 rounded w-48"></div>
-        <div className="h-4 bg-gray-200 rounded w-2">/</div>
-        <div className="h-4 bg-gray-200 rounded w-48"></div>
+      <div className="flex justify-center w-full mb-4">
+        <div className="flex items-center space-x-2">
+          <div className="h-4 bg-gray-200 rounded w-32"></div>
+          <div className="h-4 bg-gray-200 rounded w-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-48"></div>
+          <div className="h-4 bg-gray-200 rounded w-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-48"></div>
+        </div>
       </div>
 
       {/* Header Section */}
