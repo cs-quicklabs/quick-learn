@@ -196,6 +196,7 @@ const Lesson = () => {
       showApiErrorInToast(err as AxiosErrorObject);
     }
   }, [lessonId, roadmapId, courseId, router]);
+
   const updateContent = useMemo(() => {
     return debounce(onEdit, 2000);
   }, [onEdit]);

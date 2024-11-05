@@ -131,11 +131,11 @@ const Navbar = () => {
                     href={item.link}
                     id={`navDesktop${index}`}
                     className={
-                      'rounded-md px-3 py-2 text-sm font-medium text-gray-300 ' +
+                      'rounded-md px-3 py-2 text-sm font-medium text-gray-300 relative ' +
                       ((item.link != RouteEnum.DASHBOARD &&
                         pathname.includes(item.link)) ||
                       item.link == pathname
-                        ? 'bg-gray-500 text-white'
+                        ? 'text-white before:absolute before:inset-x-0 before:top-1/2 before:-translate-y-1/2 before:h-8 before:bg-gray-500 before:-z-10 before:rounded-md'
                         : 'hover:bg-gray-700 hover:text-white')
                     }
                   >

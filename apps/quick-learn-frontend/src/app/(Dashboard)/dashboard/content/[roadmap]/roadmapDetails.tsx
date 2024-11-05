@@ -40,12 +40,14 @@ import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import RoadmapDetailsSkeleton from './RoadmapDetailsSkeleton';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
 const RoadmapDetails = () => {
+  // ... (keep all the existing state and functions)
   const router = useRouter();
   const { roadmap } = useParams<{ roadmap: string }>();
   const { setContentRepositoryMetadata, metadata } = useDashboardStore(
@@ -183,10 +185,11 @@ const RoadmapDetails = () => {
       setIsLoading(false);
     }
   };
-
   if (isPageLoading) {
     return <RoadmapDetailsSkeleton />;
   }
+
+  const hasCourses = courses.length > 0;
 
   return (
     <>
@@ -228,13 +231,15 @@ const RoadmapDetails = () => {
         onConfirm={onArchive}
       />
 
-      <div>
+      <div className="container mx-auto px-4">
         <Breadcrumb links={links} />
-        <div className="items-baseline mb-8">
-          <h1 className="text-center text-5xl font-extrabold leading-tight capitalize">
+
+        {/* Roadmap Header */}
+        <div className="flex flex-col items-center justify-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">
             {roadmapData?.name}
           </h1>
-          <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
+          <p className="text-sm text-gray-500 text-center">
             <span className="capitalize">
               {roadmapData?.created_by
                 ? `${roadmapData.created_by.first_name} ${roadmapData.created_by.last_name}`
@@ -244,7 +249,7 @@ const RoadmapDetails = () => {
             {roadmapData?.created_at &&
               format(roadmapData.created_at, DateFormats.shortDate)}
           </p>
-          <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
+          <p className="text-sm text-gray-500 text-center">
             ({roadmapData?.courses?.length ?? 0} {en.contentRepository.courses},
             &nbsp;
             {roadmapData?.courses?.reduce(
@@ -255,7 +260,8 @@ const RoadmapDetails = () => {
             {roadmapData?.users_count ?? 0} {en.common.participants})
           </p>
 
-          <div className="flex items-center justify-center gap-2 mt-2">
+          {/* Action Buttons */}
+          <div className="flex items-center justify-center gap-2 mt-4">
             <Tooltip content={en.contentRepository.editRoadmap}>
               <button
                 type="button"
@@ -287,28 +293,37 @@ const RoadmapDetails = () => {
             </Tooltip>
           </div>
         </div>
-        <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
-          <div id="created-spaces">
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
-              <li>
-                <CreateNewCard
-                  title={en.roadmapDetails.createNewCourse}
-                  onAdd={setOpenAddCourseModal}
-                />
-              </li>
+
+        {/* Courses Section */}
+        <div className="px-4">
+          {hasCourses ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+              <CreateNewCard
+                title={en.roadmapDetails.createNewCourse}
+                onAdd={setOpenAddCourseModal}
+              />
               {courses.map((item) => (
-                <li key={item.id}>
-                  <Card
-                    id={item.id}
-                    title={item.name}
-                    description={item.description}
-                    stats={(item.lessons_count || 0) + ' ' + en.common.lessons}
-                    link={`${RouteEnum.CONTENT}/${roadmap}/${item.id}`}
-                  />
-                </li>
+                <Card
+                  key={item.id}
+                  id={item.id}
+                  title={item.name}
+                  description={item.description}
+                  stats={`${item.lessons_count || 0} ${en.common.lessons}`}
+                  link={`${RouteEnum.CONTENT}/${roadmap}/${item.id}`}
+                />
               ))}
-            </ul>
-          </div>
+            </div>
+          ) : (
+            <EmptyState
+              type="courses"
+              customTitle={en.contentRepository.noCourses}
+              customDescription={en.contentRepository.noCoursesDescription}
+              actionButton={{
+                label: en.roadmapDetails.createNewCourse,
+                onClick: () => setOpenAddCourseModal(true),
+              }}
+            />
+          )}
         </div>
       </div>
     </>
