@@ -1,5 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { activateLesson } from '@src/apiServices/archivedService';
+import { AxiosErrorObject } from '@src/apiServices/axios';
 import {
   createLesson,
   getRoadmap,
@@ -11,6 +13,7 @@ import {
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import { UserContext } from '@src/context/userContext';
+import AutoResizingTextarea from '@src/shared/components/AutoResizingTextArea';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import Editor from '@src/shared/components/Editor';
 import { FullPageLoader } from '@src/shared/components/UIElements';
@@ -32,12 +35,18 @@ const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
+type CreateLessonPayload = {
+  name: string;
+  content: string;
+  course_id: string;
+};
+
 const lessonSchema = z.object({
   name: z
     .string()
     .trim()
     .min(1, en.lesson.titleRequired)
-    .max(50, en.lesson.titleMaxLength),
+    .max(80, en.lesson.titleMaxLength),
   content: z.string().trim().min(1, en.lesson.contentRequired),
 });
 
@@ -56,7 +65,7 @@ const Lesson = () => {
   // get User
   const { user } = useContext(UserContext);
   const isAdmin = [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
-    user?.user_type_id || -1,
+    user?.user_type_id ?? -1,
   );
 
   // For hidding navbar
@@ -68,7 +77,7 @@ const Lesson = () => {
     };
   }, [setHideNavbar]);
 
-  const [isEditing, setIsEditing] = useState<boolean>(true);
+  const [isEditing, setIsEditing] = useState<boolean>(lessonId === 'add');
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -136,7 +145,11 @@ const Lesson = () => {
 
   function onAdd(data: LessonSchemaType) {
     setIsEditing(false);
-    createLesson({ ...data, course_id: courseId })
+
+    createLesson({
+      ...data,
+      course_id: courseId,
+    } as CreateLessonPayload)
       .then((res) => {
         showApiMessageInToast(res);
         router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
@@ -169,6 +182,21 @@ const Lesson = () => {
     [lessonId, getValues, router, roadmapId, courseId],
   );
 
+  const handleArchiveLesson = useCallback(async () => {
+    if (lessonId === 'add') return;
+
+    try {
+      const response = await activateLesson({
+        id: parseInt(lessonId),
+        active: false,
+      });
+      showApiMessageInToast(response);
+      router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
+    } catch (err) {
+      showApiErrorInToast(err as AxiosErrorObject);
+    }
+  }, [lessonId, roadmapId, courseId, router]);
+
   const updateContent = useMemo(() => {
     return debounce(onEdit, 2000);
   }, [onEdit]);
@@ -194,15 +222,12 @@ const Lesson = () => {
             control={control}
             render={({ field, fieldState: { error } }) => (
               <>
-                <textarea
-                  {...field}
-                  className={
-                    'w-full text-3xl md:text-5xl font-bold text-center md:h-20 h-10 border-none overflow-y-auto resize-none md:p-4 focus:outline-none' +
-                    (!isEditing ? ' focus:ring-0' : '')
-                  }
-                  placeholder={en.common.addTitlePlaceholder}
-                  readOnly={!isEditing}
+                <AutoResizingTextarea
+                  value={field.value}
                   onChange={(e) => onChange(field.name, e.target.value)}
+                  isEditing={isEditing}
+                  placeholder={en.common.addTitlePlaceholder}
+                  maxLength={80}
                 />
                 {error && (
                   <p className="mt-1 text-red-500 text-sm">{error.message}</p>
@@ -222,6 +247,9 @@ const Lesson = () => {
                   setValue={(e) => onChange(field.name, e)}
                   isUpdating={isUpdating}
                   isAdd={lessonId === 'add'}
+                  onArchive={
+                    lessonId === 'add' ? undefined : handleArchiveLesson
+                  }
                 />
                 {error && (
                   <p className="mt-1 text-red-500 text-sm">{error.message}</p>
@@ -232,7 +260,7 @@ const Lesson = () => {
           <button
             type="submit"
             className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
-            disabled={!isDirty || !isValid}
+            disabled={!isDirty || !isValid || !isEditing}
           >
             {isAdmin
               ? en.common.saveAndPublish

@@ -7,16 +7,19 @@ import {
   Generated,
   BeforeInsert,
   OneToMany,
-  // VirtualColumn,
+  VirtualColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { UserTypeEntity } from './user-type.entity';
 import { BaseEntity } from './BaseEntity';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
 import { SkillEntity } from './skill.entity';
 import { RoadmapEntity } from './roadmap.entity';
 import { LessonEntity } from './lesson.entity';
+import { CourseEntity } from './course.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -30,17 +33,11 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   last_name: string;
 
-  // TODO: Need to find solution for virtual column.
-  // @VirtualColumn({
-  //   type: 'varchar',
-  //   query: (alias) => `CONCAT(${alias}.first_name, ' ', ${alias}.last_name)`,
-  // })
-  // full_name: string;
-
-  @Expose()
-  get full_name() {
-    return `${this.first_name} ${this.last_name}`;
-  }
+  @VirtualColumn({
+    type: 'varchar',
+    query: (alias) => `CONCAT(${alias}.first_name, ' ', ${alias}.last_name)`,
+  })
+  full_name: string;
 
   @Column({ type: 'varchar', unique: true, length: 255 })
   email: string;
@@ -103,4 +100,33 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => LessonEntity, (user) => user.archive_by)
   archive_by_lessons: LessonEntity[];
+
+  @ManyToMany(() => RoadmapEntity, (roadmap) => roadmap.users, {
+    cascade: true,
+  })
+  @JoinTable({
+    name: 'user_roadmaps',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'roadmap_id',
+      referencedColumnName: 'id',
+    },
+  })
+  assigned_roadmaps: RoadmapEntity[];
+
+  @Column({ nullable: true })
+  updated_by_id: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.updated_users)
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by: UserEntity;
+
+  @OneToMany(() => UserEntity, (user) => user.updated_by)
+  updated_users: UserEntity[];
+
+  @OneToMany(() => CourseEntity, (course) => course.updated_by)
+  updated_courses: CourseEntity[];
 }

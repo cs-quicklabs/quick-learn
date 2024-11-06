@@ -19,6 +19,8 @@ import { UpdateRoadmapDto } from './dto/update-roadmap.dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
+import { PaginationDto } from '../users/dto';
+import { ActivateRoadmapDto } from './dto/activate-roadmap.dto';
 
 @ApiTags('Roadmap')
 @Controller({
@@ -44,6 +46,26 @@ export class RoadmapController {
   ) {
     const roadmap = await this.service.createRoadmap(createRoadmapDto, user);
     return new SuccessResponse(en.CreateRoadmap, roadmap);
+  }
+
+  @Post('archived')
+  @ApiOperation({ summary: 'Get Archived Roadmaps' })
+  async findAllArchivedRoadmaps(
+    @CurrentUser() user: UserEntity,
+    @Body() paginationDto: PaginationDto,
+  ) {
+    const roadmaps = await this.service.findAllArchived(paginationDto);
+    return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
+  }
+
+  @Post('activate')
+  @ApiOperation({ summary: 'Activate or archive roadmap' })
+  async activateRoadmap(
+    @Body() activateRoadmapDto: ActivateRoadmapDto,
+  ): Promise<SuccessResponse> {
+    const { active, id } = activateRoadmapDto;
+    const updatedRoadmap = await this.service.updateRoadmap(id, { active });
+    return new SuccessResponse(en.RoadmapStatusUpdated, updatedRoadmap);
   }
 
   @Get(':id')
@@ -74,20 +96,20 @@ export class RoadmapController {
 
   @Patch(':id/assign')
   @ApiParam({ name: 'id', description: 'Roadmap ID', required: true })
-  @ApiOperation({ summary: 'Assign a courses to roadmap' })
+  @ApiOperation({ summary: 'Assign courses to roadmap' })
   async assignCoursesRoadmap(
     @Param('id') id: string,
     @Body() assignCoursesToRoadmapDto: AssignCoursesToRoadmapDto,
   ) {
     await this.service.assignRoadmap(+id, assignCoursesToRoadmapDto);
-    return new SuccessResponse(en.updateRoadmap);
+    return new SuccessResponse(en.RoadmapCoursesAssigned);
   }
 
   @Delete(':id')
   @ApiParam({ name: 'id', description: 'Roadmap id', required: true })
-  @ApiOperation({ summary: 'Delete a roadmap' })
-  async archiveRoadmap(@Param('id') id: string) {
-    await this.service.archiveRoadmap(+id);
-    return new SuccessResponse(en.archiveRoadmap);
+  @ApiOperation({ summary: 'Permanently delete roadmap' })
+  async deleteRoadmap(@Param('id') id: string) {
+    await this.service.delete({ id: +id });
+    return new SuccessResponse(en.successDeleteRoadmap);
   }
 }

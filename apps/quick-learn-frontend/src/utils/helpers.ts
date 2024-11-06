@@ -87,3 +87,32 @@ export function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
         },
   );
 }
+
+/**
+ * Maps a record of query parameters to a query string.
+ * @param params A record with string or number values
+ * @returns A query string
+ * @example
+ * mapQueryParams({ foo: 'bar', baz: 1 }) // 'foo=bar&baz=1'
+ */
+export function mapQueryParams(
+  params: Record<string, string | number | boolean>,
+) {
+  return (
+    (Object.keys(params).length > 0 &&
+      '?' +
+        Object.entries(params)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&')) ||
+    ''
+  );
+}
+
+export const getInitials = (
+  firstName?: string,
+  lastName?: string,
+  fallback = 'U',
+): string => {
+  if (!firstName && !lastName) return fallback;
+  return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
+};

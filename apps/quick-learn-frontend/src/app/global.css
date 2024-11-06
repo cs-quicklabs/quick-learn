@@ -2,6 +2,10 @@
 @import '../../../../node_modules/tailwindcss/components.css';
 @import '../../../../node_modules/tailwindcss/utilities.css';
 
+div[role="dialog"] {
+  align-content: center !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   font-family:
@@ -200,5 +204,12 @@ input:-webkit-autofill:active {
   max-width: 85% !important;
   margin: 1rem auto;
   max-height: 400px;
+}
+.ql-clipboard {
+  position: fixed !important;
+  display: none !important;
+
+  left: 50% !important;
+  top: 50% !important;
 }
 /* lesson viewer css */

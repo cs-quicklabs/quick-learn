@@ -11,12 +11,12 @@ interface Props {
 const CreateNewCard: FC<Props> = ({
   title,
   onAdd,
-  className = 'inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group content-center cursor-pointer px-1 w-full',
+  className = 'inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full',
 }) => {
   return (
     <button type="button" className={className} onClick={() => onAdd(true)}>
-      <div className=" flex justify-center flex-col h-40 text-center content-center ">
-        <Repository className="mx-auto h-12 w-12 text-indigo-400" />
+      <div className="flex flex-col items-center justify-center h-48 py-4 px-6">
+        <Repository className="h-12 w-12 text-indigo-400" />
         <h3 className="mt-2 text-sm font-semibold text-gray-900">{title}</h3>
       </div>
     </button>

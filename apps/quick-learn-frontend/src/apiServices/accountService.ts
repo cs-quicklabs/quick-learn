@@ -9,6 +9,7 @@ import {
   TSkills,
   TTeam,
 } from '@src/shared/types/accountTypes';
+import { mapQueryParams } from '@src/utils/helpers';
 
 export const addSkill = async (
   data: Partial<TSkill>,
@@ -76,12 +77,13 @@ export const deleteRoadmapCategory = async (
   return response.data;
 };
 
-export const getRoadmapCategories = async (): Promise<
-  AxiosSuccessResponse<TRoadmapCategory>
-> => {
+export const getRoadmapCategories = async (
+  query: { is_courses?: boolean; is_roadmap?: boolean } = {},
+): Promise<AxiosSuccessResponse<TRoadmapCategory>> => {
+  const queryMapper = mapQueryParams(query);
   const response = await axiosInstance.get<
     AxiosSuccessResponse<TRoadmapCategory>
-  >(accountApiEnum.ROADMAP_CATEGORIES);
+  >(accountApiEnum.ROADMAP_CATEGORIES + queryMapper);
   return response.data;
 };
 

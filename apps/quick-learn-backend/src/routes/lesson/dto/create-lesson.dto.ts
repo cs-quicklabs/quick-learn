@@ -5,7 +5,7 @@ export class CreateLessonDto {
   @ApiProperty({ example: 'Lesson title' })
   @IsNotEmpty()
   @IsString()
-  @MaxLength(50, { message: 'Name should be less than 50 characters' })
+  @MaxLength(80, { message: 'Name should be less than 80 characters' })
   name: string;
 
   @ApiProperty({ example: 'Lesson content' })

@@ -50,13 +50,14 @@ const ViewLesson: FC<Props> = ({
             {lesson?.name}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500">
-            {lesson?.created_by_user?.full_name} added this lesson on{' '}
+            {lesson?.created_by_user?.first_name}{' '}
+            {lesson?.created_by_user?.last_name} added this lesson on{' '}
             {lesson?.created_at &&
               format(lesson.created_at, DateFormats.shortDate)}
           </p>
         </div>
       </div>
-      <article className="lesson-content flex bg-white mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-10 py-4 max-w-5xl shadow shadow-md">
+      <article className="lesson-content flex bg-white mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-10 py-4 shadow-md mb-8">
         <div
           className="lesson-viewer"
           dangerouslySetInnerHTML={{
@@ -91,9 +92,9 @@ const ViewLesson: FC<Props> = ({
             <InformationCircleIcon className="flex-shrink-0 inline w-4 h-4 me-3" />
             <div className="text-xl">
               <span className="font-medium text-lg">
-                {en.common.approvalPendingExclamation}
+                {en.approvals.approvalPendingExclamation}
               </span>{' '}
-              {en.common.approvalPendingInfo}
+              {en.approvals.approvalPendingInfo}
             </div>
           </div>
         </div>

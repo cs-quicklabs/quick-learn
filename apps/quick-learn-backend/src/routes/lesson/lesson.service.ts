@@ -6,11 +6,14 @@ import { CreateLessonDto, UpdateLessonDto } from './dto';
 import { CourseService } from '../course/course.service';
 import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
+import { PaginationDto } from '../users/dto';
+import { PaginatedResult } from '@src/common/interfaces';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
   constructor(
-    @InjectRepository(LessonEntity) repo,
+    @InjectRepository(LessonEntity) repo: Repository<LessonEntity>,
     private courseService: CourseService,
   ) {
     super(repo);
@@ -124,17 +127,76 @@ export class LessonService extends PaginationService<LessonEntity> {
   }
 
   /**
-   * Archives an existing lesson
-   * @param userId - The id of the user archiving the lesson
-   * @param lessonId - The id of the lesson that needs to be archived
-   * @throws BadRequestException if the lesson doesn't exist
-   * @returns nothing
+   * Gets archived lessons with pagination
+   * @param paginationDto - Pagination parameters
+   * @param relations - Relations to include in the query
+   * @returns Paginated list of archived lessons
    */
+  async getArchivedLessons(
+    paginationDto: PaginationDto,
+    relations: string[] = [],
+  ): Promise<PaginatedResult<LessonEntity>> {
+    const { page = 1, limit = 10, q = '' } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    const queryBuilder = this.repository
+      .createQueryBuilder('lesson')
+      .where('lesson.archived = :archived', { archived: true });
+
+    // Join all relations
+    relations.forEach((relation) => {
+      queryBuilder.leftJoinAndSelect(`lesson.${relation}`, relation);
+    });
+
+    if (q) {
+      queryBuilder.andWhere(
+        '(lesson.name ILIKE :search OR ' +
+          'lesson.content ILIKE :search OR ' +
+          'course.name ILIKE :search)',
+        { search: `%${q}%` },
+      );
+    }
+
+    queryBuilder.orderBy('lesson.updated_at', 'DESC').skip(skip).take(limit);
+
+    const [items, total] = await queryBuilder.getManyAndCount();
+
+    return {
+      items,
+      total,
+      page,
+      total_pages: Math.ceil(total / limit),
+      limit,
+    };
+  }
+
+  /**
+   * Unarchives an existing lesson
+   * @param lessonId - The id of the lesson that needs to be unarchived
+   * @param userId - The id of the user unarchiving the lesson
+   * @throws BadRequestException if the lesson doesn't exist
+   */
+  async unarchiveLesson(lessonId: LessonEntity['id']) {
+    const lesson = await this.get({ id: lessonId });
+    if (!lesson) {
+      throw new BadRequestException(en.lessonNotFound);
+    }
+
+    await this.update(
+      { id: lessonId },
+      {
+        archive_by: null,
+        archived: false,
+      },
+    );
+  }
+
   async archiveLesson(userId: UserEntity['id'], lessonId: LessonEntity['id']) {
     const lesson = await this.get({ id: lessonId });
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);
     }
+
     await this.update(
       { id: lessonId },
       {
@@ -142,5 +204,48 @@ export class LessonService extends PaginationService<LessonEntity> {
         archived: true,
       },
     );
+  }
+
+  /**
+   * Permanently deletes a lesson
+   * @param id - The id of the lesson to delete
+   * @throws BadRequestException if the lesson doesn't exist
+   */
+  async deleteLesson(id: number): Promise<void> {
+    const lesson = await this.get({ id });
+
+    if (!lesson) {
+      throw new BadRequestException(en.lessonNotFound);
+    }
+
+    await this.repository.delete({ id });
+  }
+
+  async getUserLessonDetails(
+    userId: number,
+    id: number,
+    courseId: number,
+    roadmap?: number,
+  ) {
+    const queryBuilder = this.repository
+      .createQueryBuilder('lesson')
+      .leftJoinAndSelect('lesson.course', 'course')
+      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
+      .leftJoin('course.roadmaps', 'roadmaps')
+      .innerJoin('roadmaps.users', 'users')
+      .where('lesson.id = :id', { id })
+      .andWhere('course.id = :courseId', { courseId })
+      .andWhere('lesson.archived = :archived', { archived: false })
+      .andWhere('lesson.approved = :approved', { approved: true })
+      .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .andWhere('users.id = :userId', { userId });
+
+    if (roadmap) {
+      queryBuilder
+        .addSelect('roadmaps')
+        .andWhere('roadmaps.id = :roadmapId', { roadmapId: roadmap });
+    }
+
+    return await queryBuilder.getOne();
   }
 }
