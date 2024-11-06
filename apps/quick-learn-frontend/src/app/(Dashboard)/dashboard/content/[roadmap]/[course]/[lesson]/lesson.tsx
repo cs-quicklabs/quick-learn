@@ -260,7 +260,7 @@ const Lesson = () => {
           <button
             type="submit"
             className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
-            disabled={!isDirty || !isValid}
+            disabled={!isDirty || !isValid || !isEditing}
           >
             {isAdmin
               ? en.common.saveAndPublish

@@ -97,6 +97,34 @@ const Navbar = () => {
     }
   }
 
+  const renderMenuItem = (item: TLink) => {
+    if (item.isExtended) {
+      return (
+        <MenuItem key={item.link}>
+          <a
+            href={item.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+          >
+            {item.name}
+          </a>
+        </MenuItem>
+      );
+    }
+
+    return (
+      <MenuItem key={item.link}>
+        <Link
+          href={item.link}
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+        >
+          {item.name}
+        </Link>
+      </MenuItem>
+    );
+  };
+
   return (
     <>
       <ConformationModal
@@ -112,13 +140,13 @@ const Navbar = () => {
         className="bg-gray-800 text-white shadow fixed z-10 w-full top-0"
       >
         <div className="mx-auto px-2 sm:px-4 lg:px-8">
-          <div className="flex py-2 justify-between items-center">
+          <div className="flex py-1 justify-between">
             <div className="flex px-2 lg:px-0">
               <div className="flex-shrink-0 flex items-center">
                 <Link
                   id="homeLogo"
                   href={RouteEnum.MY_LEARNING_PATH}
-                  className="items-center justify-center text-white font-extrabold font-mono px-3 hidden lg:flex tracking-wider"
+                  className="text-white font-extrabold font-mono px-3 hidden lg:block tracking-wider"
                 >
                   Quick Learn
                 </Link>
@@ -131,11 +159,11 @@ const Navbar = () => {
                     href={item.link}
                     id={`navDesktop${index}`}
                     className={
-                      'flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-gray-300 ' +
+                      'rounded-md px-3 py-2 text-sm font-medium text-gray-300 relative ' +
                       ((item.link != RouteEnum.DASHBOARD &&
                         pathname.includes(item.link)) ||
                       item.link == pathname
-                        ? 'text-white bg-gray-500 rounded-md'
+                        ? 'text-white before:absolute before:inset-x-0 before:top-1/2 before:-translate-y-1/2 before:h-8 before:bg-gray-500 before:-z-10 before:rounded-md'
                         : 'hover:bg-gray-700 hover:text-white')
                     }
                   >
@@ -145,12 +173,12 @@ const Navbar = () => {
               </div>
             </div>
 
-            <div className="flex flex-1 justify-center item-center px-2 lg:ml-6 lg:justify-end">
-              <div className="flex item-center w-full max-w-lg lg:max-w-xs">
+            <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
+              <div className="w-full max-w-lg lg:max-w-xs">
                 <label htmlFor="search" className="sr-only">
                   Search Roadmaps, Courses or Lessons
                 </label>
-                <div className="relative flex-1">
+                <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <MagnifyingGlassIcon
                       className="h-5 w-5 text-gray-400"
@@ -229,19 +257,9 @@ const Navbar = () => {
                     {/* Main Menu Items */}
                     <div className="py-1">
                       {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
-                        menuItems.map(
-                          (item, index) =>
-                            item.isExtended === undefined && (
-                              <MenuItem key={item.link}>
-                                <Link
-                                  href={item.link}
-                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                >
-                                  {item.name}
-                                </Link>
-                              </MenuItem>
-                            ),
-                        )}
+                        menuItems
+                          .filter((item) => !item.isExtended)
+                          .map((item) => renderMenuItem(item))}
                       {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN && (
                         <MenuItem>
                           <Link
@@ -256,19 +274,9 @@ const Navbar = () => {
 
                     {/* Extended Menu Items */}
                     <div className="py-1">
-                      {menuItems.map(
-                        (item) =>
-                          item.isExtended && (
-                            <MenuItem key={item.link}>
-                              <Link
-                                href={item.link}
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                              >
-                                {item.name}
-                              </Link>
-                            </MenuItem>
-                          ),
-                      )}
+                      {menuItems
+                        .filter((item) => item.isExtended)
+                        .map((item) => renderMenuItem(item))}
                     </div>
 
                     {/* Sign Out */}
@@ -290,6 +298,22 @@ const Navbar = () => {
         </div>
 
         <DisclosurePanel className="lg:hidden">
+          <div className="border-y border-gray-700">
+            {menuItems.map(
+              (item, index) =>
+                item.isExtended && (
+                  <a
+                    key={item.link + item.name}
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    {item.name}
+                  </a>
+                ),
+            )}
+          </div>
           <div className="space-y-1 px-2 pb-3 pt-2">
             {links.map((item, index) => (
               <DisclosureButton
