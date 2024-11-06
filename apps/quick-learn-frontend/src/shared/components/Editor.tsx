@@ -9,72 +9,7 @@ import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { FullPageLoader } from './UIElements';
 
-const Clipboard = Quill.import('modules/clipboard');
 const Delta = Quill.import('delta');
-
-class CustomClipboard extends Clipboard {
-  async onPaste(e: ClipboardEvent) {
-    e.preventDefault();
-
-    const range = this.quill.getSelection();
-    if (!range) return;
-
-    const clipboard = e.clipboardData;
-    if (!clipboard?.items) return;
-
-    // Check for images in clipboard
-    const items = Array.from(clipboard.items);
-    const imageItem = items.find((item) => item.type.indexOf('image') !== -1);
-
-    if (imageItem) {
-      const file = imageItem.getAsFile();
-      if (file) {
-        try {
-          const formData = new FormData();
-          formData.append('file', file);
-
-          const res = await fileUploadApiCall(formData, 'lesson');
-
-          if (range.length > 0) {
-            this.quill.deleteText(range.index, range.length);
-          }
-
-          this.quill.insertEmbed(range.index, 'image', res.data.file, 'user');
-          this.quill.setSelection(range.index + 1, 0);
-        } catch (err) {
-          toast.error('Failed to upload image. Please try again.');
-        }
-        return;
-      }
-    }
-
-    // Handle HTML content if available and no images
-    const html = clipboard.getData('text/html');
-    if (html && !imageItem) {
-      const delta = this.quill.clipboard.convert(html);
-      this.quill.updateContents(
-        new Delta().retain(range.index).delete(range.length).concat(delta),
-        'user',
-      );
-      this.quill.setSelection(range.index + delta.length(), 0);
-      return;
-    }
-
-    // Fall back to plain text
-    const text = clipboard.getData('text/plain');
-    if (text) {
-      const delta = new Delta()
-        .retain(range.index)
-        .delete(range.length)
-        .insert(text);
-
-      this.quill.updateContents(delta, 'user');
-      this.quill.setSelection(range.index + text.length, 0);
-    }
-  }
-}
-
-Quill.register('modules/clipboard', CustomClipboard, true);
 
 interface Props {
   isEditing: boolean;
@@ -101,6 +36,7 @@ const Editor: FC<Props> = ({
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
 
+  // Handle archive confirmation
   const handleArchiveConfirm = async () => {
     if (!onArchive) return;
 
@@ -115,6 +51,7 @@ const Editor: FC<Props> = ({
     }
   };
 
+  // Common function to handle image upload
   const handleImageUpload = async (file: File) => {
     if (!quillRef.current) return;
     const quill = quillRef.current.getEditor();
@@ -127,17 +64,19 @@ const Editor: FC<Props> = ({
 
       const range = quill.getSelection(true);
       if (range) {
+        // If there's a selection, delete it first
         if (range.length > 0) {
-          quill.deleteText(range.index, range.length);
+          quill.deleteText(range.index, range.length, 'silent');
         }
         quill.insertEmbed(range.index, 'image', res.data.file, 'user');
-        quill.setSelection(range.index + 1, 0);
+        quill.setSelection(range.index + 1, 0, 'silent');
       }
     } catch (err) {
       toast.error('Something went wrong!, please try again');
     }
   };
 
+  // Handle image upload from toolbar
   const imageHandler = useCallback(() => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
@@ -150,6 +89,91 @@ const Editor: FC<Props> = ({
     };
   }, []);
 
+  // Setup paste handler
+  useEffect(() => {
+    if (!quillRef.current || !isEditing) return;
+
+    const quill = quillRef.current.getEditor();
+    const handlePaste = async (e: ClipboardEvent) => {
+      const clipboard = e.clipboardData;
+      if (!clipboard?.items) return;
+
+      const items = Array.from(clipboard.items);
+      const hasImage = items.some((item) => item.type.indexOf('image') !== -1);
+      const hasHtml = clipboard.types.includes('text/html');
+      const hasText = clipboard.types.includes('text/plain');
+      const range = quill.getSelection(true);
+
+      // If there's HTML content and no images, let Quill handle it by default
+      if (hasHtml && !hasImage) {
+        e.preventDefault();
+        const html = clipboard.getData('text/html');
+        const delta = quill.clipboard.convert(html);
+
+        if (range) {
+          // If there's a selection, delete it first
+          if (range.length > 0) {
+            quill.deleteText(range.index, range.length, 'silent');
+          }
+
+          // Insert the new content
+          quill.updateContents(
+            new Delta().retain(range.index).concat(delta),
+            'silent',
+          );
+
+          // Set the selection after the inserted content
+          quill.setSelection(range.index + delta.length(), 0, 'silent');
+        }
+        return;
+      }
+
+      e.preventDefault();
+
+      // Handle image files
+      for (const item of items) {
+        if (item.type.indexOf('image') !== -1) {
+          const file = item.getAsFile();
+          if (file) {
+            await handleImageUpload(file);
+          }
+        }
+      }
+
+      // After handling images, insert any text content
+      if (hasText && range) {
+        const text = clipboard.getData('text/plain');
+        const urlRegex = /^(https?:\/\/[^\s]+)$/;
+
+        // If there's a selection, delete it first
+        if (range.length > 0) {
+          quill.deleteText(range.index, range.length, 'silent');
+        }
+
+        if (urlRegex.test(text.trim())) {
+          // Insert as a link
+          quill.insertText(range.index, text, 'link', text, 'silent');
+        } else {
+          // Insert as plain text
+          quill.insertText(range.index, text, 'silent');
+        }
+
+        // Set the selection after the inserted content
+        quill.setSelection(range.index + text.length, 0, 'silent');
+      }
+    };
+
+    // Add event listeners to the Quill editor element
+    const editorContainer = quill.root;
+    editorContainer.addEventListener('paste', handlePaste);
+
+    // Cleanup
+    return () => {
+      editorContainer.removeEventListener('paste', handlePaste);
+    };
+  }, [isEditing]);
+
+  // Modules object for setting up the Quill editor
   const modules = useMemo(
     () => ({
       toolbar: {
@@ -165,7 +189,6 @@ const Editor: FC<Props> = ({
       },
       clipboard: {
         matchVisual: false,
-        matchers: [],
       },
     }),
     [imageHandler],
@@ -200,6 +223,7 @@ const Editor: FC<Props> = ({
           className="h-full"
         />
       </div>
+
       <ConformationModal
         title={en.lesson.archiveConfirmHeading}
         subTitle={en.lesson.archiveConfirmDescription}
