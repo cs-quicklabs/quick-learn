@@ -31,7 +31,8 @@ export const AppDataSource = new DataSource({
       ? parseInt(process.env.DATABASE_MAX_CONNECTIONS, 10)
       : 100,
     ssl:
-      process.env.DATABASE_SSL_ENABLED === 'true'
+      process.env.DATABASE_SSL_ENABLED === 'true' &&
+      process.env.DATABASE_HOST !== 'localhost'
         ? {
             rejectUnauthorized:
               process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
