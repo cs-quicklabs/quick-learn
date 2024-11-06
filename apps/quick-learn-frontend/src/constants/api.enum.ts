@@ -60,3 +60,10 @@ export enum ArchivedApiEnum {
   ARCHIVED_LESSONS = '/lesson/archived',
   ACTIVATE_LESSON = '/lesson/activate',
 }
+
+export enum LearningPathAPIEnum {
+  GET_LEARNING_PATHS = '/users/my-roadmaps',
+  GET_LEARNING_PATH_ROADMAP = '/users/my-roadmaps/:id',
+  GET_LEARNING_PATH_COURSE = '/users/my-roadmaps/courses/:id',
+  GET_LEARNING_PATH_LESSON = '/users/my-roadmaps/lessons/:id',
+}

@@ -1,5 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { activateLesson } from '@src/apiServices/archivedService';
+import { AxiosErrorObject } from '@src/apiServices/axios';
 import {
   createLesson,
   getRoadmap,
@@ -180,6 +182,21 @@ const Lesson = () => {
     [lessonId, getValues, router, roadmapId, courseId],
   );
 
+  const handleArchiveLesson = useCallback(async () => {
+    if (lessonId === 'add') return;
+
+    try {
+      const response = await activateLesson({
+        id: parseInt(lessonId),
+        active: false,
+      });
+      showApiMessageInToast(response);
+      router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
+    } catch (err) {
+      showApiErrorInToast(err as AxiosErrorObject);
+    }
+  }, [lessonId, roadmapId, courseId, router]);
+
   const updateContent = useMemo(() => {
     return debounce(onEdit, 2000);
   }, [onEdit]);
@@ -210,7 +227,7 @@ const Lesson = () => {
                   onChange={(e) => onChange(field.name, e.target.value)}
                   isEditing={isEditing}
                   placeholder={en.common.addTitlePlaceholder}
-                  maxLength={80} // Matches your zod schema validation
+                  maxLength={80}
                 />
                 {error && (
                   <p className="mt-1 text-red-500 text-sm">{error.message}</p>
@@ -230,6 +247,9 @@ const Lesson = () => {
                   setValue={(e) => onChange(field.name, e)}
                   isUpdating={isUpdating}
                   isAdd={lessonId === 'add'}
+                  onArchive={
+                    lessonId === 'add' ? undefined : handleArchiveLesson
+                  }
                 />
                 {error && (
                   <p className="mt-1 text-red-500 text-sm">{error.message}</p>
@@ -240,7 +260,7 @@ const Lesson = () => {
           <button
             type="submit"
             className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
-            disabled={!isDirty || !isValid}
+            disabled={!isDirty || !isValid || !isEditing}
           >
             {isAdmin
               ? en.common.saveAndPublish

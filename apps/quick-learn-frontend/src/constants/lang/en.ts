@@ -74,7 +74,9 @@ export const en = {
     description: 'My Learning Path quick learn',
     failedToLoad: 'Failed to load your learning content',
     noRoadmaps: 'No roadmaps available',
+    noRoadmapsDescription: "You don't have any roadmaps yet.",
     noCourses: 'No courses available',
+    noCoursesDescription: "You don't have any courses yet.",
     viewRoadmap: 'View Roadmap',
     viewCourse: 'View Course',
   },
@@ -90,6 +92,10 @@ export const en = {
     editRoadmap: 'Edit Roadmap',
     createdThisRoadmapOn: 'created this roadmap on',
     archiveRoadmap: 'Archive Roadmap',
+    noRoadmaps: 'No roadmaps available',
+    noRoadmapsDescription: 'There are no roadmaps yet',
+    noCourses: 'No courses available',
+    noCoursesDescription: 'There are no courses yet',
 
     // Courses
     courses: 'courses',
@@ -165,7 +171,13 @@ export const en = {
     titleMaxLength: 'Title cannot exceed 80 characters',
     pendingApproval: 'Pending for approval',
     lesson: 'lessons',
+    noLessonsTitle: 'No lessons available',
+    noLessonsDescription: 'No lessons have been added to this course yet.',
     notfound: 'No Lessons found',
+    archiveConfirmHeading: 'Archive Lesson',
+    archiveConfirmSubHeading: 'Are you sure you want to archive this lesson?',
+    archiveConfirmDescription:
+      'When this lesson is archived, it will be moved to archived lessons. Users will not be able to access this lesson anymore.',
   },
 
   /**
@@ -301,6 +313,7 @@ export const en = {
       "When courses are archived, they'll appear here",
 
     noArchivedLessons: 'No archived lessons',
+    lessonArchivedSuccessfully: 'Lesson has been archived successfully',
     noArchivedLessonsDescription:
       "When lessons are archived, they'll appear here",
     lessonDeletedSuccess: 'Lesson has been permanently deleted',
@@ -316,5 +329,15 @@ export const en = {
       'Following courses have been made public by community members. You can copy these courses to your organization and make changes as per your requirements.',
     course: 'Courses',
     notfound: 'No Courses found',
+    noCommunityCoursesTitle: 'No community courses available',
+    noCommunityCoursesDescription:
+      'There are no community courses available at the moment. Check back later for shared courses from the community.',
+  },
+
+  /**
+   * My Learning path
+   */
+  myLearningPath: {
+    heading: 'My Learning Path',
   },
 };

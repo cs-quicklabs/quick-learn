@@ -13,6 +13,7 @@ export const en = {
   successUserMetadata: 'Successfully got user metadata.',
   successUserStatusUpdate: 'User status updated successfully.',
   successGotUserRoadmaps: "Successfully retrieved user's roadmaps",
+  successGotUserRoadmapDetail: "Successfully retrieved user's roadmap details",
 
   // Roadmap related messages
   GetAllRoapmaps: 'Successfully got all roadmaps.',
@@ -60,7 +61,7 @@ export const en = {
   updateLesson: 'Successfully updated a lesson.',
   lessonNotFound: 'Invalid lesson is provided.',
   approveLesson: 'Successfully approved a lesson.',
-  archiveLesson: 'Successfully archived a lesson.',
+  archiveLesson: 'Lesson archived successfully.',
   unarchiveLesson: 'Successfully unarchived lesson.',
   getArchivedLessons: 'Successfully retrieved archived lessons.',
   lessonDeleted: 'Lesson has been permanently deleted.',

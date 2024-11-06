@@ -145,7 +145,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     } else {
       // Filter lessons if they exist
       course.lessons = course.lessons
-        .filter((lesson) => !lesson.archived && lesson.approved)
+        .filter((lesson) => !lesson.archived)
         .map((lesson) => ({
           ...lesson,
           content: Helpers.limitSanitizedContent(lesson.content),
@@ -322,5 +322,42 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
     // Using the repository's delete method for hard delete
     await this.repository.delete({ id });
+  }
+
+  async getUserCourseDetails(userId: number, id: number, roadmap?: number) {
+    const course = this.repository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.course_category', 'course_category')
+      .leftJoin('course.lessons', 'lessons')
+      .addSelect([
+        'lessons.id',
+        'lessons.name',
+        'lessons.content',
+        'lessons.archived',
+        'lessons.approved',
+      ])
+      .leftJoin('course.roadmaps', 'roadmaps')
+      .innerJoin('roadmaps.users', 'users')
+      .where('course.id = :id', { id })
+      .andWhere('users.id = :userId', { userId });
+
+    if (roadmap) {
+      course
+        .addSelect('roadmaps')
+        .andWhere('roadmaps.id = :roadmapId', { roadmapId: roadmap });
+    }
+
+    const courseDetails = await course.getOne();
+    if (courseDetails && courseDetails.lessons.length > 0) {
+      courseDetails.lessons = courseDetails.lessons
+        .filter((lesson) => !lesson.archived && lesson.approved)
+        .map((lesson) => ({
+          ...lesson,
+          content: Helpers.limitSanitizedContent(lesson.content),
+        })) as LessonEntity[];
+    } else if (courseDetails) {
+      courseDetails.lessons = [];
+    }
+    return courseDetails;
   }
 }

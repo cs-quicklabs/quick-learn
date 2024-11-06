@@ -364,4 +364,27 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       await queryRunner.release();
     }
   }
+
+  getUserRoadmapDetails(userId: number, id: number) {
+    return this.roadmapRepository
+      .createQueryBuilder('roadmap')
+      .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
+      .leftJoinAndSelect('roadmap.courses', 'courses')
+      .leftJoin('courses.lessons', 'lessons')
+      .loadRelationCountAndMap(
+        'courses.lessons_count',
+        'courses.lessons',
+        'lessons',
+        (qb) =>
+          qb
+            .andWhere('lessons.archived = :archived', { archived: false })
+            .andWhere('lessons.approved = :approved', { approved: true }),
+      )
+      .leftJoin('roadmap.users', 'users')
+      .where('users.id = :userId', { userId })
+      .andWhere('roadmap.id = :id', { id })
+      .andWhere('roadmap.archived = :archived', { archived: false })
+      .andWhere('courses.archived = :courseArchived', { courseArchived: false })
+      .getOne();
+  }
 }

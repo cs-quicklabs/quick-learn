@@ -21,4 +21,6 @@ export interface FieldConfig {
   className?: string;
   height?: string;
   width?: string;
+  firstName?: string;
+  lastName?: string;
 }

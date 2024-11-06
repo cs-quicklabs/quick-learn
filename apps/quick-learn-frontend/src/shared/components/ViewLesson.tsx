@@ -57,7 +57,7 @@ const ViewLesson: FC<Props> = ({
           </p>
         </div>
       </div>
-      <article className="lesson-content flex bg-white mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-10 py-4 shadow-md">
+      <article className="lesson-content flex bg-white mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-10 py-4 shadow-md mb-8">
         <div
           className="lesson-viewer"
           dangerouslySetInnerHTML={{

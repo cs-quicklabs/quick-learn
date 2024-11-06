@@ -31,10 +31,12 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { Tooltip } from 'flowbite-react';
+import { useRouter } from 'next/navigation';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
 const TeamMemberDetails = () => {
+  const router = useRouter();
   const param = useParams<{ member: string }>();
   const userUUID = param.member;
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
@@ -106,11 +108,11 @@ const TeamMemberDetails = () => {
           ...res,
           message: 'User deactivated successfully',
         });
+        router.back(); // Add this line to navigate back
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsPageLoading(false));
   };
-
   const assignCourses = (data: string[]) => {
     setIsPageLoading(true);
     assignRoadmapsToUser(userUUID, { roadmaps: data })
@@ -236,8 +238,7 @@ const TeamMemberDetails = () => {
                     id={item.id.toString()}
                     title={item.name}
                     description={HTMLSanitizer(item.description, false)}
-                    // link={`${RouteEnum.TEAM}/${userUUID}/${item.id}`}
-                    link="#"
+                    link={`/dashboard/content/${item.id}`}
                   />
                 </li>
               ))}
@@ -263,8 +264,7 @@ const TeamMemberDetails = () => {
                     id={item.id}
                     title={item.name}
                     description={item.description}
-                    // link={`${RouteEnum.TEAM}/${userUUID}/courses/${item.id}`}
-                    link="#"
+                    link={`/dashboard/content/courses/${item.id}`}
                   />
                 </li>
               ))}
