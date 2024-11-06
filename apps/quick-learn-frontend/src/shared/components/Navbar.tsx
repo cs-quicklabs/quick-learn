@@ -112,13 +112,13 @@ const Navbar = () => {
         className="bg-gray-800 text-white shadow fixed z-10 w-full top-0"
       >
         <div className="mx-auto px-2 sm:px-4 lg:px-8">
-          <div className="flex py-1 justify-between">
+          <div className="flex py-2 justify-between items-center">
             <div className="flex px-2 lg:px-0">
               <div className="flex-shrink-0 flex items-center">
                 <Link
                   id="homeLogo"
                   href={RouteEnum.MY_LEARNING_PATH}
-                  className="text-white font-extrabold font-mono px-3 hidden lg:block tracking-wider"
+                  className="items-center justify-center text-white font-extrabold font-mono px-3 hidden lg:flex tracking-wider"
                 >
                   Quick Learn
                 </Link>
@@ -131,11 +131,11 @@ const Navbar = () => {
                     href={item.link}
                     id={`navDesktop${index}`}
                     className={
-                      'rounded-md px-3 py-2 text-sm font-medium text-gray-300 relative ' +
+                      'flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-gray-300 ' +
                       ((item.link != RouteEnum.DASHBOARD &&
                         pathname.includes(item.link)) ||
                       item.link == pathname
-                        ? 'text-white before:absolute before:inset-x-0 before:top-1/2 before:-translate-y-1/2 before:h-8 before:bg-gray-500 before:-z-10 before:rounded-md'
+                        ? 'text-white bg-gray-500 rounded-md'
                         : 'hover:bg-gray-700 hover:text-white')
                     }
                   >
@@ -145,12 +145,12 @@ const Navbar = () => {
               </div>
             </div>
 
-            <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
-              <div className="w-full max-w-lg lg:max-w-xs">
+            <div className="flex flex-1 justify-center item-center px-2 lg:ml-6 lg:justify-end">
+              <div className="flex item-center w-full max-w-lg lg:max-w-xs">
                 <label htmlFor="search" className="sr-only">
                   Search Roadmaps, Courses or Lessons
                 </label>
-                <div className="relative">
+                <div className="relative flex-1">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <MagnifyingGlassIcon
                       className="h-5 w-5 text-gray-400"
