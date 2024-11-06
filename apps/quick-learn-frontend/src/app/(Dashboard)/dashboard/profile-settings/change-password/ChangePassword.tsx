@@ -9,7 +9,6 @@ import {
 } from '@src/utils/toastUtils';
 import React, { useState } from 'react';
 import { z } from 'zod';
-import ChangePasswordSkeleton from './ChangePasswordSkeleton';
 
 const changePasswordFormSchema = z
   .object({
@@ -70,7 +69,6 @@ const ChangePassword = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };
-  if (isLoading) return <ChangePasswordSkeleton />;
   return (
     <>
       <div>
@@ -87,6 +85,7 @@ const ChangePassword = () => {
           resetFormOnSubmit
           buttonText="Save"
           id="changePasswordForm"
+          isLoading={isLoading}
         />
       </div>
     </>
