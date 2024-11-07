@@ -1,7 +1,6 @@
 'use client';
 import { changePasswordService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import {
@@ -72,7 +71,6 @@ const ChangePassword = () => {
   };
   return (
     <>
-      {isLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold dark:text-white">
           Change Password
@@ -87,6 +85,7 @@ const ChangePassword = () => {
           resetFormOnSubmit
           buttonText="Save"
           id="changePasswordForm"
+          isLoading={isLoading}
         />
       </div>
     </>

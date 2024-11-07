@@ -3,9 +3,9 @@ import {
   getUserPreferencesService,
   updateUserPreferencesService,
 } from '@src/apiServices/profileService';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import React, { useEffect, useState } from 'react';
+import EmailPreferenceSkeleton from './EmailPreferenceSkeleton';
 
 const EmailPreference = () => {
   const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
@@ -26,9 +26,10 @@ const EmailPreference = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   }, [isEmailChecked]);
+
+  if (isLoading) return <EmailPreferenceSkeleton />;
   return (
     <>
-      {isLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold dark:text-white">Preference</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">

@@ -14,6 +14,7 @@ import { en } from '@src/constants/lang/en';
 import React, { useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
 import AccountSettingConformationModal from '@src/shared/modals/AccountSettiongConformationModal';
+import BaseSettingSkeleton from '../BaseSettingsSkeleton';
 
 type AddSkillType = {
   name: string;
@@ -89,6 +90,10 @@ const Primaryskills = () => {
     placeholder: en.primarySkills.inputPlaceHolder,
   };
 
+  if (isPageLoading) {
+    return <BaseSettingSkeleton />;
+  }
+
   return (
     <>
       <AccountSettingConformationModal
@@ -110,7 +115,6 @@ const Primaryskills = () => {
         data={primarySkills.map((item) => {
           return { id: item.id, name: item.name };
         })}
-        isPageLoading={isPageLoading}
       />
     </>
   );
