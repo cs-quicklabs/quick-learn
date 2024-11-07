@@ -6,7 +6,6 @@ import {
 } from '@src/apiServices/accountService';
 import { en } from '@src/constants/lang/en';
 import { UserContext } from '@src/context/userContext';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { TTeam } from '@src/shared/types/accountTypes';
 import { FieldConfig } from '@src/shared/types/formTypes';
@@ -18,6 +17,7 @@ import {
 import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import AccountSettingsSkeleton from './AccountSettingsSkeleton';
 
 const AccountSettingSechema = z.object({
   name: z
@@ -85,10 +85,11 @@ const AccountSettings = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   }
-
+  if (isPageLoading) {
+    return <AccountSettingsSkeleton />;
+  }
   return (
     <>
-      {isPageLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold">{en.common.teamSettings}</h1>
         <p className="text-gray-500 text-sm mb-6">

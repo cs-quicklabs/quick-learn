@@ -3,12 +3,12 @@ import { getUnapprovedLessons } from '@src/apiServices/lessonsService';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import { TLesson } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import ApprovalListSkeleton from './ApprovalListSkeleton';
 
 const columns = [
   en.common.lesson,
@@ -31,9 +31,9 @@ const ApprovalList = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  if (loading) return <ApprovalListSkeleton />;
   return (
     <>
-      {loading && <FullPageLoader />}
       <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
         <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
           <div>

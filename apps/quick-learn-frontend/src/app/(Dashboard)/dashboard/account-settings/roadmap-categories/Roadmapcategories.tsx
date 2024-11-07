@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
 import AccountSettingConformationModal from '@src/shared/modals/AccountSettiongConformationModal';
 import { en } from '@src/constants/lang/en';
+import BaseSettingSkeleton from '../BaseSettingsSkeleton';
 
 type formOutput = {
   name: string;
@@ -91,6 +92,10 @@ const Roadmapcategories = () => {
     placeholder: en.roadmapCategories.inputPlaceHolder,
   };
 
+  if (isPageLoading) {
+    return <BaseSettingSkeleton />;
+  }
+
   return (
     <>
       <AccountSettingConformationModal
@@ -112,7 +117,6 @@ const Roadmapcategories = () => {
         data={roadmapCategories.map((item) => {
           return { id: item.id, name: item.name };
         })}
-        isPageLoading={isPageLoading}
       />
     </>
   );
