@@ -16,6 +16,7 @@ export const en = {
     delete: 'Delete',
     deactivatedOn: 'Deactivated on',
     by: 'by',
+    Archive: 'Archive',
 
     //dashboard
     loading: 'Loading...',
@@ -185,7 +186,8 @@ export const en = {
    */
   approvals: {
     lessonsApprovals: 'Lessons Approvals',
-    subHeading: 'Manage all your existing team members or add a new one.',
+    subHeading:
+      'Following lessons are waiting for approval after being created or updated by the team.',
     approveThisLesson: 'Approve this lesson',
     approvalPendingExclamation: 'Approval pending!',
     approvalPendingInfo:

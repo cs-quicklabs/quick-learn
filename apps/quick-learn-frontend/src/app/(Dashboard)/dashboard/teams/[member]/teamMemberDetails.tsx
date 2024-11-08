@@ -18,7 +18,6 @@ import { RouteEnum } from '@src/constants/route.enum';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import Card from '@src/shared/components/Card';
 import CreateNewCard from '@src/shared/components/CreateNewCard';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import AssignDataModal from '@src/shared/modals/assignDataModal';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TRoadmapCategories } from '@src/shared/types/accountTypes';
@@ -32,6 +31,8 @@ import {
 } from '@src/utils/toastUtils';
 import { Tooltip } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
+import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
+import TeamMemberDetailsSkeleton from './TeamMemberDetailsSkeleton';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
@@ -127,10 +128,13 @@ const TeamMemberDetails = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsPageLoading(false));
   };
+  const hasRoadmaps =
+    member?.assigned_roadmaps && member.assigned_roadmaps.length > 0;
+  const hasCourses = allCourses.length > 0;
 
+  if (isPageLoading && !openAssignModal) return <TeamMemberDetailsSkeleton />;
   return (
     <>
-      {isPageLoading && !openAssignModal && <FullPageLoader />}
       <ConformationModal
         title="Are you sure you want to deactivate this user?"
         subTitle="When deactivated, this user will no longer be able to access the platform."
@@ -157,35 +161,32 @@ const TeamMemberDetails = () => {
         }}
         onSubmit={assignCourses}
       />
-      <div>
+
+      <div className="container mx-auto px-4">
         <Breadcrumb links={links} />
-        <div className="items-baseline">
-          <h1 className="flex justify-center text-5xl font-extrabold leading-tight capitalize">
+
+        {/* Member Header */}
+        <div className="flex flex-col items-center justify-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">
             {member?.first_name} {member?.last_name}
           </h1>
-          <p className="mt-1 ml-1 text-sm text-gray-500 truncate sm:flex sm:items-center sm:justify-center">
-            ({allRoadmapCategories.length} {en.common.roadmaps},{' '}
+          <p className="text-sm text-gray-500">
+            ({member?.assigned_roadmaps?.length || 0} {en.common.roadmaps},{' '}
             {allCourses.length} {en.common.courses})
           </p>
-          <div className="sm:flex sm:items-center sm:justify-center gap-2 mt-2">
-            <Tooltip
-              content="Edit User"
-              trigger="hover"
-              className="py-1 px-2 max-w-sm text-xs font-normal text-white bg-gray-900 rounded-sm shadow-sm tooltip"
-            >
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <Tooltip content="Edit User">
               <Link
-                href={RouteEnum.TEAM_EDIT + '/' + userUUID}
-                type="button"
+                href={`${RouteEnum.TEAM_EDIT}/${userUUID}`}
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
               >
                 <PencilIcon className="h-4 w-4" />
               </Link>
             </Tooltip>
-            <Tooltip
-              content="Deactivate User"
-              trigger="hover"
-              className="py-1 px-2 max-w-sm text-xs font-normal text-white bg-gray-900 rounded-sm shadow-sm tooltip"
-            >
+
+            <Tooltip content="Deactivate User">
               <button
                 type="button"
                 className={`text-black bg-gray-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center ${
@@ -199,11 +200,8 @@ const TeamMemberDetails = () => {
                 <TrashIcon className="h-4 w-4" />
               </button>
             </Tooltip>
-            <Tooltip
-              content="User Activities"
-              trigger="hover"
-              className="py-1 px-2 max-w-sm text-xs font-normal text-white bg-gray-900 rounded-sm shadow-sm tooltip"
-            >
+
+            <Tooltip content="User Activities">
               <button
                 type="button"
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
@@ -213,64 +211,78 @@ const TeamMemberDetails = () => {
             </Tooltip>
           </div>
         </div>
-        <div className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-            <h1 className="text-3xl font-bold leading-tight capitalize">
+
+        {/* Roadmaps Section */}
+        <section className="mb-12">
+          <div className="flex items-baseline mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold capitalize">
               {en.common.roadmaps}
-            </h1>
-            <p className="mt-1 ml-1 text-sm text-gray-500 truncate lowercase">
+            </h2>
+            <p className="ml-2 text-sm text-gray-500">
               ({member?.assigned_roadmaps?.length ?? 0} {en.common.roadmaps})
             </p>
           </div>
-        </div>
-        <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
-          <div id="created-spaces">
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
-              <li>
-                <CreateNewCard
-                  title={en.teamMemberDetails.assignNewRoadmap}
-                  onAdd={() => setOpenAssignModal(true)}
-                />
-              </li>
+
+          {hasRoadmaps ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+              <CreateNewCard
+                title={en.teamMemberDetails.assignNewRoadmap}
+                onAdd={() => setOpenAssignModal(true)}
+              />
               {member?.assigned_roadmaps?.map((item) => (
-                <li key={item.id}>
-                  <Card
-                    id={item.id.toString()}
-                    title={item.name}
-                    description={HTMLSanitizer(item.description, false)}
-                    link={`/dashboard/content/${item.id}`}
-                  />
-                </li>
+                <Card
+                  key={item.id}
+                  id={item.id.toString()}
+                  title={item.name}
+                  description={HTMLSanitizer(item.description, false)}
+                  link={`/dashboard/content/${item.id}`}
+                />
               ))}
-            </ul>
-          </div>
-        </div>
-        <div className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-            <h1 className="text-3xl font-bold leading-tight">
+            </div>
+          ) : (
+            <EmptyState
+              type="roadmaps"
+              customTitle="No roadmaps assigned"
+              customDescription="Assign roadmaps to help this team member get started"
+              actionButton={{
+                label: en.teamMemberDetails.assignNewRoadmap,
+                onClick: () => setOpenAssignModal(true),
+              }}
+            />
+          )}
+        </section>
+
+        {/* Courses Section */}
+        <section>
+          <div className="flex items-baseline mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold capitalize">
               {en.common.courses}
-            </h1>
-            <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
-              ({allCourses.length ?? 0} {en.contentRepository.courses})
+            </h2>
+            <p className="ml-2 text-sm text-gray-500">
+              ({allCourses.length} {en.contentRepository.courses})
             </p>
           </div>
-        </div>
-        <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
-          <div id="created-spaces">
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
+
+          {hasCourses ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               {allCourses.map((item) => (
-                <li key={item.id}>
-                  <Card
-                    id={item.id}
-                    title={item.name}
-                    description={item.description}
-                    link={`/dashboard/content/courses/${item.id}`}
-                  />
-                </li>
+                <Card
+                  key={item.id}
+                  id={item.id}
+                  title={item.name}
+                  description={item.description}
+                  link={`/dashboard/content/courses/${item.id}`}
+                />
               ))}
-            </ul>
-          </div>
-        </div>
+            </div>
+          ) : (
+            <EmptyState
+              type="courses"
+              customTitle="No courses available"
+              customDescription="Courses will appear here when roadmaps are assigned"
+            />
+          )}
+        </section>
       </div>
     </>
   );

@@ -17,12 +17,14 @@ const ProgressCard = ({
   title,
   percentage = 0,
   link,
-  className = 'bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow duration-200 text-left',
+  className = 'bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow group duration-200 text-left',
 }: ProgressCardProps) => {
   return (
     <Link href={link} id={id.toString()} className={className}>
       <div className="px-6 py-4">
-        <h3 className="text-gray-900 font-medium mb-2 line-clamp-3">{name}</h3>
+        <h3 className="text-gray-900 font-medium mb-2 line-clamp-3 group-hover:underline">
+          {name}
+        </h3>
         <p className="text-gray-500 text-sm mb-4 line-clamp-3">{title}</p>
         {/* Progress section - commented out temporarily */}
         {/*

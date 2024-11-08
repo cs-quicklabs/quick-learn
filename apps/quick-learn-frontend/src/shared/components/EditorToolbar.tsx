@@ -1,10 +1,5 @@
 import { PencilIcon } from '@heroicons/react/20/solid';
-import {
-  ArrowPathIcon,
-  CheckIcon,
-  EyeIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CheckIcon, EyeIcon } from '@heroicons/react/24/outline';
 import React, { FC } from 'react';
 
 // Formats objects for setting up the Quill editor
@@ -36,7 +31,6 @@ const EditorToolbar: FC<Props> = ({
   undo,
   isUpdating,
   isAdd,
-  onArchive,
 }) => {
   return (
     <div
@@ -74,17 +68,6 @@ const EditorToolbar: FC<Props> = ({
         >
           <PencilIcon height={24} width={24} />
         </button>
-        {/* Archive button - only show for existing lessons */}
-        {!isAdd && onArchive && (
-          <button
-            type="button"
-            className="custom-quill-button text-red-500 hover:text-red-600 focus:outline-none  "
-            onClick={onArchive}
-            title="Archive lesson"
-          >
-            <TrashIcon height={24} width={24} />
-          </button>
-        )}
       </div>
       <div
         className={

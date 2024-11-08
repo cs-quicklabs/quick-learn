@@ -14,6 +14,7 @@ import {
 import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import ProfileSettingsSkeleton from './ProfileSettingsSkeleton';
 
 // Define the service input type
 interface ProfileUpdateServiceInput {
@@ -142,6 +143,10 @@ const ProfileSettings = () => {
     }
   }, [user, reset]);
 
+  if (isLoading) {
+    return <ProfileSettingsSkeleton />;
+  }
+
   return (
     <div>
       <h1 className="text-lg font-semibold">Profile Settings</h1>
@@ -154,7 +159,6 @@ const ProfileSettings = () => {
           schema={profileSchema}
           onSubmit={onSubmit}
           methods={methods}
-          isLoading={isLoading}
           buttonText="Save"
           id="profileSettingsForm"
         />

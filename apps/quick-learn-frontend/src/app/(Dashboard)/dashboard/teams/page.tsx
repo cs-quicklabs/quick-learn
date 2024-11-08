@@ -9,11 +9,9 @@ import { TUser, TUserType } from '@src/shared/types/userTypes';
 import { DateFormats } from '@src/constants/dateFormats';
 import { teamListApiCall } from '@src/apiServices/teamService';
 import { debounce } from '@src/utils/helpers';
-import {
-  CustomClipBoardIcon,
-  FullPageLoader,
-} from '@src/shared/components/UIElements';
+import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
+import TeamMemberListingSkeleton from './TeamMemberListingSkeleton';
 
 const TeamMemberListing = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
@@ -68,9 +66,9 @@ const TeamMemberListing = () => {
     [],
   );
 
+  if (isPageLoading) return <TeamMemberListingSkeleton />;
   return (
     <>
-      {isPageLoading && <FullPageLoader />}
       <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
         <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
           <div>
