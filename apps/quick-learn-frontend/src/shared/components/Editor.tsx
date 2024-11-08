@@ -1,6 +1,6 @@
 'use client';
 import ReactQuill, { Quill } from 'react-quill';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { toast } from 'react-toastify';
 import 'react-quill/dist/quill.snow.css';
 import EditorToolbar, { formats } from './EditorToolbar';
