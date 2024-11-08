@@ -1,13 +1,11 @@
 'use client';
 import ReactQuill, { Quill } from 'react-quill';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { toast } from 'react-toastify';
 import 'react-quill/dist/quill.snow.css';
 import EditorToolbar, { formats } from './EditorToolbar';
 import { en } from '@src/constants/lang/en';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
-import ConformationModal from '@src/shared/modals/conformationModal';
-import { FullPageLoader } from './UIElements';
 
 const Clipboard = Quill.import('modules/clipboard');
 const Delta = Quill.import('delta');
@@ -95,25 +93,8 @@ const Editor: FC<Props> = ({
   placeholder = en.common.addContentPlaceholder,
   isUpdating = false,
   isAdd = false,
-  onArchive,
 }) => {
   const quillRef = useRef<ReactQuill | null>(null);
-  const [showArchiveModal, setShowArchiveModal] = useState(false);
-  const [isArchiving, setIsArchiving] = useState(false);
-
-  const handleArchiveConfirm = async () => {
-    if (!onArchive) return;
-
-    try {
-      setIsArchiving(true);
-      await onArchive();
-      setShowArchiveModal(false);
-    } catch (err) {
-      toast.error(en.common.somethingWentWrong);
-    } finally {
-      setIsArchiving(false);
-    }
-  };
 
   const handleImageUpload = async (file: File) => {
     if (!quillRef.current) return;
@@ -185,7 +166,6 @@ const Editor: FC<Props> = ({
         setIsEditing={setIsEditing}
         isUpdating={isUpdating}
         isAdd={isAdd}
-        onArchive={() => setShowArchiveModal(true)}
       />
       <div className="flex-grow relative">
         <ReactQuill
@@ -200,14 +180,6 @@ const Editor: FC<Props> = ({
           className="h-full"
         />
       </div>
-      <ConformationModal
-        title={en.lesson.archiveConfirmHeading}
-        subTitle={en.lesson.archiveConfirmDescription}
-        open={showArchiveModal}
-        setOpen={setShowArchiveModal}
-        onConfirm={handleArchiveConfirm}
-      />
-      {isArchiving && <FullPageLoader />}
     </div>
   );
 };

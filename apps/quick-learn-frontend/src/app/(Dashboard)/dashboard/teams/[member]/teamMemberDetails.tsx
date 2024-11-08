@@ -171,7 +171,7 @@ const TeamMemberDetails = () => {
             {member?.first_name} {member?.last_name}
           </h1>
           <p className="text-sm text-gray-500">
-            ({allRoadmapCategories.length} {en.common.roadmaps},{' '}
+            ({member?.assigned_roadmaps?.length || 0} {en.common.roadmaps},{' '}
             {allCourses.length} {en.common.courses})
           </p>
 
