@@ -28,7 +28,7 @@ import { CourseArchiveDto } from '../course/dto/course-archive.dto';
 })
 @UseGuards(JwtAuthGuard)
 export class LessonController {
-  constructor(private service: LessonService) {}
+  constructor(private readonly service: LessonService) {}
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()
@@ -48,11 +48,7 @@ export class LessonController {
    * @returns A list of lessons.
    */
   async getUnapprovedLessons(): Promise<SuccessResponse> {
-    const lessons = await this.service.getMany(
-      { approved: false },
-      { updated_at: 'ASC' },
-      ['created_by_user'],
-    );
+    const lessons = await this.service.getUnapprovedLessons();
     return new SuccessResponse(en.getLessons, lessons);
   }
 
