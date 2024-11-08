@@ -221,6 +221,14 @@ export class LessonService extends PaginationService<LessonEntity> {
     await this.repository.delete({ id });
   }
 
+  /**
+   * Gets a lesson by id, with user and course details
+   * @param userId - The id of the user
+   * @param id - The id of the lesson
+   * @param courseId - The id of the course
+   * @param roadmap - The id of the roadmap the lesson belongs to
+   * @returns A LessonEntity
+   */
   async getUserLessonDetails(
     userId: number,
     id: number,
@@ -247,5 +255,21 @@ export class LessonService extends PaginationService<LessonEntity> {
     }
 
     return await queryBuilder.getOne();
+  }
+
+  /**
+   * Retrieves all unapproved lessons
+   * @returns A promise that resolves to a list of LessonEntity
+   */
+  async getUnapprovedLessons(): Promise<LessonEntity[]> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('lesson')
+      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
+      .innerJoin('lesson.course', 'course')
+      .where('course.archived = :courseArchived', { courseArchived: false })
+      .andWhere('lesson.archived = :archived', { archived: false })
+      .andWhere('lesson.approved = :approved', { approved: false });
+
+    return await queryBuilder.getMany();
   }
 }
