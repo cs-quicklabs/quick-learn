@@ -16,6 +16,7 @@ export const en = {
     delete: 'Delete',
     deactivatedOn: 'Deactivated on',
     by: 'by',
+    Archive: 'Archive',
 
     //dashboard
     loading: 'Loading...',
