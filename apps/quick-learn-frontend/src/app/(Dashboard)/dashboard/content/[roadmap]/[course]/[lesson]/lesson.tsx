@@ -17,6 +17,7 @@ import AutoResizingTextarea from '@src/shared/components/AutoResizingTextArea';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import Editor from '@src/shared/components/Editor';
 import { FullPageLoader } from '@src/shared/components/UIElements';
+import ConformationModal from '@src/shared/modals/conformationModal';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
 import useDashboardStore from '@src/store/dashboard.store';
@@ -82,6 +83,8 @@ const Lesson = () => {
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
 
   // To set the links for the breadcrumb
   const links = useMemo<TBreadcrumb[]>(() => {
@@ -186,6 +189,7 @@ const Lesson = () => {
     if (lessonId === 'add') return;
 
     try {
+      setIsArchiving(true);
       const response = await activateLesson({
         id: parseInt(lessonId),
         active: false,
@@ -194,6 +198,8 @@ const Lesson = () => {
       router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
     } catch (err) {
       showApiErrorInToast(err as AxiosErrorObject);
+    } finally {
+      setIsArchiving(false);
     }
   }, [lessonId, roadmapId, courseId, router]);
 
@@ -247,9 +253,6 @@ const Lesson = () => {
                   setValue={(e) => onChange(field.name, e)}
                   isUpdating={isUpdating}
                   isAdd={lessonId === 'add'}
-                  onArchive={
-                    lessonId === 'add' ? undefined : handleArchiveLesson
-                  }
                 />
                 {error && (
                   <p className="mt-1 text-red-500 text-sm">{error.message}</p>
@@ -257,6 +260,7 @@ const Lesson = () => {
               </>
             )}
           />
+
           <button
             type="submit"
             className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
@@ -267,7 +271,24 @@ const Lesson = () => {
               : en.common.lessonSaveAndApprovalButton}
           </button>
         </form>
+        {lessonId !== 'add' && isAdmin && (
+          <button
+            className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
+            // disabled={!isDirty || !isValid || !isEditing}
+            onClick={() => setShowArchiveModal(true)}
+          >
+            Archive
+          </button>
+        )}
+        <ConformationModal
+          title={en.lesson.archiveConfirmHeading}
+          subTitle={en.lesson.archiveConfirmDescription}
+          open={showArchiveModal}
+          setOpen={setShowArchiveModal}
+          onConfirm={handleArchiveLesson}
+        />
       </div>
+      {isArchiving && <FullPageLoader />}
     </>
   );
 };
