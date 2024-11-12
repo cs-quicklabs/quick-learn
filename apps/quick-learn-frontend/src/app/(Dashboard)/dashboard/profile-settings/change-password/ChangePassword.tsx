@@ -26,7 +26,12 @@ const changePasswordFormSchema = z
       .regex(/[^A-Za-z0-9]/, {
         message: 'Password must contain at least one special character',
       }),
+
     confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword !== data.oldPassword, {
+    message: 'Please enter a new password different from the previous one',
+    path: ['newPassword'],
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
