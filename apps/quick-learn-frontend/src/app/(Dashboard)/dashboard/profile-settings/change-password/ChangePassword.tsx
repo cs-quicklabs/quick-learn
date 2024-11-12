@@ -91,6 +91,7 @@ const ChangePassword = () => {
           buttonText="Save"
           id="changePasswordForm"
           isLoading={isLoading}
+          mode="onChange"
         />
       </div>
     </>
