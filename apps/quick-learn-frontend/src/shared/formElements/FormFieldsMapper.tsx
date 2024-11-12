@@ -43,7 +43,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   // Call useForm unconditionally
   const defaultMethods = useForm<z.infer<T>>({
     resolver: zodResolver(schema),
-    mode:"onChange",
+    mode: 'onChange',
   });
 
   // Use methods if provided, otherwise fall back to defaultMethods
