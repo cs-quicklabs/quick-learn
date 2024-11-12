@@ -30,7 +30,7 @@ const changePasswordFormSchema = z
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword !== data.oldPassword, {
-    message: 'Please enter a new password different from the previous one',
+    message: 'Current and new passwords cannot be the same.',
     path: ['newPassword'],
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
