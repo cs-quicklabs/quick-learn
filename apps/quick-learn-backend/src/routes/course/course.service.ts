@@ -339,7 +339,8 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       .leftJoin('course.roadmaps', 'roadmaps')
       .innerJoin('roadmaps.users', 'users')
       .where('course.id = :id', { id })
-      .andWhere('users.id = :userId', { userId });
+      .andWhere('users.id = :userId', { userId })
+      .andWhere('course.archived= :archived', { archived: false });
 
     if (roadmap) {
       course

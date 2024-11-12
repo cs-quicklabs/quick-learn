@@ -52,7 +52,7 @@ const LessonDetails = () => {
         showApiErrorInToast(err);
         router.push(RouteEnum.MY_LEARNING_PATH);
       });
-  }, [lesson, course, roadmap]);
+  }, [router, lesson, course, roadmap]);
 
   if (!lessonDetails) return <FullPageLoader />;
   return <ViewLesson lesson={lessonDetails} links={links} />;
