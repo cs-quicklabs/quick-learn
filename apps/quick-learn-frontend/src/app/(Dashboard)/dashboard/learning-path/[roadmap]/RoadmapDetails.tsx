@@ -9,7 +9,7 @@ import RoadmapCourseSkeleton from '@src/shared/components/roadmapCourseSkeleton'
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TRoadmap } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const defaultlinks: TBreadcrumb[] = [
@@ -21,7 +21,7 @@ const RoadmapDetails = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [roadmapData, setRoadmapData] = useState<TRoadmap>();
-
+  const router = useRouter();
   useEffect(() => {
     setIsPageLoading(true);
     getLearningPathRoadmap(roadmap)
@@ -35,7 +35,10 @@ const RoadmapDetails = () => {
           },
         ]);
       })
-      .catch((err) => showApiErrorInToast(err))
+      .catch((err) => {
+        showApiErrorInToast(err);
+        router.push(RouteEnum.MY_LEARNING_PATH);
+      })
       .finally(() => setIsPageLoading(false));
   }, [roadmap]);
 
