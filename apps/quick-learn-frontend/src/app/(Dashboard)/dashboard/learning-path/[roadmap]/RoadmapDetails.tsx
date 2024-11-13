@@ -40,7 +40,7 @@ const RoadmapDetails = () => {
         router.push(RouteEnum.MY_LEARNING_PATH);
       })
       .finally(() => setIsPageLoading(false));
-  }, [roadmap]);
+  }, [router, roadmap]);
 
   return (
     <>

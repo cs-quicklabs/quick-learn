@@ -66,7 +66,7 @@ const LessonDetails = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => {
         setLoading(false);
-        router.back();
+        router.push(RouteEnum.APPROVALS);
       });
   }
 
