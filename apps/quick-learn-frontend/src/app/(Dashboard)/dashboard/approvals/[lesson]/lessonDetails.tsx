@@ -15,11 +15,13 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
+import { useRouter } from 'next/navigation';
 
 const defaultLinks = [{ name: 'Approvals', link: RouteEnum.APPROVALS }];
 
 const LessonDetails = () => {
   const { lesson: id } = useParams<{ lesson: string }>();
+  const router = useRouter();
 
   // For hidding navbar
   const { setHideNavbar } = useDashboardStore((state) => state);
@@ -62,7 +64,10 @@ const LessonDetails = () => {
     approveLesson(id)
       .then((res) => showApiMessageInToast(res))
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        router.push(RouteEnum.APPROVALS);
+      });
   }
 
   if (!lesson) return null;

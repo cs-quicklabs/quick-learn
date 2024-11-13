@@ -1,5 +1,5 @@
 'use client';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
@@ -21,6 +21,7 @@ const CourseDetails = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [courseData, setCourseData] = useState<TCourse>();
+  const router = useRouter();
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -40,9 +41,12 @@ const CourseDetails = () => {
         });
         setLinks(tempLinks);
       })
-      .catch((err) => showApiErrorInToast(err))
+      .catch((err) => {
+        showApiErrorInToast(err);
+        router.push(RouteEnum.MY_LEARNING_PATH);
+      })
       .finally(() => setIsPageLoading(false));
-  }, [roadmap, course]);
+  }, [router, roadmap, course]);
 
   return (
     <>

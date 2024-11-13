@@ -26,7 +26,12 @@ const changePasswordFormSchema = z
       .regex(/[^A-Za-z0-9]/, {
         message: 'Password must contain at least one special character',
       }),
+
     confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword !== data.oldPassword, {
+    message: 'Current and new passwords cannot be the same.',
+    path: ['newPassword'],
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
@@ -86,6 +91,7 @@ const ChangePassword = () => {
           buttonText="Save"
           id="changePasswordForm"
           isLoading={isLoading}
+          mode="onChange"
         />
       </div>
     </>
