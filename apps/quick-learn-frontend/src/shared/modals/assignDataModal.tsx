@@ -62,7 +62,7 @@ const AssignDataModal: FC<Props> = ({
   }
 
   return (
-    <Modal show={show} size="4xl">
+    <Modal show={show} size="6xl">
       <Modal.Body className="p-0">
         <div className="flex items-start justify-between p-4 rounded-t">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-400">
@@ -95,7 +95,7 @@ const AssignDataModal: FC<Props> = ({
             </div>
             <div id="myTabContent">
               <div
-                className="grid grid-cols-2 gap-4 md:grid-cols-3"
+                className="grid grid-cols-2 gap-4 md:grid-cols-4"
                 id="brand"
                 role="tabpanel"
                 aria-labelledby="brand-tab"
