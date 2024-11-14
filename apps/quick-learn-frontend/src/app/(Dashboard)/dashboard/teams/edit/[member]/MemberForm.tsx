@@ -1,4 +1,4 @@
-import { TypeOf, z } from 'zod';
+import { isValid, TypeOf, z } from 'zod';
 import { useForm, Controller, Path } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
@@ -24,6 +24,7 @@ export interface IMemberForm<T extends z.ZodTypeAny> {
   readonly initialValues: z.infer<T>;
   readonly schema: T;
   readonly loading: boolean;
+  readonly onFormChange: () => void;
 }
 
 function MemberForm<T extends z.ZodTypeAny>({
@@ -32,13 +33,21 @@ function MemberForm<T extends z.ZodTypeAny>({
   initialValues,
   schema,
   loading,
+  onFormChange,
 }: IMemberForm<T>) {
   const router = useRouter();
   const params = useParams<{ member: string }>();
   const isAddMember = params.member === 'add';
-  const { control, handleSubmit, setValue } = useForm<z.infer<T>>({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isValid },
+  } = useForm<z.infer<T>>({
     defaultValues: initialValues,
     resolver: zodResolver(schema),
+    mode: 'onBlur',
   });
 
   const updatePasswordField = (index: number) => {
@@ -46,6 +55,23 @@ function MemberForm<T extends z.ZodTypeAny>({
     newFields[index].showPassword = !newFields[index].showPassword;
     setFields(newFields);
   };
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  useEffect(() => {
+    const subscription = watch(() => {
+      onFormChange();
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, onFormChange]);
+
+  // to check the form values whether the form is empty or not
+  const formValues = watch();
+
+  useEffect(() => {
+    const hasInput = Object.values(formValues).every(
+      (value) => value !== '' && value !== null && value !== undefined,
+    );
+    setIsSubmitDisabled(loading || !hasInput || !isValid); // Ensure the button only becomes active when the form is fully filled
+  }, [formValues, loading, isValid]);
 
   useEffect(() => {
     if (initialValues) {
@@ -78,7 +104,7 @@ function MemberForm<T extends z.ZodTypeAny>({
           ? 'Please fill in details of new team member.'
           : 'Please update details to edit team member.'}
       </p>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="mt-3 grid gap-4 sm:grid-cols-2 sm:gap-6">
           {fields.map(
             (
@@ -187,7 +213,11 @@ function MemberForm<T extends z.ZodTypeAny>({
           id="submit"
           type="submit"
           className={`rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 mt-6 inline-flex items-center gap-x-2 ${
-            loading ? ' bg-primary-800 cursor-not-allowed' : ' bg-primary-700'
+            loading
+              ? ' bg-primary-800 cursor-not-allowed'
+              : isSubmitDisabled
+              ? 'bg-gray-500'
+              : 'bg-blue-600 hover:bg-blue-700'
           }`}
           disabled={loading}
         >

@@ -34,7 +34,11 @@ const baseSchema = {
     })
     .trim()
     .min(1, { message: en.common.fieldRequired })
+    .regex(/@/, {
+      message: 'Please enter the valid email address',
+    })
     .email({ message: 'Invalid email address' }),
+
   skill_id: z
     .string({
       required_error: en.common.fieldRequired,

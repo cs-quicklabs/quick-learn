@@ -61,6 +61,8 @@ const AddUpdateMemberPage = () => {
   );
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false); // New flag
+  const [hasError, setHasError] = useState<boolean>(false);
 
   useEffect(() => {
     (async function () {
@@ -131,10 +133,17 @@ const AddUpdateMemberPage = () => {
       setIsLoading(false);
       router.push(RouteEnum.TEAM);
     } catch (error) {
-      showErrorMessage(error);
+      if (!hasError) {
+        toast.error('Email already exists!');
+        setHasError(true);
+      }
       setIsLoading(false);
     }
   }
+  const handleFormChange = () => {
+    setIsSubmitDisabled(false);
+    setHasError(false); // Reset error flag on any form change
+  };
 
   async function handleEditSubmit(data: EditMemberFormData) {
     try {
@@ -159,6 +168,7 @@ const AddUpdateMemberPage = () => {
           onSubmit={handleAddSubmit}
           schema={addMemberFormSchema}
           loading={isLoading}
+          onFormChange={handleFormChange}
         />
       );
     } else {
@@ -169,6 +179,7 @@ const AddUpdateMemberPage = () => {
           onSubmit={handleEditSubmit}
           schema={editMemberFormSchema}
           loading={isLoading}
+          onFormChange={handleFormChange}
         />
       );
     }
