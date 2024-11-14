@@ -81,13 +81,23 @@ const TeamMemberDetails = () => {
             link: `${RouteEnum.TEAM}/${userUUID}`,
           },
         ]);
-        const courses: TCourse[] = [];
+
+        // Create a Map to track unique courses by ID
+        const uniqueCoursesMap = new Map<number, TCourse>();
+
+        // Add each course to the map, only if it doesn't exist already
         res.data.assigned_roadmaps?.forEach((roadmap) => {
-          if (roadmap.courses.length > 0) {
-            courses.push(...roadmap.courses);
+          if (roadmap.courses?.length > 0) {
+            roadmap.courses.forEach((course) => {
+              if (!uniqueCoursesMap.has(Number(course.id))) {
+                uniqueCoursesMap.set(Number(course.id), course);
+              }
+            });
           }
         });
-        setAllCourses(courses);
+
+        // Convert the Map values back to an array
+        setAllCourses(Array.from(uniqueCoursesMap.values()));
       })
       .catch((err) => {
         showApiErrorInToast(err);
@@ -109,11 +119,12 @@ const TeamMemberDetails = () => {
           ...res,
           message: 'User deactivated successfully',
         });
-        router.back(); // Add this line to navigate back
+        router.back();
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsPageLoading(false));
   };
+
   const assignCourses = (data: string[]) => {
     setIsPageLoading(true);
     assignRoadmapsToUser(userUUID, { roadmaps: data })
@@ -128,11 +139,13 @@ const TeamMemberDetails = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsPageLoading(false));
   };
+
   const hasRoadmaps =
     member?.assigned_roadmaps && member.assigned_roadmaps.length > 0;
   const hasCourses = allCourses.length > 0;
 
   if (isPageLoading && !openAssignModal) return <TeamMemberDetailsSkeleton />;
+
   return (
     <>
       <ConformationModal
@@ -162,6 +175,7 @@ const TeamMemberDetails = () => {
         onSubmit={assignCourses}
       />
 
+      {/* Rest of the component remains the same */}
       <div className="container mx-auto px-4">
         <Breadcrumb links={links} />
 
