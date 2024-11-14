@@ -149,7 +149,7 @@ input:-webkit-autofill:active {
   margin-top: 5px;
   padding-left: 16px;
   background-color: #eee;
-  max-width: 85%;
+  /* max-width: 85%; */
   margin: 1rem auto;
 }
 .quill .ql-container .ql-syntax,
