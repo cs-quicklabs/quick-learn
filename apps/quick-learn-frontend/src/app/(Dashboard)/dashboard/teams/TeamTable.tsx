@@ -25,7 +25,6 @@ const TeamTable = ({
 }: TeamTableProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<TUser[]>([]);
-  const [totalPage, setTotalPage] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,13 +33,12 @@ const TeamTable = ({
         const res = await teamListApiCall(page, userTypeCode, query);
         if (!res.success) throw new Error();
         setData(res.data.items);
-        setTotalPage(res.data.total_pages);
         onTotalChange(res.data.total);
-        setIsLoading(false);
       } catch (error) {
-        setIsLoading(false);
         console.error('API call failed:', error);
         toast.error('Something went wrong!');
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();

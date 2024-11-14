@@ -8,11 +8,13 @@ import { debounce } from '@src/utils/helpers';
 import TeamTable from './TeamTable';
 
 const TeamMemberListing = () => {
-  const [total, setTotal] = useState<number>(0);
+  const [totalMembers, setTotalMembers] = useState<number>(0); // For title description
+  const [filteredTotal, setFilteredTotal] = useState<number>(0); // For pagination
   const [page, setPage] = useState<number>(1);
   const [userTypeCode, setUserTypeCode] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
   const [query, setQuery] = useState<string>('');
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
   const userTypes: TUserType[] = [
     { name: 'Admin', code: 'admin' },
@@ -40,6 +42,14 @@ const TeamMemberListing = () => {
     debouncedSearch(value);
   };
 
+  const handleFilteredTotalChange = (total: number) => {
+    setFilteredTotal(total);
+    if (isInitialLoad) {
+      setTotalMembers(total);
+      setIsInitialLoad(false);
+    }
+  };
+
   return (
     <>
       <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
@@ -48,8 +58,8 @@ const TeamMemberListing = () => {
             <h1 className="mr-3 text-lg font-semibold">Team</h1>
             <p className="text-gray-500 text-sm">
               Manage all your existing{' '}
-              <span className="font-bond">{total}</span> team members or add a
-              new one.
+              <span className="font-bond">{totalMembers}</span> team members or
+              add a new one.
             </p>
           </div>
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
@@ -108,7 +118,7 @@ const TeamMemberListing = () => {
           page={page}
           userTypeCode={userTypeCode}
           query={query}
-          onTotalChange={setTotal}
+          onTotalChange={handleFilteredTotalChange}
         />
       </section>
 
@@ -117,13 +127,13 @@ const TeamMemberListing = () => {
           <p className="text-sm text-gray-700">
             Showing{' '}
             <span className="font-medium">
-              {page > 1 ? (page - 1) * 10 + 1 : total === 0 ? 0 : 1}
+              {page > 1 ? (page - 1) * 10 + 1 : filteredTotal === 0 ? 0 : 1}
             </span>{' '}
             to{' '}
             <span className="font-medium">
-              {page * 10 <= total ? page * 10 : total}
+              {page * 10 <= filteredTotal ? page * 10 : filteredTotal}
             </span>{' '}
-            of <span className="font-medium">{total}</span> results
+            of <span className="font-medium">{filteredTotal}</span> results
           </p>
         </div>
         <div>
@@ -138,7 +148,7 @@ const TeamMemberListing = () => {
                 Previous
               </button>
             )}
-            {page * 10 < total && (
+            {page * 10 < filteredTotal && (
               <button
                 id="next"
                 onClick={() => setPage(page + 1)}
