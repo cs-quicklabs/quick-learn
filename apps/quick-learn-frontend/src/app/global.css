@@ -105,13 +105,14 @@ input:-webkit-autofill:active {
 .quill .ql-container .ql-editor,
 .lesson-viewer {
   font: 400 16px/28px 'Open Sans', sans-serif;
+  line-height: 2rem !important;
 }
 .quill .ql-container .ql-editor a,
 .quill .ql-container .ql-editor p,
 .lesson-viewer a,
 .lesson-viewer p {
   font-size: 1.25rem;
-  line-height: 1.75rem;
+  line-height: 2rem;
   margin-bottom: 0.5rem;
 }
 .quill .ql-container .ql-editor a,
