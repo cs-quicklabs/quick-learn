@@ -7,7 +7,7 @@ import ViewLesson from '@src/shared/components/ViewLesson';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const defaultlinks: TBreadcrumb[] = [
@@ -21,6 +21,7 @@ const LessonDetails = () => {
   }>();
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [lessonDetails, setLessonDetails] = useState<TLesson>();
+  const router = useRouter();
 
   useEffect(() => {
     getLearningPathLessionDetails(
@@ -47,8 +48,11 @@ const LessonDetails = () => {
         });
         setLinks(tempLinks);
       })
-      .catch((err) => showApiErrorInToast(err));
-  }, [lesson, course, roadmap]);
+      .catch((err) => {
+        showApiErrorInToast(err);
+        router.push(RouteEnum.MY_LEARNING_PATH);
+      });
+  }, [router, lesson, course, roadmap]);
 
   if (!lessonDetails) return <FullPageLoader />;
   return <ViewLesson lesson={lessonDetails} links={links} />;

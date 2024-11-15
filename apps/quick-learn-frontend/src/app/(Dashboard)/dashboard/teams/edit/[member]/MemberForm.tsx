@@ -1,4 +1,4 @@
-import { TypeOf, z } from 'zod';
+import React from 'react';
 import { useForm, Controller, Path } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
@@ -7,6 +7,7 @@ import { RouteEnum } from '@src/constants/route.enum';
 import { useParams, useRouter } from 'next/navigation';
 import { Loader, ShowInfoIcon } from '@src/shared/components/UIElements';
 import { Tooltip } from 'flowbite-react';
+import { z } from 'zod';
 
 export interface IMemberFieldConfig<T> {
   label: string;
@@ -36,9 +37,16 @@ function MemberForm<T extends z.ZodTypeAny>({
   const router = useRouter();
   const params = useParams<{ member: string }>();
   const isAddMember = params.member === 'add';
-  const { control, handleSubmit, setValue } = useForm<z.infer<T>>({
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { isValid, isDirty },
+  } = useForm<z.infer<T>>({
     defaultValues: initialValues,
     resolver: zodResolver(schema),
+    mode: 'onChange', // Enable real-time validation
   });
 
   const updatePasswordField = (index: number) => {
@@ -67,6 +75,9 @@ function MemberForm<T extends z.ZodTypeAny>({
       router.push(RouteEnum.TEAM + '/' + params.member);
     }
   }
+
+  // Determine if submit button should be disabled
+  const isSubmitDisabled = loading || !isValid || (!isDirty && isAddMember);
 
   return (
     <section className="mx-auto max-w-2xl">
@@ -111,7 +122,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                   )}
                 </label>
                 <Controller
-                  name={name as Path<TypeOf<T>>}
+                  name={name as Path<z.infer<T>>}
                   control={control}
                   render={({ field, fieldState: { error } }) => (
                     <>
@@ -186,10 +197,12 @@ function MemberForm<T extends z.ZodTypeAny>({
         <button
           id="submit"
           type="submit"
-          className={`rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 mt-6 inline-flex items-center gap-x-2 ${
-            loading ? ' bg-primary-800 cursor-not-allowed' : ' bg-primary-700'
+          className={`rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 mt-6 inline-flex items-center gap-x-2 ${
+            isSubmitDisabled
+              ? 'bg-primary-800 cursor-not-allowed opacity-60'
+              : 'bg-primary-700 hover:bg-primary-800'
           }`}
-          disabled={loading}
+          disabled={isSubmitDisabled}
         >
           {isAddMember ? 'Add' : 'Edit'} Member {loading ? <Loader /> : ''}
         </button>
@@ -197,7 +210,7 @@ function MemberForm<T extends z.ZodTypeAny>({
           id="cancel"
           type="button"
           className={`rounded-md bg-white px-3.5 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100 hover:text-primary-700 ml-2 ${
-            loading ? ' cursor-not-allowed' : ''
+            loading ? 'cursor-not-allowed' : ''
           }`}
           disabled={loading}
           onClick={cancel}

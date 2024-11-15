@@ -148,7 +148,15 @@ const CourseDetails = () => {
       .then((res) => {
         showApiMessageInToast(res);
         SetOpenAssignModal(false);
-        getCourseDetails();
+
+        // Check if the current roadmap is still assigned
+        const isCurrentRoadmapAssigned = data.includes(roadmapId);
+
+        if (!isCurrentRoadmapAssigned && roadmapId) {
+          router.replace(`${RouteEnum.CONTENT}/${roadmapId}`);
+        } else {
+          getCourseDetails();
+        }
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
@@ -180,6 +188,7 @@ const CourseDetails = () => {
   function onAddLesson() {
     router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/add`);
   }
+
   if (isPageLoading) {
     return <CourseDetailsSkeleton />;
   }
