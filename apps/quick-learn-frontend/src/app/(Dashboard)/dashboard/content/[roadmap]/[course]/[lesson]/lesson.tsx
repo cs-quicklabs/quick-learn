@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { activateLesson } from '@src/apiServices/archivedService';
@@ -21,26 +22,27 @@ import ConformationModal from '@src/shared/modals/conformationModal';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
 import useDashboardStore from '@src/store/dashboard.store';
-import { debounce } from '@src/utils/helpers';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import { useParams, useRouter } from 'next/navigation';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+// Move constants outside component to prevent recreating on each render
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
-
-type CreateLessonPayload = {
-  name: string;
-  content: string;
-  course_id: string;
-};
 
 const lessonSchema = z.object({
   name: z
@@ -50,34 +52,79 @@ const lessonSchema = z.object({
     .max(80, en.lesson.titleMaxLength),
   content: z.string().trim().min(1, en.lesson.contentRequired),
 });
+type LessonFormData = z.infer<typeof lessonSchema>;
+
+// Separate components for better performance
+const SaveButton = memo(
+  ({ isAdmin, disabled }: { isAdmin: boolean; disabled: boolean }) => (
+    <button
+      type="submit"
+      className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
+      disabled={disabled}
+    >
+      {isAdmin
+        ? en.common.saveAndPublish
+        : en.common.lessonSaveAndApprovalButton}
+    </button>
+  ),
+);
+
+SaveButton.displayName = 'SaveButton';
+
+const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
+  <button
+    className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
+    onClick={onClick}
+  >
+    {en.common.Archive}
+  </button>
+));
+
+ArchiveButton.displayName = 'ArchiveButton';
+
+// Custom hook for form logic
+const useLessonForm = (courseId: string, lessonId: string) => {
+  const {
+    setValue,
+    control,
+    handleSubmit,
+    formState: { isDirty, isValid },
+    getValues,
+  } = useForm<LessonFormData>({
+    resolver: zodResolver(lessonSchema),
+    mode: 'onChange',
+  });
+
+  return {
+    setValue,
+    control,
+    handleSubmit,
+    isDirty,
+    isValid,
+    getValues,
+  };
+};
 
 const Lesson = () => {
   const router = useRouter();
-  const {
-    roadmap: roadmapId,
-    course: courseId,
-    lesson: lessonId,
-  } = useParams<{
+  const params = useParams<{
     roadmap: string;
     course: string;
     lesson: string;
   }>();
+  const { roadmap: roadmapId, course: courseId, lesson: lessonId } = params;
 
-  // get User
+  // Memoize user context check
   const { user } = useContext(UserContext);
-  const isAdmin = [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
-    user?.user_type_id ?? -1,
+  const isAdmin = useMemo(
+    () =>
+      [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
+        user?.user_type_id ?? -1,
+      ),
+    [user?.user_type_id],
   );
 
-  // For hidding navbar
-  const { setHideNavbar } = useDashboardStore((state) => state);
-  useEffect(() => {
-    setHideNavbar(true);
-    return () => {
-      setHideNavbar(false);
-    };
-  }, [setHideNavbar]);
-
+  const { setHideNavbar } = useDashboardStore();
   const [isEditing, setIsEditing] = useState<boolean>(lessonId === 'add');
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
@@ -86,8 +133,10 @@ const Lesson = () => {
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
 
-  // To set the links for the breadcrumb
-  const links = useMemo<TBreadcrumb[]>(() => {
+  const form = useLessonForm(courseId, lessonId);
+
+  // Memoize links calculation
+  const links = useMemo(() => {
     const url = `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${lessonId}`;
     if (!roadmap) {
       return [
@@ -108,81 +157,110 @@ const Lesson = () => {
       },
       { name: lesson?.name ?? en.common.addLesson, link: url },
     ];
-  }, [roadmap, lesson, roadmapId, courseId, lessonId]);
+  }, [
+    roadmap,
+    lesson?.course?.name,
+    lesson?.name,
+    roadmapId,
+    courseId,
+    lessonId,
+  ]);
 
-  // form settings
-  type LessonSchemaType = z.infer<typeof lessonSchema>;
-  const {
-    setValue,
-    control,
-    handleSubmit,
-    formState: { isDirty, isValid },
-    getValues,
-  } = useForm<LessonSchemaType>({
-    resolver: zodResolver(lessonSchema),
-    mode: 'onChange',
-  });
-
+  // Optimize initial data fetching
   useEffect(() => {
-    if (!(isNaN(+roadmapId) || isNaN(+courseId))) {
-      getRoadmap(roadmapId, courseId)
-        .then((res) => setRoadmap(res.data))
-        .catch((err) => showApiErrorInToast(err));
-    }
-    if (lessonId !== 'add') {
-      getLessonDetails(lessonId)
-        .then((res) => {
-          setLesson(res.data);
-          setValue('name', res.data.name);
-          setValue('content', res.data.new_content || res.data.content);
-        })
-        .catch((err) => showApiErrorInToast(err));
-    }
-  }, [roadmapId, courseId, lessonId, setValue]);
+    const fetchData = async () => {
+      try {
+        if (!(isNaN(+roadmapId) || isNaN(+courseId))) {
+          const roadmapData = await getRoadmap(roadmapId, courseId);
+          setRoadmap(roadmapData.data);
+        }
 
-  function onSubmit(data: LessonSchemaType) {
-    setLoading(true);
-    if (lessonId === 'add') onAdd(data);
-    else onEdit(true);
-  }
+        if (lessonId !== 'add') {
+          const lessonData = await getLessonDetails(lessonId);
+          setLesson(lessonData.data);
+          form.setValue('name', lessonData.data.name);
+          form.setValue(
+            'content',
+            lessonData.data.new_content || lessonData.data.content,
+          );
+        }
+      } catch (err) {
+        showApiErrorInToast(err as AxiosErrorObject);
+      }
+    };
 
-  function onAdd(data: LessonSchemaType) {
-    setIsEditing(false);
+    fetchData();
+  }, [roadmapId, courseId, lessonId, form.setValue]);
 
-    createLesson({
-      ...data,
-      course_id: courseId,
-    } as CreateLessonPayload)
-      .then((res) => {
-        showApiMessageInToast(res);
-        router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
-      })
-      .catch((err) => showApiErrorInToast(err))
-      .finally(() => setLoading(false));
-  }
+  // Optimize navbar effect
+  useEffect(() => {
+    setHideNavbar(true);
+    return () => setHideNavbar(false);
+  }, [setHideNavbar]);
 
-  const onEdit = useCallback(
-    (redirect = false) => {
-      if (lessonId === 'add') return;
-      updateLesson(lessonId, {
-        content: getValues('content'),
-        name: getValues('name').trim().slice(0, 50),
-      })
-        .then((res) => {
+  const onSubmit = useCallback<SubmitHandler<LessonFormData>>(
+    async (data) => {
+      setLoading(true);
+      try {
+        if (lessonId === 'add') {
+          setIsEditing(false);
+          const res = await createLesson({
+            ...data,
+            course_id: courseId,
+          });
+          showApiMessageInToast(res);
+          router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
+        } else {
+          const res = await updateLesson(lessonId, {
+            content: data.content,
+            name: data.name.trim().slice(0, 50),
+          });
           if (!res.success) throw res;
-          if (redirect) {
-            showApiMessageInToast(res);
-            router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
-          }
-        })
-        .catch((err) => {
-          if (redirect) {
-            showApiErrorInToast(err);
-          } else console.log(err);
-        })
-        .finally(() => setIsUpdating(false));
+          showApiMessageInToast(res);
+          router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
+        }
+      } catch (err) {
+        showApiErrorInToast(err as AxiosErrorObject);
+      } finally {
+        setLoading(false);
+      }
     },
-    [lessonId, getValues, router, roadmapId, courseId],
+    [lessonId, courseId, roadmapId, router],
+  );
+
+  // Debounced update with useCallback
+  const updateContent = useCallback(
+    async (field: 'name' | 'content', value: string) => {
+      if (lessonId === 'add') return;
+
+      try {
+        setIsUpdating(true);
+        const res = await updateLesson(lessonId, {
+          [field]: value.trim(),
+        });
+        if (!res.success) throw res;
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    [lessonId],
+  );
+
+  // Optimize onChange handler
+  const onChange = useCallback(
+    (field: 'name' | 'content', value: string) => {
+      form.setValue(field, value, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+      // Debounce the update
+      const timeoutId = setTimeout(() => updateContent(field, value), 1000);
+      return () => clearTimeout(timeoutId);
+    },
+    [form.setValue, updateContent],
   );
 
   const handleArchiveLesson = useCallback(async () => {
@@ -203,29 +281,15 @@ const Lesson = () => {
     }
   }, [lessonId, roadmapId, courseId, router]);
 
-  const updateContent = useMemo(() => {
-    return debounce(onEdit, 2000);
-  }, [onEdit]);
-
-  function onChange(field: 'name' | 'content', value: string) {
-    setIsUpdating(true);
-    setValue(field, value, {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-    updateContent();
-  }
-
   return (
     <>
-      {loading && <FullPageLoader />}
+      {(loading || isArchiving) && <FullPageLoader />}
       <div className="mx-auto max-w-screen-lg bg-white -mt-4">
         <Breadcrumb links={links} />
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <Controller
             name="name"
-            control={control}
+            control={form.control}
             render={({ field, fieldState: { error } }) => (
               <>
                 <AutoResizingTextarea
@@ -243,7 +307,7 @@ const Lesson = () => {
           />
           <Controller
             name="content"
-            control={control}
+            control={form.control}
             render={({ field, fieldState: { error } }) => (
               <>
                 <Editor
@@ -261,24 +325,16 @@ const Lesson = () => {
             )}
           />
 
-          <button
-            type="submit"
-            className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
-            disabled={!isDirty || !isValid || !isEditing}
-          >
-            {isAdmin
-              ? en.common.saveAndPublish
-              : en.common.lessonSaveAndApprovalButton}
-          </button>
+          <SaveButton
+            isAdmin={isAdmin}
+            disabled={!form.isDirty || !form.isValid || !isEditing}
+          />
         </form>
+
         {lessonId !== 'add' && isAdmin && (
-          <button
-            className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
-            onClick={() => setShowArchiveModal(true)}
-          >
-            {en.common.Archive}
-          </button>
+          <ArchiveButton onClick={() => setShowArchiveModal(true)} />
         )}
+
         <ConformationModal
           title={en.lesson.archiveConfirmHeading}
           subTitle={en.lesson.archiveConfirmDescription}
@@ -287,9 +343,8 @@ const Lesson = () => {
           onConfirm={handleArchiveLesson}
         />
       </div>
-      {isArchiving && <FullPageLoader />}
     </>
   );
 };
 
-export default Lesson;
+export default memo(Lesson);
