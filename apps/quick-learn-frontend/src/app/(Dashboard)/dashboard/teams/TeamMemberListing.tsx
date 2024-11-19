@@ -1,7 +1,7 @@
 'use client';
 import { RouteEnum } from '@src/constants/route.enum';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUserType } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
@@ -14,7 +14,6 @@ const TeamMemberListing = () => {
   const [userTypeCode, setUserTypeCode] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
   const [query, setQuery] = useState<string>('');
-  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
   const userTypes: TUserType[] = [
     { name: 'Admin', code: 'admin' },
@@ -32,7 +31,7 @@ const TeamMemberListing = () => {
       debounce((value: string) => {
         setQuery(value);
         setPage(1);
-      }, 300),
+      }, 500),
     [],
   );
 
@@ -42,13 +41,15 @@ const TeamMemberListing = () => {
     debouncedSearch(value);
   };
 
-  const handleFilteredTotalChange = (total: number) => {
+  const handleFilteredTotalChange = useCallback((total: number) => {
     setFilteredTotal(total);
-    if (isInitialLoad) {
-      setTotalMembers(total);
-      setIsInitialLoad(false);
+  }, []);
+
+  useEffect(() => {
+    if (!userTypeCode && !query && page === 1) {
+      setTotalMembers(filteredTotal);
     }
-  };
+  }, [filteredTotal, userTypeCode, query, page]);
 
   return (
     <>
