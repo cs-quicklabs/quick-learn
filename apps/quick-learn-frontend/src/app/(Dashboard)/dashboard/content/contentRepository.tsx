@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   createRoadmap,
-  getContentRepositoryMetadata,
   getRoadmaps,
 } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
@@ -14,20 +13,27 @@ import AddEditRoadMapModal, {
   AddEditRoadmapData,
 } from '@src/shared/modals/addEditRoadMapModal';
 import { TCourse, TRoadmap } from '@src/shared/types/contentRepository';
-import useDashboardStore from '@src/store/dashboard.store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  selectContentRepository,
+  selectMetadataStatus,
+  fetchMetadata,
+} from '../../../../store/features/metadataSlice';
+import { AxiosErrorObject } from '@src/apiServices/axios';
 
 const ContentRepository = () => {
   const router = useRouter();
-  const { setContentRepositoryMetadata, metadata } = useDashboardStore(
-    (state) => state,
-  );
-  const allCourseCategories = metadata.contentRepository.course_categories;
+  const dispatch = useAppDispatch();
+  const contentRepository = useAppSelector(selectContentRepository);
+  const metadataStatus = useAppSelector(selectMetadataStatus);
+  const allCourseCategories = contentRepository.course_categories;
+
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [isModalLoading, setIsModalLoading] = useState(false);
@@ -35,15 +41,25 @@ const ContentRepository = () => {
   const [courses, setCourses] = useState<TCourse[]>([]);
 
   useEffect(() => {
-    Promise.all([
-      getContentRepositoryMetadata()
-        .then((response) => setContentRepositoryMetadata(response.data))
-        .catch((error) => showApiErrorInToast(error)),
-      getRoadmaps()
-        .then((res) => setRoadmaps(res.data))
-        .catch((err) => showApiErrorInToast(err)),
-    ]).finally(() => setIsPageLoading(false));
-  }, [setContentRepositoryMetadata]);
+    const loadData = async () => {
+      try {
+        const promises = [
+          metadataStatus === 'idle'
+            ? dispatch(fetchMetadata())
+            : Promise.resolve(),
+          getRoadmaps().then((res) => setRoadmaps(res.data)),
+        ];
+
+        await Promise.all(promises);
+      } catch (err) {
+        showApiErrorInToast(err as AxiosErrorObject);
+      } finally {
+        setIsPageLoading(false);
+      }
+    };
+
+    loadData();
+  }, [dispatch, metadataStatus]);
 
   useEffect(() => {
     const data: TCourse[] = [];
@@ -67,7 +83,7 @@ const ContentRepository = () => {
       .finally(() => setIsModalLoading(false));
   }
 
-  if (isPageLoading) {
+  if (isPageLoading || metadataStatus === 'loading') {
     return <ContentRepositorySkeleton />;
   }
 
@@ -107,7 +123,7 @@ const ContentRepository = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               <CreateNewCard
                 title={en.contentRepository.createNewRoadmap}
-                onAdd={setOpenAddModal}
+                onAdd={() => setOpenAddModal(true)}
               />
               {roadmaps.map((item) => (
                 <Card
