@@ -29,6 +29,7 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
     "date-fns": "^3.6.0",
+    "dotenv": "^16.4.5",
     "flowbite": "^2.4.1",
     "flowbite-react": "^0.10.1",
     "handlebars": "^4.7.8",
