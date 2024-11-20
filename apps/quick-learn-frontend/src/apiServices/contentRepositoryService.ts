@@ -4,6 +4,7 @@ import {
   TCreateCourse,
   TCreateRoadmap,
   TRoadmap,
+  TUserRoadmap,
 } from '@src/shared/types/contentRepository';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { ContentRepositoryApiEnum } from '@src/constants/api.enum';
@@ -115,24 +116,6 @@ export const assignRoadmapsToCourse = async (
   return response.data;
 };
 
-export const archiveRoadmap = async (
-  id: string,
-): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    ContentRepositoryApiEnum.ROADMAP + `/${id}`,
-  );
-  return response.data;
-};
-
-export const archiveCourse = async (
-  id: string,
-): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    ContentRepositoryApiEnum.COURSE + `/${id}`,
-  );
-  return response.data;
-};
-
 export const createLesson = async (payload: {
   name: string;
   content: string;
@@ -142,5 +125,30 @@ export const createLesson = async (payload: {
     ContentRepositoryApiEnum.LESSON,
     payload,
   );
+  return response.data;
+};
+
+export const getCommunityCourses = async () => {
+  const response = await axiosInstance.get<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.COMMUNITY_COURSES,
+  );
+  return response.data;
+};
+
+export const getCommunityCourse = async (
+  id: string,
+): Promise<AxiosSuccessResponse<TCourse>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<TCourse>>(
+    ContentRepositoryApiEnum.COMMUNITY + `/${id}`,
+  );
+  return response.data;
+};
+
+export const getUserRoadmapsService = async (): Promise<
+  AxiosSuccessResponse<TUserRoadmap[]>
+> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<TUserRoadmap[]>
+  >(`${ContentRepositoryApiEnum.GET_USER_ROADMAPS}?include_courses=true`);
   return response.data;
 };

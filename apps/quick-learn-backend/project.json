@@ -5,25 +5,6 @@
   "projectType": "application",
   "tags": [],
   "targets": {
-    "build": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "options": {
-        "target": "node",
-        "compiler": "tsc",
-        "outputPath": "dist/apps/quick-learn-backend",
-        "main": "apps/quick-learn-backend/src/main.ts",
-        "tsConfig": "apps/quick-learn-backend/tsconfig.app.json",
-        "assets": [
-          "apps/quick-learn-backend/src/assets",
-          "apps/quick-learn-backend/src/email-templates"
-        ],
-        "isolatedConfig": true,
-        "webpackConfig": "apps/quick-learn-backend/webpack.config.js"
-      }
-    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
@@ -50,8 +31,7 @@
       "outputs": [],
       "options": {
         "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:run -d src/database/data-source.ts",
-        "cwd": "apps/quick-learn-backend",
-        "envFile": "apps/quick-learn-backend/.env.dev"
+        "cwd": "apps/quick-learn-backend"
       }
     },
     "migration:generate": {
@@ -59,8 +39,7 @@
       "outputs": [],
       "options": {
         "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:generate -d src/database/data-source.ts src/database/migrations/migration",
-        "cwd": "apps/quick-learn-backend",
-        "envFile": "apps/quick-learn-backend/.env.dev"
+        "cwd": "apps/quick-learn-backend"
       }
     },
     "migration:create": {
@@ -68,8 +47,7 @@
       "outputs": [],
       "options": {
         "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:create src/database/migrations/migration",
-        "cwd": "apps/quick-learn-backend",
-        "envFile": "apps/quick-learn-backend/.env.dev"
+        "cwd": "apps/quick-learn-backend"
       }
     },
     "migration:revert": {
@@ -78,7 +56,6 @@
       "options": {
         "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:revert -d src/database/data-source.ts",
         "cwd": "apps/quick-learn-backend",
-        "envFile": "apps/quick-learn-backend/.env.dev"
       }
     },
     "seed:run": {
@@ -91,7 +68,9 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}"

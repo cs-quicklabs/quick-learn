@@ -6,6 +6,8 @@ import {
   updateCourseCategory,
 } from '@src/apiServices/accountService';
 import { TCourseCategories } from '@src/shared/types/accountTypes';
+import { en } from '@src/constants/lang/en';
+
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -14,7 +16,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
 import { UserContext } from '@src/context/userContext';
 import AccountSettingConformationModal from '@src/shared/modals/AccountSettiongConformationModal';
-import { en } from '@src/constants/lang/en';
+import BaseSettingSkeleton from '../BaseSettingsSkeleton';
 
 type formOutput = {
   name: string;
@@ -95,6 +97,10 @@ const Coursecategories = () => {
     placeholder: en.courseCategories.inputPlaceHolder,
   };
 
+  if (isPageLoading) {
+    return <BaseSettingSkeleton />;
+  }
+
   return (
     <>
       <AccountSettingConformationModal
@@ -116,7 +122,6 @@ const Coursecategories = () => {
         data={courseCategories.map((item) => {
           return { id: item.id, name: item.name };
         })}
-        isPageLoading={isPageLoading}
       />
     </>
   );

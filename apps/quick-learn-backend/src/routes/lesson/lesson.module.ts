@@ -9,5 +9,6 @@ import { CourseModule } from '../course/course.module';
   imports: [TypeOrmModule.forFeature([LessonEntity]), CourseModule],
   providers: [LessonService],
   controllers: [LessonController],
+  exports: [LessonService],
 })
 export class LessonModule {}

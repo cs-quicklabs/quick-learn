@@ -7,12 +7,15 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsOrder, FindOptionsWhere, ILike, In } from 'typeorm';
 import { BasicCrudService } from '@src/common/services';
-import { CourseEntity, UserEntity } from '@src/entities';
+import { CourseEntity, UserEntity, LessonEntity } from '@src/entities';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CourseCategoryService } from '../course-category/course-category.service';
 import { RoadmapService } from '../roadmap/roadmap.service';
 import { en } from '@src/lang/en';
 import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
+import Helpers from '@src/common/utils/helper';
+import { PaginationDto } from '../users/dto';
+import { PaginatedResult } from '@src/common/interfaces';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -27,8 +30,47 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     super(repo);
   }
 
-  async getAllCourses(): Promise<CourseEntity[]> {
-    return await this.getMany();
+  async getAllCourses(
+    options: FindOptionsWhere<CourseEntity>, // filter conditions
+    relations: string[] = [], // additional relations to include
+  ): Promise<CourseEntity[]> {
+    const queryBuilder = this.repository.createQueryBuilder('courses');
+
+    // Apply filters from options
+    if (options) {
+      Object.keys(options).forEach((key) => {
+        queryBuilder.andWhere(`courses.${key} = :${key}`, {
+          [key]: options[key],
+        });
+      });
+    }
+
+    // Dynamically include relations
+    relations.forEach((relation) => {
+      queryBuilder.leftJoinAndSelect(`courses.${relation}`, relation);
+    });
+
+    // Join course_category and count lessons
+    queryBuilder
+      .leftJoinAndSelect('courses.course_category', 'course_category')
+      .leftJoin('courses.lessons', 'lessons')
+      .loadRelationCountAndMap(
+        'courses.lessons_count',
+        'courses.lessons',
+        'lessons',
+        (qb) =>
+          qb
+            .andWhere('lessons.archived = :archivedLessons', {
+              archivedLessons: false,
+            })
+            .andWhere('lessons.approved = :approvedLessons', {
+              approvedLessons: true,
+            }),
+      )
+      .orderBy('courses.created_at', 'DESC')
+      .addOrderBy('course_category.created_at', 'DESC');
+
+    return await queryBuilder.getMany();
   }
 
   /**
@@ -74,7 +116,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     });
   }
 
-  async getCourseDetails(
+  /**
+   * Gets course details with specified relations
+   */ async getCourseDetails(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
   ): Promise<CourseEntity> {
@@ -91,9 +135,23 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       relations: [...courseRelations, ...relations],
       order: sort,
     });
+
     if (!course) {
-      throw new BadRequestException(en.CourseNotFound);
+      throw new BadRequestException(en.invalidCourse);
     }
+
+    if (!course.lessons) {
+      course.lessons = [];
+    } else {
+      // Filter lessons if they exist
+      course.lessons = course.lessons
+        .filter((lesson) => !lesson.archived)
+        .map((lesson) => ({
+          ...lesson,
+          content: Helpers.limitSanitizedContent(lesson.content),
+        })) as LessonEntity[];
+    }
+
     return course;
   }
 
@@ -127,12 +185,14 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       }
     }
 
-    await this.save({
-      ...course,
-      ...updateCourseDto,
-      course_category_id:
-        +updateCourseDto.course_category_id || course.course_category_id,
-    });
+    await this.repository.update(
+      { id },
+      {
+        ...updateCourseDto,
+        course_category_id:
+          +updateCourseDto.course_category_id || course.course_category_id,
+      },
+    );
   }
 
   async assignRoadmapCourse(
@@ -155,11 +215,150 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     await this.repository.save({ ...course, roadmaps });
   }
 
-  async archiveCourse(id: number): Promise<void> {
-    const course = await this.getCourseDetails({ id });
+  /**
+   * Updates the archive status of a course
+   */
+  async updateCourseArchiveStatus(
+    id: number,
+    archived: boolean,
+    currentUser: UserEntity,
+  ): Promise<void> {
+    // For status update, we don't need lessons
+    const course = await this.repository.findOne({
+      where: { id },
+      relations: ['course_category'], // Only include necessary relations
+    });
+
     if (!course) {
       throw new BadRequestException(en.CourseNotFound);
     }
-    await this.update({ id }, { archived: true });
+
+    await this.update(
+      { id },
+      {
+        archived,
+        updated_by_id: currentUser.id,
+      },
+    );
+  }
+
+  /**
+   * Archives a course
+   */
+  async archiveCourse(id: number, currentUser: UserEntity): Promise<void> {
+    // For archiving, we don't need lessons
+    const course = await this.repository.findOne({
+      where: { id },
+      relations: ['course_category'], // Only include necessary relations
+    });
+
+    if (!course) {
+      throw new BadRequestException(en.CourseNotFound);
+    }
+
+    await this.update(
+      { id },
+      {
+        archived: true,
+        updated_by_id: currentUser.id,
+      },
+    );
+  }
+
+  /**
+   * Gets archived courses with pagination
+   */
+  async getArchivedCourses(
+    paginationDto: PaginationDto,
+    relations: string[] = [],
+  ): Promise<PaginatedResult<CourseEntity>> {
+    const { page = 1, limit = 10, q = '' } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    const allRelations = [...new Set([...courseRelations, ...relations])];
+
+    const baseWhere: FindOptionsWhere<CourseEntity> = { archived: true };
+
+    const whereConditions: FindOptionsWhere<CourseEntity>[] = [];
+
+    if (q) {
+      whereConditions.push(
+        { ...baseWhere, name: ILike(`%${q}%`) },
+        { ...baseWhere, description: ILike(`%${q}%`) },
+        {
+          ...baseWhere,
+          course_category: {
+            name: ILike(`%${q}%`),
+          },
+        },
+      );
+    }
+
+    const [items, total] = await this.repository.findAndCount({
+      where: q ? whereConditions : baseWhere,
+      relations: allRelations,
+      skip,
+      take: limit,
+      order: {
+        updated_at: 'DESC',
+      },
+    });
+
+    return {
+      items,
+      total,
+      page,
+      total_pages: Math.ceil(total / limit),
+      limit,
+    };
+  }
+
+  async deleteCourse(id: number): Promise<void> {
+    const course = await this.getCourseDetails({ id }, []); // Get course without lessons to verify existence
+
+    if (!course) {
+      throw new BadRequestException(en.CourseNotFound);
+    }
+
+    // Using the repository's delete method for hard delete
+    await this.repository.delete({ id });
+  }
+
+  async getUserCourseDetails(userId: number, id: number, roadmap?: number) {
+    const course = this.repository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.course_category', 'course_category')
+      .leftJoin('course.lessons', 'lessons')
+      .addSelect([
+        'lessons.id',
+        'lessons.name',
+        'lessons.content',
+        'lessons.archived',
+        'lessons.approved',
+      ])
+      .leftJoin('course.roadmaps', 'roadmaps')
+      .innerJoin('roadmaps.users', 'users')
+      .where('course.id = :id', { id })
+      .andWhere('users.id = :userId', { userId })
+      .andWhere('course.archived= :archived', { archived: false });
+
+    if (roadmap) {
+      course
+        .addSelect('roadmaps')
+        .andWhere('roadmaps.id = :roadmapId', { roadmapId: roadmap });
+    }
+
+    const courseDetails = await course.getOne();
+    if (courseDetails && courseDetails.lessons.length > 0) {
+      courseDetails.lessons = courseDetails.lessons
+        .filter((lesson) => !lesson.archived && lesson.approved)
+        .map((lesson) => ({
+          ...lesson,
+          content: Helpers.limitSanitizedContent(lesson.content),
+        })) as LessonEntity[];
+    } else if (courseDetails) {
+      courseDetails.lessons = [];
+    }
+    return courseDetails;
   }
 }

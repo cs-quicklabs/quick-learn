@@ -85,6 +85,8 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
               }
               imageType={field?.image_type ?? 'misc'}
               label={field.label}
+              firstName={field.firstName}
+              lastName={field.lastName}
             />
           );
         return (

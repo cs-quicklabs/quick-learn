@@ -1,7 +1,6 @@
 'use client';
 import { changePasswordService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import {
@@ -27,7 +26,12 @@ const changePasswordFormSchema = z
       .regex(/[^A-Za-z0-9]/, {
         message: 'Password must contain at least one special character',
       }),
+
     confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword !== data.oldPassword, {
+    message: 'Current and new passwords cannot be the same.',
+    path: ['newPassword'],
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
@@ -72,7 +76,6 @@ const ChangePassword = () => {
   };
   return (
     <>
-      {isLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold dark:text-white">
           Change Password
@@ -87,6 +90,8 @@ const ChangePassword = () => {
           resetFormOnSubmit
           buttonText="Save"
           id="changePasswordForm"
+          isLoading={isLoading}
+          mode="onChange"
         />
       </div>
     </>

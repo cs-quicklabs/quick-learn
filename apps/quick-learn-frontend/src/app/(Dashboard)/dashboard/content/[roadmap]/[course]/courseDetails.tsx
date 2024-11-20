@@ -1,12 +1,11 @@
 'use client';
-import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import {
   ArrowRightEndOnRectangleIcon,
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { activateCourse } from '@src/apiServices/archivedService';
 import {
-  archiveCourse,
   assignRoadmapsToCourse,
   getCourse,
   updateCourse,
@@ -15,8 +14,8 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
+import Card from '@src/shared/components/Card';
 import CreateNewCard from '@src/shared/components/CreateNewCard';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import AddEditCourseModal from '@src/shared/modals/addEditCourseModal';
 import AssignDataModal from '@src/shared/modals/assignDataModal';
 import ConformationModal from '@src/shared/modals/conformationModal';
@@ -36,6 +35,8 @@ import { format } from 'date-fns';
 import { Tooltip } from 'flowbite-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import CourseDetailsSkeleton from './CourseDetailsSkeleton';
+import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
@@ -147,7 +148,15 @@ const CourseDetails = () => {
       .then((res) => {
         showApiMessageInToast(res);
         SetOpenAssignModal(false);
-        getCourseDetails();
+
+        // Check if the current roadmap is still assigned
+        const isCurrentRoadmapAssigned = data.includes(roadmapId);
+
+        if (!isCurrentRoadmapAssigned && roadmapId) {
+          router.replace(`${RouteEnum.CONTENT}/${roadmapId}`);
+        } else {
+          getCourseDetails();
+        }
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
@@ -155,7 +164,7 @@ const CourseDetails = () => {
 
   function onArchive() {
     setIsLoading(true);
-    archiveCourse(courseId)
+    activateCourse({ id: Number(courseId), active: false })
       .then((res) => {
         showApiMessageInToast(res);
         allCourseCategories.forEach((item) => {
@@ -180,18 +189,14 @@ const CourseDetails = () => {
     router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/add`);
   }
 
-  function onEditLesson(id: number) {
-    const lesson = courseData?.lessons?.find((ele) => ele.id === id);
-    if (!lesson) return;
-    const url =
-      `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/` +
-      (lesson.approved ? id : `view/${id}`);
-    router.push(url);
+  if (isPageLoading) {
+    return <CourseDetailsSkeleton />;
   }
+
+  const hasLessons = courseData?.lessons && courseData.lessons.length > 0;
 
   return (
     <>
-      {isPageLoading && <FullPageLoader />}
       <AddEditCourseModal
         open={openAddModal}
         setOpen={setOpenAddModal}
@@ -219,34 +224,33 @@ const CourseDetails = () => {
         setOpen={setShowConformationModal}
         onConfirm={onArchive}
       />
-      <div>
+
+      <div className="container mx-auto px-4">
         <Breadcrumb links={links} />
-        <div className="items-baseline mb-8">
-          <h1 className="text-center text-5xl font-extrabold leading-tight capitalize">
+
+        {/* Course Header */}
+        <div className="flex flex-col items-center justify-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">
             {courseData?.name}
           </h1>
-          <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
+          <p className="text-sm text-gray-500 text-center">
             <span className="capitalize">
               {courseData?.created_by
-                ? courseData?.created_by?.first_name +
-                  ' ' +
-                  courseData?.created_by?.last_name
+                ? `${courseData.created_by.first_name} ${courseData.created_by.last_name}`
                 : 'Admin'}
             </span>
             &nbsp;{en.contentRepository.createdThisRoadmapOn}&nbsp;
             {courseData?.created_at &&
-              format(courseData?.created_at, DateFormats.shortDate)}
+              format(courseData.created_at, DateFormats.shortDate)}
           </p>
-          <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
+          <p className="text-sm text-gray-500 text-center">
             ({courseData?.lessons?.length ?? 0} {en.common.lessons}, &nbsp;
             {courseData?.users_count ?? 0} {en.common.participants})
           </p>
-          <div className="flex items-center justify-center gap-2 mt-2">
-            <Tooltip
-              content={en.contentRepository.editCourse}
-              trigger="hover"
-              className="py-2 px-3 max-w-sm text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm tooltip"
-            >
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <Tooltip content={en.contentRepository.editCourse}>
               <button
                 type="button"
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
@@ -255,11 +259,8 @@ const CourseDetails = () => {
                 <PencilIcon className="h-4 w-4" />
               </button>
             </Tooltip>
-            <Tooltip
-              content={en.contentRepository.assignToRoadmap}
-              trigger="hover"
-              className="py-2 px-3 max-w-sm text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm tooltip"
-            >
+
+            <Tooltip content={en.contentRepository.assignToRoadmap}>
               <button
                 type="button"
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
@@ -268,11 +269,8 @@ const CourseDetails = () => {
                 <ArrowRightEndOnRectangleIcon className="h-4 w-4" />
               </button>
             </Tooltip>
-            <Tooltip
-              content={en.contentRepository.archiveCourse}
-              trigger="hover"
-              className="py-2 px-3 max-w-sm text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm tooltip"
-            >
+
+            <Tooltip content={en.contentRepository.archiveCourse}>
               <button
                 type="button"
                 className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
@@ -283,73 +281,59 @@ const CourseDetails = () => {
             </Tooltip>
           </div>
         </div>
-      </div>
-      <div className="relative px-6 grid gap-10 pb-4" id="release_notes">
-        <div id="created-spaces">
-          <ul className="grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-6 xl:gap-x-6">
-            <li>
+
+        {/* Lessons Section */}
+        <div className="px-4">
+          {hasLessons ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               <CreateNewCard
-                className="col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group content-center w-full h-full"
                 title={en.lesson.createNewLesson}
                 onAdd={onAddLesson}
               />
-            </li>
-            {courseData?.lessons?.map(
-              ({
-                name,
-                content,
-                new_content,
-                approved,
-                created_by_user,
-                created_at,
-                id,
-              }) => (
-                <li key={id}>
-                  <button
-                    type="button"
-                    onClick={() => onEditLesson(id)}
-                    className={
-                      'text-left inline-block col-span-1 rounded-lg shadow-sm hover:shadow-lg border-gray-100 group w-full h-56' +
-                      (approved ? ' bg-white' : ' bg-gray-100')
-                    }
-                  >
-                    <div className="flex-wrap py-4 px-6 text-gray-900 h-full">
-                      <h1
-                        id="message-heading"
-                        className="font-medium text-gray-900 group-hover:underline capitalize break-all line-clamp-2"
-                      >
-                        {name}
-                      </h1>
-                      <p className="font-normal text-sm text-gray-500 line-clamp-4 mt-2">
-                        {HTMLSanitizer(
-                          (approved && content) || new_content || content,
-                        )}
-                      </p>
-                      <p className="inline-flex align-center font-normal text-xs text-gray-500 line-clamp-2 mt-4 pb-2 capitalize">
-                        {approved ? (
-                          'Added by ' +
-                          created_by_user.first_name +
-                          ' ' +
-                          created_by_user.last_name +
-                          ' on ' +
-                          format(created_at, DateFormats.shortDate)
-                        ) : (
-                          <>
-                            <ExclamationTriangleIcon
-                              className="text-yellow-500 mr-1"
-                              height={16}
-                              width={16}
-                            />{' '}
-                            {en.lesson.pendingApproval}
-                          </>
-                        )}
-                      </p>
-                    </div>
-                  </button>
-                </li>
-              ),
-            )}
-          </ul>
+              {courseData.lessons?.map(
+                ({
+                  name,
+                  content,
+                  new_content,
+                  approved,
+                  created_by_user,
+                  created_at,
+                  id,
+                }) => (
+                  <Card
+                    key={id}
+                    id={id.toString()}
+                    title={name}
+                    description={HTMLSanitizer(
+                      (approved && content) || new_content || content,
+                    )}
+                    link={`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${
+                      approved ? id : `view/${id}`
+                    }`}
+                    metadata={{
+                      addedBy: created_by_user
+                        ? `${created_by_user.first_name} ${created_by_user.last_name}`
+                        : undefined,
+                      date: format(created_at, DateFormats.shortDate),
+                    }}
+                    stats={!approved ? en.lesson.pendingApproval : undefined}
+                    className={approved ? '' : 'bg-gray-100'}
+                    showWarning={!approved}
+                  />
+                ),
+              )}
+            </div>
+          ) : (
+            <EmptyState
+              type="lessons"
+              customTitle={en.lesson.notfound}
+              customDescription="Create first lesson to get started"
+              actionButton={{
+                label: en.lesson.createNewLesson,
+                onClick: onAddLesson,
+              }}
+            />
+          )}
         </div>
       </div>
     </>

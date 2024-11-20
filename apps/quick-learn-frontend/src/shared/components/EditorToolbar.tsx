@@ -18,9 +18,10 @@ export const formats = [
 interface Props {
   isEditing: boolean;
   setIsEditing: (value: boolean) => void;
-  undo: () => void;
+  undo?: () => void;
   isUpdating: boolean;
   isAdd: boolean;
+  onArchive?: () => void;
 }
 
 // Quill Toolbar component
@@ -93,6 +94,7 @@ const EditorToolbar: FC<Props> = ({
           <button className="ql-image" />
         </span>
       </div>
+      {/* Status indicator section */}
       {!isAdd && (
         <div
           className={
@@ -101,10 +103,10 @@ const EditorToolbar: FC<Props> = ({
             (isUpdating ? 'bg-amber-400 ' : 'bg-[#3070b9] ')
           }
         >
-          {/* UnComment when the quill issues has beend fixed */}
+          {/* UnComment when the quill issues has been fixed */}
           {/* <button typeof="button" onClick={undo}>
-          <UndoWithTime className="h-5 w-5" />
-        </button> */}
+            <UndoWithTime className="h-5 w-5" />
+          </button> */}
           {isUpdating ? (
             <ArrowPathIcon height={16} width={16} strokeWidth={3} />
           ) : (

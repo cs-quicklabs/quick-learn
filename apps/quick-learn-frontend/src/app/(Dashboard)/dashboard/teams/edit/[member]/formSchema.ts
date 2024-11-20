@@ -51,6 +51,7 @@ export const addMemberFormSchema = z
       })
       .trim()
       .min(8, { message: 'Password must be at least 8 characters long' })
+      .max(32, { message: 'The value should not exceed 32 character' })
       .regex(/[A-Z]/, {
         message: 'Password must contain at least one uppercase letter',
       })
