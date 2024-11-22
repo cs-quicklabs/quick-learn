@@ -21,6 +21,7 @@ export const en = {
     action: 'Action',
     select: 'Select',
     quickLearn: 'Quick Learn',
+    add:"Add New",
 
     //dashboard
     loading: 'Loading...',
@@ -379,7 +380,8 @@ export const en = {
     results: 'results',
     previous: 'Previous',
     next: 'Next',
-
+    fillDetailsOfNew:'Please fill in details of new team member.',
+    updateDetails:"Please update details to edit team member.",
     //Team table
     User: 'User',
     Role: 'Role',
