@@ -1,10 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import {
-  createRoadmap,
-  getRoadmaps,
-} from '@src/apiServices/contentRepositoryService';
+import { createRoadmap } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Card from '@src/shared/components/Card';
@@ -12,7 +9,7 @@ import CreateNewCard from '@src/shared/components/CreateNewCard';
 import AddEditRoadMapModal, {
   AddEditRoadmapData,
 } from '@src/shared/modals/addEditRoadMapModal';
-import { TCourse, TRoadmap } from '@src/shared/types/contentRepository';
+import { TCourse } from '@src/shared/types/contentRepository';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -24,44 +21,47 @@ import {
   selectMetadataStatus,
   fetchMetadata,
   selectContentRepositoryMetadata,
+  selectIsMetadataInitialized,
 } from '../../../../store/features/metadataSlice';
-import { AxiosErrorObject } from '@src/apiServices/axios';
+import {
+  addRoadmap,
+  fetchRoadmaps,
+  selectAllRoadmaps,
+  selectIsRoadmapsInitialized,
+  selectRoadmapsStatus,
+} from '@src/store/features/roadmapsSlice';
 
 const ContentRepository = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const contentRepositoryMetadata = useAppSelector(
-    selectContentRepositoryMetadata,
-  );
+
+  const contentRepository = useAppSelector(selectContentRepositoryMetadata);
   const metadataStatus = useAppSelector(selectMetadataStatus);
-  const allCourseCategories = contentRepositoryMetadata.course_categories;
+  const isMetadataInitialized = useAppSelector(selectIsMetadataInitialized);
+  const roadmaps = useAppSelector(selectAllRoadmaps);
+  const roadmapsStatus = useAppSelector(selectRoadmapsStatus);
+  const isRoadmapsInitialized = useAppSelector(selectIsRoadmapsInitialized);
+
+  const allCourseCategories = contentRepository.course_categories;
 
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(true);
   const [isModalLoading, setIsModalLoading] = useState(false);
-  const [roadmaps, setRoadmaps] = useState<TRoadmap[]>([]);
   const [courses, setCourses] = useState<TCourse[]>([]);
 
+  // Only show loader if either slice isn't initialized yet
+  const isLoading =
+    (!isMetadataInitialized || !isRoadmapsInitialized) &&
+    (metadataStatus === 'loading' || roadmapsStatus === 'loading');
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const promises = [
-          metadataStatus === 'idle'
-            ? dispatch(fetchMetadata())
-            : Promise.resolve(),
-          getRoadmaps().then((res) => setRoadmaps(res.data)),
-        ];
-
-        await Promise.all(promises);
-      } catch (err) {
-        showApiErrorInToast(err as AxiosErrorObject);
-      } finally {
-        setIsPageLoading(false);
-      }
-    };
-
-    loadData();
-  }, [dispatch, metadataStatus]);
+    // Only fetch if not initialized
+    if (!isMetadataInitialized) {
+      dispatch(fetchMetadata());
+    }
+    if (!isRoadmapsInitialized) {
+      dispatch(fetchRoadmaps());
+    }
+  }, [dispatch, isMetadataInitialized, isRoadmapsInitialized]);
 
   useEffect(() => {
     const data: TCourse[] = [];
@@ -76,7 +76,7 @@ const ContentRepository = () => {
     setIsModalLoading(true);
     createRoadmap(data)
       .then((res) => {
-        setRoadmaps((prev) => [res.data, ...prev]);
+        dispatch(addRoadmap(res.data));
         setOpenAddModal(false);
         router.push(`${RouteEnum.CONTENT}/${res.data.id}`);
         showApiMessageInToast(res);
@@ -85,10 +85,10 @@ const ContentRepository = () => {
       .finally(() => setIsModalLoading(false));
   }
 
-  if (isPageLoading || metadataStatus === 'loading') {
+  // Only show skeleton on initial load
+  if (isLoading) {
     return <ContentRepositorySkeleton />;
   }
-
   return (
     <>
       <AddEditRoadMapModal
