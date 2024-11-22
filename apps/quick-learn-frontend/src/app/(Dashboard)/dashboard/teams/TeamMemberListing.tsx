@@ -6,7 +6,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUserType } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
 import TeamTable from './TeamTable';
-
+import { en } from '@src/constants/lang/en';
 const TeamMemberListing = () => {
   const [totalMembers, setTotalMembers] = useState<number>(0); // For title description
   const [filteredTotal, setFilteredTotal] = useState<number>(0); // For pagination
@@ -56,11 +56,10 @@ const TeamMemberListing = () => {
       <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
         <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
           <div>
-            <h1 className="mr-3 text-lg font-semibold">Team</h1>
+            <h1 className="mr-3 text-lg font-semibold">{en.teams.team}</h1>
             <p className="text-gray-500 text-sm">
-              Manage all your existing{' '}
-              <span className="font-bond">{totalMembers}</span> team members or
-              add a new one.
+              {en.teams.manageExisting}{' '}
+              <span className="font-bond">{totalMembers}</span> {en.teams.addNewOne}
             </p>
           </div>
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
@@ -77,13 +76,13 @@ const TeamMemberListing = () => {
               href={`${RouteEnum.TEAM_EDIT}/add`}
               className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
             >
-              Add new member
+              {en.teams.addNewMember}
             </Link>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-x-8 p-4 border-t border-b border-gray-300 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
           <p className="items-center hidden text-sm font-medium text-gray-900 md:flex">
-            Show records only for:
+            {en.teams.showRecordsOnly}
           </p>
           <div className="space-y-3 sm:flex sm:items-center sm:space-x-10 sm:space-y-0 md:space-x-4">
             {userTypes.map((userType) => (
@@ -110,7 +109,7 @@ const TeamMemberListing = () => {
               className="underline font-medium text-blue-600 hover:underline text-sm"
               onClick={() => filterByUserType('')}
             >
-              Show All
+              {en.teams.showAll}
             </button>
           </div>
         </div>
@@ -126,15 +125,15 @@ const TeamMemberListing = () => {
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between my-5">
         <div>
           <p className="text-sm text-gray-700">
-            Showing{' '}
+            {en.teams.showing}{' '}
             <span className="font-medium">
               {page > 1 ? (page - 1) * 10 + 1 : filteredTotal === 0 ? 0 : 1}
             </span>{' '}
-            to{' '}
+            {en.teams.to}{' '}
             <span className="font-medium">
               {page * 10 <= filteredTotal ? page * 10 : filteredTotal}
             </span>{' '}
-            of <span className="font-medium">{filteredTotal}</span> results
+            {en.teams.to}<span className="font-medium">{filteredTotal}</span> {en.teams.results}
           </p>
         </div>
         <div>
@@ -146,7 +145,7 @@ const TeamMemberListing = () => {
                 className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
               >
                 <ArrowLeftIcon height={20} width={32} />
-                Previous
+                {en.teams.previous}
               </button>
             )}
             {page * 10 < filteredTotal && (
@@ -155,7 +154,7 @@ const TeamMemberListing = () => {
                 onClick={() => setPage(page + 1)}
                 className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
               >
-                Next
+                {en.teams.next}
                 <ArrowRightIcon height={20} width={32} />
               </button>
             )}

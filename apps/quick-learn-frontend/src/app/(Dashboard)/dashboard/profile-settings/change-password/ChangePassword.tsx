@@ -78,10 +78,10 @@ const ChangePassword = () => {
     <>
       <div>
         <h1 className="text-lg font-semibold dark:text-white">
-          Change Password
+          {en.ProfileSetting.changePassword}
         </h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-          Please change your password.
+          {en.ProfileSetting.changePasswordRequest}
         </p>
         <FormFieldsMapper
           fields={changePasswordFields}

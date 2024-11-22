@@ -54,25 +54,25 @@ const TeamTable = ({
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 text-left">
               <tr>
                 <th scope="col" className="px-4 py-3">
-                  User
+                  {en.teams.User}
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Role
+                  {en.teams.Role}
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Email
+                  {en.teams.Email}
                 </th>
                 <th scope="col" className="px-4 py-3 text-nowrap">
-                  Primary Skill
+                  {en.teams.PrimarySkill}
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Status
+                  {en.teams.Status}
                 </th>
                 <th scope="col" className="px-4 py-3 text-nowrap">
-                  Last Login
+                  {en.teams.lastLogin}
                 </th>
                 <th scope="col" className="px-4 py-3 text-nowrap">
-                  Added On
+                  {en.teams.addedOn}
                 </th>
               </tr>
             </thead>
