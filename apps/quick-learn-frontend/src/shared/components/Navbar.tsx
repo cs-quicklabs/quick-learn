@@ -176,7 +176,7 @@ const Navbar = () => {
             <div className="flex flex-1 justify-center align-center px-2 lg:ml-6 lg:justify-end">
               <div className="flex align-center w-full max-w-lg lg:max-w-xs">
                 <label htmlFor="search" className="sr-only">
-                 {en.component.searchRoadmapCourseLessons}
+                  {en.component.searchRoadmapCourseLessons}
                 </label>
                 <div className="relative flex-1">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -218,7 +218,9 @@ const Navbar = () => {
                   className="relative flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   <span className="absolute -inset-1.5" />
-                  <span className="sr-only">{en.component.viewNotification}</span>
+                  <span className="sr-only">
+                    {en.component.viewNotification}
+                  </span>
                   <BellIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
 

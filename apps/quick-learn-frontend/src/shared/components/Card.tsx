@@ -96,7 +96,13 @@ const Card: FC<CardProps> = ({
         )}
         {metadata && !isCreateCard && (metadata.addedBy || metadata.date) && (
           <p className="text-xs text-gray-500">
-            {metadata.addedBy ? <>{en.component.addedBy} {metadata.addedBy}</> : <>{en.component.Added}</>}
+            {metadata.addedBy ? (
+              <>
+                {en.component.addedBy} {metadata.addedBy}
+              </>
+            ) : (
+              <>{en.component.Added}</>
+            )}
             {metadata.date && (
               <>
                 <span className="mx-1">{en.component.on}</span>

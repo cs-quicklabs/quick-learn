@@ -205,7 +205,8 @@ function MemberForm<T extends z.ZodTypeAny>({
           }`}
           disabled={isSubmitDisabled}
         >
-          {isAddMember ? 'Add' : 'Edit'} {en.teams.member} {loading ? <Loader /> : ''}
+          {isAddMember ? 'Add' : 'Edit'} {en.teams.member}{' '}
+          {loading ? <Loader /> : ''}
         </button>
         <button
           id="cancel"

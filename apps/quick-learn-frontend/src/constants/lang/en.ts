@@ -17,10 +17,10 @@ export const en = {
     deactivatedOn: 'Deactivated on',
     by: 'by',
     Archive: 'Archive',
-    edit:"Edit",
-    action:"Action",
-    select:"Select",
-    quickLearn:"Quick Learn",
+    edit: 'Edit',
+    action: 'Action',
+    select: 'Select',
+    quickLearn: 'Quick Learn',
 
     //dashboard
     loading: 'Loading...',
@@ -347,85 +347,80 @@ export const en = {
     heading: 'My Learning Path',
   },
 
-
-  Auth:{
-    Login:"Login to your account",
-    SignIn:"Sign in",
-    loading:"Loading..."
+  Auth: {
+    Login: 'Login to your account',
+    SignIn: 'Sign in',
+    loading: 'Loading...',
   },
 
-  ProfileSetting:{
-     profileSetting:"Profile Settings",
-     changeProfileSetting:"Change your personal profile settings.",
-     changePassword:"Change Password",
-    changePasswordRequest:"Please change your password.",
-    preferenceHead:"Preference",
-    preferenceSubHead:"Please change your personal preferences.",
-    emailAlerts:"Enable All Email Alerts",
-    alertdisable:"If disabled, no email alert will land in your inbox."
+  ProfileSetting: {
+    profileSetting: 'Profile Settings',
+    changeProfileSetting: 'Change your personal profile settings.',
+    changePassword: 'Change Password',
+    changePasswordRequest: 'Please change your password.',
+    preferenceHead: 'Preference',
+    preferenceSubHead: 'Please change your personal preferences.',
+    emailAlerts: 'Enable All Email Alerts',
+    alertdisable: 'If disabled, no email alert will land in your inbox.',
   },
 
-  teams:{
-    teamMember:"Team Member",
-    team:"Team",
-    member:"Member",
-    manageExisting:"Manage all your existing",
-    addNewOne:"team members or add a new one.",
-    addNewMember:"Add new member",
-    showRecordsOnly:"Show records only for:",
-    showAll:"Show All",
-    showing:"Showing",
-    to:"to",
-    of:"of",
-    results:"results",
-    previous:"Previous",
-    next:"Next",
-
-
+  teams: {
+    teamMember: 'Team Member',
+    team: 'Team',
+    member: 'Member',
+    manageExisting: 'Manage all your existing',
+    addNewOne: 'team members or add a new one.',
+    addNewMember: 'Add new member',
+    showRecordsOnly: 'Show records only for:',
+    showAll: 'Show All',
+    showing: 'Showing',
+    to: 'to',
+    of: 'of',
+    results: 'results',
+    previous: 'Previous',
+    next: 'Next',
 
     //Team table
-    User:"User",
-    Role:"Role",
-    Email:"Email",
-    PrimarySkill:"Primary Skill",
-    Status:"Status",
-    lastLogin:"Last Login",
-    addedOn:"Added On",
+    User: 'User',
+    Role: 'Role',
+    Email: 'Email',
+    PrimarySkill: 'Primary Skill',
+    Status: 'Status',
+    lastLogin: 'Last Login',
+    addedOn: 'Added On',
   },
 
-  component:{
-
+  component: {
     // card
-    addedBy:"Added By",
-    Added:"Added",
-    on:"On",
+    addedBy: 'Added By',
+    Added: 'Added',
+    on: 'On',
 
     //Editor Toolbar
 
-    heading1:"Heading 1",
-    heading2:"Heading 2",
-    normal:"Normal",
+    heading1: 'Heading 1',
+    heading2: 'Heading 2',
+    normal: 'Normal',
 
     // Navbar
-    
-    searchRoadmapCourseLessons:"Search Roadmaps, Courses or Lessons",
-    openMenu:"Open main menu",
-    viewNotification:"View notifications",
-    profile:"My Profile",
-    signOut:"Sign out",
+
+    searchRoadmapCourseLessons: 'Search Roadmaps, Courses or Lessons',
+    openMenu: 'Open main menu',
+    viewNotification: 'View notifications',
+    profile: 'My Profile',
+    signOut: 'Sign out',
 
     //Search Box
 
-    search:"Search",
+    search: 'Search',
 
     //view Lesson
-    addLessonOn:"added this lesson on"
-
+    addLessonOn: 'added this lesson on',
   },
 
-  modals:{
+  modals: {
     // asssign data model
 
-    noDataFound:"No data found"
-  }
+    noDataFound: 'No data found',
+  },
 };

@@ -136,7 +136,9 @@ const AssignDataModal: FC<Props> = ({
                 })}
               </div>
               {data.length === 0 && (
-                <p className="text-center text-gray-500">{en.modals.noDataFound}</p>
+                <p className="text-center text-gray-500">
+                  {en.modals.noDataFound}
+                </p>
               )}
             </div>
             {errors &&

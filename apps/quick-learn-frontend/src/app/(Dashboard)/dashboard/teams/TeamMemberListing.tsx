@@ -59,7 +59,8 @@ const TeamMemberListing = () => {
             <h1 className="mr-3 text-lg font-semibold">{en.teams.team}</h1>
             <p className="text-gray-500 text-sm">
               {en.teams.manageExisting}{' '}
-              <span className="font-bond">{totalMembers}</span> {en.teams.addNewOne}
+              <span className="font-bond">{totalMembers}</span>{' '}
+              {en.teams.addNewOne}
             </p>
           </div>
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
@@ -133,7 +134,9 @@ const TeamMemberListing = () => {
             <span className="font-medium">
               {page * 10 <= filteredTotal ? page * 10 : filteredTotal}
             </span>{' '}
-            {en.teams.to}<span className="font-medium">{filteredTotal}</span> {en.teams.results}
+            {en.teams.to}
+            <span className="font-medium">{filteredTotal}</span>{' '}
+            {en.teams.results}
           </p>
         </div>
         <div>

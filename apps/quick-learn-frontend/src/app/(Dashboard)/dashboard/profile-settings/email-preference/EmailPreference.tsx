@@ -31,7 +31,9 @@ const EmailPreference = () => {
   return (
     <>
       <div>
-        <h1 className="text-lg font-semibold dark:text-white">{en.ProfileSetting.preferenceHead}</h1>
+        <h1 className="text-lg font-semibold dark:text-white">
+          {en.ProfileSetting.preferenceHead}
+        </h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
           {en.ProfileSetting.preferenceSubHead}
         </p>
@@ -52,7 +54,7 @@ const EmailPreference = () => {
               htmlFor="helper-checkbox"
               className="font-medium text-gray-900 dark:text-gray-300"
             >
-             {en.ProfileSetting.emailAlerts}
+              {en.ProfileSetting.emailAlerts}
             </label>
             <p
               id="helper-checkbox-text"
