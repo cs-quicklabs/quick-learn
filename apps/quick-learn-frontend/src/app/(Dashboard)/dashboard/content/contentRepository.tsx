@@ -21,18 +21,20 @@ import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
-  selectContentRepository,
   selectMetadataStatus,
   fetchMetadata,
+  selectContentRepositoryMetadata,
 } from '../../../../store/features/metadataSlice';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 
 const ContentRepository = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const contentRepository = useAppSelector(selectContentRepository);
+  const contentRepositoryMetadata = useAppSelector(
+    selectContentRepositoryMetadata,
+  );
   const metadataStatus = useAppSelector(selectMetadataStatus);
-  const allCourseCategories = contentRepository.course_categories;
+  const allCourseCategories = contentRepositoryMetadata.course_categories;
 
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
