@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ProgressCard from '@src/shared/components/ProgressCard';
 import { en } from '@src/constants/lang/en';
 import DashboardSkeleton from './components/DashboardSkeleton';
