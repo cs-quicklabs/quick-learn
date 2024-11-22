@@ -63,4 +63,4 @@ jobs:
         run: npm ci
 
       - name: Run build
-        run: npx nx build quick-learn-frontend
+        run: npx nx reset && npx nx build quick-learn-frontend
