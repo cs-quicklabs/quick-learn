@@ -80,12 +80,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Debug workspace
-        run: |
-          pwd
-          ls -la
-          cat nx.json
-          cat workspace.json
-
       - name: Build with verbose logging
         run: npx nx build quick-learn-frontend --verbose
