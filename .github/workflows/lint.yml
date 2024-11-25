@@ -86,28 +86,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Reset Nx Cache
-        run: npx nx reset
-
-      - name: Create workspace config
+      - name: Check nx version
         run: |
-          echo '{
-            "version": 2,
-            "projects": {
-              "quick-learn-frontend": "apps/quick-learn-frontend",
-              "quick-learn-backend": "apps/quick-learn-backend",
-              "shared": "libs/shared"
-            }
-          }' > workspace.json
-
-      - name: Show project structure
-        run: |
-          echo "Workspace contents:"
-          ls -la
-          echo "\nFrontend project config:"
-          cat apps/quick-learn-frontend/project.json
-          echo "\nNx projects:"
-          npx nx show projects
+          echo "Package.json nx version:"
+          npm list nx
+          echo "\nNpx nx version:"
+          npx nx --version
 
       - name: Build frontend
-        run: npx nx build quick-learn-frontend --configuration=production
+        run: npx nx build quick-learn-frontend --verbose
+
+      - name: Show Debug Info
+        if: failure()
+        run: |
+          echo "Project structure:"
+          ls -la
+          echo "\nProject.json contents:"
+          cat apps/quick-learn-frontend/project.json
+          echo "\nNx.json contents:"
+          cat nx.json
