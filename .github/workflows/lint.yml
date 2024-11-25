@@ -81,4 +81,4 @@ jobs:
         run: npm ci
 
       - name: Build with verbose logging
-        run: npx nx build quick-learn-frontend --verbose
+        run: npx nx build quick-learn-frontend --verbose --skip-nx-cache
