@@ -9,6 +9,7 @@ import { SessionEntity } from './session.entity';
 import { RoadmapEntity } from './roadmap.entity';
 import { CourseEntity } from './course.entity';
 import { LessonEntity } from './lesson.entity';
+import { UserLessonProgressEntity } from './user-lesson-progress.entity';
 
 export const Entities = [
   UserEntity,
@@ -22,6 +23,7 @@ export const Entities = [
   RoadmapEntity,
   CourseEntity,
   LessonEntity,
+  UserLessonProgressEntity,
 ];
 
 export {
@@ -36,4 +38,5 @@ export {
   RoadmapEntity,
   CourseEntity,
   LessonEntity,
+  UserLessonProgressEntity,
 };
