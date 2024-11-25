@@ -6,7 +6,8 @@
   },
   "projects": {
     "quick-learn-frontend": "apps/quick-learn-frontend",
-    "quick-learn-backend": "apps/quick-learn-backend"
+    "quick-learn-backend": "apps/quick-learn-backend",
+    "shared": "libs/shared"
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],

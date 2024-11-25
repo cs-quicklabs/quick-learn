@@ -86,12 +86,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check nx version
+      - name: Update nx.json
         run: |
-          echo "Package.json nx version:"
-          npm list nx
-          echo "\nNpx nx version:"
-          npx nx --version
+          content=$(cat nx.json | jq '.projects.shared = "libs/shared"')
+          echo "$content" > nx.json
+
+      - name: Build shared library first
+        run: npx nx build shared --verbose
 
       - name: Build frontend
         run: npx nx build quick-learn-frontend --verbose
@@ -101,6 +102,8 @@ jobs:
         run: |
           echo "Project structure:"
           ls -la
+          echo "\nProject files:"
+          ls -R apps/ libs/
           echo "\nProject.json contents:"
           cat apps/quick-learn-frontend/project.json
           echo "\nNx.json contents:"
