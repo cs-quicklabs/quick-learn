@@ -59,8 +59,11 @@ jobs:
 
       - uses: actions/checkout@v4
 
+      - name: Clear Nx Cache
+        run: npx nx reset
+
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run build
         run: npx nx build quick-learn-frontend
