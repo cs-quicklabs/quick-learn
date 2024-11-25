@@ -213,7 +213,7 @@ const Lesson = () => {
         } else {
           const res = await updateLesson(lessonId, {
             content: data.content,
-            name: data.name.trim().slice(0, 50),
+            name: data.name.trim().slice(0, 80),
           });
           if (!res.success) throw res;
           showApiMessageInToast(res);
