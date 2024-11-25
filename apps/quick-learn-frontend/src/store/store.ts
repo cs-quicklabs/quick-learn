@@ -5,6 +5,7 @@ import roadmapsReducer from './features/roadmapsSlice';
 import learningPathReducer from './features/learningPathSlice';
 import uiReducer from './features/uiSlice';
 import teamReducer from './features/teamSlice';
+import approvalReducer from './features/approvalSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,7 +13,8 @@ export const store = configureStore({
     roadmaps: roadmapsReducer,
     learningPath: learningPathReducer,
     ui: uiReducer,
-    team: teamReducer, // Add the team reducer
+    team: teamReducer,
+    approval: approvalReducer,
   },
 });
 
