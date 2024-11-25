@@ -5,6 +5,39 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/quick-learn-frontend",
+        "postcssConfig": "apps/quick-learn-frontend/postcss.config.js"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/quick-learn-frontend"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "quick-learn-frontend:build",
+        "dev": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "quick-learn-frontend:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "quick-learn-frontend:build:production",
+          "dev": false
+        }
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
