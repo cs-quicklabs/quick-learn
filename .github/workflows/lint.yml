@@ -1,4 +1,5 @@
 name: Lint Checks
+
 on:
   push:
     branches: [dev]
@@ -14,11 +15,10 @@ jobs:
         with:
           node-version: 20.x
 
+      - uses: actions/checkout@v4
+
       - name: Install dependencies
         run: npm ci
-
-      - name: Reset Nx Cache
-        run: npx nx reset
 
       - name: Run lint
         run: npx nx lint quick-learn-backend --max-warnings=0
@@ -34,11 +34,10 @@ jobs:
         with:
           node-version: 20.x
 
+      - uses: actions/checkout@v4
+
       - name: Install dependencies
         run: npm ci
-
-      - name: Reset Nx Cache
-        run: npx nx reset
 
       - name: Run lint
         run: npx nx lint quick-learn-frontend --max-warnings=0
@@ -48,37 +47,20 @@ jobs:
 
   build-frontend:
     runs-on: ubuntu-22.04
+
     env:
       BUCKET_URL: your-bucket-url.com
-    steps:
-      - uses: actions/checkout@v4
 
+    steps:
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
 
-      - name: Clean cache and node_modules
-        run: |
-          rm -rf node_modules
-          rm -rf .nx/cache
-          rm -rf dist
-          npm cache clean --force
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build frontend
-        run: npx nx build quick-learn-frontend --verbose
-
-      # - name: Show Debug Info
-      #   if: failure()
-      #   run: |
-      #     echo "Project structure:"
-      #     ls -la
-      #     echo "\nProject files:"
-      #     ls -R apps/ libs/
-      #     echo "\nProject.json contents:"
-      #     cat apps/quick-learn-frontend/project.json
-      #     echo "\nNx.json contents:"
-      #     cat nx.json
+      - name: Run build
+        run: npx nx build quick-learn-frontend

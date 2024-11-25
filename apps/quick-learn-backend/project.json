@@ -1,79 +1,16 @@
 {
-  "name": "quick-learn-backend",
+  "name": "quick-learn-frontend",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/quick-learn-backend/src",
+  "sourceRoot": "apps/quick-learn-frontend",
   "projectType": "application",
   "tags": [],
   "targets": {
-    "serve": {
-      "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "quick-learn-backend:build"
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "quick-learn-backend:build:development"
-        },
-        "production": {
-          "buildTarget": "quick-learn-backend:build:production"
-        }
-      }
-    },
-    "dev": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "quick-learn-backend:build:development"
-      }
-    },
-    "migration:run": {
-      "executor": "nx:run-commands",
-      "outputs": [],
-      "options": {
-        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:run -d src/database/data-source.ts",
-        "cwd": "apps/quick-learn-backend"
-      }
-    },
-    "migration:generate": {
-      "executor": "nx:run-commands",
-      "outputs": [],
-      "options": {
-        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:generate -d src/database/data-source.ts src/database/migrations/migration",
-        "cwd": "apps/quick-learn-backend"
-      }
-    },
-    "migration:create": {
-      "executor": "nx:run-commands",
-      "outputs": [],
-      "options": {
-        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:create src/database/migrations/migration",
-        "cwd": "apps/quick-learn-backend"
-      }
-    },
-    "migration:revert": {
-      "executor": "nx:run-commands",
-      "outputs": [],
-      "options": {
-        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:revert -d src/database/data-source.ts",
-        "cwd": "apps/quick-learn-backend"
-      }
-    },
-    "seed:run": {
-      "executor": "nx:run-commands",
-      "outputs": [],
-      "options": {
-        "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ./src/database/seeds/run-seed.ts",
-        "cwd": "apps/quick-learn-backend"
-      }
-    },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}"
+          "apps/quick-learn-frontend/src/**/*.{ts,tsx,js,jsx}"
         ]
       }
     },
@@ -81,7 +18,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "prettier --check \"apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}\""
+          "prettier --check \"apps/quick-learn-frontend/src/**/*.{ts,tsx,js,jsx}\""
         ]
       }
     },
@@ -89,8 +26,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx run quick-learn-backend:lint",
-          "nx run quick-learn-backend:format:check"
+          "nx run quick-learn-frontend:lint",
+          "nx run quick-learn-frontend:format:check"
         ]
       }
     },
@@ -98,7 +35,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "prettier --write \"apps/quick-learn-backend/src/**/*.{ts,tsx,js,jsx}\""
+          "prettier --write \"apps/quick-learn-frontend/src/**/*.{ts,tsx,js,jsx}\""
         ]
       }
     }
