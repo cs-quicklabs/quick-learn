@@ -73,6 +73,7 @@ export const en = {
 
   // Content Repository related messages
   GetContentRepositoryMetadata: 'Successfully got content repository metadata.',
+  GetCourseRepositoryMetadata: 'Successfully got Course repository metadata.',
   successUserUpdated: 'Successfully updated user details.',
   userNotFound: 'User details not found.',
 };

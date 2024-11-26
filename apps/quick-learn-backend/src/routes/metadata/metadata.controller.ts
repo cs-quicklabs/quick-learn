@@ -20,4 +20,11 @@ export class MetadataController {
     const metadata = await this.service.getContentRepositoryMetadata();
     return new SuccessResponse(en.GetContentRepositoryMetadata, metadata);
   }
+
+  @Get('cource-repository')
+  @ApiOperation({ summary: 'Get cource repository metadata' })
+  async getAllCourses() {
+    const metadata = await this.service.getContentRepositoryWithLessionCount();
+    return new SuccessResponse(en.GetCourseRepositoryMetadata, metadata);
+  }
 }

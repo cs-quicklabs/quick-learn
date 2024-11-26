@@ -7,7 +7,7 @@ export class MetadataService {
   constructor(
     private readonly roadmapCategoryService: RoadmapCategoryService,
     private readonly courseCategoryService: CourseCategoryService,
-  ) {}
+  ) { }
 
   async getContentRepositoryMetadata() {
     const metadata = {};
@@ -35,6 +35,18 @@ export class MetadataService {
 
     metadata['roadmap_categories'] = roadmapCategories;
     metadata['course_categories'] = courseCategories;
+    return metadata;
+  }
+
+  async getContentRepositoryWithLessionCount() {
+    const metadata = {};
+    const courseData = await this.courseCategoryService.getAllCourseCategoriesWithLessonsCount()
+    courseData.forEach((category) => {
+      category.courses = category.courses.filter(
+        (course) => course.archived === false,
+      );
+    });
+    metadata['course_categories'] = courseData;
     return metadata;
   }
 }
