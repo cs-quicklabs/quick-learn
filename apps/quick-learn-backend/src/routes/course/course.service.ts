@@ -16,6 +16,7 @@ import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 import Helpers from '@src/common/utils/helper';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
+import { FileService } from '@src/file/fileService.service';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -26,6 +27,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     @Inject(forwardRef(() => RoadmapService))
     private roadmapService: RoadmapService,
     private courseCategoryService: CourseCategoryService,
+    private readonly FileService: FileService,
   ) {
     super(repo);
   }
@@ -118,7 +120,8 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
   /**
    * Gets course details with specified relations
-   */ async getCourseDetails(
+   */ 
+  async getCourseDetails(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
   ): Promise<CourseEntity> {
@@ -153,6 +156,37 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
 
     return course;
+  }
+
+   /**
+   * Gets lessions details within cource with relations
+   */
+
+   async getImagesUsedInLessonsRelatedCource(
+    options: FindOptionsWhere<CourseEntity>,
+    relations: string[] = [],
+  ): Promise<string[]> {
+    const course = await this.repository.findOne({
+      where: { ...options },
+      relations: [...courseRelations, ...relations],
+      order: {
+        lessons: {
+          updated_at: 'DESC',
+        },
+      },
+    });
+
+    if (!course) {
+      throw new BadRequestException(en.invalidCourse);
+    }
+
+    let imageToDelete = [];
+    if (!course.lessons) {
+      return imageToDelete = [];
+    } else {
+      imageToDelete = Helpers.extractImageUrlsFromHtml(course.lessons as [], 'content', false)
+      return imageToDelete
+    }
   }
 
   async updateCourse(
@@ -320,6 +354,11 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       throw new BadRequestException(en.CourseNotFound);
     }
 
+    const imageUsed = await this.getImagesUsedInLessonsRelatedCource({ id } , ['lessons']); // Get course without lessons to delete all images from s3
+
+    if (imageUsed && imageUsed.length) {
+      await this.FileService.deleteFiles(imageUsed);
+    }
     // Using the repository's delete method for hard delete
     await this.repository.delete({ id });
   }
