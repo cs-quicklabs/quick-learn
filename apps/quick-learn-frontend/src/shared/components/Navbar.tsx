@@ -148,7 +148,7 @@ const Navbar = () => {
                   href={RouteEnum.MY_LEARNING_PATH}
                   className="items-center justify-center text-white font-extrabold font-mono px-3 hidden lg:flex tracking-wider"
                 >
-                  Quick Learn
+                  {en.common.quickLearn}
                 </Link>
                 <span className="text-white font-medium px-3 block lg:hidden"></span>
               </div>
@@ -176,7 +176,7 @@ const Navbar = () => {
             <div className="flex flex-1 justify-center align-center px-2 lg:ml-6 lg:justify-end">
               <div className="flex align-center w-full max-w-lg lg:max-w-xs">
                 <label htmlFor="search" className="sr-only">
-                  Search Roadmaps, Courses or Lessons
+                  {en.component.searchRoadmapCourseLessons}
                 </label>
                 <div className="relative flex-1">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -199,7 +199,7 @@ const Navbar = () => {
             <div className="flex lg:hidden">
               <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 <span className="absolute -inset-0.5" />
-                <span className="sr-only">Open main menu</span>
+                <span className="sr-only">{en.component.openMenu}</span>
                 <Bars3Icon
                   className="block h-6 w-6 group-data-[open]:hidden"
                   aria-hidden="true"
@@ -218,7 +218,9 @@ const Navbar = () => {
                   className="relative flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   <span className="absolute -inset-1.5" />
-                  <span className="sr-only">View notifications</span>
+                  <span className="sr-only">
+                    {en.component.viewNotification}
+                  </span>
                   <BellIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
 
@@ -266,7 +268,7 @@ const Navbar = () => {
                             href={RouteEnum.PROFILE_SETTINGS}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
-                            My Profile
+                            {en.component.profile}
                           </Link>
                         </MenuItem>
                       )}
@@ -286,7 +288,7 @@ const Navbar = () => {
                           onClick={() => setShowConformationModal(true)}
                           className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
                         >
-                          Sign out
+                          {en.component.signOut}
                         </button>
                       </MenuItem>
                     </div>
@@ -356,7 +358,7 @@ const Navbar = () => {
                 className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
               >
                 <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
+                <span className="sr-only">{en.component.viewNotification}</span>
                 <BellIcon aria-hidden="true" className="h-6 w-6" />
               </button>
             </div>

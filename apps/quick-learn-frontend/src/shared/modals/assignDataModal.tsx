@@ -136,7 +136,9 @@ const AssignDataModal: FC<Props> = ({
                 })}
               </div>
               {data.length === 0 && (
-                <p className="text-center text-gray-500">No data found</p>
+                <p className="text-center text-gray-500">
+                  {en.modals.noDataFound}
+                </p>
               )}
             </div>
             {errors &&
@@ -167,7 +169,7 @@ const AssignDataModal: FC<Props> = ({
               disabled={isLoading}
               className="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
             >
-              Cancel
+              {en.common.cancel}
             </button>
           </div>
         </form>

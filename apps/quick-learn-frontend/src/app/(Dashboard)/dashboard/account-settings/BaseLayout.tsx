@@ -7,7 +7,7 @@ import { noSpecialCharValidation } from '@src/utils/helpers';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
+import { en } from '@src/constants/lang/en';
 type BaseType = {
   id: number | string;
   name: string;
@@ -154,7 +154,7 @@ const BaseLayout = ({
                   {tableColumnName}
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Action
+                  {en.common.action}
                 </th>
               </tr>
             </thead>
@@ -212,14 +212,14 @@ const BaseLayout = ({
                         className="font-medium text-blue-600 hover:underline"
                         onClick={() => onEditClick(index)}
                       >
-                        Edit
+                        {en.common.edit}
                       </button>
                       <button
                         type="button"
                         className="ml-2 font-medium text-red-600 hover:underline"
                         onClick={() => onDelete(item.id as number)}
                       >
-                        Delete
+                        {en.common.delete}
                       </button>
                     </td>
                   </tr>

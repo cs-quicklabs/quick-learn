@@ -51,4 +51,4 @@ jobs:
       - name: Reset Nx cache
         run: npx nx reset
       - name: Run build
-        run: npx nx build quick-learn-frontend
+        run: npx nx reset && npx nx build quick-learn-frontend
