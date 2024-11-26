@@ -1,97 +1,86 @@
 'use client';
 
-import React, {
-  useEffect,
-  useCallback,
-  useState,
-  ChangeEvent,
-  useMemo,
-} from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
-  activateCourse,
-  getArchivedCourses,
-  deleteCourse,
-} from '@src/apiServices/archivedService';
+  fetchArchivedCourses,
+  activateArchivedCourse,
+  deleteArchivedCourse,
+  selectArchivedCourses,
+  setCoursesSearchValue,
+} from '@src/store/features/archivedSlice';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
 import SearchBox from '@src/shared/components/SearchBox';
 import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ConformationModal from '@src/shared/modals/conformationModal';
-import { TCourse } from '@src/shared/types/contentRepository';
 import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
 
 const ArchivedCourses = () => {
-  const [searchValue, setSearchValue] = useState<string>('');
-  const [coursesList, setCoursesList] = useState<TCourse[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+  const {
+    items: coursesList,
+    isLoading,
+    isInitialLoad,
+    hasMore,
+    page,
+    searchValue,
+  } = useAppSelector(selectArchivedCourses);
+
   const [restoreId, setRestoreId] = useState<string | false>(false);
   const [deleteId, setDeleteId] = useState<string | false>(false);
 
-  const fetchCourses = useCallback(
-    async (currentPage: number, search: string, resetList = false) => {
-      setIsLoading(true);
-      try {
-        const res = await getArchivedCourses(currentPage, search);
-        if (resetList || currentPage === 1) {
-          setCoursesList(res.data.items);
-        } else {
-          setCoursesList((prev) => [...prev, ...res.data.items]);
-        }
-        setPage(res.data.page + 1);
-        setHasMore(
-          Boolean(res.data.total_pages) &&
-            res.data.page !== res.data.total_pages,
-        );
-      } catch (error) {
-        toast.error(en.common.noResultFound);
-      } finally {
-        setIsLoading(false);
-        setIsInitialLoad(false);
-      }
-    },
-    [],
-  );
-
   const getNextCourses = useCallback(() => {
     if (!isLoading && hasMore) {
-      fetchCourses(page, searchValue);
+      dispatch(fetchArchivedCourses({ page, search: searchValue }));
     }
-  }, [fetchCourses, hasMore, isLoading, page, searchValue]);
-
-  const restoreCourse = useCallback(
-    async (id: string) => {
-      try {
-        await activateCourse({ active: true, id: parseInt(id, 10) });
-        setPage(1);
-        await fetchCourses(1, searchValue, true);
-        setRestoreId(false);
-        toast.success(en.archivedSection.courseRestored);
-      } catch (error) {
-        toast.error(en.common.somethingWentWrong);
-      }
-    },
-    [fetchCourses, searchValue],
-  );
+  }, [dispatch, hasMore, isLoading, page, searchValue]);
 
   const handleDeleteCourse = useCallback(
     async (id: string) => {
       try {
-        await deleteCourse(parseInt(id, 10));
-        setPage(1);
-        await fetchCourses(1, searchValue, true);
-        setDeleteId(false);
+        await dispatch(deleteArchivedCourse({ id: parseInt(id, 10) })).unwrap();
+        dispatch(
+          fetchArchivedCourses({
+            page: 1,
+            search: searchValue,
+            resetList: true,
+          }),
+        );
         toast.success(en.archivedSection.courseDeleted);
       } catch (error) {
         toast.error(en.common.somethingWentWrong);
+      } finally {
+        setDeleteId(false);
       }
     },
-    [fetchCourses, searchValue],
+    [dispatch, searchValue],
+  );
+
+  const restoreCourse = useCallback(
+    async (id: string) => {
+      try {
+        await dispatch(
+          activateArchivedCourse({ id: parseInt(id, 10) }),
+        ).unwrap();
+        dispatch(
+          fetchArchivedCourses({
+            page: 1,
+            search: searchValue,
+            resetList: true,
+          }),
+        );
+        toast.success(en.archivedSection.courseRestored);
+      } catch (error) {
+        toast.error(en.common.somethingWentWrong);
+      } finally {
+        setRestoreId(false);
+      }
+    },
+    [dispatch, searchValue],
   );
 
   const handleQueryChange = useMemo(
@@ -99,20 +88,20 @@ const ArchivedCourses = () => {
       debounce(async (value: string) => {
         const _value = value || '';
         try {
-          setIsLoading(true);
-          setSearchValue(_value);
-          setPage(1);
-          fetchCourses(1, _value, true);
+          dispatch(setCoursesSearchValue(_value));
+          dispatch(
+            fetchArchivedCourses({ page: 1, search: _value, resetList: true }),
+          );
         } catch (err) {
           toast.error(en.common.somethingWentWrong);
         }
       }, 300),
-    [fetchCourses],
+    [dispatch],
   );
 
   useEffect(() => {
-    fetchCourses(1, '', true);
-  }, [fetchCourses]);
+    dispatch(fetchArchivedCourses({ page: 1, search: '', resetList: true }));
+  }, [dispatch]);
 
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
@@ -143,7 +132,7 @@ const ArchivedCourses = () => {
         {en.archivedSection.archivedCoursesSubtext}
       </p>
       <SearchBox
-        handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+        handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           handleQueryChange(e.target.value)
         }
       />

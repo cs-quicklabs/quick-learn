@@ -1,14 +1,14 @@
 'use client';
-import { getUnapprovedLessons } from '@src/apiServices/lessonsService';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import { TLesson } from '@src/shared/types/contentRepository';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ApprovalListSkeleton from './ApprovalListSkeleton';
+import { RootState } from '@src/store/store';
+import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 
 const columns = [
   en.common.lesson,
@@ -18,19 +18,17 @@ const columns = [
 ];
 
 const ApprovalList = () => {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<TLesson[]>([]);
+  const dispatch = useAppDispatch();
+  const { lessons, isLoading, isInitialLoad } = useAppSelector(
+    (state: RootState) => state.approval,
+  );
 
   useEffect(() => {
-    setLoading(true);
-    getUnapprovedLessons()
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((err) => showApiErrorInToast(err))
-      .finally(() => setLoading(false));
-  }, []);
-  if (loading) return <ApprovalListSkeleton />;
+    dispatch(fetchUnapprovedLessons());
+  }, [dispatch]);
+
+  if (isInitialLoad && isLoading) return <ApprovalListSkeleton />;
+
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
       <div className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
@@ -44,7 +42,7 @@ const ApprovalList = () => {
             </div>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        <div className={`overflow-x-auto ${isLoading ? 'opacity-60' : ''}`}>
           <table className="w-full text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
@@ -62,7 +60,7 @@ const ApprovalList = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map((lesson, index) => (
+              {lessons.map((lesson, index) => (
                 <tr
                   id={`row${index}`}
                   key={lesson.id}
@@ -94,7 +92,7 @@ const ApprovalList = () => {
                   </td>
                 </tr>
               ))}
-              {data.length === 0 && (
+              {lessons.length === 0 && (
                 <tr>
                   <td
                     colSpan={7}
@@ -108,6 +106,11 @@ const ApprovalList = () => {
           </table>
         </div>
       </div>
+      {isLoading && !isInitialLoad && (
+        <div className="fixed top-4 right-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
+        </div>
+      )}
     </div>
   );
 };
