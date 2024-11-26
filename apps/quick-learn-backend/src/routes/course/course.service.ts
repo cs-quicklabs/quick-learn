@@ -356,7 +356,6 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
     const imageUsed = await this.getLessonsInCource({ id } , ['lessons']); // Get course without lessons to delete all images from s3
 
-    // console.log(course.imageUsed , 'course');
     if (imageUsed && imageUsed.length) {
       await this.FileService.deleteFiles(imageUsed);
     }
