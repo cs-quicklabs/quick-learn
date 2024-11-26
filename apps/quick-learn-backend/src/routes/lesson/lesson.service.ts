@@ -9,14 +9,12 @@ import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
 import { Repository } from 'typeorm';
-import Helpers from '@src/common/utils/helper';
-import { FileService } from '@src/file/fileService.service';
+
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
   constructor(
     @InjectRepository(LessonEntity) repo: Repository<LessonEntity>,
     private courseService: CourseService,
-    private readonly FileService: FileService,
   ) {
     super(repo);
   }
@@ -77,18 +75,6 @@ export class LessonService extends PaginationService<LessonEntity> {
 
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);
-    }
-
-    
-    // GET ALL IMAGE URL USED IN EXISTING LESSION CONTENT
-    const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(lesson.content , undefined , true)
-    // GET ALL IMAGE URL USED IN INCOMING LESSION CONTENT
-    const incomingContentImageUrl = Helpers.extractImageUrlsFromHtml(updateLessonDto.content , undefined , true)
-    // CHECK IF ANY IMAGE URL IS NOW NOT USED IN UPDATED CONTENT
-    const UrlsToBeDeletedFromBucket = existingContentImageUrl.filter(urls => !incomingContentImageUrl.includes(urls))
-    // DELETE IMAGE FROM BUCKET (FOR UPDATE LESSION)
-    if (UrlsToBeDeletedFromBucket && UrlsToBeDeletedFromBucket.length) {
-     await this.FileService.deleteFiles(UrlsToBeDeletedFromBucket);
     }
 
     let payload: Partial<LessonEntity> = {
@@ -231,12 +217,6 @@ export class LessonService extends PaginationService<LessonEntity> {
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);
     }
-
-    // GET ALL IMAGE URL USED IN EXISTING LESSION CONTENT
-    const  existingContentImageUrl = Helpers.extractImageUrlsFromHtml(lesson.content , undefined , true)
-    if (existingContentImageUrl && existingContentImageUrl.length) {
-      await this.FileService.deleteFiles(existingContentImageUrl);
-      }
 
     await this.repository.delete({ id });
   }

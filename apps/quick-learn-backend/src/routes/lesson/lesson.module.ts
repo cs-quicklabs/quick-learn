@@ -4,10 +4,9 @@ import { LessonEntity } from '@src/entities';
 import { LessonController } from './lesson.controller';
 import { LessonService } from './lesson.service';
 import { CourseModule } from '../course/course.module';
-import { FileModule } from '@src/file/file.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LessonEntity]), CourseModule , FileModule],
+  imports: [TypeOrmModule.forFeature([LessonEntity]), CourseModule],
   providers: [LessonService],
   controllers: [LessonController],
   exports: [LessonService],
