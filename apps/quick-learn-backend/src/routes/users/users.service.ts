@@ -248,7 +248,7 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     // ON PROFILE CHANGE VERIFY IF LOGO HAS CHANGED AND PERVIOUS IMAGE IS NOT EMPTY STRING
-    if ((user.profile_image !== payload.profile_image) && user.profile_image !== "") {
+    if ((user.profile_image !== payload.profile_image) && (user.profile_image !== "" && user.profile_image !== null)) {
       // DELETE OLD IMAGE FROM S3 BUCKET
       await this.FileService.deleteFiles([user.profile_image]);
     } 
