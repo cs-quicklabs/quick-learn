@@ -8,9 +8,10 @@ import { UpdateTeamDto } from './dto/update-team.dto';
 import { FileService } from '@src/file/fileService.service';
 @Injectable()
 export class TeamService extends BasicCrudService<TeamEntity> {
-  constructor(@InjectRepository(TeamEntity) repo: Repository<TeamEntity>,
-  private readonly FileService: FileService
-) {
+  constructor(
+    @InjectRepository(TeamEntity) repo: Repository<TeamEntity>,
+    private readonly FileService: FileService,
+  ) {
     super(repo);
   }
 
@@ -28,10 +29,14 @@ export class TeamService extends BasicCrudService<TeamEntity> {
       throw new BadRequestException('No team has assigned to the user.');
     }
     // ON PROFILE CHANGE VERIFY IF LOGO HAS CHANGED
-    if((user.team.logo !== payload.logo) && (user.team.logo !== "" && user.team.logo !== null)) {
+    if (
+      user.team.logo !== payload.logo &&
+      user.team.logo !== '' &&
+      user.team.logo !== null
+    ) {
       // DELETE OLD LOGO FROM S3 BUCKET
       await this.FileService.deleteFiles([user.team.logo]);
-    }    
+    }
     await this.update({ id: teamId }, payload);
   }
 }

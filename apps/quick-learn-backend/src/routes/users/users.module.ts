@@ -20,7 +20,7 @@ import { FileModule } from '@src/file/file.module';
     RoadmapModule,
     CourseModule,
     LessonModule,
-    FileModule
+    FileModule,
   ],
   exports: [UsersService],
 })

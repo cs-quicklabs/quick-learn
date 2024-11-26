@@ -41,7 +41,7 @@ export class UsersService extends PaginationService<UserEntity> {
     private roadmapService: RoadmapService,
     private courseService: CourseService,
     private lessonService: LessonService,
-    private readonly FileService: FileService
+    private readonly FileService: FileService,
   ) {
     super(userRepository);
   }
@@ -248,10 +248,14 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     // ON PROFILE CHANGE VERIFY IF LOGO HAS CHANGED AND PERVIOUS IMAGE IS NOT EMPTY STRING
-    if ((user.profile_image !== payload.profile_image) && (user.profile_image !== "" && user.profile_image !== null)) {
+    if (
+      user.profile_image !== payload.profile_image &&
+      user.profile_image !== '' &&
+      user.profile_image !== null
+    ) {
       // DELETE OLD IMAGE FROM S3 BUCKET
       await this.FileService.deleteFiles([user.profile_image]);
-    } 
+    }
 
     if (payload.email) {
       const userByEmail = await this.findOne({ email: payload.email });

@@ -79,7 +79,7 @@ function getS3Key(request, file) {
     }),
   ],
   controllers: [FileController],
-  exports : [FileService],
-  providers : [FileService],
+  exports: [FileService],
+  providers: [FileService],
 })
 export class FileModule {}

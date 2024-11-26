@@ -8,7 +8,7 @@ import { FileModule } from '@src/file/file.module';
 @Module({
   controllers: [TeamController],
   providers: [TeamService],
-  imports: [TypeOrmModule.forFeature([TeamEntity]) , FileModule],
+  imports: [TypeOrmModule.forFeature([TeamEntity]), FileModule],
   exports: [TeamService],
 })
 export class TeamModule {}
