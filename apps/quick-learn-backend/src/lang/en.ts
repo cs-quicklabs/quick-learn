@@ -17,9 +17,9 @@ export const en = {
 
   // Roadmap related messages
   GetAllRoapmaps: 'Successfully got all roadmaps.',
-  CreateRoadmap: 'Successfully created a roadmap.',
-  updateRoadmap: 'Successfully updated a roadmap.',
-  archiveRoadmap: 'Successfully archived roadmap.',
+  CreateRoadmap: 'Roadmap created Successfully.',
+  updateRoadmap: 'Roadmap updated successfully.',
+  archiveRoadmap: 'Roadmaps archieved successfully.',
   RoadmapNotFound: 'Roadmap details not found.',
   RoadmapAlreadyExists:
     'The Roadmap with the same name already exists in the active or archived content repository.',
@@ -36,13 +36,13 @@ export const en = {
   // Course related messages
   GetAllCourses: 'Successfully got all courses.',
   GetCourseDetails: 'Successfully got course details.',
-  CreateCourse: 'Successfully created a course.',
-  UpdateCourse: 'Successfully updated a course.',
+  CreateCourse: 'Course created successfully.',
+  UpdateCourse: 'Course updated successfully.',
   CourseNotFound: 'Course details not found.',
   InvalidCourseCategory: 'Course category does not exist.',
   courseAlreadyExists:
     'The Course with the same name already exists in the active or archived content repository.',
-  archiveCourse: 'Successfully archived course.',
+  archiveCourse: 'Course archived successfully.',
   invalidCourses: 'Courses does not exist.',
   courseCategriesHasData: 'Course category has course(s) assigned.',
   successDeleteCourse: 'Course category is deleted.',
