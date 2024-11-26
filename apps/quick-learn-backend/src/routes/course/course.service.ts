@@ -16,7 +16,7 @@ import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 import Helpers from '@src/common/utils/helper';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
-import { FileService } from '@src/file/fileService.service';
+import { FileService } from '@src/file/file.service';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -120,7 +120,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
   /**
    * Gets course details with specified relations
-   */ 
+   */
   async getCourseDetails(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
@@ -158,11 +158,11 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     return course;
   }
 
-   /**
+  /**
    * Gets lessions details within cource with relations
    */
 
-   async getImagesUsedInLessonsRelatedCource(
+  async getImagesUsedInLessonsRelatedCource(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
   ): Promise<string[]> {
@@ -182,10 +182,14 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
     let imageToDelete = [];
     if (!course.lessons) {
-      return imageToDelete = [];
+      return (imageToDelete = []);
     } else {
-      imageToDelete = Helpers.extractImageUrlsFromHtml(course.lessons as [], 'content', false)
-      return imageToDelete
+      imageToDelete = Helpers.extractImageUrlsFromHtml(
+        course.lessons as [],
+        'content',
+        false,
+      );
+      return imageToDelete;
     }
   }
 
@@ -354,7 +358,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       throw new BadRequestException(en.CourseNotFound);
     }
 
-    const imageUsed = await this.getImagesUsedInLessonsRelatedCource({ id } , ['lessons']); // Get course without lessons to delete all images from s3
+    const imageUsed = await this.getImagesUsedInLessonsRelatedCource({ id }, [
+      'lessons',
+    ]); // Get course without lessons to delete all images from s3
 
     if (imageUsed && imageUsed.length) {
       await this.FileService.deleteFiles(imageUsed);

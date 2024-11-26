@@ -23,7 +23,7 @@ import { RoadmapService } from '../roadmap/roadmap.service';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 import { CourseService } from '../course/course.service';
 import { LessonService } from '../lesson/lesson.service';
-import { FileService } from '@src/file/fileService.service';
+import { FileService } from '@src/file/file.service';
 
 const userRelations = ['user_type', 'skill', 'team'];
 
@@ -41,7 +41,7 @@ export class UsersService extends PaginationService<UserEntity> {
     private roadmapService: RoadmapService,
     private courseService: CourseService,
     private lessonService: LessonService,
-    private readonly FileService: FileService
+    private readonly FileService: FileService,
   ) {
     super(userRepository);
   }
@@ -248,10 +248,13 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     // ON PROFILE CHANGE VERIFY IF LOGO HAS CHANGED AND PERVIOUS IMAGE IS NOT EMPTY STRING
-    if ((user.profile_image !== payload.profile_image) && user.profile_image !== "") {
+    if (
+      user.profile_image !== payload.profile_image &&
+      user.profile_image !== ''
+    ) {
       // DELETE OLD IMAGE FROM S3 BUCKET
       await this.FileService.deleteFiles([user.profile_image]);
-    } 
+    }
 
     if (payload.email) {
       const userByEmail = await this.findOne({ email: payload.email });

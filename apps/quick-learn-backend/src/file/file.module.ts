@@ -10,7 +10,7 @@ import { AllConfigType } from '@src/config/config.type';
 import multerS3 from 'multer-s3';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { S3Client } from '@aws-sdk/client-s3';
-import { FileService } from './fileService.service';
+import { FileService } from './file.service';
 
 function getS3Key(request, file) {
   const imagePath = request.query?.path;
@@ -79,7 +79,7 @@ function getS3Key(request, file) {
     }),
   ],
   controllers: [FileController],
-  exports : [FileService],
-  providers : [FileService],
+  exports: [FileService],
+  providers: [FileService],
 })
 export class FileModule {}

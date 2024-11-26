@@ -7,7 +7,7 @@ import { CourseModule } from '../course/course.module';
 import { FileModule } from '@src/file/file.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LessonEntity]), CourseModule , FileModule],
+  imports: [TypeOrmModule.forFeature([LessonEntity]), CourseModule, FileModule],
   providers: [LessonService],
   controllers: [LessonController],
   exports: [LessonService],
