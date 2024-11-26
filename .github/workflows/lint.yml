@@ -19,7 +19,7 @@ jobs:
         run: npm ci
 
       - name: Reset Nx cache
-        run: nx reset
+        run: npx nx reset
 
       - name: Run lint
         run: npx nx lint quick-learn-backend --max-warnings=0
@@ -40,7 +40,7 @@ jobs:
         run: npm ci
 
       - name: Reset Nx cache
-        run: nx reset
+        run: npx nx reset
 
       - name: Run lint
         run: npx nx lint quick-learn-frontend --max-warnings=0
@@ -63,7 +63,7 @@ jobs:
         run: npm ci
 
       - name: Reset Nx cache
-        run: nx reset
+        run: npx nx reset
 
       - name: Run build
         run: npx nx build quick-learn-frontend
