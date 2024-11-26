@@ -55,7 +55,7 @@
       "outputs": [],
       "options": {
         "command": "ts-node --project tsconfig.app.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:revert -d src/database/data-source.ts",
-        "cwd": "apps/quick-learn-backend",
+        "cwd": "apps/quick-learn-backend"
       }
     },
     "seed:run": {

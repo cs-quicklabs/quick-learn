@@ -1,11 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import {
-  createRoadmap,
-  getContentRepositoryMetadata,
-  getRoadmaps,
-} from '@src/apiServices/contentRepositoryService';
+import { createRoadmap } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Card from '@src/shared/components/Card';
@@ -13,37 +9,59 @@ import CreateNewCard from '@src/shared/components/CreateNewCard';
 import AddEditRoadMapModal, {
   AddEditRoadmapData,
 } from '@src/shared/modals/addEditRoadMapModal';
-import { TCourse, TRoadmap } from '@src/shared/types/contentRepository';
-import useDashboardStore from '@src/store/dashboard.store';
+import { TCourse } from '@src/shared/types/contentRepository';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  selectMetadataStatus,
+  fetchMetadata,
+  selectContentRepositoryMetadata,
+  selectIsMetadataInitialized,
+} from '../../../../store/features/metadataSlice';
+import {
+  addRoadmap,
+  fetchRoadmaps,
+  selectAllRoadmaps,
+  selectIsRoadmapsInitialized,
+  selectRoadmapsStatus,
+} from '@src/store/features/roadmapsSlice';
 
 const ContentRepository = () => {
   const router = useRouter();
-  const { setContentRepositoryMetadata, metadata } = useDashboardStore(
-    (state) => state,
-  );
-  const allCourseCategories = metadata.contentRepository.course_categories;
+  const dispatch = useAppDispatch();
+
+  const contentRepository = useAppSelector(selectContentRepositoryMetadata);
+  const metadataStatus = useAppSelector(selectMetadataStatus);
+  const isMetadataInitialized = useAppSelector(selectIsMetadataInitialized);
+  const roadmaps = useAppSelector(selectAllRoadmaps);
+  const roadmapsStatus = useAppSelector(selectRoadmapsStatus);
+  const isRoadmapsInitialized = useAppSelector(selectIsRoadmapsInitialized);
+
+  const allCourseCategories = contentRepository.course_categories;
+
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(true);
   const [isModalLoading, setIsModalLoading] = useState(false);
-  const [roadmaps, setRoadmaps] = useState<TRoadmap[]>([]);
   const [courses, setCourses] = useState<TCourse[]>([]);
 
+  // Only show loader if either slice isn't initialized yet
+  const isLoading =
+    (!isMetadataInitialized || !isRoadmapsInitialized) &&
+    (metadataStatus === 'loading' || roadmapsStatus === 'loading');
+
   useEffect(() => {
-    Promise.all([
-      getContentRepositoryMetadata()
-        .then((response) => setContentRepositoryMetadata(response.data))
-        .catch((error) => showApiErrorInToast(error)),
-      getRoadmaps()
-        .then((res) => setRoadmaps(res.data))
-        .catch((err) => showApiErrorInToast(err)),
-    ]).finally(() => setIsPageLoading(false));
-  }, [setContentRepositoryMetadata]);
+    // Only fetch if not initialized
+    if (!isMetadataInitialized) {
+      dispatch(fetchMetadata());
+    }
+    if (!isRoadmapsInitialized) {
+      dispatch(fetchRoadmaps());
+    }
+  }, [dispatch, isMetadataInitialized, isRoadmapsInitialized]);
 
   useEffect(() => {
     const data: TCourse[] = [];
@@ -58,7 +76,7 @@ const ContentRepository = () => {
     setIsModalLoading(true);
     createRoadmap(data)
       .then((res) => {
-        setRoadmaps((prev) => [res.data, ...prev]);
+        dispatch(addRoadmap(res.data));
         setOpenAddModal(false);
         router.push(`${RouteEnum.CONTENT}/${res.data.id}`);
         showApiMessageInToast(res);
@@ -67,10 +85,10 @@ const ContentRepository = () => {
       .finally(() => setIsModalLoading(false));
   }
 
-  if (isPageLoading) {
+  // Only show skeleton on initial load
+  if (isLoading) {
     return <ContentRepositorySkeleton />;
   }
-
   return (
     <>
       <AddEditRoadMapModal
@@ -107,7 +125,7 @@ const ContentRepository = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               <CreateNewCard
                 title={en.contentRepository.createNewRoadmap}
-                onAdd={setOpenAddModal}
+                onAdd={() => setOpenAddModal(true)}
               />
               {roadmaps.map((item) => (
                 <Card

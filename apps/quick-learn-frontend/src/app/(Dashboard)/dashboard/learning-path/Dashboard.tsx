@@ -1,46 +1,34 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ProgressCard from '@src/shared/components/ProgressCard';
-import { TUserCourse, TUserRoadmap } from '@src/shared/types/contentRepository';
-import { getUserRoadmapsService } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
 import DashboardSkeleton from './components/DashboardSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { RouteEnum } from '@src/constants/route.enum';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import {
+  fetchUserContent,
+  selectIsLearningPathInitialized,
+  selectLearningPathStatus,
+  selectUserCourses,
+  selectUserRoadmaps,
+} from '@src/store/features/learningPathSlice';
 
 const Dashboard = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [roadmaps, setRoadmaps] = useState<TUserRoadmap[]>([]);
-  const [courses, setCourses] = useState<TUserCourse[]>([]);
+  const dispatch = useAppDispatch();
+
+  const roadmaps = useAppSelector(selectUserRoadmaps);
+  const courses = useAppSelector(selectUserCourses);
+  const status = useAppSelector(selectLearningPathStatus);
+  const isInitialized = useAppSelector(selectIsLearningPathInitialized);
+
+  const isLoading = !isInitialized && status === 'loading';
 
   useEffect(() => {
-    const fetchUserContent = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getUserRoadmapsService();
-        if (response.success) {
-          const userRoadmaps = response.data;
-          setRoadmaps(userRoadmaps);
-          const allCourses = userRoadmaps.reduce<TUserCourse[]>(
-            (acc, roadmap) => {
-              if (roadmap.courses) {
-                return [...acc, ...roadmap.courses];
-              }
-              return acc;
-            },
-            [],
-          );
-          const uniqueCourses = Array.from(
-            new Map(allCourses.map((course) => [course.id, course])).values(),
-          );
-          setCourses(uniqueCourses);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUserContent();
-  }, []);
+    if (!isInitialized) {
+      dispatch(fetchUserContent());
+    }
+  }, [dispatch, isInitialized]);
 
   if (isLoading) {
     return <DashboardSkeleton />;
