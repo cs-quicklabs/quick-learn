@@ -1,18 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class FileService {
     private s3Client: S3Client;
     static deleteFiles: unknown;
 
-    constructor() {
+    constructor(private configService: ConfigService) {
         this.s3Client = new S3Client({
-            region: process.env.AWS_S3_REGION,
-            endpoint: process.env.AWS_Endpoint,
+            region:  this.configService.getOrThrow('file.awsS3Region', { infer: true }),
+            endpoint: this.configService.getOrThrow('file.endPoint', { infer: true }),
             credentials: {
-                accessKeyId: process.env.ACCESS_KEY_ID,
-                secretAccessKey: process.env.SECRET_ACCESS_KEY,
+                accessKeyId: this.configService.getOrThrow('file.accessKeyId', { infer: true }),
+                secretAccessKey: this.configService.getOrThrow('file.secretAccessKey', { infer: true }),
             },
         });
     }

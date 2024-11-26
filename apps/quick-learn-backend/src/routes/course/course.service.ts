@@ -162,7 +162,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
    * Gets lessions details within cource with relations
    */
 
-   async getLessonsInCource(
+   async getImagesUsedInLessonsRelatedCource(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
   ): Promise<string[]> {
@@ -354,7 +354,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       throw new BadRequestException(en.CourseNotFound);
     }
 
-    const imageUsed = await this.getLessonsInCource({ id } , ['lessons']); // Get course without lessons to delete all images from s3
+    const imageUsed = await this.getImagesUsedInLessonsRelatedCource({ id } , ['lessons']); // Get course without lessons to delete all images from s3
 
     if (imageUsed && imageUsed.length) {
       await this.FileService.deleteFiles(imageUsed);

@@ -48,6 +48,14 @@ export default class Helpers {
       : sanitizedContent;
   }
 
+  /**
+   * 
+   * @param input {string | { [key: string]: unknown }[]}
+   * @param label {string}
+   * @param isHtmlString {boolean}
+   * @returns {string[]}
+   */
+
   static extractImageUrlsFromHtml(
     input: string | { [key: string]: unknown }[],
     label?: string,
@@ -71,7 +79,7 @@ export default class Helpers {
     } else {
       // Input is an array of objects with the label property
       (input as { [key: string]: unknown }[]).forEach((item) => {
-        if (item[label] && typeof item[label] === "string") {
+        if (label && item[label] && typeof item[label] === "string") {
           let match: RegExpExecArray | null;
           const htmlString = item[label];
   
