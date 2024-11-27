@@ -253,7 +253,6 @@ export class UsersService extends PaginationService<UserEntity> {
       user.profile_image !== '' &&
       user.profile_image !== null
     ) {
-      console.log("ENTERED HERE");
       // DELETE OLD IMAGE FROM S3 BUCKET
       await this.FileService.deleteFiles([user.profile_image]);
     }
