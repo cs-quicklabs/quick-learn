@@ -26,7 +26,6 @@ import {
   TCreateCourse,
 } from '@src/shared/types/contentRepository';
 import useDashboardStore from '@src/store/dashboard.store';
-import { HTMLSanitizer } from '@src/utils/helpers';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -304,9 +303,9 @@ const CourseDetails = () => {
                     key={id}
                     id={id.toString()}
                     title={name}
-                    description={HTMLSanitizer(
-                      (approved && content) || new_content || content,
-                    )}
+                    description={
+                      (approved && content) || new_content || content
+                    }
                     link={`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${
                       approved ? id : `view/${id}`
                     }`}
