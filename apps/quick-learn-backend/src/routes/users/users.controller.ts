@@ -177,11 +177,7 @@ export class UsersController {
     @Body() body: { uuid: string; active: boolean },
   ): Promise<SuccessResponse> {
     const { active, uuid } = body;
-    const updatedUser = await this.usersService.updateUser(
-      uuid,
-      { active },
-      false,
-    );
+    const updatedUser = await this.usersService.updateUser(uuid, { active });
     return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
   }
 
@@ -228,14 +224,10 @@ export class UsersController {
     @CurrentUser() currentUser: UserEntity,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.updateUser(
-      uuid,
-      {
-        ...updateUserDto,
-        updated_by: currentUser,
-      },
-      false,
-    );
+    const user = await this.usersService.updateUser(uuid, {
+      ...updateUserDto,
+      updated_by: currentUser,
+    });
     return new SuccessResponse(en.successUserUpdate, user);
   }
 

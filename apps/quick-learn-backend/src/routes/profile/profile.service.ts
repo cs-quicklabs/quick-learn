@@ -26,13 +26,9 @@ export class ProfileService {
     if (!arePasswordsSame) {
       throw new UnauthorizedException('Invalid Old Password');
     }
-    await this.usersService.updateUser(
-      user.uuid,
-      {
-        password: await bcrypt.hash(changePasswordDTO.newPassword, 10),
-      },
-      false,
-    );
+    await this.usersService.updateUser(user.uuid, {
+      password: await bcrypt.hash(changePasswordDTO.newPassword, 10),
+    });
     return new SuccessResponse('Password updated successfully');
   }
 
@@ -42,13 +38,9 @@ export class ProfileService {
     });
   }
   async changePreferencesService(user: UserEntity, preference: boolean) {
-    await this.usersService.updateUser(
-      user.uuid,
-      {
-        email_alert_preference: preference,
-      },
-      false,
-    );
+    await this.usersService.updateUser(user.uuid, {
+      email_alert_preference: preference,
+    });
     return new SuccessResponse('Email preference updated successfully', {
       prefernce: user.email_alert_preference,
     });

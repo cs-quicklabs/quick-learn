@@ -243,7 +243,7 @@ export class UsersService extends PaginationService<UserEntity> {
   async updateUser(
     uuid: UserEntity['uuid'],
     payload: Partial<UserEntity>,
-    imageDeleteRequired: boolean,
+    imageDeleteRequired = false,
   ) {
     const user = await this.findOne({ uuid });
 
