@@ -11,7 +11,7 @@ export class ProfileService {
   constructor(private usersService: UsersService) {}
 
   async updateUserProfile(user: UserEntity, newDetails: UpdateProfileDto) {
-    await this.usersService.updateUser(user.uuid, newDetails);
+    await this.usersService.updateUser(user.uuid, newDetails , true);
     return new SuccessResponse('Profile updated successfully');
   }
 
@@ -28,7 +28,7 @@ export class ProfileService {
     }
     await this.usersService.updateUser(user.uuid, {
       password: await bcrypt.hash(changePasswordDTO.newPassword, 10),
-    });
+    } , false);
     return new SuccessResponse('Password updated successfully');
   }
 
@@ -40,7 +40,7 @@ export class ProfileService {
   async changePreferencesService(user: UserEntity, preference: boolean) {
     await this.usersService.updateUser(user.uuid, {
       email_alert_preference: preference,
-    });
+    },false);
     return new SuccessResponse('Email preference updated successfully', {
       prefernce: user.email_alert_preference,
     });

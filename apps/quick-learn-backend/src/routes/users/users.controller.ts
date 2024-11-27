@@ -177,7 +177,7 @@ export class UsersController {
     @Body() body: { uuid: string; active: boolean },
   ): Promise<SuccessResponse> {
     const { active, uuid } = body;
-    const updatedUser = await this.usersService.updateUser(uuid, { active });
+    const updatedUser = await this.usersService.updateUser(uuid, { active } , false);
     return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
   }
 
@@ -227,7 +227,7 @@ export class UsersController {
     const user = await this.usersService.updateUser(uuid, {
       ...updateUserDto,
       updated_by: currentUser,
-    });
+    },false);
     return new SuccessResponse(en.successUserUpdate, user);
   }
 
