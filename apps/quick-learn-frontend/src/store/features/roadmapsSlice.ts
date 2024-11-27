@@ -5,12 +5,10 @@ import { TRoadmap } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { RootState } from '../store';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import { BaseAsyncState } from '../types/base.types';
 
-interface RoadmapsState {
+interface RoadmapsState extends BaseAsyncState {
   roadmaps: TRoadmap[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
-  isInitialized: boolean;
 }
 
 const initialState: RoadmapsState = {

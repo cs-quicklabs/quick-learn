@@ -5,13 +5,11 @@ import { TUserCourse, TUserRoadmap } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { RootState } from '../store';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import { BaseAsyncState } from '../types/base.types';
 
-interface LearningPathState {
+interface LearningPathState extends BaseAsyncState {
   roadmaps: TUserRoadmap[];
   courses: TUserCourse[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
-  isInitialized: boolean;
 }
 
 const initialState: LearningPathState = {

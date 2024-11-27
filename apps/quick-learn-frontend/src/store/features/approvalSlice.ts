@@ -7,12 +7,10 @@ import {
 } from '@src/apiServices/lessonsService';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import { BaseLoadingState } from '../types/base.types';
 
-interface ApprovalState {
+interface ApprovalState extends BaseLoadingState {
   lessons: TLesson[];
-  isLoading: boolean;
-  isInitialLoad: boolean;
-  error: string | null;
 }
 
 const initialState: ApprovalState = {

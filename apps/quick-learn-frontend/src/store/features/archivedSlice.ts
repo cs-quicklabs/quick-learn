@@ -7,77 +7,24 @@ import {
 import * as archivedService from '@src/apiServices/archivedService';
 import { RootState } from '../store';
 import { TUser } from '@src/shared/types/userTypes';
+import {
+  createInitialPaginatedState,
+  PaginatedCollectionState,
+} from '../types/base.types';
 
-interface ArchivedState {
-  users: {
-    items: TUser[];
-    isLoading: boolean;
-    isInitialLoad: boolean;
-    hasMore: boolean;
-    page: number;
-    searchValue: string;
-  };
-  roadmaps: {
-    items: TRoadmap[];
-    isLoading: boolean;
-    isInitialLoad: boolean;
-    hasMore: boolean;
-    page: number;
-    searchValue: string;
-  };
-  courses: {
-    items: TCourse[];
-    isLoading: boolean;
-    isInitialLoad: boolean;
-    hasMore: boolean;
-    page: number;
-    searchValue: string;
-  };
-  lessons: {
-    items: TLesson[];
-    isLoading: boolean;
-    isInitialLoad: boolean;
-    hasMore: boolean;
-    page: number;
-    searchValue: string;
-  };
+export interface ArchivedState {
+  users: PaginatedCollectionState<TUser>;
+  roadmaps: PaginatedCollectionState<TRoadmap>;
+  courses: PaginatedCollectionState<TCourse>;
+  lessons: PaginatedCollectionState<TLesson>;
 }
 
-const initialState: ArchivedState = {
-  users: {
-    items: [],
-    isLoading: false,
-    isInitialLoad: true,
-    hasMore: true,
-    page: 1,
-    searchValue: '',
-  },
-  roadmaps: {
-    items: [],
-    isLoading: false,
-    isInitialLoad: true,
-    hasMore: true,
-    page: 1,
-    searchValue: '',
-  },
-  courses: {
-    items: [],
-    isLoading: false,
-    isInitialLoad: true,
-    hasMore: true,
-    page: 1,
-    searchValue: '',
-  },
-  lessons: {
-    items: [],
-    isLoading: false,
-    isInitialLoad: true,
-    hasMore: true,
-    page: 1,
-    searchValue: '',
-  },
+export const initialState: ArchivedState = {
+  users: createInitialPaginatedState<TUser>(),
+  roadmaps: createInitialPaginatedState<TRoadmap>(),
+  courses: createInitialPaginatedState<TCourse>(),
+  lessons: createInitialPaginatedState<TLesson>(),
 };
-
 // Users Thunks
 export const fetchArchivedUsers = createAsyncThunk(
   'archived/fetchUsers',

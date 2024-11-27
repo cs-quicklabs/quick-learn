@@ -5,16 +5,13 @@ import { TContentRepositoryMetadata } from '@src/shared/types/contentRepository'
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { RootState } from '../store';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import { BaseAsyncState } from '../types/base.types';
 
-interface MetadataState {
+interface MetadataState extends BaseAsyncState {
   metadata: {
     contentRepository: TContentRepositoryMetadata;
   };
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
-  isInitialized: boolean;
 }
-
 const initialState: MetadataState = {
   metadata: {
     contentRepository: {
