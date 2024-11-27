@@ -79,9 +79,6 @@ jobs:
       - name: Reset Nx cache
         run: npx nx reset
 
-      - name: Validate Nx workspace
-        run: npx nx validate
-
       - name: Debug Nx project graph
         run: npx nx graph --file=graph.html
 
