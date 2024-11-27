@@ -51,9 +51,13 @@ export class AuthService {
     // Comparing password
     const isVerified = await bcrypt.compare(password, user.password);
     if (isVerified) {
-      await this.usersService.updateUser(user.uuid, {
-        last_login_timestamp: new Date(),
-      },false);
+      await this.usersService.updateUser(
+        user.uuid,
+        {
+          last_login_timestamp: new Date(),
+        },
+        false,
+      );
       return user;
     } else {
       throw new ForbiddenException('Wrong Credentials!');

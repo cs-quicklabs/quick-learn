@@ -240,7 +240,11 @@ export class UsersService extends PaginationService<UserEntity> {
     });
   }
 
-  async updateUser(uuid: UserEntity['uuid'], payload: Partial<UserEntity> , imageDeleteRequired : boolean) {
+  async updateUser(
+    uuid: UserEntity['uuid'],
+    payload: Partial<UserEntity>,
+    imageDeleteRequired: boolean,
+  ) {
     const user = await this.findOne({ uuid });
 
     if (!user) {
@@ -248,7 +252,8 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     // ON PROFILE CHANGE VERIFY IF LOGO HAS CHANGED AND PERVIOUS IMAGE IS NOT EMPTY STRING
-    if (imageDeleteRequired &&
+    if (
+      imageDeleteRequired &&
       user.profile_image !== payload.profile_image &&
       user.profile_image !== '' &&
       user.profile_image !== null
