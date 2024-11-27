@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { BasicCrudService } from '@src/common/services';
 import { UserEntity } from '@src/entities/user.entity';
 import { UpdateTeamDto } from './dto/update-team.dto';
-import { FileService } from '@src/file/fileService.service';
+import { FileService } from '@src/file/file.service';
 @Injectable()
 export class TeamService extends BasicCrudService<TeamEntity> {
   constructor(

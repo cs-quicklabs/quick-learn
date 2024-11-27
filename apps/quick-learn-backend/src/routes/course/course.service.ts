@@ -16,7 +16,7 @@ import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 import Helpers from '@src/common/utils/helper';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
-import { FileService } from '@src/file/fileService.service';
+import { FileService } from '@src/file/file.service';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -158,7 +158,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     return course;
   }
 
-    /**
+  /**
    * Gets course details from assigned roadmaps
    */
 
@@ -181,6 +181,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     )
     .getMany();
   }
+  
   /**
    * Gets lessions details within cource with relations
    */

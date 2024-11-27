@@ -23,7 +23,7 @@ import { RoadmapService } from '../roadmap/roadmap.service';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 import { CourseService } from '../course/course.service';
 import { LessonService } from '../lesson/lesson.service';
-import { FileService } from '@src/file/fileService.service';
+import { FileService } from '@src/file/file.service';
 
 const userRelations = ['user_type', 'skill', 'team'];
 

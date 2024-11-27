@@ -10,7 +10,7 @@ import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
 import { Repository } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
-import { FileService } from '@src/file/fileService.service';
+import { FileService } from '@src/file/file.service';
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
   constructor(
