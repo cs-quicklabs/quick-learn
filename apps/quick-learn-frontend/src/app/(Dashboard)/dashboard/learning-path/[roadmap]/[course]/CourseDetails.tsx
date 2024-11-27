@@ -11,6 +11,7 @@ import { TCourse } from '@src/shared/types/contentRepository';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import ProgressCard from '@src/shared/components/ProgressCard';
+import { getCourseProgress } from '@src/apiServices/lessonsService';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.myLearningPath.heading, link: RouteEnum.MY_LEARNING_PATH },
@@ -21,6 +22,7 @@ const CourseDetails = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [courseData, setCourseData] = useState<TCourse>();
+  const [completedLesson, setCompletedLesson] = useState<any>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -46,6 +48,14 @@ const CourseDetails = () => {
         router.push(RouteEnum.MY_LEARNING_PATH);
       })
       .finally(() => setIsPageLoading(false));
+
+    getCourseProgress(course)
+      .then((res: any) => {
+        const lessons = res?.completedLessons || []; // Extract the completedLessons array
+        setCompletedLesson(lessons);
+        console.log('Completed Lessons:', lessons);
+      })
+      .catch((err) => console.log('err', err));
   }, [router, roadmap, course]);
 
   return (
@@ -91,6 +101,12 @@ const CourseDetails = () => {
                   name={lessons.name}
                   title={lessons.content}
                   link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}/${lessons.id}`}
+                  isCompleted={
+                    completedLesson &&
+                    completedLesson.find(
+                      (idx: any) => lessons.id === idx.lesson_id,
+                    )
+                  }
                   // percentage={course.percentage || 0}
                 />
               ))}

@@ -57,10 +57,10 @@ export class LessonProgressService {
     return await this.userLessonProgressRepository.save(progress);
   }
 
-  async getLessonProgress(
+  async getLessonProgressArray(
     userId: number,
     courseId: number,
-  ): Promise<{ total: number; completed: number; percentage: number }> {
+  ): Promise<{ completedLessons: any[] }> {
     // Verify the course exists
     const course = await this.courseRepository.findOne({
       where: { id: courseId },
@@ -70,50 +70,97 @@ export class LessonProgressService {
       throw new NotFoundException('Course not found');
     }
 
-    const [completedLessons, totalLessons] = await Promise.all([
-      this.userLessonProgressRepository.count({
+    const [completedLessons] = await Promise.all([
+      this.userLessonProgressRepository.find({
         where: {
           user_id: userId,
           course_id: courseId,
         },
       }),
-      this.lessonRepository.count({
-        where: {
-          course_id: courseId,
-        },
-      }),
     ]);
 
-    return {
-      total: totalLessons,
-      completed: completedLessons,
-      percentage:
-        totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0,
-    };
+    return { completedLessons };
   }
 
-  async getUserLessonStatus(
-    userId: number,
-    courseId: number,
-  ): Promise<
-    { lessonId: number; completed: boolean; completedDate: Date | null }[]
+  // async getCourseLessonCount(
+  //   userId: number,
+  //   courseId: number,
+  // ): Promise<{ total: number; completedLessons: number }> {
+  //   const course = await this.courseRepository.findOne({
+  //     where: { id: courseId },
+  //     relations: ['lessons'],
+  //   });
+
+  //   if (!course) {
+  //     throw new NotFoundException('Course not found');
+  //   }
+
+  //   const totalLessons = course.lessons.filter(
+  //     (lesson) => !lesson.archived && lesson.approved,
+  //   ).length;
+
+  //   const completedLessons = await this.userLessonProgressRepository.count({
+  //     where: {
+  //       user_id: userId,
+  //       course_id: courseId,
+  //     },
+  //   });
+
+  //   return {
+  //     total: totalLessons,
+  //     completedLessons,
+  //   };
+  // }
+
+  async getUserLessonProgressViaCourse(userId: number): Promise<
+    {
+      course_id: number;
+      lessons: { lesson_id: number; completed_date: Date | null }[];
+    }[]
   > {
-    const lessons = await this.lessonRepository.find({
-      where: { course_id: courseId },
+    // Fetch all lessons completed by the user
+    const completedLessons = await this.userLessonProgressRepository.find({
+      where: { user_id: userId },
+      select: ['course_id', 'lesson_id', 'completed_date'], // Include completed_date
     });
 
-    const progress = await this.userLessonProgressRepository.find({
+    // Group lessons by course_id
+    const courseProgressMap: {
+      [course_id: number]: { lesson_id: number; completed_date: Date | null }[];
+    } = {};
+
+    completedLessons.forEach(({ course_id, lesson_id, completed_date }) => {
+      if (!courseProgressMap[course_id]) {
+        courseProgressMap[course_id] = [];
+      }
+      courseProgressMap[course_id].push({ lesson_id, completed_date });
+    });
+
+    // Convert the grouped data to the desired format
+    const userProgress = Object.entries(courseProgressMap).map(
+      ([course_id, lessons]) => ({
+        course_id: Number(course_id),
+        lessons,
+      }),
+    );
+
+    return userProgress;
+  }
+
+  async checkLessonRead(
+    userId: number,
+    lessonId: number,
+  ): Promise<{ isRead: boolean }> {
+    // Check if the lesson exists for the user
+    const lessonProgress = await this.userLessonProgressRepository.findOne({
       where: {
         user_id: userId,
-        course_id: courseId,
+        lesson_id: lessonId,
       },
+      select: ['id'], // Fetch only the necessary field for existence check
     });
 
-    return lessons.map((lesson) => ({
-      lessonId: lesson.id,
-      completed: progress.some((p) => p.lesson_id === lesson.id),
-      completedDate:
-        progress.find((p) => p.lesson_id === lesson.id)?.completed_date || null,
-    }));
+    // Return true if the lesson exists, false otherwise
+    return { isRead: !!lessonProgress };
   }
 }

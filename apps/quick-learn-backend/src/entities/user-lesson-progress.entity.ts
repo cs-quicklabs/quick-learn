@@ -1,7 +1,6 @@
 import {
   Entity,
   Column,
-  BaseEntity,
   ManyToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
@@ -11,8 +10,8 @@ import { LessonEntity } from './lesson.entity';
 import { CourseEntity } from './course.entity';
 
 @Entity('user_lesson_progress')
-export class UserLessonProgressEntity extends BaseEntity {
-  @PrimaryGeneratedColumn() // Adding the primary key
+export class UserLessonProgressEntity {
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column({ type: 'int', nullable: false })
@@ -26,16 +25,6 @@ export class UserLessonProgressEntity extends BaseEntity {
 
   @Column({ type: 'timestamp', nullable: true, name: 'completed_date' })
   completed_date: Date;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
-
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
-  updated_at: Date;
 
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })

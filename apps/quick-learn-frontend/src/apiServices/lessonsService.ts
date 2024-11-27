@@ -49,3 +49,43 @@ export const updateLesson = async (
   );
   return response.data;
 };
+
+// this api mark lesson as read.
+export const markAsDone = async (
+  lessonId: string,
+  courseId: string,
+): Promise<AxiosSuccessResponse<any>> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse<any>>(
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId}`,
+    {
+      courseId: parseInt(courseId),
+    },
+  );
+  return response.data;
+};
+
+//this api returns read lesson array
+export const getCourseProgress = async (
+  courseId: string,
+): Promise<AxiosSuccessResponse<any>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<any>>(
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/${courseId}/progress`,
+  );
+  return response.data;
+};
+
+export const getLessonStatus = async (
+  LessonId: string,
+): Promise<AxiosSuccessResponse<any>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<any>>(
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/check/${LessonId}`,
+  );
+  return response.data;
+};
+
+export const getUserProgress = async (): Promise<AxiosSuccessResponse<any>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<any>>(
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/userprogress`,
+  );
+  return response.data;
+};

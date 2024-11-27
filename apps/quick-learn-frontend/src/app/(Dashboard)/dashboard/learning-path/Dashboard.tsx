@@ -7,7 +7,7 @@ import { en } from '@src/constants/lang/en';
 import DashboardSkeleton from './components/DashboardSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { RouteEnum } from '@src/constants/route.enum';
-
+import { getUserProgress } from '@src/apiServices/lessonsService';
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [roadmaps, setRoadmaps] = useState<TUserRoadmap[]>([]);
@@ -39,6 +39,9 @@ const Dashboard = () => {
         setIsLoading(false);
       }
     };
+    getUserProgress()
+      .then((res) => console.log(res))
+      .catch((e) => console.log('error: ', e));
     fetchUserContent();
   }, []);
 
