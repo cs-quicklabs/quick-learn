@@ -1,7 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import useDashboardStore from '@src/store/dashboard.store';
 import { RouteEnum } from '@src/constants/route.enum';
 import {
   approveLesson,
@@ -16,19 +15,20 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch } from '@src/store/hooks';
+import { setHideNavbar } from '@src/store/features/uiSlice';
 
 const defaultLinks = [{ name: 'Approvals', link: RouteEnum.APPROVALS }];
 
 const LessonDetails = () => {
   const { lesson: id } = useParams<{ lesson: string }>();
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
-  // For hidding navbar
-  const { setHideNavbar } = useDashboardStore((state) => state);
   useEffect(() => {
-    setHideNavbar(true);
+    dispatch(setHideNavbar(true));
     return () => {
-      setHideNavbar(false);
+      dispatch(setHideNavbar(false));
     };
   }, [setHideNavbar]);
 

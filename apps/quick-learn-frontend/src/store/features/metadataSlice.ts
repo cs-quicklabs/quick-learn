@@ -1,5 +1,5 @@
 // store/features/metadataSlice.ts
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
 import { TContentRepositoryMetadata } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
@@ -45,7 +45,17 @@ export const fetchMetadata = createAsyncThunk(
 const metadataSlice = createSlice({
   name: 'metadata',
   initialState,
-  reducers: {},
+  reducers: {
+    updateContentRepository: (
+      state,
+      action: PayloadAction<Partial<TContentRepositoryMetadata>>,
+    ) => {
+      state.metadata.contentRepository = {
+        ...state.metadata.contentRepository,
+        ...action.payload,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMetadata.pending, (state) => {
@@ -67,6 +77,8 @@ const metadataSlice = createSlice({
       });
   },
 });
+
+export const { updateContentRepository } = metadataSlice.actions;
 
 export const selectMetadataStatus = (state: RootState) => state.metadata.status;
 export const selectContentRepositoryMetadata = (state: RootState) =>

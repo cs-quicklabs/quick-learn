@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { activateLesson } from '@src/apiServices/archivedService';
@@ -21,7 +20,8 @@ import { FullPageLoader } from '@src/shared/components/UIElements';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
-import useDashboardStore from '@src/store/dashboard.store';
+import { useDispatch } from 'react-redux';
+import { setHideNavbar } from '@src/store/features/uiSlice';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -107,6 +107,7 @@ const useLessonForm = (courseId: string, lessonId: string) => {
 
 const Lesson = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const params = useParams<{
     roadmap: string;
     course: string;
@@ -114,7 +115,7 @@ const Lesson = () => {
   }>();
   const { roadmap: roadmapId, course: courseId, lesson: lessonId } = params;
 
-  // Memoize user context check
+  // Context and state remain the same
   const { user } = useContext(UserContext);
   const isAdmin = useMemo(
     () =>
@@ -124,7 +125,6 @@ const Lesson = () => {
     [user?.user_type_id],
   );
 
-  const { setHideNavbar } = useDashboardStore();
   const [isEditing, setIsEditing] = useState<boolean>(lessonId === 'add');
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
@@ -194,9 +194,13 @@ const Lesson = () => {
 
   // Optimize navbar effect
   useEffect(() => {
-    setHideNavbar(true);
-    return () => setHideNavbar(false);
-  }, [setHideNavbar]);
+    dispatch(setHideNavbar(true));
+
+    // Return cleanup function that dispatches the action
+    return () => {
+      dispatch(setHideNavbar(false));
+    };
+  }, [dispatch]);
 
   const onSubmit = useCallback<SubmitHandler<LessonFormData>>(
     async (data) => {
@@ -227,7 +231,6 @@ const Lesson = () => {
     },
     [lessonId, courseId, roadmapId, router],
   );
-
   // Debounced update with useCallback
   const updateContent = useCallback(
     async (field: 'name' | 'content', value: string) => {

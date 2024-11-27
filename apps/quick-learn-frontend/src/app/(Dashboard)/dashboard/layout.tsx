@@ -1,7 +1,8 @@
 'use client';
 import { UserProvider } from '@src/context/userContext';
-import useDashboardStore from '@src/store/dashboard.store';
 import Navbar from '@src/shared/components/Navbar';
+import { selectHideNavbar } from '@src/store/features/uiSlice';
+import { useAppSelector } from '@src/store/hooks';
 import { usePathname } from 'next/navigation';
 
 export default function Layout({
@@ -9,7 +10,7 @@ export default function Layout({
 }: {
   readonly children: React.ReactNode;
 }) {
-  const { hideNavbar } = useDashboardStore((state) => state);
+  const hideNavbar = useAppSelector(selectHideNavbar);
   const pathname = usePathname();
 
   // Add paths that should be full width

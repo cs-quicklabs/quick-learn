@@ -29,7 +29,9 @@ import {
   TCreateRoadmap,
   TRoadmap,
 } from '@src/shared/types/contentRepository';
-import useDashboardStore from '@src/store/dashboard.store';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContentRepositoryMetadata } from '@src/store/features/metadataSlice';
+import { AppDispatch } from '@src/store/store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -47,14 +49,15 @@ const defaultlinks: TBreadcrumb[] = [
 ];
 
 const RoadmapDetails = () => {
-  // ... (keep all the existing state and functions)
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const { roadmap } = useParams<{ roadmap: string }>();
-  const { setContentRepositoryMetadata, metadata } = useDashboardStore(
-    (state) => state,
+  const contentRepositoryMetadata = useSelector(
+    selectContentRepositoryMetadata,
   );
-  const allCourseCategories = metadata.contentRepository.course_categories;
-  const allRoadmapCategories = metadata.contentRepository.roadmap_categories;
+
+  const allCourseCategories = contentRepositoryMetadata.course_categories;
+  const allRoadmapCategories = contentRepositoryMetadata.roadmap_categories;
 
   // State management
   const [openAddModal, setOpenAddModal] = useState(false);
@@ -171,10 +174,13 @@ const RoadmapDetails = () => {
         courses: category.courses.filter((ele) => !coursesId.includes(ele.id)),
       }));
 
-      setContentRepositoryMetadata({
-        ...metadata.contentRepository,
-        roadmap_categories: updatedRoadmapCategories,
-        course_categories: updatedCourseCategories,
+      // We'll need to create an action in the metadata slice to handle this update
+      dispatch({
+        type: 'metadata/updateContentRepository',
+        payload: {
+          roadmap_categories: updatedRoadmapCategories,
+          course_categories: updatedCourseCategories,
+        },
       });
 
       setShowConformationModal(false);
@@ -185,6 +191,7 @@ const RoadmapDetails = () => {
       setIsLoading(false);
     }
   };
+
   if (isPageLoading) {
     return <RoadmapDetailsSkeleton />;
   }

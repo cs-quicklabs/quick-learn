@@ -4,7 +4,8 @@ import { Modal } from 'flowbite-react';
 import { CloseIcon } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { z } from 'zod';
-import useDashboardStore from '@src/store/dashboard.store';
+import { useSelector } from 'react-redux';
+import { selectContentRepositoryMetadata } from '@src/store/features/metadataSlice';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldConfig } from '../types/formTypes';
@@ -50,8 +51,8 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
   isloading = false,
   initialData,
 }) => {
-  const contentRepositoryMetadata = useDashboardStore(
-    (state) => state.metadata.contentRepository,
+  const contentRepositoryMetadata = useSelector(
+    selectContentRepositoryMetadata,
   );
 
   const AddEditCourseFields: FieldConfig[] = [
