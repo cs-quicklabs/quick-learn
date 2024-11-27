@@ -1,6 +1,7 @@
 // store/features/teamSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { teamListApiCall } from '@src/apiServices/teamService';
+import { en } from '@src/constants/lang/en';
 import { TUser } from '@src/shared/types/userTypes';
 
 interface TeamState {
@@ -70,7 +71,7 @@ const teamSlice = createSlice({
       .addCase(fetchTeamMembers.rejected, (state, action) => {
         state.isLoading = false;
         state.isInitialLoad = false; // Set to false even on error
-        state.error = action.error.message || 'Failed to fetch team members';
+        state.error = action.error.message || en.common.anErrorOccurred;
       });
   },
 });

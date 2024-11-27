@@ -26,6 +26,7 @@ export const en = {
     //dashboard
     loading: 'Loading...',
     error: 'Error',
+    anErrorOccurred: 'An error occurred',
     myRoadmaps: 'My Roadmaps',
     myCourses: 'My Courses',
     complete: 'Complete',
