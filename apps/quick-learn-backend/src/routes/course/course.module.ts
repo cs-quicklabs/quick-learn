@@ -11,7 +11,7 @@ import { FileModule } from '@src/file/file.module';
     TypeOrmModule.forFeature([CourseEntity]),
     forwardRef(() => RoadmapModule),
     CourseCategoriesModule,
-    FileModule
+    FileModule,
   ],
   providers: [CourseService],
   controllers: [CourseController],

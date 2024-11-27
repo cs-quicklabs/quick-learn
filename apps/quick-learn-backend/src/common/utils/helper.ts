@@ -49,7 +49,7 @@ export default class Helpers {
   }
 
   /**
-   * 
+   *
    * @param input {string | { [key: string]: unknown }[]}
    * @param label {string}
    * @param isHtmlString {boolean}
@@ -59,16 +59,16 @@ export default class Helpers {
   static extractImageUrlsFromHtml(
     input: string | { [key: string]: unknown }[],
     label?: string,
-    isHtmlString = true
+    isHtmlString = true,
   ): string[] {
     // Regular expression to match <img> tags and extract the src attribute
     const regex = /<img[^>]+src="([^"]+)"/g;
     const urls: string[] = [];
-  
+
     if (isHtmlString) {
       // Input is a single HTML string
       let match: RegExpExecArray | null;
-  
+
       // Execute regex to find all matches
       while ((match = regex.exec(input as string)) !== null) {
         // Add the URL found to the array
@@ -79,10 +79,10 @@ export default class Helpers {
     } else {
       // Input is an array of objects with the label property
       (input as { [key: string]: unknown }[]).forEach((item) => {
-        if (label && item[label] && typeof item[label] === "string") {
+        if (label && item[label] && typeof item[label] === 'string') {
           let match: RegExpExecArray | null;
           const htmlString = item[label];
-  
+
           // Execute regex to find all matches
           while ((match = regex.exec(htmlString as string)) !== null) {
             if (match[1]) {
@@ -92,7 +92,7 @@ export default class Helpers {
         }
       });
     }
-  
+
     return urls;
   }
 }
