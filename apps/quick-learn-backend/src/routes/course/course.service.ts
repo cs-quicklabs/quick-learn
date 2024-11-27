@@ -158,6 +158,29 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     return course;
   }
 
+    /**
+   * Gets course details from assigned roadmaps
+   */
+
+  async getUserAssignedRoadmapCourses(
+    userId: number,
+  ): Promise<CourseEntity[]>{
+    // INNER JOINT CREATED ON user_roadmaps TO GET ALL ASSIGNED ROADMAPS USER ID CHECK ADDED FOR SAME, LEFT JOINT CREATED ON lessons TO GET ALL LESSONS COUNT
+    return await this.repository
+    .createQueryBuilder('course')
+    .innerJoin('course.roadmaps', 'roadmap')
+    .innerJoin('user_roadmaps', 'ur', 'ur.roadmap_id = roadmap.id')
+    .where('ur.user_id = :userId', { userId })
+    .andWhere('course.archived = :archived', { archived: false })
+    .leftJoin('course.lessons', 'lesson')
+    .loadRelationCountAndMap(
+      'course.lessonCount',
+      'course.lessons',
+      'lesson',
+      (qb) => qb.andWhere('lesson.archived = :archived', { archived: false }),
+    )
+    .getMany();
+  }
   /**
    * Gets lessions details within cource with relations
    */

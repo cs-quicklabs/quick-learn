@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -35,6 +36,18 @@ export class CourseController {
   async getRoadmap(): Promise<SuccessResponse> {
     const data = await this.service.getMany();
     return new SuccessResponse(en.GetAllCourses, data);
+  }
+
+  @Get('/my-courses')
+  @ApiOperation({ summary: 'Get all assigned roadmap courses' })
+  async getMyCourses(@CurrentUser() user: UserEntity) {
+    // CHECK IF USER IS LOGGED IN
+    if(!user.id){
+      throw new BadRequestException(en.userNotFound);
+    }
+    const data = await this.service.getUserAssignedRoadmapCourses(user.id)
+    return new SuccessResponse(en.GetAllCourses, data);
+
   }
 
   @Get('/community-course')
