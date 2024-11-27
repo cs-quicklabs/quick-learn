@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FC, useRef, useEffect, useState } from 'react';
 import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/20/solid';
-
+import { en } from '@src/constants/lang/en';
 interface CardProps {
   title: string;
   description: string;
@@ -96,10 +96,16 @@ const Card: FC<CardProps> = ({
         )}
         {metadata && !isCreateCard && (metadata.addedBy || metadata.date) && (
           <p className="text-xs text-gray-500">
-            {metadata.addedBy ? <>Added By {metadata.addedBy}</> : <>Added</>}
+            {metadata.addedBy ? (
+              <>
+                {en.component.addedBy} {metadata.addedBy}
+              </>
+            ) : (
+              <>{en.component.Added}</>
+            )}
             {metadata.date && (
               <>
-                <span className="mx-1">on</span>
+                <span className="mx-1">{en.component.on}</span>
                 {metadata.date}
               </>
             )}

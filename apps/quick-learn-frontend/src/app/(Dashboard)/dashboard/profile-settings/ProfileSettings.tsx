@@ -149,9 +149,11 @@ const ProfileSettings = () => {
 
   return (
     <div>
-      <h1 className="text-lg font-semibold">Profile Settings</h1>
+      <h1 className="text-lg font-semibold">
+        {en.ProfileSetting.profileSetting}
+      </h1>
       <p className="text-gray-500 text-sm mb-6">
-        Change your personal profile settings.
+        {en.ProfileSetting.changeProfileSetting}
       </p>
       <FormProvider {...methods}>
         <FormFieldsMapper

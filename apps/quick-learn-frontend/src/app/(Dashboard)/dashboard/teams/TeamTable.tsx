@@ -1,83 +1,93 @@
-import { useEffect, useState } from 'react';
+// components/TeamTable.tsx
+import { useEffect } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
-import { TUser } from '@src/shared/types/userTypes';
 import { DateFormats } from '@src/constants/dateFormats';
-import { teamListApiCall } from '@src/apiServices/teamService';
 import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import TeamMemberListingSkeleton from './TeamMemberListingSkeleton';
+import { RootState } from '@src/store/store';
+import { fetchTeamMembers } from '@src/store/features/teamSlice';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 
-interface TeamTableProps {
-  page: number;
-  userTypeCode: string;
-  query: string;
-  onTotalChange: (total: number) => void;
-}
-
-const TeamTable = ({
-  page,
-  userTypeCode,
-  query,
-  onTotalChange,
-}: TeamTableProps) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<TUser[]>([]);
+const TeamTable = () => {
+  const dispatch = useAppDispatch();
+  const {
+    isLoading,
+    isInitialLoad,
+    users,
+    currentPage,
+    currentUserType,
+    searchQuery,
+  } = useAppSelector((state: RootState) => ({
+    isLoading: state.team.isLoading,
+    isInitialLoad: state.team.isInitialLoad,
+    users: state.team.users,
+    currentPage: state.team.currentPage,
+    currentUserType: state.team.currentUserType,
+    searchQuery: state.team.searchQuery,
+  }));
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
       try {
-        const res = await teamListApiCall(page, userTypeCode, query);
-        if (!res.success) throw new Error();
-        setData(res.data.items);
-        onTotalChange(res.data.total);
+        dispatch(
+          fetchTeamMembers({
+            page: currentPage,
+            userTypeCode: currentUserType,
+            query: searchQuery,
+          }),
+        );
       } catch (error) {
         console.error('API call failed:', error);
         toast.error('Something went wrong!');
-      } finally {
-        setIsLoading(false);
       }
     };
     fetchData();
-  }, [page, userTypeCode, query, onTotalChange]);
+  }, [dispatch, currentPage, currentUserType, searchQuery]);
 
-  if (isLoading) return <TeamMemberListingSkeleton />;
+  // Only show skeleton loader on initial load
+  if (isInitialLoad && isLoading) return <TeamMemberListingSkeleton />;
 
   return (
     <div className="flow-root">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div
+        className={`-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 ${
+          isLoading ? 'opacity-60' : ''
+        }`}
+      >
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <table className="min-w-full divide-y divide-gray-300 text-sm text-left text-gray-500">
+            {/* Rest of the table code remains the same */}
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 text-left">
               <tr>
                 <th scope="col" className="px-4 py-3">
-                  User
+                  {en.teams.User}
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Role
+                  {en.teams.Role}
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Email
+                  {en.teams.Email}
                 </th>
                 <th scope="col" className="px-4 py-3 text-nowrap">
-                  Primary Skill
+                  {en.teams.PrimarySkill}
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Status
+                  {en.teams.Status}
                 </th>
                 <th scope="col" className="px-4 py-3 text-nowrap">
-                  Last Login
+                  {en.teams.lastLogin}
                 </th>
                 <th scope="col" className="px-4 py-3 text-nowrap">
-                  Added On
+                  {en.teams.addedOn}
                 </th>
               </tr>
             </thead>
             <tbody>
-              {data.map((user, index) => (
+              {users.map((user, index) => (
                 <tr
                   id={`row${index}`}
                   key={user.uuid}
@@ -119,7 +129,7 @@ const TeamTable = ({
                   </td>
                 </tr>
               ))}
-              {data.length === 0 && (
+              {users.length === 0 && (
                 <tr>
                   <td
                     colSpan={7}
@@ -133,6 +143,12 @@ const TeamTable = ({
           </table>
         </div>
       </div>
+      {/* Optional loading indicator for non-initial loads */}
+      {isLoading && !isInitialLoad && (
+        <div className="fixed top-4 right-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
+        </div>
+      )}
     </div>
   );
 };

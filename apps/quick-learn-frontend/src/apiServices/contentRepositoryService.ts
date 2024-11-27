@@ -8,13 +8,30 @@ import {
 } from '@src/shared/types/contentRepository';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { ContentRepositoryApiEnum } from '@src/constants/api.enum';
+import { store } from '@src/store/store';
+import { selectMetadataStatus } from '@src/store/features/metadataSlice';
 
 export const getContentRepositoryMetadata = async (): Promise<
   AxiosSuccessResponse<TContentRepositoryMetadata>
 > => {
+  // Check the current state from Redux store
+  const currentState = store.getState();
+  const metadataStatus = selectMetadataStatus(currentState);
+
+  // If data is already loaded, return it wrapped in the expected response format
+  if (metadataStatus === 'succeeded') {
+    return {
+      data: currentState.metadata.metadata.contentRepository,
+      message: 'Data retrieved from store',
+      success: true,
+    };
+  }
+
+  // If not in store, make the API call
   const response = await axiosInstance.get<
     AxiosSuccessResponse<TContentRepositoryMetadata>
   >(ContentRepositoryApiEnum.METADATA);
+
   return response.data;
 };
 

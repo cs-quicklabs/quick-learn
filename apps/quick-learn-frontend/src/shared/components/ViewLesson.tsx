@@ -25,7 +25,7 @@ const LessonHeader = memo(
       <div className="items-baseline">
         <h1 className="text-5xl font-extrabold leading-tight">{name}</h1>
         <p className="mt-1 ml-1 text-sm text-gray-500">
-          {firstName} {lastName} added this lesson on{' '}
+          {firstName} {lastName} {en.component.addLessonOn}{' '}
           {createdAt && format(new Date(createdAt), DateFormats.shortDate)}
         </p>
       </div>

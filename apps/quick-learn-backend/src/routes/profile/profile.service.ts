@@ -11,7 +11,7 @@ export class ProfileService {
   constructor(private usersService: UsersService) {}
 
   async updateUserProfile(user: UserEntity, newDetails: UpdateProfileDto) {
-    await this.usersService.updateUser(user.uuid, newDetails);
+    await this.usersService.updateUser(user.uuid, newDetails, true);
     return new SuccessResponse('Profile updated successfully');
   }
 

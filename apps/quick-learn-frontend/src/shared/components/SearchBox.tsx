@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC } from 'react';
 import { SearchIcon } from './UIElements';
-
+import { en } from '@src/constants/lang/en';
 interface Props {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
@@ -12,7 +12,7 @@ const SearchBox: FC<Props> = ({ handleChange }) => {
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
       >
-        Search
+        {en.component.search}
       </label>
       <div className="relative rounded-md shadow-sm">
         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

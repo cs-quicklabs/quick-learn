@@ -8,6 +8,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Loader, ShowInfoIcon } from '@src/shared/components/UIElements';
 import { Tooltip } from 'flowbite-react';
 import { z } from 'zod';
+import { en } from '@src/constants/lang/en';
 
 export interface IMemberFieldConfig<T> {
   label: string;
@@ -82,12 +83,10 @@ function MemberForm<T extends z.ZodTypeAny>({
   return (
     <section className="mx-auto max-w-2xl">
       <h1 className="text-lg font-semibold">
-        {isAddMember ? 'Add New' : 'Edit'} Team Member
+        {isAddMember ? en.common.add : en.common.edit} {en.teams.teamMember}
       </h1>
       <p className="text-gray-600 text-sm">
-        {isAddMember
-          ? 'Please fill in details of new team member.'
-          : 'Please update details to edit team member.'}
+        {isAddMember ? en.teams.fillDetailsOfNew : en.teams.updateDetails}
       </p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-3 grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -133,7 +132,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                           className="appearance-none block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 capitalize"
                         >
                           <option value="" disabled hidden>
-                            Select
+                            {en.common.select}
                           </option>
                           {options?.map((option) => (
                             <option
@@ -204,7 +203,8 @@ function MemberForm<T extends z.ZodTypeAny>({
           }`}
           disabled={isSubmitDisabled}
         >
-          {isAddMember ? 'Add' : 'Edit'} Member {loading ? <Loader /> : ''}
+          {isAddMember ? 'Add' : 'Edit'} {en.teams.member}{' '}
+          {loading ? <Loader /> : ''}
         </button>
         <button
           id="cancel"
@@ -215,7 +215,7 @@ function MemberForm<T extends z.ZodTypeAny>({
           disabled={loading}
           onClick={cancel}
         >
-          Cancel
+          {en.common.cancel}
         </button>
       </form>
     </section>

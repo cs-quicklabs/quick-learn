@@ -1,7 +1,7 @@
 import { PencilIcon } from '@heroicons/react/20/solid';
 import { ArrowPathIcon, CheckIcon, EyeIcon } from '@heroicons/react/24/outline';
 import React, { FC } from 'react';
-
+import { en } from '@src/constants/lang/en';
 // Formats objects for setting up the Quill editor
 export const formats = [
   'header',
@@ -78,9 +78,9 @@ const EditorToolbar: FC<Props> = ({
       >
         <span className="ql-formats" style={{ margin: '0px' }}>
           <select className="ql-header" defaultValue="3">
-            <option value="1">Heading 1</option>
-            <option value="2">Heading 2</option>
-            <option value="3">Normal</option>
+            <option value="1">{en.component.heading1}</option>
+            <option value="2">{en.component.heading2}</option>
+            <option value="3">{en.component.normal}</option>
           </select>
         </span>
         <span className="ql-formats" style={{ margin: '0px' }}>

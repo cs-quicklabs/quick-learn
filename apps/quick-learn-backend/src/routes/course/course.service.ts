@@ -16,6 +16,7 @@ import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 import Helpers from '@src/common/utils/helper';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
+import { FileService } from '@src/file/file.service';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
@@ -26,6 +27,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     @Inject(forwardRef(() => RoadmapService))
     private roadmapService: RoadmapService,
     private courseCategoryService: CourseCategoryService,
+    private readonly FileService: FileService,
   ) {
     super(repo);
   }
@@ -118,7 +120,8 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
   /**
    * Gets course details with specified relations
-   */ async getCourseDetails(
+   */
+  async getCourseDetails(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
   ): Promise<CourseEntity> {
@@ -153,6 +156,63 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
 
     return course;
+  }
+
+  /**
+   * Gets course details from assigned roadmaps
+   */
+
+  async getUserAssignedRoadmapCourses(userId: number): Promise<CourseEntity[]> {
+    // INNER JOINT CREATED ON user_roadmaps TO GET ALL ASSIGNED ROADMAPS USER ID CHECK ADDED FOR SAME, LEFT JOINT CREATED ON lessons TO GET ALL LESSONS COUNT
+    return await this.repository
+      .createQueryBuilder('course')
+      .innerJoin('course.roadmaps', 'roadmap')
+      .innerJoin('user_roadmaps', 'ur', 'ur.roadmap_id = roadmap.id')
+      .where('ur.user_id = :userId', { userId })
+      .andWhere('course.archived = :archived', { archived: false })
+      .leftJoin('course.lessons', 'lesson')
+      .loadRelationCountAndMap(
+        'course.lessonCount',
+        'course.lessons',
+        'lesson',
+        (qb) => qb.andWhere('lesson.archived = :archived', { archived: false }),
+      )
+      .getMany();
+  }
+
+  /**
+   * Gets lessions details within cource with relations
+   */
+
+  async getImagesUsedInLessonsRelatedCource(
+    options: FindOptionsWhere<CourseEntity>,
+    relations: string[] = [],
+  ): Promise<string[]> {
+    const course = await this.repository.findOne({
+      where: { ...options },
+      relations: [...courseRelations, ...relations],
+      order: {
+        lessons: {
+          updated_at: 'DESC',
+        },
+      },
+    });
+
+    if (!course) {
+      throw new BadRequestException(en.invalidCourse);
+    }
+
+    let imageToDelete = [];
+    if (!course.lessons) {
+      return (imageToDelete = []);
+    } else {
+      imageToDelete = Helpers.extractImageUrlsFromHtml(
+        course.lessons as [],
+        'content',
+        false,
+      );
+      return imageToDelete;
+    }
   }
 
   async updateCourse(
@@ -320,6 +380,13 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       throw new BadRequestException(en.CourseNotFound);
     }
 
+    const imageUsed = await this.getImagesUsedInLessonsRelatedCource({ id }, [
+      'lessons',
+    ]); // Get course without lessons to delete all images from s3
+
+    if (imageUsed && imageUsed.length) {
+      await this.FileService.deleteFiles(imageUsed);
+    }
     // Using the repository's delete method for hard delete
     await this.repository.delete({ id });
   }
