@@ -1,4 +1,5 @@
 name: Lint Checks
+
 on:
   push:
     branches: [dev]
@@ -13,19 +14,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: npm ci
-
+      - name: Show Nx version
+        run: npx nx --version
       - name: Reset Nx cache
-        run: npx nx reset
-
+        run: npx nx@19.4.1 reset
       - name: Run lint
-        run: npx nx lint quick-learn-backend --max-warnings=0
-
+        run: npx nx@19.4.1 lint quick-learn-backend --max-warnings=0
       - name: Check formatting
-        run: npx nx run quick-learn-backend:format:check --max-warnings=0
+        run: npx nx@19.4.1 run quick-learn-backend:format:check --max-warnings=0
 
   lint-frontend:
     runs-on: ubuntu-22.04
@@ -34,32 +33,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: npm ci
-
+      - name: Show Nx version
+        run: npx nx --version
       - name: Reset Nx cache
-        run: npx nx reset
-
+        run: npx nx@19.4.1 reset
       - name: Run lint
-        run: npx nx lint quick-learn-frontend --max-warnings=0
-
+        run: npx nx@19.4.1 lint quick-learn-frontend --max-warnings=0
       - name: Check formatting
-        run: npx nx run quick-learn-frontend:format:check --max-warnings=0
+        run: npx nx@19.4.1 run quick-learn-frontend:format:check --max-warnings=0
 
   build-frontend:
     runs-on: ubuntu-22.04
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.9.0
-
       - name: Cache Node modules
         uses: actions/cache@v3
         with:
@@ -69,18 +63,15 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
       - name: Install system dependencies
         run: sudo apt-get install -y build-essential libvips-dev
-
       - name: Install dependencies
         run: npm ci
-
+      - name: Show Nx version
+        run: npx nx --version
       - name: Reset Nx cache
-        run: npx nx reset
-
+        run: npx nx@19.4.1 reset
       - name: Debug Nx project graph
-        run: npx nx graph --file=graph.html
-
+        run: npx nx@19.4.1 graph --file=graph.html
       - name: Run build
-        run: npx nx build quick-learn-frontend
+        run: npx nx@19.4.1 build quick-learn-frontend
