@@ -25,7 +25,12 @@ const ProgressCard = ({
         <h3 className="text-gray-900 font-medium mb-2 line-clamp-3 group-hover:underline">
           {name}
         </h3>
-        <p className="text-gray-500 text-sm mb-4 line-clamp-3">{title}</p>
+        <p
+          className="text-gray-500 text-sm mb-4 line-clamp-3"
+          dangerouslySetInnerHTML={{
+            __html: title, // Render the sanitized HTML
+          }}
+        />
         {/* Progress section - commented out temporarily */}
         {/*
         <div className="flex items-center text-sm text-gray-500 mb-2 font-bold">

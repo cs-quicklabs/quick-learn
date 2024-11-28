@@ -23,19 +23,17 @@ export default class Helpers {
     });
   }
 
-  static HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
+  static HTMLSanitizer(value: string, isDefaultTagsAllowed = false): string {
     return sanitizeHtml(
       value,
       isDefaultTagsAllowed
         ? {
-            allowedTags: ['b', 'i', 'em', 'strong', 'a'],
-            allowedAttributes: {
-              a: ['href'],
-            },
+            allowedTags: ['b', 'i', 'em', 'strong', 'a', 'br'],
+            allowedAttributes: { a: ['href'] },
             allowedIframeHostnames: ['www.youtube.com'],
           }
         : {
-            allowedTags: [],
+            allowedTags: ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'br'],
             allowedAttributes: {},
             allowedIframeHostnames: [],
           },
