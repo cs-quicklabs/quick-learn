@@ -39,7 +39,7 @@ const addSchema = z.object({
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     })
-    .refine(noSpecialCharValidation, 'Only alphabets and space are allowed'),
+    .refine(noSpecialCharValidation, 'Special characters are not allowed'),
 });
 
 type AddSchemaType = z.infer<typeof addSchema>;
@@ -53,7 +53,7 @@ const editSchema = z.object({
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     })
-    .refine(noSpecialCharValidation, 'Only alphabets and space are allowed'),
+    .refine(noSpecialCharValidation, 'Special characters are not allowed'),
 });
 
 type EditSchemaType = z.infer<typeof editSchema>;
@@ -170,7 +170,7 @@ const BaseLayout = ({
                             heading.toLowerCase().replace(' ', '_') +
                             '_name_edit'
                           }
-                          className="m-2 p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                          className="m-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                           {...register('name')}
                           disabled={isEditLoading}
                         />

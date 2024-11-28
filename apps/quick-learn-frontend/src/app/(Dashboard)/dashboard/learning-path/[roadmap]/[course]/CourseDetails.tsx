@@ -85,7 +85,6 @@ const CourseDetails = () => {
             <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
               {courseData?.lessons?.map((lessons) => (
                 <ProgressCard
-                  className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow duration-200 text-left h-41"
                   key={lessons.id}
                   id={+lessons.id}
                   name={lessons.name}
