@@ -60,8 +60,7 @@ export class LessonProgressService {
   async getLessonProgressArray(
     userId: number,
     courseId: number,
-  ): Promise<{ completedLessons: any[] }> {
-    // Verify the course exists
+  ): Promise<{ lesson_id: number; completed_date: Date | null }[]> {
     const course = await this.courseRepository.findOne({
       where: { id: courseId },
     });
@@ -70,16 +69,18 @@ export class LessonProgressService {
       throw new NotFoundException('Course not found');
     }
 
-    const [completedLessons] = await Promise.all([
-      this.userLessonProgressRepository.find({
-        where: {
-          user_id: userId,
-          course_id: courseId,
-        },
-      }),
-    ]);
+    const completedLessons = await this.userLessonProgressRepository.find({
+      where: {
+        user_id: userId,
+        course_id: courseId,
+      },
+      select: ['lesson_id', 'completed_date'],
+    });
 
-    return { completedLessons };
+    return completedLessons.map(({ lesson_id, completed_date }) => ({
+      lesson_id,
+      completed_date,
+    }));
   }
 
   // async getCourseLessonCount(

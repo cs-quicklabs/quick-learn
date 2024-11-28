@@ -32,10 +32,11 @@ export class LessonProgressController {
 
   @Get(':courseId/progress')
   async getLessonProgress(@Param('courseId') courseId: number, @Request() req) {
-    return await this.lessonProgressService.getLessonProgressArray(
+    const data = await this.lessonProgressService.getLessonProgressArray(
       req.user.id,
       courseId,
     );
+    return new SuccessResponse('Course completed lessons', data);
   }
 
   // @Get(':courseId/progresscount')
@@ -51,16 +52,19 @@ export class LessonProgressController {
 
   @Get('/userprogress')
   async getAllUserProgress(@Request() req) {
-    return await this.lessonProgressService.getUserLessonProgressViaCourse(
-      req.user.id,
-    );
+    const data =
+      await this.lessonProgressService.getUserLessonProgressViaCourse(
+        req.user.id,
+      );
+    return new SuccessResponse('All user Progress grouped by course', data);
   }
 
   @Get('check/:lessonId')
   async checkIsRead(@Param('lessonId') lessonId: number, @Request() req) {
-    return await this.lessonProgressService.checkLessonRead(
+    const data = await this.lessonProgressService.checkLessonRead(
       req.user.id,
       lessonId,
     );
+    return new SuccessResponse('Lesson Status ', data);
   }
 }

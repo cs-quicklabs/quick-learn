@@ -28,12 +28,13 @@ const LessonDetails = () => {
   const [lessonDetails, setLessonDetails] = useState<TLesson>();
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
-  const [isRead, setIsRead] = useState(false); // remove it when userprogress is being declared globally
+  const [isRead, setIsRead] = useState<boolean>(false); // remove it when userprogress is being declared globally
 
-  const handleCheckboxChange = async (event: any) => {
+  const handleCheckboxChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const checked = event.target.checked;
     setIsChecked(checked);
-    // Call the API to mark the lesson as completed
     try {
       const res = await markAsDone(lesson, course);
       showApiMessageInToast(res);
@@ -75,8 +76,8 @@ const LessonDetails = () => {
       });
 
     getLessonStatus(lesson)
-      .then((res: any) => {
-        setIsRead(res.isRead);
+      .then((res) => {
+        setIsRead(res.data.isRead);
       })
       .catch((err) => console.log('err', err));
   }, [router, lesson, course, roadmap]);

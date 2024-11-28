@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { MdOutlineDone } from 'react-icons/md';
 import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
+import { LessonProgress } from '../types/LessonProgressTypes';
 
 interface ProgressCardProps {
   id: number;
@@ -12,7 +13,7 @@ interface ProgressCardProps {
   percentage?: number;
   link: string;
   className?: string;
-  isCompleted?: any;
+  isCompleted?: LessonProgress;
 }
 
 const ProgressCard = ({
