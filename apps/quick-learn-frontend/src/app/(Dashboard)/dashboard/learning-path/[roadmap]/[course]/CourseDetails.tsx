@@ -1,6 +1,6 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import RoadmapCourseSkeleton from '@src/shared/components/roadmapCourseSkeleton';
@@ -58,6 +58,21 @@ const CourseDetails = () => {
       .catch((err) => console.log('err', err));
   }, [router, roadmap, course]);
 
+  const progressPercentage = useMemo(() => {
+    if (!completedLesson || !courseData?.lessons?.length) {
+      return 0;
+    }
+    const courseLessonIds = new Set(
+      courseData.lessons.map((lesson) => lesson.id),
+    );
+    const completedCount = completedLesson.filter((lesson) =>
+      courseLessonIds.has(lesson.lesson_id),
+    ).length;
+
+    const totalLessons = courseData?.lessons?.length;
+    return Math.round((completedCount / totalLessons) * 100);
+  }, [completedLesson, courseData]);
+
   return (
     <>
       {isPageLoading && <RoadmapCourseSkeleton />}
@@ -68,7 +83,7 @@ const CourseDetails = () => {
         </h1>
         <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
           ({courseData?.lessons?.length ?? 0} {en.common.lessons}, &nbsp;
-          {'0% '}
+          {`${progressPercentage}% `}
           {en.common.complete})
         </p>
       </div>
