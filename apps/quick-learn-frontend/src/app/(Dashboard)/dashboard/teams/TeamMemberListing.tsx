@@ -24,7 +24,7 @@ const TeamMemberListing = () => {
       totalUsers: state.team.totalUsers,
       currentPage: state.team.currentPage,
       currentUserType: state.team.currentUserType,
-      filteredTotal: state.team.totalUsers,
+      filteredTotal: state.team.filterdTotal,
     }));
 
   const userTypes: TUserType[] = [

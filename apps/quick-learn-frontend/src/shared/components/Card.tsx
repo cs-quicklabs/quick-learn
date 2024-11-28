@@ -48,7 +48,6 @@ const Card: FC<CardProps> = ({
     window.addEventListener('resize', checkTitleHeight);
     return () => window.removeEventListener('resize', checkTitleHeight);
   }, [title]);
-
   const CardContent = () => (
     <div
       className={`flex flex-col h-48 ${
@@ -70,11 +69,12 @@ const Card: FC<CardProps> = ({
         </h1>
         <p
           className={`font-normal text-gray-500 ${
-            isLongTitle ? 'line-clamp-2' : 'line-clamp-3'
-          } text-sm`}
-        >
-          {description}
-        </p>
+            isLongTitle ? 'line-clamp-1' : 'line-clamp-2'
+          } text-sm whitespace-pre-line`}
+          dangerouslySetInnerHTML={{
+            __html: description,
+          }}
+        />
       </div>
 
       <div className={`mt-auto ${isLongTitle ? 'space-y-0.5' : 'space-y-1'}`}>
