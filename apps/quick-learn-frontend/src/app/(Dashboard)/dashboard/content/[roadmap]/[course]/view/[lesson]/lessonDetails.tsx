@@ -8,7 +8,7 @@ import ViewLesson from '@src/shared/components/ViewLesson';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
-import { useParams } from 'next/navigation';
+import { useParams , useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 const defaultlinks: TBreadcrumb[] = [
@@ -25,6 +25,7 @@ const LessonDetails = () => {
     course: string;
     lesson: string;
   }>();
+  const router = useRouter();
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
 
@@ -52,6 +53,10 @@ const LessonDetails = () => {
     ];
   }, [roadmap, lesson, roadmapId, courseId, lessonId]);
 
+  const redirectUserOnError = () => {
+    router.replace(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
+  }
+
   useEffect(() => {
     if (!(isNaN(+roadmapId) || isNaN(+courseId))) {
       getRoadmap(roadmapId, courseId)
@@ -63,7 +68,7 @@ const LessonDetails = () => {
         .then((res) => {
           setLesson(res.data);
         })
-        .catch((err) => showApiErrorInToast(err));
+        .catch((err) => {showApiErrorInToast(err);redirectUserOnError();});
     }
   }, [roadmapId, courseId, lessonId]);
 
