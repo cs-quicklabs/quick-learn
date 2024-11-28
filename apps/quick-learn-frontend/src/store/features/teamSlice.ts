@@ -66,8 +66,13 @@ const teamSlice = createSlice({
       .addCase(fetchTeamMembers.fulfilled, (state, action) => {
         state.isLoading = false;
         state.users = action.payload.items;
-        if (state.isInitialLoad) {
-          state.totalUsers = action.payload.total; // Only set the totalUsers once on initial load
+        if (
+          state.filterdTotal > state.totalUsers ||
+          (state.searchQuery === '' && state.currentUserType === '')
+        ) {
+          state.totalUsers = state.filterdTotal; // Only set the totalUsers once on initial load
+          state.searchQuery = '';
+          state.currentUserType = '';
         }
         state.isInitialLoad = false; // Set to false after first successful load
         state.filterdTotal = action.payload.total;
