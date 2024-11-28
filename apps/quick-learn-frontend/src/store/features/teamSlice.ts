@@ -6,6 +6,7 @@ import { TUser } from '@src/shared/types/userTypes';
 interface TeamState {
   users: TUser[];
   totalUsers: number;
+  filterdTotal: number;
   isLoading: boolean;
   isInitialLoad: boolean; // New flag for initial load
   error: string | null;
@@ -17,6 +18,7 @@ interface TeamState {
 const initialState: TeamState = {
   users: [],
   totalUsers: 0,
+  filterdTotal: 0,
   isLoading: true,
   isInitialLoad: true, // Track initial load
   error: null,
@@ -63,9 +65,12 @@ const teamSlice = createSlice({
       })
       .addCase(fetchTeamMembers.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isInitialLoad = false; // Set to false after first successful load
         state.users = action.payload.items;
-        state.totalUsers = action.payload.total;
+        if (state.isInitialLoad) {
+          state.totalUsers = action.payload.total; // Only set the totalUsers once on initial load
+        }
+        state.isInitialLoad = false; // Set to false after first successful load
+        state.filterdTotal = action.payload.total;
       })
       .addCase(fetchTeamMembers.rejected, (state, action) => {
         state.isLoading = false;
