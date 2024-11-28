@@ -1,6 +1,6 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import RoadmapCourseSkeleton from '@src/shared/components/roadmapCourseSkeleton';
@@ -11,6 +11,8 @@ import { TCourse } from '@src/shared/types/contentRepository';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import ProgressCard from '@src/shared/components/ProgressCard';
+import { getCourseProgress } from '@src/apiServices/lessonsService';
+import { LessonProgress } from '@src/shared/types/LessonProgressTypes';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.myLearningPath.heading, link: RouteEnum.MY_LEARNING_PATH },
@@ -21,6 +23,7 @@ const CourseDetails = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [courseData, setCourseData] = useState<TCourse>();
+  const [completedLesson, setCompletedLesson] = useState<LessonProgress[]>();
   const router = useRouter();
 
   useEffect(() => {
@@ -46,7 +49,29 @@ const CourseDetails = () => {
         router.push(RouteEnum.MY_LEARNING_PATH);
       })
       .finally(() => setIsPageLoading(false));
+
+    getCourseProgress(course)
+      .then((res) => {
+        setCompletedLesson(res.data);
+        console.log('Completed Lessons:', res);
+      })
+      .catch((err) => console.log('err', err));
   }, [router, roadmap, course]);
+
+  const progressPercentage = useMemo(() => {
+    if (!completedLesson || !courseData?.lessons?.length) {
+      return 0;
+    }
+    const courseLessonIds = new Set(
+      courseData.lessons.map((lesson) => lesson.id),
+    );
+    const completedCount = completedLesson.filter((lesson) =>
+      courseLessonIds.has(lesson.lesson_id),
+    ).length;
+
+    const totalLessons = courseData?.lessons?.length;
+    return Math.round((completedCount / totalLessons) * 100);
+  }, [completedLesson, courseData]);
 
   return (
     <>
@@ -58,7 +83,7 @@ const CourseDetails = () => {
         </h1>
         <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
           ({courseData?.lessons?.length ?? 0} {en.common.lessons}, &nbsp;
-          {'0% '}
+          {`${progressPercentage}% `}
           {en.common.complete})
         </p>
       </div>
@@ -90,6 +115,12 @@ const CourseDetails = () => {
                   name={lessons.name}
                   title={lessons.content}
                   link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}/${lessons.id}`}
+                  isCompleted={
+                    completedLesson &&
+                    completedLesson.find(
+                      (idx: LessonProgress) => lessons.id === idx.lesson_id,
+                    )
+                  }
                   // percentage={course.percentage || 0}
                 />
               ))}
