@@ -1,12 +1,12 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useMemo } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Modal } from 'flowbite-react';
+import { Modal, Accordion } from 'flowbite-react';
 import { CloseIcon, Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
-import { Accordion } from 'flowbite-react';
+import { ChevronDownIcon } from 'lucide-react';
 
 interface Props {
   show: boolean;
@@ -51,6 +51,11 @@ const AssignDataModal: FC<Props> = ({
     defaultValues: initialValues,
     mode: 'onChange',
   });
+  // const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+  const sortedData = useMemo(
+    () => [...data].sort((a, b) => a.name.localeCompare(b.name)),
+    [data],
+  );
 
   useEffect(() => {
     if (show) {
@@ -68,7 +73,7 @@ const AssignDataModal: FC<Props> = ({
     if (initialValues?.selected && show && !isLoading) {
       setValue('selected', initialValues.selected);
     }
-  }, [initialValues, show, isLoading, reset, setValue]);
+  }, [initialValues, show, isLoading, reset, setValue, sortedData]);
 
   function onFormSubmit(formData: schemaType) {
     onSubmit(formData?.selected ?? []);
@@ -86,6 +91,7 @@ const AssignDataModal: FC<Props> = ({
       setIsAllExpanded(true);
     }
   };
+
   const handleAccordionChange = (id: string) => {
     const newOpenAccordions = openAccordions.includes(id)
       ? openAccordions.filter((openId) => openId !== id)
@@ -100,8 +106,6 @@ const AssignDataModal: FC<Props> = ({
 
     setIsAllExpanded(newIsAllExpanded);
   };
-
-  const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <Modal show={show} size="6xl">
@@ -121,7 +125,7 @@ const AssignDataModal: FC<Props> = ({
         <div className="ml-4 text-[14px] text-gray-500 mt-0">
           <p>{note}</p>
         </div>
-        <div className="mb-4 px-4 md:px-6">
+        <div className="mb-4 px-4 md:px-6 mt-3">
           <ul
             className="flex flex-wrap -mb-px text-sm font-medium justify-between items-center border-b border-gray-200 dark:border-gray-700"
             id="myTab"
@@ -161,19 +165,30 @@ const AssignDataModal: FC<Props> = ({
                   const sortedList = ele.list.sort((a, b) =>
                     a.name.localeCompare(b.name),
                   );
+                  const isOpen = openAccordions.includes(ele.name);
                   return (
                     <div key={ele.name}>
                       {
-                        <Accordion>
+                        <Accordion
+                          collapseAll
+                          className="[&>div>div>button>svg]:hidden" // Hide default Flowbite accordion icon
+                        >
                           <Accordion.Panel>
                             <Accordion.Title
-                              className="text-black bg-transparent focus:ring-0"
+                              className="relative flex items-center justify-between text-black bg-transparent focus:ring-0 [&>svg]:hidden px-3 py-4"
                               onClick={() => handleAccordionChange(ele.name)}
                             >
-                              {ele.name}
+                              <span className="flex-grow">{ele.name}</span>
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                <ChevronDownIcon
+                                  className={`w-5 h-5 transition-transform duration-300 ${
+                                    isOpen ? 'rotate-180' : 'rotate-0'
+                                  }`}
+                                />
+                              </div>
                             </Accordion.Title>
                             <Accordion.Content
-                              className=" py-6 border-none"
+                              className="py-6 border-none"
                               hidden={!openAccordions.includes(ele.name)}
                             >
                               {sortedList.length > 0 ? (
