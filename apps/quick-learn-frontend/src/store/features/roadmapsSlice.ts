@@ -20,14 +20,7 @@ const initialState: RoadmapsState = {
 
 export const fetchRoadmaps = createAsyncThunk(
   'roadmaps/fetchRoadmaps',
-  async (_, { getState }) => {
-    const state = getState() as RootState;
-
-    // If already initialized and has data, skip the fetch
-    if (state.roadmaps.isInitialized && state.roadmaps.roadmaps.length > 0) {
-      return state.roadmaps.roadmaps;
-    }
-
+  async () => {
     const response = await getRoadmaps();
     return response.data;
   },
@@ -44,9 +37,7 @@ const roadmapsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchRoadmaps.pending, (state) => {
-        if (!state.isInitialized) {
-          state.status = 'loading';
-        }
+        state.status = 'loading';
       })
       .addCase(fetchRoadmaps.fulfilled, (state, action) => {
         state.status = 'succeeded';
@@ -54,9 +45,7 @@ const roadmapsSlice = createSlice({
         state.isInitialized = true;
       })
       .addCase(fetchRoadmaps.rejected, (state, action) => {
-        if (!state.isInitialized) {
-          state.status = 'failed';
-        }
+        state.status = 'failed';
         state.error = action.error.message || null;
         showApiErrorInToast(action.error as AxiosErrorObject);
       });

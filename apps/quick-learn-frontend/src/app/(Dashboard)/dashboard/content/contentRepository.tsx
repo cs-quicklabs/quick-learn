@@ -16,13 +16,8 @@ import {
 } from '@src/utils/toastUtils';
 import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import {
-  selectMetadataStatus,
-  fetchMetadata,
-  selectContentRepositoryMetadata,
-  selectIsMetadataInitialized,
-} from '../../../../store/features/metadataSlice';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import { selectContentRepositoryMetadata } from '@src/store/features/metadataSlice';
 import {
   addRoadmap,
   fetchRoadmaps,
@@ -36,32 +31,21 @@ const ContentRepository = () => {
   const dispatch = useAppDispatch();
 
   const contentRepository = useAppSelector(selectContentRepositoryMetadata);
-  const metadataStatus = useAppSelector(selectMetadataStatus);
-  const isMetadataInitialized = useAppSelector(selectIsMetadataInitialized);
   const roadmaps = useAppSelector(selectAllRoadmaps);
   const roadmapsStatus = useAppSelector(selectRoadmapsStatus);
   const isRoadmapsInitialized = useAppSelector(selectIsRoadmapsInitialized);
 
-  const allCourseCategories = contentRepository.course_categories;
+  const allCourseCategories = contentRepository?.course_categories || [];
 
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [courses, setCourses] = useState<TCourse[]>([]);
 
-  // Only show loader if either slice isn't initialized yet
-  const isLoading =
-    (!isMetadataInitialized || !isRoadmapsInitialized) &&
-    (metadataStatus === 'loading' || roadmapsStatus === 'loading');
+  const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
 
   useEffect(() => {
-    // Only fetch if not initialized
-    if (!isMetadataInitialized) {
-      dispatch(fetchMetadata());
-    }
-    if (!isRoadmapsInitialized) {
-      dispatch(fetchRoadmaps());
-    }
-  }, [dispatch, isMetadataInitialized, isRoadmapsInitialized]);
+    dispatch(fetchRoadmaps());
+  }, [dispatch]);
 
   useEffect(() => {
     const data: TCourse[] = [];
@@ -85,10 +69,10 @@ const ContentRepository = () => {
       .finally(() => setIsModalLoading(false));
   }
 
-  // Only show skeleton on initial load
   if (isLoading) {
     return <ContentRepositorySkeleton />;
   }
+
   return (
     <>
       <AddEditRoadMapModal
@@ -99,7 +83,6 @@ const ContentRepository = () => {
       />
 
       <div className="container mx-auto px-4">
-        {/* Main Heading */}
         <div className="flex flex-col items-center justify-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-2">
             {en.contentRepository.contentRepository}
@@ -110,7 +93,6 @@ const ContentRepository = () => {
           </p>
         </div>
 
-        {/* Roadmaps Section */}
         <section className="mb-12">
           <div className="flex items-baseline mb-6">
             <h2 className="text-2xl md:text-3xl font-bold">
@@ -156,7 +138,6 @@ const ContentRepository = () => {
           )}
         </section>
 
-        {/* Courses Section */}
         <section>
           <div className="flex items-baseline mb-6">
             <h2 className="text-2xl md:text-3xl font-bold">

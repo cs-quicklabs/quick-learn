@@ -22,18 +22,6 @@ const initialState: LearningPathState = {
 export const fetchUserContent = createAsyncThunk(
   'learningPath/fetchUserContent',
   async (_, { getState }) => {
-    const state = getState() as RootState;
-
-    if (
-      state.learningPath.isInitialized &&
-      state.learningPath.roadmaps.length > 0
-    ) {
-      return {
-        roadmaps: state.learningPath.roadmaps,
-        courses: state.learningPath.courses,
-      };
-    }
-
     const response = await getUserRoadmapsService().catch(
       (error: AxiosErrorObject) => {
         showApiErrorInToast(error);

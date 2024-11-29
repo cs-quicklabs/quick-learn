@@ -84,6 +84,6 @@ export const selectMetadataStatus = (state: RootState) => state.metadata.status;
 export const selectContentRepositoryMetadata = (state: RootState) =>
   state.metadata.metadata.contentRepository;
 export const selectIsMetadataInitialized = (state: RootState) =>
-  state.metadata.isInitialized;
+  state.metadata.isInitialized ?? false;
 
 export default metadataSlice.reducer;
