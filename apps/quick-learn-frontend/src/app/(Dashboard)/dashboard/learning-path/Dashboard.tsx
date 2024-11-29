@@ -25,10 +25,8 @@ const Dashboard = () => {
   const isLoading = !isInitialized && status === 'loading';
 
   useEffect(() => {
-    if (!isInitialized) {
-      dispatch(fetchUserContent());
-    }
-  }, [dispatch, isInitialized]);
+    dispatch(fetchUserContent());
+  }, [dispatch]);
 
   if (isLoading) {
     return <DashboardSkeleton />;
