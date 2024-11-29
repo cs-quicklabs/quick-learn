@@ -6,7 +6,6 @@ import { Modal, Accordion } from 'flowbite-react';
 import { CloseIcon, Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
-import { ChevronDownIcon } from 'lucide-react';
 
 interface Props {
   show: boolean;
@@ -179,13 +178,22 @@ const AssignDataModal: FC<Props> = ({
                               onClick={() => handleAccordionChange(ele.name)}
                             >
                               <span className="flex-grow">{ele.name}</span>
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                <ChevronDownIcon
-                                  className={`w-5 h-5 transition-transform duration-300 ${
-                                    isOpen ? 'rotate-180' : 'rotate-0'
-                                  }`}
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className={`size-6 absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-300 ${
+                                  isOpen ? 'rotate-180' : 'rotate-0'
+                                }`}
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="m19.5 8.25-7.5 7.5-7.5-7.5"
                                 />
-                              </div>
+                              </svg>
                             </Accordion.Title>
                             <Accordion.Content
                               className="py-6 border-none"
