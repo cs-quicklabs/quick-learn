@@ -21,7 +21,6 @@ import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { selectContentRepositoryMetadata } from '@src/store/features/metadataSlice';
 import {
   addRoadmap,
-  fetchRoadmaps,
   selectAllRoadmaps,
   selectIsRoadmapsInitialized,
   selectRoadmapsStatus,
@@ -43,10 +42,6 @@ const ContentRepository = () => {
   const [courses, setCourses] = useState<TCourse[]>([]);
 
   const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
-
-  useEffect(() => {
-    dispatch(fetchRoadmaps());
-  }, [dispatch]);
 
   useEffect(() => {
     const data: TCourse[] = [];
