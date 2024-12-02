@@ -234,7 +234,9 @@ export const en = {
    * Archived items section
    */
   teamMemberDetails: {
-    assignNewRoadmap: 'Assign New Roadmap',
+    assignNewRoadmap: 'Assign/Unassign Roadmap',
+    checkboxAssign:
+      'Use the checkboxes to assign or remove roadmaps from the selected user',
   },
 
   // Success messages

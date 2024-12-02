@@ -159,6 +159,7 @@ const TeamMemberDetails = () => {
         show={openAssignModal}
         setShow={setOpenAssignModal}
         heading={en.teamMemberDetails.assignNewRoadmap}
+        note={en.teamMemberDetails.checkboxAssign}
         sub_heading={en.common.selectRoadmaps}
         data={allRoadmapCategories.map((item) => ({
           name: item.name,
