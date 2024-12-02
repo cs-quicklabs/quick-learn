@@ -178,14 +178,14 @@ export class UsersService extends PaginationService<UserEntity> {
       return [];
     }
 
-    // Transform the response to include lesson_ids while maintaining entity types
     if (includeCourses) {
       user.assigned_roadmaps.forEach((roadmap) => {
         if (roadmap.courses) {
           roadmap.courses.forEach((course) => {
-            (course as any).lesson_ids =
+            const typedCourse = course as CourseWithLessonIds;
+            typedCourse.lesson_ids =
               course.lessons?.map((lesson) => lesson.id) || [];
-            delete course.lessons;
+            delete typedCourse.lessons;
           });
         }
       });
