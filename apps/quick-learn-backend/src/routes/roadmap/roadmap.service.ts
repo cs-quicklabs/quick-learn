@@ -365,26 +365,20 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
     }
   }
 
-  getUserRoadmapDetails(userId: number, id: number) {
-    return this.roadmapRepository
+  async getUserRoadmapDetails(userId: number, roadmapId: number) {
+    return await this.roadmapRepository
       .createQueryBuilder('roadmap')
+      .leftJoinAndSelect('roadmap.courses', 'course')
+      .leftJoinAndSelect('course.lessons', 'lesson')
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
-      .leftJoinAndSelect('roadmap.courses', 'courses')
-      .leftJoin('courses.lessons', 'lessons')
-      .loadRelationCountAndMap(
-        'courses.lessons_count',
-        'courses.lessons',
-        'lessons',
-        (qb) =>
-          qb
-            .andWhere('lessons.archived = :archived', { archived: false })
-            .andWhere('lessons.approved = :approved', { approved: true }),
-      )
-      .leftJoin('roadmap.users', 'users')
-      .where('users.id = :userId', { userId })
-      .andWhere('roadmap.id = :id', { id })
+      .leftJoin('roadmap.users', 'user')
+      .where('roadmap.id = :roadmapId', { roadmapId })
+      .andWhere('user.id = :userId', { userId })
       .andWhere('roadmap.archived = :archived', { archived: false })
-      .andWhere('courses.archived = :courseArchived', { courseArchived: false })
+      .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
+      .orderBy('course.id', 'ASC')
+      .addOrderBy('lesson.id', 'ASC')
       .getOne();
   }
 }

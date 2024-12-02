@@ -159,9 +159,15 @@ export class UsersService extends PaginationService<UserEntity> {
     if (includeCourses) {
       queryBuilder
         .leftJoinAndSelect('roadmap.courses', 'course')
+        .leftJoinAndSelect('course.lessons', 'lesson')
         .andWhere('course.archived = :courseArchived', {
           courseArchived: false,
-        });
+        })
+        .andWhere('lesson.archived = :lessonArchived', {
+          lessonArchived: false,
+        })
+        .orderBy('course.id', 'ASC')
+        .addOrderBy('lesson.id', 'ASC');
     }
 
     const user = await queryBuilder.getOne();
@@ -169,14 +175,35 @@ export class UsersService extends PaginationService<UserEntity> {
       return [];
     }
 
+    // Transform the response to include lesson_ids while maintaining entity types
+    if (includeCourses) {
+      user.assigned_roadmaps.forEach((roadmap) => {
+        if (roadmap.courses) {
+          roadmap.courses.forEach((course) => {
+            (course as any).lesson_ids =
+              course.lessons?.map((lesson) => lesson.id) || [];
+            delete course.lessons;
+          });
+        }
+      });
+    }
+
     return user.assigned_roadmaps;
   }
-
   async getRoadmapDetails(userId: number, id: number) {
     const roadmap = await this.roadmapService.getUserRoadmapDetails(userId, id);
 
     if (!roadmap) {
       throw new BadRequestException(en.RoadmapNotFound);
+    }
+
+    // Add lesson_ids to courses if courses exist
+    if (roadmap.courses) {
+      roadmap.courses.forEach((course) => {
+        (course as any).lesson_ids =
+          course.lessons?.map((lesson) => lesson.id) || [];
+        delete course.lessons;
+      });
     }
 
     return roadmap;
