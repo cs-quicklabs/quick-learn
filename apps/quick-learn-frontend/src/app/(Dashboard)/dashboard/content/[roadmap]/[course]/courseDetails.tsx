@@ -25,7 +25,12 @@ import {
   TCourse,
   TCreateCourse,
 } from '@src/shared/types/contentRepository';
-import useDashboardStore from '@src/store/dashboard.store';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectContentRepositoryMetadata,
+  updateContentRepository,
+} from '@src/store/features/metadataSlice';
+import { AppDispatch } from '@src/store/store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -43,14 +48,17 @@ const defaultlinks: TBreadcrumb[] = [
 
 const CourseDetails = () => {
   const router = useRouter();
-  const { setContentRepositoryMetadata, metadata } = useDashboardStore(
-    (state) => state,
+  const dispatch = useDispatch<AppDispatch>();
+  const contentRepositoryMetadata = useSelector(
+    selectContentRepositoryMetadata,
   );
-  const allCourseCategories = metadata.contentRepository.course_categories;
-  const allRoadmapCategories = metadata.contentRepository.roadmap_categories;
+  const allCourseCategories = contentRepositoryMetadata.course_categories;
+  const allRoadmapCategories = contentRepositoryMetadata.roadmap_categories;
+
   const params = useParams<{ roadmap: string; course: string }>();
   const courseId = params.course;
   const roadmapId = params.roadmap;
+
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [courseData, setcourseData] = useState<TCourse>();
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
@@ -166,13 +174,17 @@ const CourseDetails = () => {
     activateCourse({ id: Number(courseId), active: false })
       .then((res) => {
         showApiMessageInToast(res);
-        allCourseCategories.forEach((item) => {
-          item.courses = item.courses.filter((ele) => ele.id !== courseId);
-        });
-        setContentRepositoryMetadata({
-          ...metadata.contentRepository,
-          course_categories: allCourseCategories,
-        });
+        const updatedCourseCategories = allCourseCategories.map((category) => ({
+          ...category,
+          courses: category.courses.filter((course) => course.id !== courseId),
+        }));
+
+        dispatch(
+          updateContentRepository({
+            course_categories: updatedCourseCategories,
+          }),
+        );
+
         if (roadmapId && parseInt(roadmapId)) {
           router.replace(RouteEnum.CONTENT + `/${roadmapId}`);
         } else {

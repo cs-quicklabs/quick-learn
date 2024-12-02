@@ -1,17 +1,14 @@
-// store/features/learningPathSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getUserRoadmapsService } from '@src/apiServices/contentRepositoryService';
 import { TUserCourse, TUserRoadmap } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { RootState } from '../store';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import { BaseAsyncState } from '../types/base.types';
 
-interface LearningPathState {
+interface LearningPathState extends BaseAsyncState {
   roadmaps: TUserRoadmap[];
   courses: TUserCourse[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
-  isInitialized: boolean;
 }
 
 const initialState: LearningPathState = {
@@ -25,20 +22,13 @@ const initialState: LearningPathState = {
 export const fetchUserContent = createAsyncThunk(
   'learningPath/fetchUserContent',
   async (_, { getState }) => {
-    const state = getState() as RootState;
+    const response = await getUserRoadmapsService().catch(
+      (error: AxiosErrorObject) => {
+        showApiErrorInToast(error);
+        throw error;
+      },
+    );
 
-    // If already initialized and has data, skip the fetch
-    if (
-      state.learningPath.isInitialized &&
-      state.learningPath.roadmaps.length > 0
-    ) {
-      return {
-        roadmaps: state.learningPath.roadmaps,
-        courses: state.learningPath.courses,
-      };
-    }
-
-    const response = await getUserRoadmapsService();
     if (!response.success) {
       throw new Error('Failed to fetch user content');
     }
@@ -51,7 +41,6 @@ export const fetchUserContent = createAsyncThunk(
       return acc;
     }, []);
 
-    // Remove duplicate courses
     const uniqueCourses = Array.from(
       new Map(allCourses.map((course) => [course.id, course])).values(),
     );
@@ -94,13 +83,13 @@ const learningPathSlice = createSlice({
         state.roadmaps = action.payload.roadmaps;
         state.courses = action.payload.courses;
         state.isInitialized = true;
+        state.error = null;
       })
       .addCase(fetchUserContent.rejected, (state, action) => {
         if (!state.isInitialized) {
           state.status = 'failed';
         }
-        state.error = action.error.message || null;
-        showApiErrorInToast(action.error as AxiosErrorObject);
+        state.error = (action.payload as string) || 'An error occurred';
       });
   },
 });

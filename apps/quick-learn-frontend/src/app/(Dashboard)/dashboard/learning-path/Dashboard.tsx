@@ -25,10 +25,8 @@ const Dashboard = () => {
   const isLoading = !isInitialized && status === 'loading';
 
   useEffect(() => {
-    if (!isInitialized) {
-      dispatch(fetchUserContent());
-    }
-  }, [dispatch, isInitialized]);
+    dispatch(fetchUserContent());
+  }, [dispatch]);
 
   if (isLoading) {
     return <DashboardSkeleton />;
@@ -64,7 +62,6 @@ const Dashboard = () => {
                   name={roadmap.name}
                   title={roadmap.description}
                   link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap.id}`}
-                  // percentage={roadmap.percentage || 0}
                 />
               ))}
             </ul>
@@ -104,7 +101,6 @@ const Dashboard = () => {
                   name={course.name}
                   title={course.description}
                   link={`${RouteEnum.MY_LEARNING_PATH}/courses/${course.id}`}
-                  // percentage={course.percentage || 0}
                 />
               ))}
             </ul>
