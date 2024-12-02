@@ -6,6 +6,7 @@ import uiReducer from './features/uiSlice';
 import teamReducer from './features/teamSlice';
 import approvalReducer from './features/approvalSlice';
 import archivedReducer from './features/archivedSlice';
+import userProgressReducer from './features/userProgressSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     team: teamReducer,
     approval: approvalReducer,
     archived: archivedReducer,
+    userProgress: userProgressReducer,
   },
 });
 

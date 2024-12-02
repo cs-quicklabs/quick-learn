@@ -11,8 +11,8 @@ import { TCourse } from '@src/shared/types/contentRepository';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import ProgressCard from '@src/shared/components/ProgressCard';
-import { getCourseProgress } from '@src/apiServices/lessonsService';
-import { LessonProgress } from '@src/shared/types/LessonProgressTypes';
+import { useAppSelector } from '@src/store/hooks';
+import { selectUserProgress } from '@src/store/features/userProgressSlice';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.myLearningPath.heading, link: RouteEnum.MY_LEARNING_PATH },
@@ -23,8 +23,18 @@ const CourseDetails = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [courseData, setCourseData] = useState<TCourse>();
-  const [completedLesson, setCompletedLesson] = useState<LessonProgress[]>();
   const router = useRouter();
+
+  // Get progress data from Redux store
+  const userProgress = useAppSelector(selectUserProgress);
+
+  // Find the progress data for this specific course
+  const courseProgress = useMemo(
+    () =>
+      userProgress?.find((progress) => progress.course_id === Number(course))
+        ?.lessons || [],
+    [userProgress, course],
+  );
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -49,29 +59,22 @@ const CourseDetails = () => {
         router.push(RouteEnum.MY_LEARNING_PATH);
       })
       .finally(() => setIsPageLoading(false));
-
-    getCourseProgress(course)
-      .then((res) => {
-        setCompletedLesson(res.data);
-        console.log('Completed Lessons:', res);
-      })
-      .catch((err) => console.log('err', err));
   }, [router, roadmap, course]);
 
   const progressPercentage = useMemo(() => {
-    if (!completedLesson || !courseData?.lessons?.length) {
+    if (!courseProgress?.length || !courseData?.lessons?.length) {
       return 0;
     }
     const courseLessonIds = new Set(
       courseData.lessons.map((lesson) => lesson.id),
     );
-    const completedCount = completedLesson.filter((lesson) =>
+    const completedCount = courseProgress.filter((lesson) =>
       courseLessonIds.has(lesson.lesson_id),
     ).length;
 
-    const totalLessons = courseData?.lessons?.length;
+    const totalLessons = courseData.lessons.length;
     return Math.round((completedCount / totalLessons) * 100);
-  }, [completedLesson, courseData]);
+  }, [courseProgress, courseData]);
 
   return (
     <>
@@ -83,8 +86,10 @@ const CourseDetails = () => {
         </h1>
         <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
           ({courseData?.lessons?.length ?? 0} {en.common.lessons}, &nbsp;
-          {`${progressPercentage}% `}
-          {en.common.complete})
+          {progressPercentage === 0
+            ? 'Not started yet'
+            : `${progressPercentage}% ${en.common.complete}`}
+          )
         </p>
       </div>
 
@@ -103,27 +108,27 @@ const CourseDetails = () => {
       </div>
 
       <div className="relative px-6 grid gap-10 pb-16">
-        {courseData?.lessons?.length === 0 ? (
+        {!courseData?.lessons?.length ? (
           <EmptyState type="lessons" />
         ) : (
           <div>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
-              {courseData?.lessons?.map((lessons) => (
-                <ProgressCard
-                  key={lessons.id}
-                  id={+lessons.id}
-                  name={lessons.name}
-                  title={lessons.content}
-                  link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}/${lessons.id}`}
-                  isCompleted={
-                    completedLesson &&
-                    completedLesson.find(
-                      (idx: LessonProgress) => lessons.id === idx.lesson_id,
-                    )
-                  }
-                  // percentage={course.percentage || 0}
-                />
-              ))}
+              {courseData.lessons.map((lesson) => {
+                const lessonProgress = courseProgress.find(
+                  (progress) => progress.lesson_id === lesson.id,
+                );
+
+                return (
+                  <ProgressCard
+                    key={lesson.id}
+                    id={+lesson.id}
+                    name={lesson.name}
+                    title={lesson.content}
+                    link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}/${lesson.id}`}
+                    isCompleted={lessonProgress}
+                  />
+                );
+              })}
             </ul>
           </div>
         )}

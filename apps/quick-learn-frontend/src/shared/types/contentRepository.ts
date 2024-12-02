@@ -47,6 +47,7 @@ export interface TCourse extends TCreateCourse {
   updated_at: string;
   lessons?: TLesson[];
   updated_by?: TUser;
+  lesson_ids?: number[];
 }
 
 export type TAssignModalMetadata = {
@@ -91,6 +92,7 @@ export type TUserCourse = {
   description: string;
   percentage?: number;
   lessons?: TUserLesson[];
+  lesson_ids?: number[];
 };
 
 export type TUserLesson = {

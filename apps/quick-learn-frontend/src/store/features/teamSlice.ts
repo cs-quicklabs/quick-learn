@@ -67,7 +67,9 @@ const teamSlice = createSlice({
       .addCase(fetchTeamMembers.fulfilled, (state, action) => {
         state.isLoading = false;
         state.users = action.payload.items;
-        if (
+        if (state.isInitialLoad) {
+          state.totalUsers = action.payload.total;
+        } else if (
           state.filterdTotal > state.totalUsers ||
           (state.searchQuery === '' && state.currentUserType === '')
         ) {
