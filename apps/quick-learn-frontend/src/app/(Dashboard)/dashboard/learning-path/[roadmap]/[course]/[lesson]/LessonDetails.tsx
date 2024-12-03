@@ -100,9 +100,9 @@ const LessonDetails = () => {
             type="checkbox"
             checked={isChecked}
             onChange={handleCheckboxChange}
-            className="rounded-md h-6 w-6 border-gray-400"
+            className="rounded-md h-8 w-8 border-gray-400 bg-[#F4F4F6]"
           />
-          <p className="font-semibold text-[20px]">
+          <p className="text-2xl font-semibold text-gray-900 dark:text-gray-300">
             {en.myLearningPath.markRead}
           </p>
         </div>

@@ -350,7 +350,7 @@ export const en = {
   myLearningPath: {
     heading: 'My Learning Path',
     lessonCompleted: 'You have completed the lesson',
-    markRead: 'Mark as Read',
+    markRead: 'Mark as read',
   },
 
   Auth: {
