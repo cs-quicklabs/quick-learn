@@ -152,6 +152,7 @@ const TeamMemberListing = () => {
                 : filteredTotal}
             </span>{' '}
             {en.teams.to}
+            <span> </span>
             <span className="font-medium">{filteredTotal}</span>{' '}
             {en.teams.results}
           </p>

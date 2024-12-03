@@ -60,7 +60,7 @@ const ProgressCard = ({
               <span className="bg-green-600 flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center">
                 <MdOutlineDone />
               </span>
-              Completed at{' '}
+              Completed on{' '}
               {format(isCompleted.completed_date, DateFormats.shortDate)}
             </div>
           )}

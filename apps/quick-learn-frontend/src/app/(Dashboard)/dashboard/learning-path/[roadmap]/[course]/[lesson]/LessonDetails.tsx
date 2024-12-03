@@ -88,20 +88,23 @@ const LessonDetails = () => {
       <ViewLesson lesson={lessonDetails} links={links} />
       {/* <input type="text" onClick={handlereadme} /> */}
       {isRead ? (
-        <p className="text-slate-500 italic text-center flex justify-center items-center gap-2">
+        <p className="text-slate-500 italic text-center flex justify-center items-center gap-2 mb-7">
           <span className="bg-green-600 flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center  ">
             <MdOutlineDone />
           </span>
-          You have completed the lesson
+          {en.myLearningPath.lessonCompleted}
         </p>
       ) : (
-        <div className="flex justify-center items-center gap-4">
+        <div className="flex justify-center items-center gap-4 mb-48 mt-12">
           <input
             type="checkbox"
             checked={isChecked}
             onChange={handleCheckboxChange}
+            className="rounded-md h-6 w-6 border-gray-400"
           />
-          Mark the lesson read
+          <p className="font-semibold text-[20px]">
+            {en.myLearningPath.markRead}
+          </p>
         </div>
       )}
     </>
