@@ -27,7 +27,8 @@ export default function Layout({
 
   useEffect(() => {
     dispatch(fetchMetadata());
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <UserProvider>
       <div className="w-full">
