@@ -21,6 +21,7 @@ import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { selectContentRepositoryMetadata } from '@src/store/features/metadataSlice';
 import {
   addRoadmap,
+  fetchRoadmaps,
   selectAllRoadmaps,
   selectIsRoadmapsInitialized,
   selectRoadmapsStatus,
@@ -51,6 +52,10 @@ const ContentRepository = () => {
     });
     setCourses(data);
   }, [allCourseCategories]);
+
+  useEffect(() => {
+    dispatch(fetchRoadmaps());
+  }, []);
 
   function onSubmit(data: AddEditRoadmapData) {
     setIsModalLoading(true);

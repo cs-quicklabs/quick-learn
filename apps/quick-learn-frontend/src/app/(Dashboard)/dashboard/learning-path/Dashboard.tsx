@@ -16,7 +16,6 @@ import {
 import {
   fetchUserProgress,
   selectUserProgress,
-  selectUserProgressStatus,
 } from '@src/store/features/userProgressSlice';
 
 const Dashboard = () => {
@@ -27,10 +26,8 @@ const Dashboard = () => {
   const status = useAppSelector(selectLearningPathStatus);
   const isInitialized = useAppSelector(selectIsLearningPathInitialized);
   const userProgress = useAppSelector(selectUserProgress);
-  const progressStatus = useAppSelector(selectUserProgressStatus);
 
-  const isLoading =
-    (!isInitialized && status === 'loading') || progressStatus === 'loading';
+  const isLoading = !isInitialized && status === 'loading';
 
   useEffect(() => {
     dispatch(fetchUserContent());
@@ -98,7 +95,7 @@ const Dashboard = () => {
             <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
               {roadmaps.map((roadmap) => (
                 <ProgressCard
-                  className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow group duration-200 text-left h-40"
+                  className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow group duration-200 text-left"
                   key={roadmap?.id}
                   id={roadmap?.id}
                   name={roadmap?.name || ''}
@@ -161,7 +158,7 @@ const Dashboard = () => {
 
                 return (
                   <ProgressCard
-                    className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow group duration-200 text-left h-40"
+                    className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow group duration-200 text-left"
                     key={course?.id}
                     id={course?.id}
                     name={course?.name || ''}

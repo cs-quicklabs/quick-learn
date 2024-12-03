@@ -1,7 +1,7 @@
 'use client';
 import { UserProvider } from '@src/context/userContext';
 import Navbar from '@src/shared/components/Navbar';
-import { fetchRoadmaps } from '@src/store/features/roadmapsSlice';
+import { fetchMetadata } from '@src/store/features/metadataSlice';
 import { selectHideNavbar } from '@src/store/features/uiSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { usePathname } from 'next/navigation';
@@ -26,8 +26,9 @@ export default function Layout({
     : 'max-w-screen-2xl mx-auto mt-16 py-3 px-4 sm:py-5 lg:px-8';
 
   useEffect(() => {
-    dispatch(fetchRoadmaps());
-  }, [dispatch]);
+    dispatch(fetchMetadata());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <UserProvider>
       <div className="w-full">
