@@ -14,7 +14,7 @@ export default function Layout({
 }) {
   const hideNavbar = useAppSelector(selectHideNavbar);
   const pathname = usePathname();
-  const dispatch = useAppDispatch(); 
+  const dispatch = useAppDispatch();
 
   // Add paths that should be full width
   const fullWidthPaths = ['/dashboard/learning-path'];
