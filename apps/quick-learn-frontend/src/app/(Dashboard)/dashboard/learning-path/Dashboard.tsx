@@ -16,7 +16,6 @@ import {
 import {
   fetchUserProgress,
   selectUserProgress,
-  selectUserProgressStatus,
 } from '@src/store/features/userProgressSlice';
 
 const Dashboard = () => {
@@ -27,10 +26,8 @@ const Dashboard = () => {
   const status = useAppSelector(selectLearningPathStatus);
   const isInitialized = useAppSelector(selectIsLearningPathInitialized);
   const userProgress = useAppSelector(selectUserProgress);
-  const progressStatus = useAppSelector(selectUserProgressStatus);
 
-  const isLoading =
-    (!isInitialized && status === 'loading') || progressStatus === 'loading';
+  const isLoading = !isInitialized && status === 'loading';
 
   useEffect(() => {
     dispatch(fetchUserContent());
