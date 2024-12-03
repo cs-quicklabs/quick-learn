@@ -11,8 +11,12 @@ import { TCourse } from '@src/shared/types/contentRepository';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import ProgressCard from '@src/shared/components/ProgressCard';
-import { useAppSelector } from '@src/store/hooks';
-import { selectUserProgress } from '@src/store/features/userProgressSlice';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import {
+  fetchUserProgress,
+  selectUserProgress,
+  selectUserProgressStatus,
+} from '@src/store/features/userProgressSlice';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.myLearningPath.heading, link: RouteEnum.MY_LEARNING_PATH },
@@ -24,18 +28,17 @@ const CourseDetails = () => {
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [courseData, setCourseData] = useState<TCourse>();
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
-  // Get progress data from Redux store
+  // Get progress from Redux store
   const userProgress = useAppSelector(selectUserProgress);
+  const progressStatus = useAppSelector(selectUserProgressStatus);
 
-  // Find the progress data for this specific course
-  const courseProgress = useMemo(
-    () =>
-      userProgress?.find((progress) => progress.course_id === Number(course))
-        ?.lessons || [],
-    [userProgress, course],
-  );
+  useEffect(() => {
+    dispatch(fetchUserProgress());
+  }, [dispatch]);
 
+  // Fetch course data
   useEffect(() => {
     setIsPageLoading(true);
     getLearningPathCourse(course, !isNaN(+roadmap) ? roadmap : undefined)
@@ -61,24 +64,37 @@ const CourseDetails = () => {
       .finally(() => setIsPageLoading(false));
   }, [router, roadmap, course]);
 
+  // Get progress data for this course
+  const courseLessonProgress = useMemo(() => {
+    const courseProgress = userProgress?.find(
+      (progress) => progress.course_id === Number(course),
+    );
+    return courseProgress?.lessons || [];
+  }, [userProgress, course]);
+
+  // Calculate overall course progress
   const progressPercentage = useMemo(() => {
-    if (!courseProgress?.length || !courseData?.lessons?.length) {
-      return 0;
-    }
+    if (!courseData?.lessons?.length) return 0;
+
     const courseLessonIds = new Set(
       courseData.lessons.map((lesson) => lesson.id),
     );
-    const completedCount = courseProgress.filter((lesson) =>
+
+    const completedCount = courseLessonProgress.filter((lesson) =>
       courseLessonIds.has(lesson.lesson_id),
     ).length;
 
-    const totalLessons = courseData.lessons.length;
-    return Math.round((completedCount / totalLessons) * 100);
-  }, [courseProgress, courseData]);
+    return Math.round((completedCount / courseData.lessons.length) * 100);
+  }, [courseLessonProgress, courseData]);
+
+  const isLoading = isPageLoading || progressStatus === 'loading';
+
+  if (isLoading) {
+    return <RoadmapCourseSkeleton />;
+  }
 
   return (
     <>
-      {isPageLoading && <RoadmapCourseSkeleton />}
       <Breadcrumb links={links} />
       <div className="items-baseline mb-8">
         <h1 className="text-center text-5xl font-extrabold leading-tight capitalize">
@@ -114,7 +130,7 @@ const CourseDetails = () => {
           <div>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
               {courseData.lessons.map((lesson) => {
-                const lessonProgress = courseProgress.find(
+                const lessonProgress = courseLessonProgress.find(
                   (progress) => progress.lesson_id === lesson.id,
                 );
 
@@ -125,7 +141,16 @@ const CourseDetails = () => {
                     name={lesson.name}
                     title={lesson.content}
                     link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}/${lesson.id}`}
-                    isCompleted={lessonProgress}
+                    isCompleted={
+                      lessonProgress
+                        ? {
+                            lesson_id: lessonProgress.lesson_id,
+                            completed_date: new Date(
+                              lessonProgress.completed_date,
+                            ),
+                          }
+                        : undefined
+                    }
                   />
                 );
               })}
