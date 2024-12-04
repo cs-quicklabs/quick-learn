@@ -18,15 +18,16 @@ import {
   selectUserProgress,
 } from '@src/store/features/userProgressSlice';
 import { fetchMetadata } from '@src/store/features/metadataSlice';
+import { TUserRoadmap } from '@src/shared/types/contentRepository';
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
 
-  const roadmaps = useAppSelector(selectUserRoadmaps);
-  const courses = useAppSelector(selectUserCourses);
+  const roadmaps = useAppSelector(selectUserRoadmaps) || [];
+  const courses = useAppSelector(selectUserCourses) || [];
   const status = useAppSelector(selectLearningPathStatus);
   const isInitialized = useAppSelector(selectIsLearningPathInitialized);
-  const userProgress = useAppSelector(selectUserProgress);
+  const userProgress = useAppSelector(selectUserProgress) || [];
 
   const isLoading = !isInitialized && status === 'loading';
 
@@ -40,13 +41,14 @@ const Dashboard = () => {
     return <DashboardSkeleton />;
   }
 
-  const calculateRoadmapProgress = (roadmap: (typeof roadmaps)[0]) => {
-    if (!roadmap?.courses?.length) return 0;
+  const calculateRoadmapProgress = (roadmap: TUserRoadmap) => {
+    if (!roadmap || !Array.isArray(roadmap.courses)) return 0;
 
     const totalLessonsInRoadmap = roadmap.courses.reduce((total, course) => {
+      if (!course) return total;
       return (
         total +
-        (Array.isArray(course?.lesson_ids) ? course.lesson_ids.length : 0)
+        (Array.isArray(course.lesson_ids) ? course.lesson_ids.length : 0)
       );
     }, 0);
 
@@ -54,15 +56,20 @@ const Dashboard = () => {
 
     const completedLessonsInRoadmap = roadmap.courses.reduce(
       (total, course) => {
+        if (!course) return total;
+
         const courseProgress = userProgress?.find(
-          (progress) => progress?.course_id === course?.id,
+          (progress) => progress?.course_id === +course.id,
         );
+
         const completedLessonIds =
           courseProgress?.lessons?.map((lesson) => lesson?.lesson_id) || [];
-        const completedCount = Array.isArray(course?.lesson_ids)
+
+        const completedCount = Array.isArray(course.lesson_ids)
           ? course.lesson_ids.filter((id) => completedLessonIds.includes(id))
               .length
           : 0;
+
         return total + completedCount;
       },
       0,
@@ -90,7 +97,7 @@ const Dashboard = () => {
       </div>
 
       <div className="relative px-6 grid gap-10 pb-4">
-        {!roadmaps?.length ? (
+        {!Array.isArray(roadmaps) || roadmaps.length === 0 ? (
           <EmptyState type="roadmaps" />
         ) : (
           <div>
@@ -98,7 +105,7 @@ const Dashboard = () => {
               {roadmaps.map((roadmap) => (
                 <ProgressCard
                   className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow group duration-200 text-left"
-                  key={roadmap?.id}
+                  key={roadmap?.id || 'fallback-key'}
                   id={roadmap?.id}
                   name={roadmap?.name || ''}
                   title={roadmap?.description || ''}
@@ -130,24 +137,26 @@ const Dashboard = () => {
       </div>
 
       <div className="relative px-6 grid gap-10 pb-16">
-        {!courses?.length ? (
+        {!Array.isArray(courses) || courses.length === 0 ? (
           <EmptyState type="courses" />
         ) : (
           <div>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
               {courses.map((course) => {
+                if (!course) return null;
+
                 const courseProgress = userProgress?.find(
-                  (progress) => progress?.course_id === course?.id,
+                  (progress) => progress?.course_id === course.id,
                 );
 
                 const completedLessonIds =
                   courseProgress?.lessons?.map((lesson) => lesson?.lesson_id) ||
                   [];
 
-                const totalLessons = Array.isArray(course?.lesson_ids)
+                const totalLessons = Array.isArray(course.lesson_ids)
                   ? course.lesson_ids.length
                   : 0;
-                const completedCount = Array.isArray(course?.lesson_ids)
+                const completedCount = Array.isArray(course.lesson_ids)
                   ? course.lesson_ids.filter((id) =>
                       completedLessonIds.includes(id),
                     ).length
@@ -161,11 +170,11 @@ const Dashboard = () => {
                 return (
                   <ProgressCard
                     className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow group duration-200 text-left"
-                    key={course?.id}
-                    id={course?.id}
-                    name={course?.name || ''}
-                    title={course?.description || ''}
-                    link={`${RouteEnum.MY_LEARNING_PATH}/courses/${course?.id}`}
+                    key={course.id || 'fallback-key'}
+                    id={course.id}
+                    name={course.name || ''}
+                    title={course.description || ''}
+                    link={`${RouteEnum.MY_LEARNING_PATH}/courses/${course.id}`}
                     percentage={percentage}
                   />
                 );
