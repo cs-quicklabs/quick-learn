@@ -21,6 +21,7 @@ import { fetchMetadata } from '@src/store/features/metadataSlice';
 import {
   addRoadmap,
   fetchRoadmaps,
+  selectAllCourses,
   selectAllRoadmaps,
   selectIsRoadmapsInitialized,
   selectRoadmapsStatus,
@@ -30,34 +31,14 @@ const ContentRepository = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const roadmaps = useAppSelector(selectAllRoadmaps);
+  const courses = useAppSelector(selectAllCourses);
   const roadmapsStatus = useAppSelector(selectRoadmapsStatus);
   const isRoadmapsInitialized = useAppSelector(selectIsRoadmapsInitialized);
 
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
-  const [courses, setCourses] = useState<TCourse[]>([]);
 
   const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
-
-  useEffect(() => {
-    // Create a Map to store unique courses by their ID
-    const uniqueCoursesMap = new Map<number, TCourse>();
-
-    // Iterate through each roadmap and add its courses to the Map
-    roadmaps.forEach((roadmap: TRoadmap) => {
-      roadmap.courses.forEach((course) => {
-        // Only add the course if it's not already in the Map
-        uniqueCoursesMap.set(+course.id, course);
-      });
-    });
-
-    // Convert the Map values to an array and sort alphabetically by name
-    const uniqueCourses = Array.from(uniqueCoursesMap.values()).sort((a, b) =>
-      a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-    );
-
-    setCourses(uniqueCourses);
-  }, [roadmaps]);
 
   useEffect(() => {
     dispatch(fetchRoadmaps());
