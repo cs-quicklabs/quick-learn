@@ -17,6 +17,7 @@ import {
   fetchUserProgress,
   selectUserProgress,
 } from '@src/store/features/userProgressSlice';
+import { fetchMetadata } from '@src/store/features/metadataSlice';
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
@@ -32,6 +33,7 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(fetchUserContent());
     dispatch(fetchUserProgress());
+    dispatch(fetchMetadata());
   }, [dispatch]);
 
   if (isLoading) {

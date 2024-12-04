@@ -54,7 +54,8 @@ const roadmapsSlice = createSlice({
 
 export const { addRoadmap } = roadmapsSlice.actions;
 
-export const selectAllRoadmaps = (state: RootState) => state.roadmaps.roadmaps;
+export const selectAllRoadmaps = (state: RootState) =>
+  state.roadmaps.roadmaps ?? initialState.roadmaps;
 export const selectRoadmapsStatus = (state: RootState) => state.roadmaps.status;
 export const selectIsRoadmapsInitialized = (state: RootState) =>
   state.roadmaps.isInitialized;

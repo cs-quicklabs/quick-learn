@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -10,7 +9,7 @@ import CreateNewCard from '@src/shared/components/CreateNewCard';
 import AddEditRoadMapModal, {
   AddEditRoadmapData,
 } from '@src/shared/modals/addEditRoadMapModal';
-import { TCourse } from '@src/shared/types/contentRepository';
+import { TCourse, TRoadmap } from '@src/shared/types/contentRepository';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -18,7 +17,7 @@ import {
 import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-import { selectContentRepositoryMetadata } from '@src/store/features/metadataSlice';
+import { fetchMetadata } from '@src/store/features/metadataSlice';
 import {
   addRoadmap,
   fetchRoadmaps,
@@ -30,13 +29,9 @@ import {
 const ContentRepository = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-
-  const contentRepository = useAppSelector(selectContentRepositoryMetadata);
   const roadmaps = useAppSelector(selectAllRoadmaps);
   const roadmapsStatus = useAppSelector(selectRoadmapsStatus);
   const isRoadmapsInitialized = useAppSelector(selectIsRoadmapsInitialized);
-
-  const allCourseCategories = contentRepository?.course_categories || [];
 
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
@@ -45,16 +40,29 @@ const ContentRepository = () => {
   const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
 
   useEffect(() => {
-    const data: TCourse[] = [];
-    allCourseCategories.forEach((category) => {
-      if (!category.courses) category.courses = [];
-      data.push(...category.courses);
+    // Create a Map to store unique courses by their ID
+    const uniqueCoursesMap = new Map<number, TCourse>();
+
+    // Iterate through each roadmap and add its courses to the Map
+    roadmaps.forEach((roadmap: TRoadmap) => {
+      roadmap.courses.forEach((course) => {
+        // Only add the course if it's not already in the Map
+        uniqueCoursesMap.set(+course.id, course);
+      });
     });
-    setCourses(data);
-  }, [allCourseCategories]);
+
+    // Convert the Map values to an array and sort alphabetically by name
+    const uniqueCourses = Array.from(uniqueCoursesMap.values()).sort((a, b) =>
+      a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+    );
+
+    setCourses(uniqueCourses);
+  }, [roadmaps]);
 
   useEffect(() => {
     dispatch(fetchRoadmaps());
+    dispatch(fetchMetadata());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function onSubmit(data: AddEditRoadmapData) {
