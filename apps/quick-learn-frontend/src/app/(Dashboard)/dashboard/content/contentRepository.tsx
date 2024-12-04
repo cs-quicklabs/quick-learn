@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -63,6 +62,7 @@ const ContentRepository = () => {
   useEffect(() => {
     dispatch(fetchRoadmaps());
     dispatch(fetchMetadata());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function onSubmit(data: AddEditRoadmapData) {
