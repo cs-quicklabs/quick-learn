@@ -1,7 +1,8 @@
 import { FC, memo, useEffect } from 'react';
 import { format } from 'date-fns';
 import { InformationCircleIcon } from '@heroicons/react/20/solid';
-import useDashboardStore from '@src/store/dashboard.store';
+import { useDispatch } from 'react-redux';
+import { setHideNavbar } from '@src/store/features/uiSlice';
 import Breadcrumb from './Breadcrumb';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
@@ -25,7 +26,7 @@ const LessonHeader = memo(
       <div className="items-baseline">
         <h1 className="text-5xl font-extrabold leading-tight">{name}</h1>
         <p className="mt-1 ml-1 text-sm text-gray-500">
-          {firstName} {lastName} added this lesson on{' '}
+          {firstName} {lastName} {en.component.addLessonOn}{' '}
           {createdAt && format(new Date(createdAt), DateFormats.shortDate)}
         </p>
       </div>
@@ -98,12 +99,14 @@ PendingAlert.displayName = 'PendingAlert';
 
 // Custom hook for navbar management
 const useNavbarManagement = () => {
-  const { setHideNavbar } = useDashboardStore();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setHideNavbar(true);
-    return () => setHideNavbar(false);
-  }, [setHideNavbar]);
+    dispatch(setHideNavbar(true));
+    return () => {
+      dispatch(setHideNavbar(false));
+    };
+  }, [dispatch]);
 };
 
 interface Props {

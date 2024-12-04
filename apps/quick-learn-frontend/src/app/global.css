@@ -192,3 +192,6 @@ input:-webkit-autofill:active {
   top: 50% !important;
 }
 /* lesson viewer css */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

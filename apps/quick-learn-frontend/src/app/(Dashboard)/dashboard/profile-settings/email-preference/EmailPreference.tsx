@@ -6,7 +6,7 @@ import {
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import React, { useEffect, useState } from 'react';
 import EmailPreferenceSkeleton from './EmailPreferenceSkeleton';
-
+import { en } from '@src/constants/lang/en';
 const EmailPreference = () => {
   const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,9 +31,11 @@ const EmailPreference = () => {
   return (
     <>
       <div>
-        <h1 className="text-lg font-semibold dark:text-white">Preference</h1>
+        <h1 className="text-lg font-semibold dark:text-white">
+          {en.ProfileSetting.preferenceHead}
+        </h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-          Please change your personal preferences.
+          {en.ProfileSetting.preferenceSubHead}
         </p>
 
         <div className="flex mt-6">
@@ -52,13 +54,13 @@ const EmailPreference = () => {
               htmlFor="helper-checkbox"
               className="font-medium text-gray-900 dark:text-gray-300"
             >
-              Enable All Email Alerts
+              {en.ProfileSetting.emailAlerts}
             </label>
             <p
               id="helper-checkbox-text"
               className="text-sm font-normal text-gray-400 dark:text-gray-300"
             >
-              If disabled, no email alert will land in your inbox.
+              {en.ProfileSetting.alertdisable}
             </p>
           </div>
         </div>

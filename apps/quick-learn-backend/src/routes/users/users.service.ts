@@ -16,15 +16,19 @@ import { CreateUserDto, ListFilterDto, PaginationDto } from './dto';
 import { PaginatedResult } from '@src/common/interfaces';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { emailSubjects } from '@src/common/constants/email-subject';
-import { UserEntity, UserTypeEntity } from '@src/entities';
+import { CourseEntity, UserEntity, UserTypeEntity } from '@src/entities';
 import { SessionService } from '../auth/session.service';
 import { en } from '@src/lang/en';
 import { RoadmapService } from '../roadmap/roadmap.service';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 import { CourseService } from '../course/course.service';
 import { LessonService } from '../lesson/lesson.service';
+import { FileService } from '@src/file/file.service';
 
 const userRelations = ['user_type', 'skill', 'team'];
+interface CourseWithLessonIds extends CourseEntity {
+  lesson_ids?: number[];
+}
 
 @Injectable()
 export class UsersService extends PaginationService<UserEntity> {
@@ -40,6 +44,7 @@ export class UsersService extends PaginationService<UserEntity> {
     private roadmapService: RoadmapService,
     private courseService: CourseService,
     private lessonService: LessonService,
+    private readonly FileService: FileService,
   ) {
     super(userRepository);
   }
@@ -157,14 +162,33 @@ export class UsersService extends PaginationService<UserEntity> {
     if (includeCourses) {
       queryBuilder
         .leftJoinAndSelect('roadmap.courses', 'course')
+        .leftJoinAndSelect('course.lessons', 'lesson')
         .andWhere('course.archived = :courseArchived', {
           courseArchived: false,
-        });
+        })
+        .andWhere('lesson.archived = :lessonArchived', {
+          lessonArchived: false,
+        })
+        .orderBy('course.id', 'ASC')
+        .addOrderBy('lesson.id', 'ASC');
     }
 
     const user = await queryBuilder.getOne();
     if (!user?.assigned_roadmaps) {
       return [];
+    }
+
+    if (includeCourses) {
+      user.assigned_roadmaps.forEach((roadmap) => {
+        if (roadmap.courses) {
+          roadmap.courses.forEach((course) => {
+            const typedCourse = course as CourseWithLessonIds;
+            typedCourse.lesson_ids =
+              course.lessons?.map((lesson) => lesson.id) || [];
+            delete typedCourse.lessons;
+          });
+        }
+      });
     }
 
     return user.assigned_roadmaps;
@@ -177,9 +201,17 @@ export class UsersService extends PaginationService<UserEntity> {
       throw new BadRequestException(en.RoadmapNotFound);
     }
 
+    if (roadmap.courses) {
+      roadmap.courses.forEach((course) => {
+        const typedCourse = course as CourseWithLessonIds;
+        typedCourse.lesson_ids =
+          course.lessons?.map((lesson) => lesson.id) || [];
+        delete typedCourse.lessons;
+      });
+    }
+
     return roadmap;
   }
-
   async getCourseDetails(userId: number, id: number, roadmap?: number) {
     const course = await this.courseService.getUserCourseDetails(
       userId,
@@ -238,11 +270,26 @@ export class UsersService extends PaginationService<UserEntity> {
     });
   }
 
-  async updateUser(uuid: UserEntity['uuid'], payload: Partial<UserEntity>) {
+  async updateUser(
+    uuid: UserEntity['uuid'],
+    payload: Partial<UserEntity>,
+    imageDeleteRequired = false,
+  ) {
     const user = await this.findOne({ uuid });
 
     if (!user) {
       throw new BadRequestException(en.userNotFound);
+    }
+
+    // ON PROFILE CHANGE VERIFY IF LOGO HAS CHANGED AND PERVIOUS IMAGE IS NOT EMPTY STRING
+    if (
+      imageDeleteRequired &&
+      user.profile_image !== payload.profile_image &&
+      user.profile_image !== '' &&
+      user.profile_image !== null
+    ) {
+      // DELETE OLD IMAGE FROM S3 BUCKET
+      await this.FileService.deleteFiles([user.profile_image]);
     }
 
     if (payload.email) {

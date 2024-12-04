@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FC, useRef, useEffect, useState } from 'react';
 import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/20/solid';
-
+import { en } from '@src/constants/lang/en';
 interface CardProps {
   title: string;
   description: string;
@@ -48,7 +48,6 @@ const Card: FC<CardProps> = ({
     window.addEventListener('resize', checkTitleHeight);
     return () => window.removeEventListener('resize', checkTitleHeight);
   }, [title]);
-
   const CardContent = () => (
     <div
       className={`flex flex-col h-48 ${
@@ -70,11 +69,12 @@ const Card: FC<CardProps> = ({
         </h1>
         <p
           className={`font-normal text-gray-500 ${
-            isLongTitle ? 'line-clamp-2' : 'line-clamp-3'
-          } text-sm`}
-        >
-          {description}
-        </p>
+            isLongTitle ? 'line-clamp-1' : 'line-clamp-2'
+          } text-sm whitespace-pre-line`}
+          dangerouslySetInnerHTML={{
+            __html: description,
+          }}
+        />
       </div>
 
       <div className={`mt-auto ${isLongTitle ? 'space-y-0.5' : 'space-y-1'}`}>
@@ -96,10 +96,16 @@ const Card: FC<CardProps> = ({
         )}
         {metadata && !isCreateCard && (metadata.addedBy || metadata.date) && (
           <p className="text-xs text-gray-500">
-            {metadata.addedBy ? <>Added By {metadata.addedBy}</> : <>Added</>}
+            {metadata.addedBy ? (
+              <>
+                {en.component.addedBy} {metadata.addedBy}
+              </>
+            ) : (
+              <>{en.component.Added}</>
+            )}
             {metadata.date && (
               <>
-                <span className="mx-1">on</span>
+                <span className="mx-1">{en.component.on}</span>
                 {metadata.date}
               </>
             )}

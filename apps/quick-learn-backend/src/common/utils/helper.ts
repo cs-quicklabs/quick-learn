@@ -23,19 +23,17 @@ export default class Helpers {
     });
   }
 
-  static HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
+  static HTMLSanitizer(value: string, isDefaultTagsAllowed = false): string {
     return sanitizeHtml(
       value,
       isDefaultTagsAllowed
         ? {
-            allowedTags: ['b', 'i', 'em', 'strong', 'a'],
-            allowedAttributes: {
-              a: ['href'],
-            },
+            allowedTags: ['b', 'i', 'em', 'strong', 'a', 'br'],
+            allowedAttributes: { a: ['href'] },
             allowedIframeHostnames: ['www.youtube.com'],
           }
         : {
-            allowedTags: [],
+            allowedTags: ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'br'],
             allowedAttributes: {},
             allowedIframeHostnames: [],
           },
@@ -46,5 +44,53 @@ export default class Helpers {
     return sanitizedContent.length > 250
       ? sanitizedContent.substring(0, 250) + '...'
       : sanitizedContent;
+  }
+
+  /**
+   *
+   * @param input {string | { [key: string]: unknown }[]}
+   * @param label {string}
+   * @param isHtmlString {boolean}
+   * @returns {string[]}
+   */
+
+  static extractImageUrlsFromHtml(
+    input: string | { [key: string]: unknown }[],
+    label?: string,
+    isHtmlString = true,
+  ): string[] {
+    // Regular expression to match <img> tags and extract the src attribute
+    const regex = /<img[^>]+src="([^"]+)"/g;
+    const urls: string[] = [];
+
+    if (isHtmlString) {
+      // Input is a single HTML string
+      let match: RegExpExecArray | null;
+
+      // Execute regex to find all matches
+      while ((match = regex.exec(input as string)) !== null) {
+        // Add the URL found to the array
+        if (match[1]) {
+          urls.push(match[1]);
+        }
+      }
+    } else {
+      // Input is an array of objects with the label property
+      (input as { [key: string]: unknown }[]).forEach((item) => {
+        if (label && item[label] && typeof item[label] === 'string') {
+          let match: RegExpExecArray | null;
+          const htmlString = item[label];
+
+          // Execute regex to find all matches
+          while ((match = regex.exec(htmlString as string)) !== null) {
+            if (match[1]) {
+              urls.push(match[1]);
+            }
+          }
+        }
+      });
+    }
+
+    return urls;
   }
 }

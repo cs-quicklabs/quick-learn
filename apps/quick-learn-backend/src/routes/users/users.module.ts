@@ -8,6 +8,7 @@ import { AuthModule } from '../auth/auth.module';
 import { RoadmapModule } from '../roadmap/roadmap.module';
 import { CourseModule } from '../course/course.module';
 import { LessonModule } from '../lesson/lesson.module';
+import { FileModule } from '@src/file/file.module';
 
 @Module({
   controllers: [UsersController],
@@ -19,6 +20,7 @@ import { LessonModule } from '../lesson/lesson.module';
     RoadmapModule,
     CourseModule,
     LessonModule,
+    FileModule,
   ],
   exports: [UsersService],
 })

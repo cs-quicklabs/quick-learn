@@ -1,11 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import {
-  createRoadmap,
-  getContentRepositoryMetadata,
-  getRoadmaps,
-} from '@src/apiServices/contentRepositoryService';
+import { createRoadmap } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Card from '@src/shared/components/Card';
@@ -13,52 +9,47 @@ import CreateNewCard from '@src/shared/components/CreateNewCard';
 import AddEditRoadMapModal, {
   AddEditRoadmapData,
 } from '@src/shared/modals/addEditRoadMapModal';
-import { TCourse, TRoadmap } from '@src/shared/types/contentRepository';
-import useDashboardStore from '@src/store/dashboard.store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import { fetchMetadata } from '@src/store/features/metadataSlice';
+import {
+  addRoadmap,
+  fetchRoadmaps,
+  selectAllCourses,
+  selectAllRoadmaps,
+  selectIsRoadmapsInitialized,
+  selectRoadmapsStatus,
+} from '@src/store/features/roadmapsSlice';
 
 const ContentRepository = () => {
   const router = useRouter();
-  const { setContentRepositoryMetadata, metadata } = useDashboardStore(
-    (state) => state,
-  );
-  const allCourseCategories = metadata.contentRepository.course_categories;
+  const dispatch = useAppDispatch();
+  const roadmaps = useAppSelector(selectAllRoadmaps);
+  const courses = useAppSelector(selectAllCourses);
+  const roadmapsStatus = useAppSelector(selectRoadmapsStatus);
+  const isRoadmapsInitialized = useAppSelector(selectIsRoadmapsInitialized);
+
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(true);
   const [isModalLoading, setIsModalLoading] = useState(false);
-  const [roadmaps, setRoadmaps] = useState<TRoadmap[]>([]);
-  const [courses, setCourses] = useState<TCourse[]>([]);
+
+  const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
 
   useEffect(() => {
-    Promise.all([
-      getContentRepositoryMetadata()
-        .then((response) => setContentRepositoryMetadata(response.data))
-        .catch((error) => showApiErrorInToast(error)),
-      getRoadmaps()
-        .then((res) => setRoadmaps(res.data))
-        .catch((err) => showApiErrorInToast(err)),
-    ]).finally(() => setIsPageLoading(false));
-  }, [setContentRepositoryMetadata]);
-
-  useEffect(() => {
-    const data: TCourse[] = [];
-    allCourseCategories.forEach((category) => {
-      if (!category.courses) category.courses = [];
-      data.push(...category.courses);
-    });
-    setCourses(data);
-  }, [allCourseCategories]);
+    dispatch(fetchRoadmaps());
+    dispatch(fetchMetadata());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function onSubmit(data: AddEditRoadmapData) {
     setIsModalLoading(true);
     createRoadmap(data)
       .then((res) => {
-        setRoadmaps((prev) => [res.data, ...prev]);
+        dispatch(addRoadmap(res.data));
         setOpenAddModal(false);
         router.push(`${RouteEnum.CONTENT}/${res.data.id}`);
         showApiMessageInToast(res);
@@ -67,7 +58,7 @@ const ContentRepository = () => {
       .finally(() => setIsModalLoading(false));
   }
 
-  if (isPageLoading) {
+  if (isLoading) {
     return <ContentRepositorySkeleton />;
   }
 
@@ -81,7 +72,6 @@ const ContentRepository = () => {
       />
 
       <div className="container mx-auto px-4">
-        {/* Main Heading */}
         <div className="flex flex-col items-center justify-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-2">
             {en.contentRepository.contentRepository}
@@ -92,7 +82,6 @@ const ContentRepository = () => {
           </p>
         </div>
 
-        {/* Roadmaps Section */}
         <section className="mb-12">
           <div className="flex items-baseline mb-6">
             <h2 className="text-2xl md:text-3xl font-bold">
@@ -107,7 +96,7 @@ const ContentRepository = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               <CreateNewCard
                 title={en.contentRepository.createNewRoadmap}
-                onAdd={setOpenAddModal}
+                onAdd={() => setOpenAddModal(true)}
               />
               {roadmaps.map((item) => (
                 <Card
@@ -138,7 +127,6 @@ const ContentRepository = () => {
           )}
         </section>
 
-        {/* Courses Section */}
         <section>
           <div className="flex items-baseline mb-6">
             <h2 className="text-2xl md:text-3xl font-bold">

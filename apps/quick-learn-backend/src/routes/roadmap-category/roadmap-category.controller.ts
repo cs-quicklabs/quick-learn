@@ -50,7 +50,6 @@ export class RoadmapCategoryController {
   @Get()
   @ApiOperation({ summary: 'Get all roadmap categories' })
   async findAll(@Query() listRoadmapQueryDto: ListRoadmapQueryDto) {
-    console.log(listRoadmapQueryDto);
     const relations = [];
     let conditions:
       | FindOptionsWhere<RoadmapCategoryEntity>

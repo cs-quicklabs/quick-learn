@@ -1,20 +1,16 @@
 'use client';
 
-import React, {
-  useEffect,
-  useCallback,
-  useState,
-  ChangeEvent,
-  useMemo,
-} from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
-  activateUser,
-  getArchivedUsers,
-  deleteUser,
-} from '@src/apiServices/archivedService';
+  fetchArchivedUsers,
+  activateArchivedUser,
+  deleteArchivedUser,
+  selectArchivedUsers,
+  setUsersSearchValue,
+} from '@src/store/features/archivedSlice';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
 import SearchBox from '@src/shared/components/SearchBox';
-import { TUser } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ConformationModal from '@src/shared/modals/conformationModal';
@@ -24,68 +20,32 @@ import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
 
 const InactiveUsers = () => {
-  const [searchValue, setSearchValue] = useState<string>('');
-  const [usersList, setUsersList] = useState<TUser[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+  const {
+    items: usersList,
+    isLoading,
+    isInitialLoad,
+    hasMore,
+    page,
+    searchValue,
+  } = useAppSelector(selectArchivedUsers);
+
   const [restoreId, setRestoreId] = useState<string | false>(false);
   const [deleteId, setDeleteId] = useState<string | false>(false);
 
-  const fetchUsers = useCallback(
-    async (currentPage: number, search: string, resetList = false) => {
-      setIsLoading(true);
-      try {
-        const res = await getArchivedUsers(currentPage, search);
-        if (resetList || currentPage === 1) {
-          setUsersList(res.data.items);
-        } else {
-          setUsersList((prev) => [...prev, ...res.data.items]);
-        }
-        setPage(res.data.page + 1);
-        setHasMore(
-          Boolean(res.data.total_pages) &&
-            res.data.page !== res.data.total_pages,
-        );
-      } catch (error) {
-        toast.error('Error fetching users');
-      } finally {
-        setIsLoading(false);
-        setIsInitialLoad(false);
-      }
-    },
-    [],
-  );
-
   const getNextUsers = useCallback(() => {
     if (!isLoading && hasMore) {
-      fetchUsers(page, searchValue);
+      dispatch(fetchArchivedUsers({ page, search: searchValue }));
     }
-  }, [fetchUsers, hasMore, isLoading, page, searchValue]);
+  }, [dispatch, hasMore, isLoading, page, searchValue]);
 
-  const restoreUser = useCallback(
+  const handleDeleteUser = useCallback(
     async (uuid: string) => {
       try {
-        await activateUser({ active: true, uuid });
-        setPage(1);
-        await fetchUsers(1, searchValue, true);
-        toast.success(en.successUserActivate);
-      } catch (error) {
-        toast.error(en.errorActivatingUser);
-      } finally {
-        setRestoreId(false);
-      }
-    },
-    [fetchUsers, searchValue],
-  );
-
-  const handleDelete = useCallback(
-    async (uuid: string) => {
-      try {
-        await deleteUser(uuid);
-        setPage(1);
-        await fetchUsers(1, searchValue, true);
+        await dispatch(deleteArchivedUser({ uuid })).unwrap();
+        dispatch(
+          fetchArchivedUsers({ page: 1, search: searchValue, resetList: true }),
+        );
         toast.success(en.successUserDelete);
       } catch (error) {
         toast.error(en.errorDeletingUser);
@@ -93,7 +53,24 @@ const InactiveUsers = () => {
         setDeleteId(false);
       }
     },
-    [fetchUsers, searchValue],
+    [dispatch, searchValue],
+  );
+
+  const restoreUser = useCallback(
+    async (uuid: string) => {
+      try {
+        await dispatch(activateArchivedUser({ uuid })).unwrap();
+        dispatch(
+          fetchArchivedUsers({ page: 1, search: searchValue, resetList: true }),
+        );
+        toast.success(en.successUserActivate);
+      } catch (error) {
+        toast.error(en.errorActivatingUser);
+      } finally {
+        setRestoreId(false);
+      }
+    },
+    [dispatch, searchValue],
   );
 
   const handleQueryChange = useMemo(
@@ -101,20 +78,20 @@ const InactiveUsers = () => {
       debounce(async (value: string) => {
         const _value = value || '';
         try {
-          setIsLoading(true);
-          setSearchValue(_value);
-          setPage(1);
-          fetchUsers(1, _value, true);
+          dispatch(setUsersSearchValue(_value));
+          dispatch(
+            fetchArchivedUsers({ page: 1, search: _value, resetList: true }),
+          );
         } catch (err) {
           console.log('Something went wrong!', err);
         }
       }, 300),
-    [fetchUsers],
+    [dispatch],
   );
 
   useEffect(() => {
-    fetchUsers(1, '', true);
-  }, [fetchUsers]);
+    dispatch(fetchArchivedUsers({ page: 1, search: '', resetList: true }));
+  }, [dispatch]);
 
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
@@ -135,9 +112,7 @@ const InactiveUsers = () => {
         onConfirm={() =>
           restoreId
             ? restoreUser(restoreId)
-            : deleteId
-            ? handleDelete(deleteId)
-            : null
+            : deleteId && handleDeleteUser(deleteId)
         }
       />
       <h1 className="text-lg leading-6 font-medium text-gray-900">
@@ -147,7 +122,7 @@ const InactiveUsers = () => {
         {en.archivedSection.inactiveUsersSubtext}
       </p>
       <SearchBox
-        handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+        handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           handleQueryChange(e.target.value)
         }
       />

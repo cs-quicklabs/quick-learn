@@ -1,94 +1,84 @@
 'use client';
 
-import React, {
-  useEffect,
-  useCallback,
-  useState,
-  ChangeEvent,
-  useMemo,
-} from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
-  activateLesson,
-  getArchivedLessons,
-  deleteLesson,
-} from '@src/apiServices/archivedService';
+  fetchArchivedLessons,
+  activateArchivedLesson,
+  deleteArchivedLesson,
+  selectArchivedLessons,
+  setLessonsSearchValue,
+} from '@src/store/features/archivedSlice';
 import ArchivedCell from '@src/shared/components/ArchivedCell';
 import SearchBox from '@src/shared/components/SearchBox';
 import { debounce } from '@src/utils/helpers';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ConformationModal from '@src/shared/modals/conformationModal';
-import { TLesson } from '@src/shared/types/contentRepository';
 import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
 
 const ArchivedLessons = () => {
-  const [searchValue, setSearchValue] = useState<string>('');
-  const [lessonsList, setLessonsList] = useState<TLesson[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+  const {
+    items: lessonsList,
+    isLoading,
+    isInitialLoad,
+    hasMore,
+    page,
+    searchValue,
+  } = useAppSelector(selectArchivedLessons);
+
   const [restoreId, setRestoreId] = useState<number | false>(false);
   const [deleteId, setDeleteId] = useState<number | false>(false);
 
-  const fetchLessons = useCallback(
-    async (currentPage: number, search: string, resetList = false) => {
-      setIsLoading(true);
-      try {
-        const res = await getArchivedLessons(currentPage, search);
-        if (resetList || currentPage === 1) {
-          setLessonsList(res.data.items);
-        } else {
-          setLessonsList((prev) => [...prev, ...res.data.items]);
-        }
-        setPage(res.data.page + 1);
-        setHasMore(res.data.page < res.data.total_pages);
-      } catch (error) {
-        toast.error(en.common.noResultFound);
-      } finally {
-        setIsLoading(false);
-        setIsInitialLoad(false);
-      }
-    },
-    [],
-  );
-
   const getNextLessons = useCallback(() => {
     if (!isLoading && hasMore) {
-      fetchLessons(page, searchValue);
+      dispatch(fetchArchivedLessons({ page, search: searchValue }));
     }
-  }, [fetchLessons, hasMore, isLoading, page, searchValue]);
+  }, [dispatch, hasMore, isLoading, page, searchValue]);
 
   const handleDeleteLesson = useCallback(
     async (id: number) => {
       try {
-        await deleteLesson(id);
-        setPage(1);
-        await fetchLessons(1, searchValue, true);
-        setDeleteId(false);
+        await dispatch(deleteArchivedLesson({ id })).unwrap();
+        dispatch(
+          fetchArchivedLessons({
+            page: 1,
+            search: searchValue,
+            resetList: true,
+          }),
+        );
         toast.success(en.archivedSection.lessonDeletedSuccess);
       } catch (error) {
         toast.error(en.common.somethingWentWrong);
+      } finally {
+        setDeleteId(false);
       }
     },
-    [fetchLessons, searchValue],
+    [dispatch, searchValue],
   );
 
   const restoreLesson = useCallback(
     async (id: number) => {
       try {
-        await activateLesson({ active: true, id });
-        setPage(1);
-        await fetchLessons(1, searchValue, true);
-        setRestoreId(false);
+        await dispatch(activateArchivedLesson({ id })).unwrap();
+        dispatch(
+          fetchArchivedLessons({
+            page: 1,
+            search: searchValue,
+            resetList: true,
+          }),
+        );
         toast.success(en.archivedSection.lessonRestoredSuccess);
       } catch (error) {
         toast.error(en.common.somethingWentWrong);
+      } finally {
+        setRestoreId(false);
       }
     },
-    [fetchLessons, searchValue],
+    [dispatch, searchValue],
   );
 
   const handleQueryChange = useMemo(
@@ -96,20 +86,20 @@ const ArchivedLessons = () => {
       debounce(async (value: string) => {
         const _value = value || '';
         try {
-          setIsLoading(true);
-          setSearchValue(_value);
-          setPage(1);
-          fetchLessons(1, _value, true);
+          dispatch(setLessonsSearchValue(_value));
+          dispatch(
+            fetchArchivedLessons({ page: 1, search: _value, resetList: true }),
+          );
         } catch (err) {
           toast.error(en.common.somethingWentWrong);
         }
       }, 300),
-    [fetchLessons],
+    [dispatch],
   );
 
   useEffect(() => {
-    fetchLessons(1, '', true);
-  }, [fetchLessons]);
+    dispatch(fetchArchivedLessons({ page: 1, search: '', resetList: true }));
+  }, [dispatch]);
 
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
@@ -140,7 +130,7 @@ const ArchivedLessons = () => {
         {en.archivedSection.archivedLessonsSubtext}
       </p>
       <SearchBox
-        handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+        handleChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           handleQueryChange(e.target.value)
         }
       />

@@ -1,20 +1,25 @@
 'use client';
-import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
-import useDashboardStore from '@src/store/dashboard.store';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchMetadata,
+  selectIsMetadataInitialized,
+} from '@src/store/features/metadataSlice';
+import { AppDispatch } from '@src/store/store';
 
 export default function Layout({
   children,
 }: {
   readonly children: React.ReactNode;
 }) {
-  const { setContentRepositoryMetadata } = useDashboardStore((state) => state);
+  const dispatch = useDispatch<AppDispatch>();
+  const isInitialized = useSelector(selectIsMetadataInitialized);
 
   useEffect(() => {
-    getContentRepositoryMetadata()
-      .then((response) => setContentRepositoryMetadata(response.data))
-      .catch((error) => showApiErrorInToast(error));
-  }, [setContentRepositoryMetadata]);
+    if (!isInitialized) {
+      dispatch(fetchMetadata());
+    }
+  }, [dispatch, isInitialized]);
+
   return <>{children}</>;
 }
