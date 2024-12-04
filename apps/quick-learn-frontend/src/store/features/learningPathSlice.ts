@@ -99,12 +99,15 @@ export const { updateCourseProgress, updateRoadmapProgress } =
 
 // Selectors
 export const selectUserRoadmaps = (state: RootState) =>
-  state.learningPath.roadmaps;
+  state?.learningPath?.roadmaps ?? [];
+
 export const selectUserCourses = (state: RootState) =>
-  state.learningPath.courses;
+  state?.learningPath?.courses ?? [];
+
 export const selectLearningPathStatus = (state: RootState) =>
-  state.learningPath.status;
+  state?.learningPath?.status ?? 'idle';
+
 export const selectIsLearningPathInitialized = (state: RootState) =>
-  state.learningPath.isInitialized;
+  state?.learningPath?.isInitialized ?? false;
 
 export default learningPathSlice.reducer;
