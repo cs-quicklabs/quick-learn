@@ -19,15 +19,22 @@ export class LessonProgressController {
   @Post('complete/:lessonId')
   async markLessonAsCompleted(
     @Param('lessonId') lessonId: number,
-    @Body() dto: { courseId: number },
+    @Body() dto: { courseId: number; isCompleted: boolean },
     @Request() req,
   ) {
-    await this.lessonProgressService.markLessonAsCompleted(
+    const response = await this.lessonProgressService.markLessonAsCompleted(
       req.user.id,
       lessonId,
       dto.courseId,
     );
-    return new SuccessResponse('Successfully completed the lesson');
+    if (dto.isCompleted) {
+      return new SuccessResponse('Successfully completed the lesson', {
+        isRead: !!response,
+        completed_date: response.completed_date,
+      });
+    } else {
+      return new SuccessResponse('This lesson is marked as unread');
+    }
   }
 
   @Get(':courseId/progress')

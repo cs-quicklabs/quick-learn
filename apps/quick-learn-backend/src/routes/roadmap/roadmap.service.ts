@@ -237,7 +237,8 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         'courses',
         'courses.archived = :archived',
         { archived: false },
-      );
+      )
+      .leftJoinAndSelect('roadmap.created_by', 'created_by');
 
     if (courseId) {
       queryBuilder.andWhere('courses.id = :courseId', { courseId });
