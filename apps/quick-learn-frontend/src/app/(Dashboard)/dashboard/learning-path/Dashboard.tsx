@@ -91,6 +91,7 @@ const Dashboard = () => {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   const calculateRoadmapProgress = (roadmap: TUserRoadmap) => {
