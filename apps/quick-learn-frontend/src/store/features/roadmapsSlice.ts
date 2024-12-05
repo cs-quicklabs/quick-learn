@@ -83,7 +83,7 @@ const roadmapsSlice = createSlice({
 
     removeRoadmap: (state, action: PayloadAction<string>) => {
       state.roadmaps = sortByName(
-        state.roadmaps.filter((r) => r.id !== action.payload),
+        state.roadmaps.filter((r) => r.id !== +action.payload),
       );
 
       // Update courses array - remove courses that are no longer in any roadmap
@@ -140,7 +140,7 @@ export const selectAllRoadmaps = (state: RootState): TRoadmap[] =>
 
 export const selectRoadmapById = (
   state: RootState,
-  roadmapId: string,
+  roadmapId: number,
 ): TRoadmap | undefined =>
   state.roadmaps.roadmaps.find((roadmap) => roadmap.id === roadmapId);
 
