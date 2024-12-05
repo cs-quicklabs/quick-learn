@@ -13,7 +13,7 @@ import {
 } from '@src/utils/toastUtils';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { MdOutlineDone } from 'react-icons/md';
+import { MdInfo } from 'react-icons/md';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.myLearningPath.heading, link: RouteEnum.MY_LEARNING_PATH },
@@ -29,6 +29,7 @@ const LessonDetails = () => {
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
   const [isRead, setIsRead] = useState<boolean>(false); // remove it when userprogress is being declared globally
+  const [completedOn, setCompletedOn] = useState<string>('');
 
   const handleCheckboxChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -36,10 +37,23 @@ const LessonDetails = () => {
     const checked = event.target.checked;
     setIsChecked(checked);
     try {
-      const res = await markAsDone(lesson, course);
+      const res = await markAsDone(lesson, course, true);
       showApiMessageInToast(res);
-      setIsRead(true);
+      setIsRead(res.data.isRead);
+      setCompletedOn(res.data.completed_date);
+      setIsChecked(res.data.isRead);
       console.log(`Lesson ${checked ? 'completed' : 'not completed'}`);
+    } catch (error) {
+      console.error('Error marking lesson as completed:', error);
+    }
+  };
+
+  const markLessionAsUnread = async () => {
+    try {
+      const res = await markAsDone(lesson, course, false);
+      showApiMessageInToast(res);
+      setIsRead(false);
+      setIsChecked(false);
     } catch (error) {
       console.error('Error marking lesson as completed:', error);
     }
@@ -78,6 +92,8 @@ const LessonDetails = () => {
     getLessonStatus(lesson)
       .then((res) => {
         setIsRead(res.data.isRead);
+        setCompletedOn(res.data.completed_date);
+        setIsChecked(res.data.isRead);
       })
       .catch((err) => console.log('err', err));
   }, [router, lesson, course, roadmap]);
@@ -88,12 +104,25 @@ const LessonDetails = () => {
       <ViewLesson lesson={lessonDetails} links={links} />
       {/* <input type="text" onClick={handlereadme} /> */}
       {isRead ? (
-        <p className="text-slate-500 italic text-center flex justify-center items-center gap-2 mb-7">
-          <span className="bg-green-600 flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center  ">
-            <MdOutlineDone />
-          </span>
-          {en.myLearningPath.lessonCompleted}
-        </p>
+        <div className="w-full flex align-middle justify-center">
+          <p className="bg-green-100 p-5 rounded-md text-[#166534] text-center flex justify-center items-center gap-2 mb-7 w-1/2 text-start">
+            <span className="bg-[#166534] flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center  ">
+              <MdInfo />
+            </span>
+            <p>
+              <span className="font-bold">
+                {en.myLearningPath.alreadyCompleted}
+              </span>{' '}
+              {completedOn && en.myLearningPath.lessonCompleted(completedOn)}{' '}
+              <span
+                className="font-bold underline cursor-pointer"
+                onClick={markLessionAsUnread}
+              >
+                {en.myLearningPath.markAsUnread}
+              </span>
+            </p>
+          </p>
+        </div>
       ) : (
         <div className="flex justify-center items-center gap-4 mb-48 mt-12">
           <input

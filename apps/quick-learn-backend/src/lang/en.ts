@@ -3,7 +3,7 @@ export const en = {
   accountDeactiveMessage:
     'Your account is deactivated. Please reach out to the system administrator for further assistance.',
   deactiveUserAddError: 'The account is deactivated.',
-
+  usingsamePassword: 'New password cannot be same as old password.',
   // User related messages
   successGotUsers: 'Successfully got users.',
   successGotUser: 'Successfully got user details.',
