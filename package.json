@@ -33,6 +33,7 @@
     "dotenv": "^16.4.5",
     "flowbite": "^2.4.1",
     "flowbite-react": "^0.10.1",
+    "framer-motion": "^11.13.1",
     "handlebars": "^4.7.8",
     "helmet": "^7.1.0",
     "mjml": "^4.15.3",

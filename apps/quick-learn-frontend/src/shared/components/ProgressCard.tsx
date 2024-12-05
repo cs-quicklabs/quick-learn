@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { MdOutlineDone } from 'react-icons/md';
 import { format } from 'date-fns';
@@ -26,6 +26,17 @@ const ProgressCard = ({
   className = '',
   isCompleted,
 }: ProgressCardProps) => {
+  const [animatedWidth, setAnimatedWidth] = useState(0);
+
+  useEffect(() => {
+    setAnimatedWidth(0);
+    const timer = setTimeout(() => {
+      setAnimatedWidth(percentage);
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [percentage]);
+
   const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border border-gray-100 group w-full relative transition-shadow duration-200 ${className}`;
 
   return (
@@ -56,10 +67,36 @@ const ProgressCard = ({
               </p>
               <div className="overflow-hidden rounded-full bg-gray-200">
                 <div
-                  className="h-2 rounded-full bg-green-600"
-                  style={{ width: `${percentage}%` }}
-                />
+                  className="h-2 rounded-full transition-[width] duration-1000 ease-in-out relative overflow-hidden"
+                  style={{ width: `${animatedWidth}%` }}
+                >
+                  <div
+                    className="absolute inset-0 h-full w-full"
+                    style={{
+                      background: `linear-gradient(
+                        90deg,
+                        rgba(22, 163, 74, 1) 0%,
+                        rgba(34, 197, 94, 1) 45%,
+                        rgba(34, 197, 94, 1) 55%,
+                        rgba(22, 163, 74, 1) 100%
+                      )`,
+                      backgroundSize: '200% 100%',
+                      animation:
+                        percentage > 0 ? 'shimmer 2s infinite linear' : 'none',
+                    }}
+                  />
+                </div>
               </div>
+              <style jsx>{`
+                @keyframes shimmer {
+                  0% {
+                    background-position: 100% 0;
+                  }
+                  100% {
+                    background-position: -100% 0;
+                  }
+                }
+              `}</style>
             </>
           ) : (
             <div className="text-xs text-gray-500 flex gap-2 items-center font-medium">
