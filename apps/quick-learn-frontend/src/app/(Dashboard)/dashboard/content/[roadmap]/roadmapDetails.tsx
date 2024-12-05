@@ -255,19 +255,20 @@ const RoadmapDetails = () => {
         onSubmit={onAddCourse}
         isloading={isLoading}
       />
-
-      <AssignDataModal
-        show={openAssignModal}
-        setShow={setOpenAssignModal}
-        heading={en.roadmapDetails.addExistingCourses}
-        sub_heading={en.common.selectCourses}
-        isLoading={isLoading}
-        data={courseCategoriesData}
-        initialValues={{
-          selected: roadmapData.courses.map((item) => String(item.id)) || [],
-        }}
-        onSubmit={assignCourses}
-      />
+      {openAssignModal && (
+        <AssignDataModal
+          show={openAssignModal}
+          setShow={setOpenAssignModal}
+          heading={en.roadmapDetails.addExistingCourses}
+          sub_heading={en.common.selectCourses}
+          isLoading={isLoading}
+          data={courseCategoriesData}
+          initialValues={{
+            selected: roadmapData.courses.map((item) => String(item.id)) || [],
+          }}
+          onSubmit={assignCourses}
+        />
+      )}
 
       <ConformationModal
         title={en.roadmapDetails.archiveConfirmHeading}
@@ -351,7 +352,7 @@ const RoadmapDetails = () => {
               {courses.map((item) => (
                 <Card
                   key={item.id}
-                  id={item.id}
+                  id={String(item.id)}
                   title={item.name}
                   description={item.description}
                   stats={`${item.lessons_count || 0} ${en.common.lessons}`}

@@ -5,6 +5,7 @@ import { activateLesson } from '@src/apiServices/archivedService';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 import {
   createLesson,
+  getCourse,
   getRoadmap,
 } from '@src/apiServices/contentRepositoryService';
 import {
@@ -39,6 +40,11 @@ import {
 } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import {
+  selectRoadmapById,
+  updateRoadmap,
+} from '@src/store/features/roadmapsSlice';
+import { store } from '@src/store/store';
 
 // Move constants outside component to prevent recreating on each render
 const defaultlinks: TBreadcrumb[] = [
@@ -213,6 +219,26 @@ const Lesson = () => {
             ...data,
             course_id: courseId,
           });
+
+          // Get updated course data with new lesson
+          const courseRes = await getCourse(courseId);
+
+          // Update roadmap in store with new course data
+          const roadmapFromStore = selectRoadmapById(
+            store.getState(),
+            parseInt(roadmapId),
+          );
+          if (roadmapFromStore) {
+            dispatch(
+              updateRoadmap({
+                ...roadmapFromStore,
+                courses: roadmapFromStore.courses.map((c) =>
+                  c.id === parseInt(courseId) ? courseRes.data : c,
+                ),
+              }),
+            );
+          }
+
           showApiMessageInToast(res);
           router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
         } else {
