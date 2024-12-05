@@ -40,6 +40,12 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         'courses.archived = :archived',
         { archived: false },
       )
+      .leftJoinAndSelect(
+        'courses.lessons',
+        'lessons',
+        'lessons.archived = :archived',
+        { archived: false },
+      )
       .loadRelationCountAndMap(
         'roadmap.courses_count',
         'roadmap.courses',
@@ -47,7 +53,6 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         (qb) =>
           qb.andWhere('courses.archived = :archived', { archived: false }),
       )
-      .leftJoin('courses.lessons', 'lessons')
       .loadRelationCountAndMap(
         'courses.lessons_count',
         'courses.lessons',

@@ -19,6 +19,13 @@ const initialState: RoadmapsState = {
   isInitialized: false,
 };
 
+// Helper function to sort items alphabetically by name
+const sortByName = <T extends { name: string }>(items: T[]): T[] => {
+  return [...items].sort((a, b) =>
+    a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+  );
+};
+
 export const fetchRoadmaps = createAsyncThunk<
   TRoadmap[],
   void,
@@ -26,7 +33,7 @@ export const fetchRoadmaps = createAsyncThunk<
 >('roadmaps/fetchRoadmaps', async (_, { rejectWithValue }) => {
   try {
     const response = await getRoadmaps();
-    return response.data;
+    return sortByName(response.data);
   } catch (error) {
     return rejectWithValue(
       (error as AxiosErrorObject).message || 'Failed to fetch roadmaps',
@@ -40,6 +47,7 @@ const roadmapsSlice = createSlice({
   reducers: {
     addRoadmap: (state, action: PayloadAction<TRoadmap>) => {
       state.roadmaps.unshift(action.payload);
+      state.roadmaps = sortByName(state.roadmaps);
 
       // Update courses array with unique courses
       const newCourses = action.payload.courses || [];
@@ -49,16 +57,14 @@ const roadmapsSlice = createSlice({
         }
       });
 
-      // Sort courses alphabetically
-      state.courses.sort((a, b) =>
-        a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-      );
+      state.courses = sortByName(state.courses);
     },
 
     updateRoadmap: (state, action: PayloadAction<TRoadmap>) => {
       const index = state.roadmaps.findIndex((r) => r.id === action.payload.id);
       if (index !== -1) {
         state.roadmaps[index] = action.payload;
+        state.roadmaps = sortByName(state.roadmaps);
       }
 
       // Update courses array
@@ -72,26 +78,24 @@ const roadmapsSlice = createSlice({
         }
       });
 
-      // Sort courses alphabetically
-      state.courses.sort((a, b) =>
-        a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-      );
+      state.courses = sortByName(state.courses);
     },
 
     removeRoadmap: (state, action: PayloadAction<string>) => {
-      const roadmapId = action.payload;
-      state.roadmaps = state.roadmaps.filter((r) => r.id !== roadmapId);
+      state.roadmaps = sortByName(
+        state.roadmaps.filter((r) => r.id !== +action.payload),
+      );
 
       // Update courses array - remove courses that are no longer in any roadmap
-      const allCourses = new Set<string>();
+      const allCourses = new Set<number>();
       state.roadmaps.forEach((roadmap) => {
         (roadmap.courses || []).forEach((course) => {
-          allCourses.add(course.id);
+          allCourses.add(+course.id);
         });
       });
 
-      state.courses = state.courses.filter((course) =>
-        allCourses.has(course.id),
+      state.courses = sortByName(
+        state.courses.filter((course) => allCourses.has(+course.id)),
       );
     },
   },
@@ -104,21 +108,18 @@ const roadmapsSlice = createSlice({
         fetchRoadmaps.fulfilled,
         (state, action: PayloadAction<TRoadmap[]>) => {
           state.status = 'succeeded';
-          state.roadmaps = action.payload;
+          state.roadmaps = action.payload; // Already sorted in thunk
 
           // Update courses array with unique courses from all roadmaps
-          const coursesMap = new Map<string, TCourse>();
+          const coursesMap = new Map<number, TCourse>();
           action.payload.forEach((roadmap) => {
             (roadmap.courses || []).forEach((course) => {
-              coursesMap.set(course.id, course);
+              coursesMap.set(+course.id, course);
             });
           });
 
           // Convert to array and sort alphabetically
-          state.courses = Array.from(coursesMap.values()).sort((a, b) =>
-            a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-          );
-
+          state.courses = sortByName(Array.from(coursesMap.values()));
           state.isInitialized = true;
         },
       )
@@ -139,7 +140,7 @@ export const selectAllRoadmaps = (state: RootState): TRoadmap[] =>
 
 export const selectRoadmapById = (
   state: RootState,
-  roadmapId: string,
+  roadmapId: number,
 ): TRoadmap | undefined =>
   state.roadmaps.roadmaps.find((roadmap) => roadmap.id === roadmapId);
 

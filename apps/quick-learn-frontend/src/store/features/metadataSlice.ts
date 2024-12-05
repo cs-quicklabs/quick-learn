@@ -1,4 +1,3 @@
-// store/features/metadataSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
 import { TContentRepositoryMetadata } from '@src/shared/types/contentRepository';
@@ -12,6 +11,7 @@ interface MetadataState extends BaseAsyncState {
     contentRepository: TContentRepositoryMetadata;
   };
 }
+
 const initialState: MetadataState = {
   metadata: {
     contentRepository: {
@@ -26,17 +26,7 @@ const initialState: MetadataState = {
 
 export const fetchMetadata = createAsyncThunk(
   'metadata/fetchMetadata',
-  async (_, { getState }) => {
-    const state = getState() as RootState;
-
-    // If already initialized and has data, skip the fetch
-    if (
-      state.metadata.isInitialized &&
-      state.metadata.metadata.contentRepository.course_categories.length > 0
-    ) {
-      return state.metadata.metadata.contentRepository;
-    }
-
+  async () => {
     const response = await getContentRepositoryMetadata();
     return response.data;
   },
@@ -59,9 +49,7 @@ const metadataSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMetadata.pending, (state) => {
-        if (!state.isInitialized) {
-          state.status = 'loading';
-        }
+        state.status = 'loading';
       })
       .addCase(fetchMetadata.fulfilled, (state, action) => {
         state.status = 'succeeded';
@@ -69,9 +57,7 @@ const metadataSlice = createSlice({
         state.isInitialized = true;
       })
       .addCase(fetchMetadata.rejected, (state, action) => {
-        if (!state.isInitialized) {
-          state.status = 'failed';
-        }
+        state.status = 'failed';
         state.error = action.error.message || null;
         showApiErrorInToast(action.error as AxiosErrorObject);
       });
@@ -81,9 +67,11 @@ const metadataSlice = createSlice({
 export const { updateContentRepository } = metadataSlice.actions;
 
 export const selectMetadataStatus = (state: RootState) => state.metadata.status;
+
 export const selectContentRepositoryMetadata = (state: RootState) =>
   state.metadata?.metadata?.contentRepository ??
   initialState.metadata.contentRepository;
+
 export const selectIsMetadataInitialized = (state: RootState) =>
   state.metadata?.isInitialized ?? false;
 

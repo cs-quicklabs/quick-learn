@@ -283,7 +283,7 @@ const TeamMemberDetails = () => {
               {allCourses.map((item) => (
                 <Card
                   key={item.id}
-                  id={item.id}
+                  id={String(item.id)}
                   title={item.name}
                   description={item.description}
                   link={`/dashboard/content/courses/${item.id}`}
