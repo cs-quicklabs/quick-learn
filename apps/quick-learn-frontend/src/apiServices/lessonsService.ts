@@ -59,11 +59,13 @@ export const updateLesson = async (
 export const markAsDone = async (
   lessonId: string,
   courseId: string,
+  isCompleted: boolean,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId}`,
     {
       courseId: parseInt(courseId),
+      isCompleted: isCompleted,
     },
   );
   return response.data;

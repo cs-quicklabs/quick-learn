@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -163,17 +164,6 @@ export class AuthService {
       },
     });
 
-    // TODO: delete expired tokens using cronjobs
-    await this.resetTokenRepository.delete({
-      token: resetToken,
-      active: true,
-    });
-
-    // TODO: delete expired tokens using cronjobs
-    await this.resetTokenRepository.delete({
-      expiry_date: LessThan(new Date()),
-    });
-
     if (!token) {
       throw new UnauthorizedException('Invalid Link');
     }
@@ -185,6 +175,23 @@ export class AuthService {
     if (!user) {
       throw new InternalServerErrorException();
     }
+
+    // VALIDATE IF NEW PASSWORD IS SAME AS OLD PASSWORD
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      throw new BadRequestException(en.usingsamePassword);
+    }
+
+    // TODO: delete expired tokens using cronjobs
+    await this.resetTokenRepository.delete({
+      token: resetToken,
+      active: true,
+    });
+
+    // TODO: delete expired tokens using cronjobs
+    await this.resetTokenRepository.delete({
+      expiry_date: LessThan(new Date()),
+    });
 
     user.password = await bcrypt.hash(newPassword, 10);
     // Todo: update the below to use update function rather than save method

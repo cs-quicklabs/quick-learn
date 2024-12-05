@@ -1,3 +1,6 @@
+import { format } from 'date-fns';
+import { DateFormats } from '../dateFormats';
+
 // English localization constants for the application
 export const en = {
   /**
@@ -349,8 +352,15 @@ export const en = {
    */
   myLearningPath: {
     heading: 'My Learning Path',
-    lessonCompleted: 'You have completed the lesson',
+    lessonCompleted(completedOn: string) {
+      return `You marked this lesson completed on ${format(
+        completedOn,
+        DateFormats.shortDate,
+      )}.If you wish to be reminded about this lesson again, you can`;
+    },
     markRead: 'Mark as read',
+    alreadyCompleted: 'Already completed !!',
+    markAsUnread: 'mark it unread',
   },
 
   Auth: {
