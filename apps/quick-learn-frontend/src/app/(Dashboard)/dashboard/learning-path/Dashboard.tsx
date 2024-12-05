@@ -1,97 +1,33 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ProgressCard from '@src/shared/components/ProgressCard';
 import { en } from '@src/constants/lang/en';
 import DashboardSkeleton from './components/DashboardSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { RouteEnum } from '@src/constants/route.enum';
 import { TUserRoadmap, TUserCourse } from '@src/shared/types/contentRepository';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
-import { AxiosErrorObject } from '@src/apiServices/axios';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import {
+  fetchDashboardData,
+  selectDashboardData,
+} from '@src/store/features/dashboardSlice';
 import {
   fetchUserProgress,
   selectUserProgress,
 } from '@src/store/features/userProgressSlice';
-import { getUserRoadmapsService } from '@src/apiServices/contentRepositoryService';
-
-interface DashboardState {
-  roadmaps: TUserRoadmap[];
-  courses: TUserCourse[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
-  isInitialized: boolean;
-}
-
-const initialState: DashboardState = {
-  roadmaps: [],
-  courses: [],
-  status: 'idle',
-  error: null,
-  isInitialized: false,
-};
+import { useEffect } from 'react';
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
-  const [state, setState] = useState<DashboardState>(initialState);
+  const { roadmaps, courses, status, isInitialized } =
+    useAppSelector(selectDashboardData);
   const userProgress = useAppSelector(selectUserProgress);
 
-  const extractUniqueCourses = (roadmaps: TUserRoadmap[]): TUserCourse[] => {
-    const allCourses = roadmaps.reduce<TUserCourse[]>((acc, roadmap) => {
-      if (roadmap.courses) {
-        return [...acc, ...roadmap.courses];
-      }
-      return acc;
-    }, []);
-
-    return Array.from(
-      new Map(allCourses.map((course) => [course.id, course])).values(),
-    );
-  };
-
   useEffect(() => {
-    const fetchData = async () => {
-      if (!state.isInitialized) {
-        setState((prev) => ({ ...prev, status: 'loading' }));
-      }
-
-      try {
-        // Fetch both roadmaps and progress data
-        const [response] = await Promise.all([
-          getUserRoadmapsService().catch((error: AxiosErrorObject) => {
-            showApiErrorInToast(error);
-            throw error;
-          }),
-          dispatch(fetchUserProgress()),
-        ]);
-
-        if (!response.success) {
-          throw new Error('Failed to fetch user content');
-        }
-
-        const userRoadmaps = response.data;
-        const uniqueCourses = extractUniqueCourses(userRoadmaps);
-
-        setState({
-          roadmaps: userRoadmaps,
-          courses: uniqueCourses,
-          status: 'succeeded',
-          error: null,
-          isInitialized: true,
-        });
-      } catch (error) {
-        if (!state.isInitialized) {
-          setState((prev) => ({
-            ...prev,
-            status: 'failed',
-            error: error instanceof Error ? error.message : 'An error occurred',
-          }));
-        }
-      }
-    };
-
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    Promise.all([
+      dispatch(fetchDashboardData()),
+      dispatch(fetchUserProgress()),
+    ]);
   }, [dispatch]);
 
   const calculateRoadmapProgress = (roadmap: TUserRoadmap) => {
@@ -163,19 +99,19 @@ const Dashboard = () => {
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
             {en.common.roadmapsCount.replace(
               '{count}',
-              state.roadmaps?.length?.toString() || '0',
+              roadmaps?.length?.toString() || '0',
             )}
           </p>
         </div>
       </div>
 
       <div className="relative px-6 grid gap-10 pb-4">
-        {!Array.isArray(state.roadmaps) || state.roadmaps.length === 0 ? (
+        {!Array.isArray(roadmaps) || roadmaps.length === 0 ? (
           <EmptyState type="roadmaps" />
         ) : (
           <div>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
-              {state.roadmaps.map((roadmap) => (
+              {roadmaps.map((roadmap) => (
                 <ProgressCard
                   className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-shadow group duration-200 text-left"
                   key={roadmap?.id || 'fallback-key'}
@@ -203,19 +139,19 @@ const Dashboard = () => {
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
             {en.common.coursesCount.replace(
               '{count}',
-              state.courses?.length?.toString() || '0',
+              courses?.length?.toString() || '0',
             )}
           </p>
         </div>
       </div>
 
       <div className="relative px-6 grid gap-10 pb-16">
-        {!Array.isArray(state.courses) || state.courses.length === 0 ? (
+        {!Array.isArray(courses) || courses.length === 0 ? (
           <EmptyState type="courses" />
         ) : (
           <div>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
-              {state.courses.map((course) => {
+              {courses.map((course) => {
                 if (!course) return null;
 
                 return (
@@ -237,7 +173,7 @@ const Dashboard = () => {
     </>
   );
 
-  if (!state.isInitialized && state.status === 'loading') {
+  if (!isInitialized && status === 'loading') {
     return <DashboardSkeleton />;
   }
 
