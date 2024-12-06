@@ -156,11 +156,11 @@ export const { addRoadmap, updateRoadmap, removeRoadmap } =
 
 // Selectors
 export const selectDashboardData = (state: RootState) => ({
-  roadmaps: state.dashboard.roadmaps,
-  courses: state.dashboard.courses,
-  status: state.dashboard.status,
-  error: state.dashboard.error,
-  isInitialized: state.dashboard.isInitialized,
+  roadmaps: state.dashboard?.roadmaps || [],
+  courses: state.dashboard?.courses || [],
+  status: state.dashboard?.status || 'idle',
+  error: state.dashboard?.error || null,
+  isInitialized: state.dashboard?.isInitialized || false,
 });
 
 export default dashboardSlice.reducer;
