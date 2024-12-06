@@ -201,7 +201,10 @@ export class UsersController {
       relations.push('assigned_roadmaps.courses');
       relations.push('assigned_roadmaps.courses.lessons');
     }
-    const user = await this.usersService.findOneWithSelectedRelationData({ uuid }, relations);
+    const user = await this.usersService.findOneWithSelectedRelationData(
+      { uuid },
+      relations,
+    );
     return new SuccessResponse(en.successGotUser, user);
   }
 

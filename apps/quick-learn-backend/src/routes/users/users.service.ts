@@ -298,12 +298,13 @@ export class UsersService extends PaginationService<UserEntity> {
         { isArchived: false },
       );
 
-      queryBuilder.leftJoin(
-        'user_lesson_progress', 
-        'lesson_progress', 
-        'lesson_progress.user_id = user.id AND lesson_progress.lesson_id = lessons.id AND lesson_progress.course_id = courses.id'
-      )
-      .addSelect('lesson_progress.completed_date', 'completed_date');
+      queryBuilder
+        .leftJoin(
+          'user_lesson_progress',
+          'lesson_progress',
+          'lesson_progress.user_id = user.id AND lesson_progress.lesson_id = lessons.id AND lesson_progress.course_id = courses.id',
+        )
+        .addSelect('lesson_progress.completed_date', 'completed_date');
     }
 
     // Select specific fields
@@ -334,7 +335,7 @@ export class UsersService extends PaginationService<UserEntity> {
       );
     });
 
-    return user
+    return user;
   }
 
   async updateUser(
