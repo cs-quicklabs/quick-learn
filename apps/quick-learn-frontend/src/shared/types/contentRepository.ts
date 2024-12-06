@@ -20,7 +20,7 @@ export interface TCreateCourse {
 }
 
 export interface TRoadmap extends TCreateRoadmap {
-  id: string;
+  id: number;
   archived: boolean;
   roadmap_category: TRoadmapCategories;
   courses: TCourse[];
@@ -35,7 +35,7 @@ export interface TRoadmap extends TCreateRoadmap {
 }
 
 export interface TCourse extends TCreateCourse {
-  id: string;
+  id: number;
   archived: boolean;
   roadmaps?: TRoadmap[];
   course_category: TCourseCategories;

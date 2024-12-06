@@ -101,7 +101,7 @@ const ContentRepository = () => {
               {roadmaps.map((item) => (
                 <Card
                   key={item.id}
-                  id={item.id}
+                  id={String(item.id)}
                   title={item.name}
                   description={item.description}
                   stats={`${item.courses_count || 0} ${en.common.courses}, ${
@@ -144,7 +144,7 @@ const ContentRepository = () => {
                   key={item.id}
                   title={item.name}
                   description={item.description}
-                  id={item.id}
+                  id={String(item.id)}
                   stats={`${item.lessons_count ?? 0} ${en.common.lessons}`}
                   link={`${RouteEnum.CONTENT}/courses/${item.id}`}
                 />

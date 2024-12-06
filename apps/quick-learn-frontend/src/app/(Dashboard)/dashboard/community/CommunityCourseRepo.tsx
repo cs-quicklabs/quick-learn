@@ -66,7 +66,7 @@ const CommunityCourseRepository = () => {
             return (
               <Card
                 key={course.id}
-                id={course.id}
+                id={String(course.id)}
                 title={course.name}
                 description={course.description}
                 stats={`${course?.lessons_count} ${en.lesson.lesson}`}
