@@ -46,22 +46,11 @@ export class LessonProgressController {
     return new SuccessResponse('Course completed lessons', data);
   }
 
-  // @Get(':courseId/progresscount')
-  // async getLessonProgressCount(
-  //   @Param('courseId') courseId: number,
-  //   @Request() req,
-  // ) {
-  //   return await this.lessonProgressService.getCourseLessonCount(
-  //     req.user.id,
-  //     courseId,
-  //   );
-  // }
-
-  @Get('/userprogress')
-  async getAllUserProgress(@Request() req) {
+  @Get('/userprogress:userID?')
+  async getAllUserProgress(@Request() req, @Param('userID') userID?: number) {
     const data =
       await this.lessonProgressService.getUserLessonProgressViaCourse(
-        req.user.id,
+        userID ? userID : req.user.id,
       );
     return new SuccessResponse('All user Progress grouped by course', data);
   }

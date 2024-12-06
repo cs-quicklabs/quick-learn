@@ -270,6 +270,73 @@ export class UsersService extends PaginationService<UserEntity> {
     });
   }
 
+  async findOneWithSelectedRelationData(
+    options: FindOptionsWhere<UserEntity>,
+    relations: string[] = [],
+  ): Promise<UserEntity> {
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .where({ ...options });
+
+    // Dynamically add joins based on relations array
+    if (relations.includes('assigned_roadmaps')) {
+      queryBuilder.leftJoinAndSelect(
+        'user.assigned_roadmaps',
+        'assigned_roadmaps',
+      );
+    }
+
+    if (relations.includes('assigned_roadmaps.courses')) {
+      queryBuilder.leftJoinAndSelect('assigned_roadmaps.courses', 'courses');
+    }
+
+    if (relations.includes('assigned_roadmaps.courses.lessons')) {
+      queryBuilder.leftJoinAndSelect(
+        'courses.lessons',
+        'lessons',
+        'lessons.id IS NOT NULL AND lessons.archived = :isArchived',
+        { isArchived: false },
+      );
+
+      queryBuilder.leftJoin(
+        'user_lesson_progress', 
+        'lesson_progress', 
+        'lesson_progress.user_id = user.id AND lesson_progress.lesson_id = lessons.id AND lesson_progress.course_id = courses.id'
+      )
+      .addSelect('lesson_progress.completed_date', 'completed_date');
+    }
+
+    // Select specific fields
+    const selectFields = ['user'];
+
+    if (relations.includes('assigned_roadmaps')) {
+      selectFields.push('assigned_roadmaps');
+    }
+
+    if (relations.includes('assigned_roadmaps.courses')) {
+      selectFields.push('courses');
+    }
+
+    if (relations.includes('assigned_roadmaps.courses.lessons')) {
+      selectFields.push('lessons.id');
+    }
+
+    queryBuilder.select(selectFields);
+
+    const user = await queryBuilder.getOne();
+
+    user.assigned_roadmaps = (user.assigned_roadmaps || []).filter(
+      (roadmap) => roadmap.archived === false,
+    );
+    user.assigned_roadmaps.forEach((roadmap) => {
+      roadmap.courses = (roadmap.courses || []).filter(
+        (course) => course.archived === false,
+      );
+    });
+
+    return user
+  }
+
   async updateUser(
     uuid: UserEntity['uuid'],
     payload: Partial<UserEntity>,
