@@ -297,14 +297,6 @@ export class UsersService extends PaginationService<UserEntity> {
         'lessons.id IS NOT NULL AND lessons.archived = :isArchived',
         { isArchived: false },
       );
-
-      queryBuilder
-        .leftJoin(
-          'user_lesson_progress',
-          'lesson_progress',
-          'lesson_progress.user_id = user.id AND lesson_progress.lesson_id = lessons.id AND lesson_progress.course_id = courses.id',
-        )
-        .addSelect('lesson_progress.completed_date', 'completed_date');
     }
 
     // Select specific fields
