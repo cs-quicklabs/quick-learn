@@ -7,7 +7,7 @@ import RoadmapCourseSkeleton from '@src/shared/components/roadmapCourseSkeleton'
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { getLearningPathCourse } from '@src/apiServices/learningPathService';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
-import { TCourse, TUserCourse } from '@src/shared/types/contentRepository';
+import { TUserCourse } from '@src/shared/types/contentRepository';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import ProgressCard from '@src/shared/components/ProgressCard';
