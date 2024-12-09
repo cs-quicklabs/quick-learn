@@ -199,16 +199,12 @@ export class UsersController {
     }
     if (getUserQueryDto.is_load_assigned_courses) {
       relations.push('assigned_roadmaps.courses');
+      relations.push('assigned_roadmaps.courses.lessons');
     }
-    const user = await this.usersService.findOne({ uuid }, relations);
-    user.assigned_roadmaps = (user.assigned_roadmaps || []).filter(
-      (roadmap) => roadmap.archived === false,
+    const user = await this.usersService.findOneWithSelectedRelationData(
+      { uuid },
+      relations,
     );
-    user.assigned_roadmaps.forEach((roadmap) => {
-      roadmap.courses = (roadmap.courses || []).filter(
-        (course) => course.archived === false,
-      );
-    });
     return new SuccessResponse(en.successGotUser, user);
   }
 

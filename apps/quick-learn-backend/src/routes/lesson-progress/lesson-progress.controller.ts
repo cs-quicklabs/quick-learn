@@ -10,6 +10,7 @@ import {
   Get,
   UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 
 @Controller({ path: 'lessonprogress', version: '1' })
 @UseGuards(JwtAuthGuard)
@@ -46,22 +47,14 @@ export class LessonProgressController {
     return new SuccessResponse('Course completed lessons', data);
   }
 
-  // @Get(':courseId/progresscount')
-  // async getLessonProgressCount(
-  //   @Param('courseId') courseId: number,
-  //   @Request() req,
-  // ) {
-  //   return await this.lessonProgressService.getCourseLessonCount(
-  //     req.user.id,
-  //     courseId,
-  //   );
-  // }
-
-  @Get('/userprogress')
-  async getAllUserProgress(@Request() req) {
+  @Get('/userprogress:userID?')
+  async getAllUserProgress(
+    @CurrentUser() curentUser,
+    @Param('userID') userID?: number,
+  ) {
     const data =
       await this.lessonProgressService.getUserLessonProgressViaCourse(
-        req.user.id,
+        userID ? userID : curentUser.id,
       );
     return new SuccessResponse('All user Progress grouped by course', data);
   }
