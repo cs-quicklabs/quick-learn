@@ -231,7 +231,7 @@ const Navbar = () => {
                       {user?.profile_image ? (
                         <Image
                           alt=""
-                          id='headerProfileImage'
+                          id="headerProfileImage"
                           src={user.profile_image}
                           className="h-10 w-10 rounded-full object-cover"
                           width={40}

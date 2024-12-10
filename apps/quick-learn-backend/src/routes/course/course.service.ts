@@ -43,7 +43,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     totalPages: number;
   }> {
     const queryBuilder = this.repository.createQueryBuilder('courses');
-    const { page = 1, limit = 10, q = '' } = paginationDto;
+    const { page = 1, limit = 10 } = paginationDto;
     // Apply filters from options
     if (options) {
       Object.keys(options).forEach((key) => {
