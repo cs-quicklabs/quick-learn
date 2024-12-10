@@ -32,6 +32,70 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     super(repo);
   }
 
+  async getContentRepoCourses(
+    paginationDto: PaginationDto,
+    options: FindOptionsWhere<CourseEntity>, // filter conditions
+    relations: string[] = [], // additional relations to include
+  ): Promise<{
+    courses: CourseEntity[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const queryBuilder = this.repository.createQueryBuilder('courses');
+    const { page = 1, limit = 10 } = paginationDto;
+    // Apply filters from options
+    if (options) {
+      Object.keys(options).forEach((key) => {
+        queryBuilder.andWhere(`courses.${key} = :${key}`, {
+          [key]: options[key],
+        });
+      });
+    }
+
+    // Dynamically include relations
+    relations.forEach((relation) => {
+      queryBuilder.leftJoinAndSelect(`courses.${relation}`, relation);
+    });
+
+    // Join course_category and count lessons
+    queryBuilder
+      .leftJoin('courses.lessons', 'lessons')
+      .loadRelationCountAndMap(
+        'courses.lessons_count',
+        'courses.lessons',
+        'lessons',
+        (qb) =>
+          qb
+            .andWhere('lessons.archived = :archivedLessons', {
+              archivedLessons: false,
+            })
+            .andWhere('lessons.approved = :approvedLessons', {
+              approvedLessons: true,
+            }),
+      )
+      .orderBy('courses.name', 'ASC');
+
+    // Calculate total count before pagination
+    const total = await queryBuilder.getCount();
+
+    // Apply pagination
+    queryBuilder.skip((page - 1) * limit).take(limit);
+
+    // Get paginated courses
+    const courses = await queryBuilder.getMany();
+
+    // Calculate total pages
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      courses,
+      total,
+      page,
+      totalPages,
+    };
+  }
+
   async getAllCourses(
     options: FindOptionsWhere<CourseEntity>, // filter conditions
     relations: string[] = [], // additional relations to include
