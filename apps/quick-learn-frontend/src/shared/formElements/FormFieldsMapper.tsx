@@ -65,73 +65,80 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(handleFormSubmit)}
-      className="space-y-4"
-      noValidate
-    >
-      {fields.map((field) => {
-        if (field.type === 'image')
-          return (
-            <ImageInput
-              key={field.label}
-              watch={watch}
-              setValue={setValue}
-              name={field.name}
-              src={
-                getValues(
-                  field.name as unknown as readonly Path<TypeOf<T>>[],
-                ) as unknown as string
-              }
-              imageType={field?.image_type ?? 'misc'}
-              label={field.label}
-              firstName={field.firstName}
-              lastName={field.lastName}
-            />
-          );
-        return (
-          <InputField
-            key={field.name}
-            label={field.label}
-            sub_label={field.sub_label}
-            name={field.name}
-            type={field.type}
-            placeholder={field.placeholder ?? ''}
-            options={field.options}
-            height={field.height}
-            width={field.width}
-            className={field.className}
-            register={register}
-            disabled={isLoading || field.disabled}
-            errorMsg={errors[field.name]?.message as string}
-            id={id}
-          />
-        );
-      })}
-      <div className="flex flex-wrap mt-4 gap-2">
-        <button
-          type="submit"
-          disabled={buttonDisabled || isLoading || !isValid || !isDirty}
-          className={`${
-            bigButton && 'w-full'
-          } text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center align-middle disabled:bg-gray-500`}
-        >
-          {isLoading ? <Loader /> : buttonText}
-        </button>
-        {cancelButton && (
+    <>
+      <div className="mb-2">
+        {fields.map((field) => {
+          if (field.type === 'image')
+            return (
+              <ImageInput
+                key={field.label}
+                watch={watch}
+                setValue={setValue}
+                name={field.name}
+                src={
+                  getValues(
+                    field.name as unknown as readonly Path<TypeOf<T>>[],
+                  ) as unknown as string
+                }
+                imageType={field?.image_type ?? 'misc'}
+                label={field.label}
+                firstName={field.firstName}
+                lastName={field.lastName}
+              />
+            );
+        })}
+      </div>
+      <form
+        onSubmit={handleSubmit(handleFormSubmit)}
+        className="space-y-4"
+        noValidate
+      >
+        {fields.map((field) => {
+          if (field.type !== 'image')
+            return (
+              <InputField
+                key={field.name}
+                label={field.label}
+                sub_label={field.sub_label}
+                name={field.name}
+                type={field.type}
+                placeholder={field.placeholder ?? ''}
+                options={field.options}
+                height={field.height}
+                width={field.width}
+                className={field.className}
+                register={register}
+                disabled={isLoading || field.disabled}
+                errorMsg={errors[field.name]?.message as string}
+                id={id}
+              />
+            );
+        })}
+        <div className="flex flex-wrap mt-4 gap-2">
           <button
+            type="submit"
+            disabled={buttonDisabled || isLoading || !isValid || !isDirty}
             className={`${
               bigButton && 'w-full'
-            } py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200`}
-            onClick={() => cancelButton()}
-            type="button"
-            disabled={isLoading}
+            } text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center align-middle disabled:bg-gray-500`}
           >
-            {en.common.cancel}
+            {isLoading ? <Loader /> : buttonText}
           </button>
-        )}
-      </div>
-    </form>
+          {cancelButton && (
+            <button
+              className={`${
+                bigButton && 'w-full'
+              } py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200`}
+              onClick={() => cancelButton()}
+              type="button"
+              disabled={isLoading}
+            >
+              {en.common.cancel}
+            </button>
+          )}
+        </div>
+      </form>
+    </>
   );
 }
 
