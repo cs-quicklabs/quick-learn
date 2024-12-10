@@ -31,10 +31,16 @@ import { CourseArchiveDto } from './dto/course-archive.dto';
 export class CourseController {
   constructor(private service: CourseService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Get all courses' })
-  async getRoadmap(): Promise<SuccessResponse> {
-    const data = await this.service.getMany();
+  @Post('/content')
+  @ApiOperation({ summary: 'Get all content page courses' })
+  async getCourses(
+    @Body() paginationDto: PaginationDto,
+  ): Promise<SuccessResponse> {
+    const data = await this.service.getContentRepoCourses(
+      paginationDto,
+      { is_community_available: true, archived: false },
+      [],
+    );
     return new SuccessResponse(en.GetAllCourses, data);
   }
 
