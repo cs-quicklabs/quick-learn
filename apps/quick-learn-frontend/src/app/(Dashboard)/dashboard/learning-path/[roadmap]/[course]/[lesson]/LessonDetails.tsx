@@ -42,7 +42,7 @@ const LessonDetails = () => {
     });
 
     return links;
-  }, []);
+  }, [member, baseLink]);
 
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [lessonDetails, setLessonDetails] = useState<TLesson>();
@@ -115,7 +115,7 @@ const LessonDetails = () => {
         setIsChecked(res.data.isRead);
       })
       .catch((err) => console.log('err', err));
-  }, [router, lesson, course, roadmap]);
+  }, [router, lesson, course, roadmap, member, baseLink, defaultlinks]);
 
   if (!lessonDetails) return <FullPageLoader />;
   return (

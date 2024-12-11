@@ -47,7 +47,7 @@ const RoadmapDetails = () => {
     });
 
     return links;
-  }, []);
+  }, [member, baseLink]);
 
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
@@ -63,7 +63,7 @@ const RoadmapDetails = () => {
 
   useEffect(() => {
     !member && dispatch(fetchUserProgress());
-  }, [dispatch]);
+  }, [dispatch, member]);
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -88,7 +88,7 @@ const RoadmapDetails = () => {
         .then((res) => setMemberUserProgress(res.data))
         .catch((e) => showApiErrorInToast(e));
     }
-  }, [router, roadmap]);
+  }, [router, roadmap, member, baseLink, defaultlinks]);
 
   const isLoading = isPageLoading || progressStatus === 'loading';
 

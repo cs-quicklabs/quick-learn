@@ -31,7 +31,7 @@ const CourseDetails = () => {
     return member !== undefined
       ? `${RouteEnum.TEAM}/${member}`
       : RouteEnum.MY_LEARNING_PATH;
-  }, []);
+  }, [member]);
 
   const defaultlinks: TBreadcrumb[] = useMemo(() => {
     const links: TBreadcrumb[] = [];
@@ -65,8 +65,8 @@ const CourseDetails = () => {
   const progressStatus = useAppSelector(selectUserProgressStatus);
 
   useEffect(() => {
-    dispatch(fetchUserProgress());
-  }, [dispatch]);
+    !member && dispatch(fetchUserProgress());
+  }, [dispatch, member]);
 
   // Fetch course data
   useEffect(() => {
@@ -98,7 +98,7 @@ const CourseDetails = () => {
         .then((res) => setMemberUserProgress(res.data))
         .catch((e) => showApiErrorInToast(e));
     }
-  }, [router, roadmap, course]);
+  }, [router, roadmap, course, member, defaultlinks, baseLink]);
 
   // Get progress data for this course
   const courseLessonProgress = useMemo(() => {
@@ -108,7 +108,7 @@ const CourseDetails = () => {
         )
       : userProgress?.find((progress) => progress.course_id === Number(course));
     return courseProgress?.lessons || [];
-  }, [userProgress, memberUserProgress, course]);
+  }, [userProgress, memberUserProgress, course, member]);
 
   // Calculate overall course progress
   const progressPercentage = useMemo(() => {
