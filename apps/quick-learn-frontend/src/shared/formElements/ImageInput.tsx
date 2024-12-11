@@ -117,8 +117,10 @@ const ImageInput: FC<Props> = ({
 
   // Handle Trash Icon Click - Open the confirmation modal
   const handleImagedeletion = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering `handleImageClick`
-    setIsDeleteModalOpen(true); // Open the confirmation modal
+    if (imagePreview) {
+      e.stopPropagation(); // Prevent triggering `handleImageClick`
+      setIsDeleteModalOpen(true); // Open the confirmation modal
+    }
   };
 
   // Handle Deletion Confirmation - Remove the image and close the modal
@@ -200,14 +202,12 @@ const ImageInput: FC<Props> = ({
             className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity ${
               isLoading ? 'opacity-100' : ''
             }`}
+            onClick={handleImagedeletion}
           >
             {isLoading ? (
               <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : imagePreview ? (
-              <TrashIcon
-                className="text-white w-8 h-8"
-                onClick={handleImagedeletion} // Handle trash icon click
-              />
+              <TrashIcon className="text-white w-8 h-8" />
             ) : (
               <CameraIcon className="text-white w-8 h-8" />
             )}
