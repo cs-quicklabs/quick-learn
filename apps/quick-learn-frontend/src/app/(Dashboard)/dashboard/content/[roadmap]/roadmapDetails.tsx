@@ -175,6 +175,16 @@ const RoadmapDetails = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchRoadmapInBackground = async () => {
+      const updatedRoadmap = await getRoadmap(roadmapId);
+      setRoadmapData(updatedRoadmap.data);
+    };
+    if (roadmapId) {
+      fetchRoadmapInBackground();
+    }
+  }, [roadmapId]);
+
   const assignCourses = async (data: string[]) => {
     setIsLoading(true);
     try {
