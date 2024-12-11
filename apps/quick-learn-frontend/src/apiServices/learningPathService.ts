@@ -8,9 +8,11 @@ import { LearningPathAPIEnum } from '@src/constants/api.enum';
 
 export const getLearningPathRoadmap = async (
   id: string,
+  userId?: number,
 ): Promise<AxiosSuccessResponse<TRoadmap>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<TRoadmap>>(
-    LearningPathAPIEnum.GET_LEARNING_PATH_ROADMAP.replace(':id', id),
+    LearningPathAPIEnum.GET_LEARNING_PATH_ROADMAP.replace(':id', id) +
+      `${userId ? `/${userId}` : ''}`,
   );
   return response.data;
 };

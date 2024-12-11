@@ -361,6 +361,7 @@ export const en = {
     markRead: 'Mark as read',
     alreadyCompleted: 'Already completed !!',
     markAsUnread: 'mark it unread',
+    learning_path: 'Learning Path',
   },
 
   Auth: {

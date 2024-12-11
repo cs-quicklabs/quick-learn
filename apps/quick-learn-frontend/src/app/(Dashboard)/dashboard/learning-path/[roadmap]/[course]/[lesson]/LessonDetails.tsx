@@ -12,18 +12,38 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MdInfo } from 'react-icons/md';
 
-const defaultlinks: TBreadcrumb[] = [
-  { name: en.myLearningPath.heading, link: RouteEnum.MY_LEARNING_PATH },
-];
 const LessonDetails = () => {
-  const { roadmap, course, lesson } = useParams<{
+  const { roadmap, course, lesson, member } = useParams<{
     roadmap: string;
     course: string;
     lesson: string;
+    member: string;
   }>();
+  const baseLink = useMemo(() => {
+    return member !== undefined
+      ? `${RouteEnum.TEAM}/${member}`
+      : RouteEnum.MY_LEARNING_PATH;
+  }, [member]);
+  const defaultlinks: TBreadcrumb[] = useMemo(() => {
+    const links: TBreadcrumb[] = [];
+
+    if (member !== undefined) {
+      links.push({ name: 'Team', link: RouteEnum.TEAM });
+    }
+
+    links.push({
+      name: member
+        ? en.myLearningPath.learning_path
+        : en.myLearningPath.heading,
+      link: baseLink,
+    });
+
+    return links;
+  }, []);
+
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [lessonDetails, setLessonDetails] = useState<TLesson>();
   const router = useRouter();
@@ -37,12 +57,11 @@ const LessonDetails = () => {
     const checked = event.target.checked;
     setIsChecked(checked);
     try {
-      const res = await markAsDone(lesson, course, true);
+      const res = await markAsDone(lesson, course, true, Number(member));
       showApiMessageInToast(res);
       setIsRead(res.data.isRead);
       setCompletedOn(res.data.completed_date);
       setIsChecked(res.data.isRead);
-      console.log(`Lesson ${checked ? 'completed' : 'not completed'}`);
     } catch (error) {
       console.error('Error marking lesson as completed:', error);
     }
@@ -50,7 +69,7 @@ const LessonDetails = () => {
 
   const markLessionAsUnread = async () => {
     try {
-      const res = await markAsDone(lesson, course, false);
+      const res = await markAsDone(lesson, course, false, Number(member));
       showApiMessageInToast(res);
       setIsRead(false);
       setIsChecked(false);
@@ -71,25 +90,25 @@ const LessonDetails = () => {
         if (roadmap && !isNaN(+roadmap)) {
           tempLinks.push({
             name: res.data.course.roadmaps?.[0]?.name ?? '',
-            link: `${RouteEnum.MY_LEARNING_PATH}/${roadmap}`,
+            link: `${baseLink}/${roadmap}`,
           });
         }
         tempLinks.push({
           name: res.data.course.name ?? '',
-          link: `${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}`,
+          link: `${baseLink}/${roadmap}/${course}`,
         });
         tempLinks.push({
           name: res.data?.name ?? '',
-          link: `${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}/${lesson}`,
+          link: `${baseLink}/${roadmap}/${course}/${lesson}`,
         });
         setLinks(tempLinks);
       })
       .catch((err) => {
         showApiErrorInToast(err);
-        router.push(RouteEnum.MY_LEARNING_PATH);
+        router.push(baseLink);
       });
 
-    getLessonStatus(lesson)
+    getLessonStatus(lesson, Number(member))
       .then((res) => {
         setIsRead(res.data.isRead);
         setCompletedOn(res.data.completed_date);
@@ -105,7 +124,7 @@ const LessonDetails = () => {
       {/* <input type="text" onClick={handlereadme} /> */}
       {isRead ? (
         <div className="w-full flex align-middle justify-center">
-          <p className="bg-green-100 p-5 rounded-md text-[#166534] text-center flex justify-center items-center gap-2 mb-7 w-1/2 text-start">
+          <p className="bg-green-100 p-5 rounded-md text-[#166534]  flex justify-center items-center gap-2 mb-7 w-1/2 text-start">
             <span className="bg-[#166534] flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center  ">
               <MdInfo />
             </span>

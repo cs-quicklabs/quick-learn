@@ -11,20 +11,41 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
+import { ApiParam } from '@nestjs/swagger';
+import { UserEntity } from '@src/entities';
 
 @Controller({ path: 'lessonprogress', version: '1' })
 @UseGuards(JwtAuthGuard)
 export class LessonProgressController {
   constructor(private readonly lessonProgressService: LessonProgressService) {}
 
-  @Post('complete/:lessonId')
+  @Post('complete/:lessonId/:userId?')
+  @ApiParam({
+    name: 'lessonId',
+    required: true,
+    type: String, // Route parameters are strings by default
+    description: 'The lesson ID to be marked as completed or unread',
+  })
+  @ApiParam({
+    name: 'userId',
+    required: false,
+    type: Number, // Route parameters are strings by default
+    description: 'Optional user ID',
+  })
   async markLessonAsCompleted(
-    @Param('lessonId') lessonId: number,
     @Body() dto: { courseId: number; isCompleted: boolean },
-    @Request() req,
+    @CurrentUser() user: UserEntity,
+    @Param('lessonId') lessonId: number,
+    @Param('userId') userId?: number,
   ) {
+    let currentUser = user.id;
+    if (userId && (user.user_type_id === 1 || 2)) {
+      //check if current user is SUPER ADMIN or ADMIN
+      currentUser = userId;
+    }
+
     const response = await this.lessonProgressService.markLessonAsCompleted(
-      req.user.id,
+      currentUser,
       lessonId,
       dto.courseId,
     );
@@ -47,7 +68,7 @@ export class LessonProgressController {
     return new SuccessResponse('Course completed lessons', data);
   }
 
-  @Get('/userprogress:userID?')
+  @Get('/userprogress/:userID?')
   async getAllUserProgress(
     @CurrentUser() curentUser,
     @Param('userID') userID?: number,
@@ -59,10 +80,27 @@ export class LessonProgressController {
     return new SuccessResponse('All user Progress grouped by course', data);
   }
 
-  @Get('check/:lessonId')
-  async checkIsRead(@Param('lessonId') lessonId: number, @Request() req) {
+  @Get('check/:lessonId/:userId?')
+  @ApiParam({
+    name: 'lessonId',
+    required: true,
+    type: String, // Route parameters are strings by default
+    description: 'The lesson ID to check if marked or not',
+  })
+  @ApiParam({
+    name: 'userId',
+    required: false,
+    type: Number, // Route parameters are strings by default
+    description: 'Optional user ID',
+  })
+  async checkIsRead(
+    @Param('lessonId') lessonId: number,
+    @CurrentUser() user: UserEntity,
+    @Param('userId') userId?: number,
+  ) {
+    let currUserViewed = userId ? userId : user.id;
     const data = await this.lessonProgressService.checkLessonRead(
-      req.user.id,
+      currUserViewed,
       lessonId,
     );
     return new SuccessResponse('Lesson Status ', data);
