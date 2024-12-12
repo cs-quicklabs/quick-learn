@@ -17,12 +17,10 @@ import {
   selectUserProgress,
   selectUserProgressStatus,
 } from '@src/store/features/userProgressSlice';
+import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
+import { getUserProgress } from '@src/apiServices/lessonsService';
 import { motion } from 'framer-motion';
 import { AxiosErrorObject } from '@src/apiServices/axios';
-
-const defaultlinks: TBreadcrumb[] = [
-  { name: en.myLearningPath.heading, link: RouteEnum.MY_LEARNING_PATH },
-];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -58,12 +56,46 @@ const headerVariants = {
 };
 
 const CourseDetails = () => {
-  const { roadmap, course } = useParams<{ roadmap: string; course: string }>();
+  const { member, roadmap, course } = useParams<{
+    member: string;
+    roadmap: string;
+    course: string;
+  }>();
+  // dynamically set the url to Team member or own Learning path
+  const baseLink = useMemo(() => {
+    return member !== undefined
+      ? `${RouteEnum.TEAM}/${member}`
+      : RouteEnum.MY_LEARNING_PATH;
+  }, [member]);
+
+  const defaultlinks: TBreadcrumb[] = useMemo(() => {
+    const links: TBreadcrumb[] = [];
+
+    if (member !== undefined) {
+      links.push({ name: 'Team', link: RouteEnum.TEAM });
+    }
+
+    links.push({
+      name: member
+        ? en.myLearningPath.learning_path
+        : en.myLearningPath.heading,
+      link: baseLink,
+    });
+
+    return links;
+  }, [member, baseLink]);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [courseData, setCourseData] = useState<TUserCourse>();
+
+  const [memberUserProgress, setMemberUserProgress] = useState<
+    UserLessonProgress[]
+  >([]);
+
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  // Get progress from Redux store
 
   const userProgress = useAppSelector(selectUserProgress);
   const progressStatus = useAppSelector(selectUserProgressStatus);
@@ -88,12 +120,12 @@ const CourseDetails = () => {
           if (roadmap && !isNaN(+roadmap)) {
             tempLinks.push({
               name: res.data?.roadmaps?.[0]?.name ?? '',
-              link: `${RouteEnum.MY_LEARNING_PATH}/${roadmap}`,
+              link: `${baseLink}/${roadmap}`,
             });
           }
           tempLinks.push({
             name: res.data?.name ?? '',
-            link: `${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}`,
+            link: `${baseLink}/${roadmap}/${course}`,
           });
           setLinks(tempLinks);
         } catch (err) {
@@ -106,14 +138,30 @@ const CourseDetails = () => {
     };
 
     fetchData();
-  }, [dispatch, progressStatus, roadmap, course, router]);
+    if (member) {
+      getUserProgress(Number(member))
+        .then((res) => setMemberUserProgress(res.data))
+        .catch((e) => showApiErrorInToast(e));
+    }
+  }, [
+    dispatch,
+    progressStatus,
+    roadmap,
+    course,
+    router,
+    member,
+    defaultlinks,
+    baseLink,
+  ]);
 
   const courseLessonProgress = useMemo(() => {
-    const courseProgress = userProgress?.find(
-      (progress) => progress.course_id === Number(course),
-    );
+    const courseProgress = member
+      ? memberUserProgress?.find(
+          (progress) => progress.course_id === Number(course),
+        )
+      : userProgress?.find((progress) => progress.course_id === Number(course));
     return courseProgress?.lessons || [];
-  }, [userProgress, course]);
+  }, [userProgress, memberUserProgress, course, member]);
 
   const progressPercentage = useMemo(() => {
     if (!courseData?.lessons?.length) return 0;
@@ -125,7 +173,6 @@ const CourseDetails = () => {
     const completedCount = courseLessonProgress.filter((lesson) =>
       courseLessonIds.has(lesson.lesson_id),
     ).length;
-
     return Math.round((completedCount / courseData.lessons.length) * 100);
   }, [courseLessonProgress, courseData]);
 
@@ -200,7 +247,9 @@ const CourseDetails = () => {
                       id={+lesson.id}
                       name={lesson.name}
                       title={lesson.content}
-                      link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}/${lesson.id}`}
+                      link={`${
+                        member ? baseLink : RouteEnum.MY_LEARNING_PATH
+                      }/${roadmap}/${course}/${lesson.id}`}
                       isCompleted={
                         lessonProgress
                           ? {

@@ -6,7 +6,6 @@ import { en } from '@src/constants/lang/en';
 import DashboardSkeleton from './components/DashboardSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { RouteEnum } from '@src/constants/route.enum';
-import { TUserRoadmap, TUserCourse } from '@src/shared/types/contentRepository';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchDashboardData,
@@ -16,6 +15,10 @@ import {
   fetchUserProgress,
   selectUserProgress,
 } from '@src/store/features/userProgressSlice';
+import {
+  calculateRoadmapProgress,
+  calculateCourseProgress,
+} from '@src/utils/helpers';
 import { store } from '@src/store/store';
 import ActivityGraph from '@src/shared/modals/ActivityGraph';
 
@@ -82,65 +85,6 @@ const Dashboard = () => {
       ]);
     }
   }, [dispatch, isStoreReady]);
-
-  const calculateRoadmapProgress = (roadmap: TUserRoadmap) => {
-    if (!roadmap || !Array.isArray(roadmap.courses)) return 0;
-
-    const totalLessonsInRoadmap = roadmap.courses.reduce((total, course) => {
-      if (!course) return total;
-      return (
-        total +
-        (Array.isArray(course.lesson_ids) ? course.lesson_ids.length : 0)
-      );
-    }, 0);
-
-    if (totalLessonsInRoadmap === 0) return 0;
-
-    const completedLessonsInRoadmap = roadmap.courses.reduce(
-      (total, course) => {
-        if (!course) return total;
-
-        const courseProgress = userProgress?.find(
-          (progress) => progress.course_id === course.id,
-        );
-
-        const completedLessonIds =
-          courseProgress?.lessons?.map((lesson) => lesson.lesson_id) || [];
-
-        const completedCount = Array.isArray(course.lesson_ids)
-          ? course.lesson_ids.filter((id) => completedLessonIds.includes(id))
-              .length
-          : 0;
-
-        return total + completedCount;
-      },
-      0,
-    );
-
-    return Math.round(
-      (completedLessonsInRoadmap / totalLessonsInRoadmap) * 100,
-    );
-  };
-
-  const calculateCourseProgress = (course: TUserCourse) => {
-    if (!course || !Array.isArray(course.lesson_ids)) return 0;
-
-    const courseProgress = userProgress?.find(
-      (progress) => progress.course_id === course.id,
-    );
-
-    const completedLessonIds =
-      courseProgress?.lessons?.map((lesson) => lesson.lesson_id) || [];
-
-    const totalLessons = course.lesson_ids.length;
-    const completedCount = course.lesson_ids.filter((id) =>
-      completedLessonIds.includes(id),
-    ).length;
-
-    return totalLessons > 0
-      ? Math.round((completedCount / totalLessons) * 100)
-      : 0;
-  };
 
   // Handle store initialization error
   if (storeError) {
@@ -210,7 +154,7 @@ const Dashboard = () => {
                     name={roadmap?.name || ''}
                     title={roadmap?.description || ''}
                     link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap?.id}`}
-                    percentage={calculateRoadmapProgress(roadmap)}
+                    percentage={calculateRoadmapProgress(roadmap, userProgress)}
                   />
                 </motion.div>
               ))}
@@ -271,7 +215,7 @@ const Dashboard = () => {
                       name={course.name || ''}
                       title={course.description || ''}
                       link={`${RouteEnum.MY_LEARNING_PATH}/courses/${course.id}`}
-                      percentage={calculateCourseProgress(course)}
+                      percentage={calculateCourseProgress(course, userProgress)}
                     />
                   </motion.div>
                 );
