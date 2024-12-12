@@ -145,12 +145,11 @@ const RoadmapDetails = () => {
           router.push(RouteEnum.MY_LEARNING_PATH);
         })
         .finally(() => setIsPageLoading(false));
-
-      if (member) {
-        getUserProgress(Number(member))
-          .then((res) => setMemberUserProgress(res.data))
-          .catch((e) => showApiErrorInToast(e));
-      }
+    }
+    if (member) {
+      getUserProgress(Number(member))
+        .then((res) => setMemberUserProgress(res.data))
+        .catch((e) => showApiErrorInToast(e));
     }
   }, [roadmap, router, dashboardRoadmaps, member, baseLink, defaultlinks]);
 
@@ -229,7 +228,9 @@ const RoadmapDetails = () => {
                       id={course.id}
                       name={course.name}
                       title={course.description}
-                      link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course.id}`}
+                      link={`${
+                        member ? baseLink : RouteEnum.MY_LEARNING_PATH
+                      }/${roadmap}/${course.id}`}
                       percentage={percentage}
                     />
                   </motion.li>

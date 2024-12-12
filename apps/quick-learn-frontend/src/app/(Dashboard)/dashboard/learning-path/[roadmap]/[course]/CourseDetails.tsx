@@ -140,7 +140,10 @@ const CourseDetails = () => {
     fetchData();
     if (member) {
       getUserProgress(Number(member))
-        .then((res) => setMemberUserProgress(res.data))
+        .then((res) => {
+          setMemberUserProgress(res.data);
+          console.log('coursedetail ', res.data);
+        })
         .catch((e) => showApiErrorInToast(e));
     }
   }, [
@@ -247,7 +250,9 @@ const CourseDetails = () => {
                       id={+lesson.id}
                       name={lesson.name}
                       title={lesson.content}
-                      link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}/${lesson.id}`}
+                      link={`${
+                        member ? baseLink : RouteEnum.MY_LEARNING_PATH
+                      }/${roadmap}/${course}/${lesson.id}`}
                       isCompleted={
                         lessonProgress
                           ? {
