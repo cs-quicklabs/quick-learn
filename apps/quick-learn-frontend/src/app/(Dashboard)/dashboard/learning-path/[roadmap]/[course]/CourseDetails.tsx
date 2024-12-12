@@ -140,10 +140,7 @@ const CourseDetails = () => {
     fetchData();
     if (member) {
       getUserProgress(Number(member))
-        .then((res) => {
-          setMemberUserProgress(res.data);
-          console.log('coursedetail ', res.data);
-        })
+        .then((res) => setMemberUserProgress(res.data))
         .catch((e) => showApiErrorInToast(e));
     }
   }, [

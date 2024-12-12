@@ -13,6 +13,7 @@ import {
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam } from '@nestjs/swagger';
 import { UserEntity } from '@src/entities';
+import { UserTypeId } from '@src/common/enum/user_role.enum';
 
 @Controller({ path: 'lessonprogress', version: '1' })
 @UseGuards(JwtAuthGuard)
@@ -39,7 +40,10 @@ export class LessonProgressController {
     @Param('userId') userId?: number,
   ) {
     let currentUser = user.id;
-    if (userId && (user.user_type_id === 1 || 2)) {
+    if (
+      userId &&
+      (user.user_type_id === UserTypeId.SUPER_ADMIN || UserTypeId.ADMIN)
+    ) {
       //check if current user is SUPER ADMIN or ADMIN
       currentUser = userId;
     }
@@ -98,9 +102,9 @@ export class LessonProgressController {
     @CurrentUser() user: UserEntity,
     @Param('userId') userId?: number,
   ) {
-    const currUserViewed = userId ? userId : user.id;
+    const currentUserViewed = userId ? userId : user.id;
     const data = await this.lessonProgressService.checkLessonRead(
-      currUserViewed,
+      currentUserViewed,
       lessonId,
     );
     return new SuccessResponse('Lesson Status ', data);
