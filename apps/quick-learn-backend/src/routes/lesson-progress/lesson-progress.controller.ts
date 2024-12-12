@@ -98,7 +98,7 @@ export class LessonProgressController {
     @CurrentUser() user: UserEntity,
     @Param('userId') userId?: number,
   ) {
-    let currUserViewed = userId ? userId : user.id;
+    const currUserViewed = userId ? userId : user.id;
     const data = await this.lessonProgressService.checkLessonRead(
       currUserViewed,
       lessonId,
