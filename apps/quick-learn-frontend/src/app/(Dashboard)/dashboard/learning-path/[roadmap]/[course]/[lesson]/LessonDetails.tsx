@@ -7,6 +7,8 @@ import { FullPageLoader } from '@src/shared/components/UIElements';
 import ViewLesson from '@src/shared/components/ViewLesson';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson } from '@src/shared/types/contentRepository';
+import { fetchUserProgress } from '@src/store/features/userProgressSlice';
+import { useAppDispatch } from '@src/store/hooks';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -47,6 +49,7 @@ const LessonDetails = () => {
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [lessonDetails, setLessonDetails] = useState<TLesson>();
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [isChecked, setIsChecked] = useState(false);
   const [isRead, setIsRead] = useState<boolean>(false); // remove it when userprogress is being declared globally
   const [completedOn, setCompletedOn] = useState<string>('');
@@ -62,6 +65,8 @@ const LessonDetails = () => {
       setIsRead(res.data.isRead);
       setCompletedOn(res.data.completed_date);
       setIsChecked(res.data.isRead);
+      await dispatch(fetchUserProgress());
+      console.log(`Lesson ${checked ? 'completed' : 'not completed'}`);
     } catch (error) {
       console.error('Error marking lesson as completed:', error);
     }
@@ -70,6 +75,7 @@ const LessonDetails = () => {
   const markLessionAsUnread = async () => {
     try {
       const res = await markAsDone(lesson, course, false, Number(member));
+      await dispatch(fetchUserProgress());
       showApiMessageInToast(res);
       setIsRead(false);
       setIsChecked(false);
