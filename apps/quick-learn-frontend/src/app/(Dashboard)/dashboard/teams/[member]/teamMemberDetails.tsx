@@ -38,10 +38,13 @@ import {
   calculateRoadmapProgress,
   calculateCourseProgress,
 } from '@src/utils/helpers';
+import { useDispatch } from 'react-redux';
+import { decrementTotalUsers } from '@src/store/features/teamSlice';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
 const TeamMemberDetails = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const param = useParams<{ member: string }>();
   const userId = param.member;
@@ -125,6 +128,7 @@ const TeamMemberDetails = () => {
     updateUser(userId, { active: 'false' })
       .then((res) => {
         setMember({ ...member, active: false });
+        dispatch(decrementTotalUsers());
         showApiMessageInToast({
           ...res,
           message: 'User deactivated successfully',
