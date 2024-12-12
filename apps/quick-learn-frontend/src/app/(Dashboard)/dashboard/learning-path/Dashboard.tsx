@@ -17,7 +17,7 @@ import {
   selectUserProgress,
 } from '@src/store/features/userProgressSlice';
 import { store } from '@src/store/store';
-import ActivityGraph from '@src/shared/components/ActivityGraph';
+import ActivityGraph from '@src/shared/modals/ActivityGraph';
 
 const AnimatedProgressCard = motion(ProgressCard);
 
