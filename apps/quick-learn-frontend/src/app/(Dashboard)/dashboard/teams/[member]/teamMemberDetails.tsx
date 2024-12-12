@@ -38,6 +38,7 @@ import {
   calculateRoadmapProgress,
   calculateCourseProgress,
 } from '@src/utils/helpers';
+import ActivityGraph from '@src/shared/modals/ActivityGraph';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
@@ -56,6 +57,7 @@ const TeamMemberDetails = () => {
   >([]);
   const [userProgress, setUserProgress] = useState<UserLessonProgress[]>([]);
   const [allCourses, setAllCourses] = useState<TCourse[]>([]);
+  const [userActivityModal, setUserActivityModal] = useState<boolean>(false);
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -72,6 +74,10 @@ const TeamMemberDetails = () => {
       .finally(() => setIsPageLoading(false));
     //get team memeber learning progress
   }, [userId]);
+
+  const toggleUserActivityModal = () => {
+    setUserActivityModal(!userActivityModal);
+  };
 
   const getMemberDetails = useCallback(() => {
     setIsPageLoading(true);
@@ -312,6 +318,14 @@ const TeamMemberDetails = () => {
             />
           )}
         </section>
+
+        {/* UserActivity Section */}
+        <div className="flex align-center justify-center mt-8 w-full">
+          <ActivityGraph
+            userProgressData={userProgress}
+            isOpen={userActivityModal}
+          />
+        </div>
       </div>
     </>
   );

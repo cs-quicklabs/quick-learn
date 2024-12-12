@@ -20,7 +20,6 @@ import {
   calculateCourseProgress,
 } from '@src/utils/helpers';
 import { store } from '@src/store/store';
-import ActivityGraph from '@src/shared/modals/ActivityGraph';
 
 const AnimatedProgressCard = motion(ProgressCard);
 
@@ -234,9 +233,6 @@ const Dashboard = () => {
       transition={{ duration: 0.5 }}
       className="bg-gray-50 relative z-0 flex-1 min-h-0 focus:outline-none"
     >
-      <div className="flex align-center justify-center mt-8 w-full">
-        <ActivityGraph userProgressData={userProgress} />
-      </div>
       {renderRoadmapsSection()}
       {renderCoursesSection()}
     </motion.div>

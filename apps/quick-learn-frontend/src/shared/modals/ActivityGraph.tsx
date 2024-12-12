@@ -1,9 +1,14 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { CourseProgress } from '@src/store/features/userProgressSlice';
-import { Modal, Tabs } from 'flowbite-react';
+import { Modal } from 'flowbite-react';
+import { CloseIcon } from '../components/UIElements';
+import { format, subMonths } from 'date-fns';
+import { Tooltip } from 'flowbite-react';
+import { DateFormats } from '@src/constants/dateFormats';
 
 interface props {
   userProgressData: CourseProgress[];
+  isOpen: boolean;
 }
 
 interface Lesson {
@@ -36,8 +41,9 @@ interface OutputData {
   opacity: number;
 }
 
-const ActivityGraph: React.FC<props> = (userProgressData) => {
+const ActivityGraph: React.FC<props> = (userProgressData, isOpen) => {
   const [userProgressArray, setUserProgressArray] = useState<OutputData[]>([]);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const getDateCounts = (data: UserProgressData): DateCount[] => {
     const dateCounts: Record<string, number> = {};
@@ -69,26 +75,42 @@ const ActivityGraph: React.FC<props> = (userProgressData) => {
     sixMonthsAgo.setMonth(now.getMonth() - 6);
 
     const inputMap = new Map<string, number>();
+    let maxCount = 0;
+
+    // Populate the map and find the maximum count
     input.forEach((item) => {
       inputMap.set(item.date, item.count);
+      if (item.count > maxCount) {
+        maxCount = item.count;
+      }
     });
 
     for (let d = new Date(sixMonthsAgo); d <= now; d.setDate(d.getDate() + 1)) {
       const currentDate = d.toISOString().split('T')[0];
       const count = inputMap.get(currentDate) || 0;
 
-      // Calculate opacity based on count (e.g., linear scaling)
-      const opacity = count > 0 ? Math.min(count / 10, 1) : 0; // Example scaling logic
+      // Calculate opacity based on the highest count and normalize
+      const normalizedOpacity = maxCount > 0 ? (count / maxCount) * 100 : 0;
+      const tailwindOpacity = Math.round(normalizedOpacity / 5) * 5;
 
       result.push({
         timestamp: currentDate,
         count,
-        opacity,
+        opacity: tailwindOpacity,
       });
     }
 
     return result;
   };
+
+  function getLastSixMonths() {
+    const months = [];
+    for (let i = 0; i < 6; i++) {
+      const date = subMonths(new Date(), i);
+      months.unshift(format(date, 'MMM'));
+    }
+    return months;
+  }
 
   useEffect(() => {
     if (userProgressData) {
@@ -98,17 +120,84 @@ const ActivityGraph: React.FC<props> = (userProgressData) => {
 
   return (
     <Fragment>
-      <Modal show={false} size='4xl'>
-        <Modal.Header className="border-none">Activitys</Modal.Header>
-        <Modal.Body className="mt-[-40px]">
-          <Tabs
-            aria-label="m-0"
-            variant="default"
-            className="text-slate-500 active::text-blue-600"
-          >
-            <Tabs.Item active title="Activities" className=""></Tabs.Item>
-            <Tabs.Item title="Events"></Tabs.Item>
-            <Tabs.Item title="Consistency">
+      <Modal show={isOpen} size="4xl">
+        <Modal.Body>
+          <div className="mb-4 flex items-center justify-between rounded-t dark:border-gray-700 sm:mb-5">
+            <p className="text-lg font-semibold text-gray-900 dark:text-white">
+              User Activity
+            </p>
+            <div>
+              <CloseIcon />
+            </div>
+          </div>
+          <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+            <ul
+              className="flex flex-wrap -mb-px text-sm font-medium text-center"
+              id="myTab"
+              data-tabs-toggle="#myTabContent"
+              role="tablist"
+            >
+              <li className="mr-1">
+                <button
+                  className={`inline-block px-2 pb-2 ${
+                    selectedTab === 0
+                      ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500'
+                      : 'text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:border-transparent'
+                  }`}
+                  id="brand-tab"
+                  data-tabs-target="#brandi"
+                  type="button"
+                  role="tab"
+                  aria-controls="brandi"
+                  aria-selected="true"
+                  onClick={() => setSelectedTab(0)}
+                >
+                  Activities
+                </button>
+              </li>
+              <li className="mr-1">
+                <button
+                  className={`inline-block px-2 pb-2 ${
+                    selectedTab === 1
+                      ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500'
+                      : 'text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:border-transparent'
+                  }`}
+                  id="advanced-filers-tab"
+                  data-tabs-target="#advanced-filters"
+                  type="button"
+                  role="tab"
+                  aria-controls="advanced-filters"
+                  aria-selected="false"
+                  onClick={() => setSelectedTab(1)}
+                >
+                  Events
+                </button>
+              </li>
+              <li className="mr-1">
+                <button
+                  className={`inline-block px-2 pb-2 ${
+                    selectedTab === 2
+                      ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500'
+                      : 'text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:border-transparent'
+                  }`}
+                  id="consistency-tab"
+                  data-tabs-target="#consistency"
+                  type="button"
+                  role="tab"
+                  aria-controls="consistency"
+                  aria-selected="false"
+                  onClick={() => setSelectedTab(2)}
+                >
+                  Consistency
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <div id="myTabContent">
+            {selectedTab === 0 && <Fragment></Fragment>}
+            {selectedTab === 1 && <Fragment></Fragment>}
+            {selectedTab === 2 && (
               <div className="grid place-items-center">
                 <div className="flex items-start gap-4">
                   <div className="flex flex-col gap-2 pt-6">
@@ -123,14 +212,15 @@ const ActivityGraph: React.FC<props> = (userProgressData) => {
                   <div>
                     <div
                       className="flex items-center justify-between"
-                      style={{ width: 640 }}
+                      style={{ width: 600 }}
                     >
-                      <h6 className="w-full text-xs">Jul</h6>
-                      <h6 className="w-full text-xs">Aug</h6>
-                      <h6 className="w-full text-xs">Sep</h6>
-                      <h6 className="w-full text-xs">Oct</h6>
-                      <h6 className="w-full text-xs">Nov</h6>
-                      <h6 className="w-full text-xs">Dec</h6>
+                      {getLastSixMonths().map(
+                        (month: string, index: number) => (
+                          <h6 className="w-full text-xs" key={index}>
+                            {month}
+                          </h6>
+                        ),
+                      )}
                     </div>
                     <div
                       className="mt-2 grid w-full grid-flow-col gap-2"
@@ -142,30 +232,36 @@ const ActivityGraph: React.FC<props> = (userProgressData) => {
                       {userProgressArray?.map(
                         (item: OutputData, index: number) => {
                           return (
-                            <div
-                              key={index}
-                              className={`h-4 w-4 rounded bg-sky-900 opacity-${
-                                item.opacity > 0 ? item.opacity * 2 * 10 : 20
-                              }`}
-                            />
+                            <Fragment key={index}>
+                              <Tooltip
+                                content={`${item.count} activities on ${format(
+                                  item.timestamp,
+                                  DateFormats.shortDate,
+                                )}`}
+                                placement="top"
+                              >
+                                <div
+                                  className={`h-4 w-4 bg-lime-600 opacity-${item.opacity > 0 ? item.opacity : 10}`}
+                                />
+                              </Tooltip>
+                            </Fragment>
                           );
                         },
                       )}
                     </div>
-                    <div className="mt-8 flex items-center gap-2 text-xs">
+                    <div className="mt-8 flex items-center gap-2 text-right text-xs">
                       <span>Less</span>
-                      <span className="h-4 w-4 rounded bg-sky-600 opacity-10" />
-                      <span className="h-4 w-4 rounded bg-sky-900 opacity-20" />
-                      <span className="h-4 w-4 rounded bg-sky-900 opacity-40" />
-                      <span className="h-4 w-4 rounded bg-sky-900 opacity-80" />
-                      <span className="h-4 w-4 rounded bg-sky-900" />
+                      <span className="h-4 w-4 bg-lime-600 opacity-20" />
+                      <span className="h-4 w-4 bg-lime-600 opacity-50" />
+                      <span className="h-4 w-4 bg-lime-600 opacity-80" />
+                      <span className="h-4 w-4 bg-lime-600" />
                       <span>More</span>
                     </div>
                   </div>
                 </div>
               </div>
-            </Tabs.Item>
-          </Tabs>
+            )}
+          </div>
         </Modal.Body>
       </Modal>
     </Fragment>
