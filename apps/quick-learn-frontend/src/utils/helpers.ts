@@ -4,6 +4,13 @@ import { AxiosErrorObject } from '@src/apiServices/axios';
 import { toast } from 'react-toastify';
 import { DebounceFunction } from '@src/shared/types/utilTypes';
 import sanitizeHtml from 'sanitize-html';
+import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
+import {
+  TRoadmap,
+  TCourse,
+  TUserRoadmap,
+  TUserCourse,
+} from '@src/shared/types/contentRepository';
 
 export function showErrorMessage(error: unknown) {
   if (error instanceof AxiosError) {
@@ -115,4 +122,64 @@ export const getInitials = (
 ): string => {
   if (!firstName && !lastName) return fallback;
   return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
+};
+
+export const calculateRoadmapProgress = (
+  roadmapData: TRoadmap | TUserRoadmap | undefined,
+  userProgress: UserLessonProgress[],
+) => {
+  if (!roadmapData?.courses?.length) return 0;
+
+  const totalLessonsInRoadmap = roadmapData.courses.reduce((total, course) => {
+    return total + (course.lesson_ids?.length || course?.lessons?.length || 0);
+  }, 0);
+
+  if (totalLessonsInRoadmap === 0) return 0;
+
+  const completedLessonsInRoadmap = roadmapData.courses.reduce(
+    (total, course) => {
+      const courseProgress = userProgress?.find(
+        (progress) => progress?.course_id === Number(course?.id),
+      );
+
+      const completedLessonIds =
+        courseProgress?.lessons?.map((lesson) => lesson.lesson_id) || [];
+      const completedCount = course.lesson_ids
+        ? course.lesson_ids?.filter((id) => completedLessonIds.includes(id))
+            .length || 0
+        : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
+            .length || 0;
+
+      return total + completedCount;
+    },
+    0,
+  );
+
+  return Math.round((completedLessonsInRoadmap / totalLessonsInRoadmap) * 100);
+};
+
+export const calculateCourseProgress = (
+  course: TUserCourse | TCourse,
+  userProgress: UserLessonProgress[],
+) => {
+  if (!course || !Array.isArray(course.lesson_ids || course.lessons)) return 0;
+
+  const courseProgress = userProgress?.find(
+    (progress) => progress.course_id === course.id,
+  );
+
+  const completedLessonIds =
+    courseProgress?.lessons?.map((lesson) => lesson.lesson_id) || [];
+
+  const totalLessons =
+    course?.lesson_ids?.length || course?.lessons?.length || 0;
+  const completedCount = course.lesson_ids
+    ? course.lesson_ids?.filter((id) => completedLessonIds.includes(id))
+        .length || 0
+    : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
+        .length || 0;
+
+  return totalLessons > 0
+    ? Math.round((completedCount / totalLessons) * 100)
+    : 0;
 };

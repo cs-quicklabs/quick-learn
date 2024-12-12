@@ -7,26 +7,25 @@ import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import ProgressCard from '@src/shared/components/ProgressCard';
 import RoadmapCourseSkeleton from '@src/shared/components/roadmapCourseSkeleton';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
-import {
-  TCourse,
-  TUserCourse,
-  TUserRoadmap,
-} from '@src/shared/types/contentRepository';
+import { TRoadmap } from '@src/shared/types/contentRepository';
+import { TUserRoadmap } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchUserProgress,
   selectUserProgress,
   selectUserProgressStatus,
 } from '@src/store/features/userProgressSlice';
+import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
+import { getUserProgress } from '@src/apiServices/lessonsService';
+import {
+  calculateCourseProgress,
+  calculateRoadmapProgress,
+} from '@src/utils/helpers';
 import { selectDashboardData } from '@src/store/features/dashboardSlice';
 import { motion } from 'framer-motion';
-
-const defaultlinks: TBreadcrumb[] = [
-  { name: en.myLearningPath.heading, link: RouteEnum.MY_LEARNING_PATH },
-];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -62,12 +61,38 @@ const headerVariants = {
 };
 
 const RoadmapDetails = () => {
-  const { roadmap } = useParams<{ roadmap: string }>();
+  const { member, roadmap } = useParams<{ member: string; roadmap: string }>();
+  const baseLink = useMemo(() => {
+    return member !== undefined
+      ? `${RouteEnum.TEAM}/${member}`
+      : RouteEnum.MY_LEARNING_PATH;
+  }, [member]);
+
+  const defaultlinks: TBreadcrumb[] = useMemo(() => {
+    const links: TBreadcrumb[] = [];
+
+    if (member !== undefined) {
+      links.push({ name: 'Team', link: RouteEnum.TEAM });
+    }
+
+    links.push({
+      name: member
+        ? en.myLearningPath.learning_path
+        : en.myLearningPath.heading,
+      link: baseLink,
+    });
+
+    return links;
+  }, [member, baseLink]);
+
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
-  const [roadmapData, setRoadmapData] = useState<TUserRoadmap>();
+  const [roadmapData, setRoadmapData] = useState<TRoadmap | TUserRoadmap>();
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [memberUserProgress, setMemberUserProgress] = useState<
+    UserLessonProgress[]
+  >([]);
 
   const userProgress = useAppSelector(selectUserProgress);
   const progressStatus = useAppSelector(selectUserProgressStatus);
@@ -86,17 +111,18 @@ const RoadmapDetails = () => {
 
     if (existingRoadmap) {
       setRoadmapData(existingRoadmap);
-      setLinks([
-        ...defaultlinks,
-        {
-          name: existingRoadmap.name,
-          link: `${RouteEnum.MY_LEARNING_PATH}/${roadmap}`,
-        },
-      ]);
+
       // Still fetch fresh data in background
       getLearningPathRoadmap(roadmap)
         .then((res) => {
           setRoadmapData(res.data);
+          setLinks([
+            ...defaultlinks,
+            {
+              name: res.data.name,
+              link: `${baseLink}/${roadmap}`,
+            },
+          ]);
         })
         .catch((err) => {
           showApiErrorInToast(err);
@@ -120,62 +146,12 @@ const RoadmapDetails = () => {
         })
         .finally(() => setIsPageLoading(false));
     }
-  }, [roadmap, router, dashboardRoadmaps]);
-
-  const calculateCourseProgress = (course: TCourse | TUserCourse) => {
-    if (!course?.lesson_ids?.length) return 0;
-
-    const courseProgress = userProgress?.find(
-      (progress) => progress.course_id === Number(course.id),
-    );
-
-    if (!courseProgress?.lessons?.length) return 0;
-
-    const completedLessonIds = courseProgress.lessons.map(
-      (lesson) => lesson.lesson_id,
-    );
-
-    const totalLessons = course.lesson_ids.length;
-    const completedCount = course.lesson_ids.filter((id) =>
-      completedLessonIds.includes(id),
-    ).length;
-
-    return Math.round((completedCount / totalLessons) * 100);
-  };
-
-  const calculateRoadmapProgress = () => {
-    if (!roadmapData?.courses?.length) return 0;
-
-    const totalLessonsInRoadmap = roadmapData.courses.reduce(
-      (total, course) => {
-        return total + (course.lesson_ids?.length || 0);
-      },
-      0,
-    );
-
-    if (totalLessonsInRoadmap === 0) return 0;
-
-    const completedLessonsInRoadmap = roadmapData.courses.reduce(
-      (total, course) => {
-        const courseProgress = userProgress?.find(
-          (progress) => progress.course_id === Number(course.id),
-        );
-
-        const completedLessonIds =
-          courseProgress?.lessons?.map((lesson) => lesson.lesson_id) || [];
-        const completedCount =
-          course.lesson_ids?.filter((id) => completedLessonIds.includes(id))
-            .length || 0;
-
-        return total + completedCount;
-      },
-      0,
-    );
-
-    return Math.round(
-      (completedLessonsInRoadmap / totalLessonsInRoadmap) * 100,
-    );
-  };
+    if (member) {
+      getUserProgress(Number(member))
+        .then((res) => setMemberUserProgress(res.data))
+        .catch((e) => showApiErrorInToast(e));
+    }
+  }, [roadmap, router, dashboardRoadmaps, member, baseLink, defaultlinks]);
 
   if (isPageLoading && !roadmapData) {
     return <RoadmapCourseSkeleton />;
@@ -198,7 +174,10 @@ const RoadmapDetails = () => {
         <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
           ({roadmapData.courses?.length ?? 0} {en.contentRepository.courses},
           &nbsp;
-          {`${calculateRoadmapProgress()}% `}
+          {`${calculateRoadmapProgress(
+            roadmapData,
+            member ? memberUserProgress : userProgress,
+          )}% `}
           {en.common.complete})
         </p>
       </motion.div>
@@ -231,7 +210,10 @@ const RoadmapDetails = () => {
           >
             <motion.ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 2xl:grid-cols-5 xl:gap-x-8">
               {roadmapData.courses.map((course) => {
-                const percentage = calculateCourseProgress(course);
+                const percentage = calculateCourseProgress(
+                  course,
+                  member ? memberUserProgress : userProgress,
+                );
 
                 return (
                   <motion.li
@@ -246,7 +228,9 @@ const RoadmapDetails = () => {
                       id={course.id}
                       name={course.name}
                       title={course.description}
-                      link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course.id}`}
+                      link={`${
+                        member ? baseLink : RouteEnum.MY_LEARNING_PATH
+                      }/${roadmap}/${course.id}`}
                       percentage={percentage}
                     />
                   </motion.li>

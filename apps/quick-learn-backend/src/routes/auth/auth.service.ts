@@ -52,7 +52,7 @@ export class AuthService {
     // Comparing password
     const isVerified = await bcrypt.compare(password, user.password);
     if (isVerified) {
-      await this.usersService.updateUser(user.uuid, {
+      await this.usersService.updateUser(user.id, {
         last_login_timestamp: new Date(),
       });
       return user;
