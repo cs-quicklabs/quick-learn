@@ -65,6 +65,6 @@ export enum ArchivedApiEnum {
 export enum LearningPathAPIEnum {
   GET_LEARNING_PATHS = '/users/my-roadmaps',
   GET_LEARNING_PATH_ROADMAP = '/users/my-roadmaps/:id',
-  GET_LEARNING_PATH_COURSE = '/users/my-roadmaps/courses/:id',
-  GET_LEARNING_PATH_LESSON = '/users/my-roadmaps/lessons/:id',
+  GET_LEARNING_PATH_COURSE = '/users/myroadmaps/courses/:id',
+  GET_LEARNING_PATH_LESSON = '/users/myroadmaps/lessons/:id',
 }
