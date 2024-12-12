@@ -1,6 +1,6 @@
 import {
-  TCourse,
   TLesson,
+  TUserCourse,
   TRoadmap,
 } from '@src/shared/types/contentRepository';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
@@ -20,8 +20,8 @@ export const getLearningPathRoadmap = async (
 export const getLearningPathCourse = async (
   id: string,
   roadmapId?: string,
-): Promise<AxiosSuccessResponse<TCourse>> => {
-  const response = await axiosInstance.get<AxiosSuccessResponse<TCourse>>(
+): Promise<AxiosSuccessResponse<TUserCourse>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<TUserCourse>>(
     LearningPathAPIEnum.GET_LEARNING_PATH_COURSE.replace(':id', id) +
       (roadmapId ? `?roadmapId=${roadmapId}` : ''),
   );

@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ProgressCard from '@src/shared/components/ProgressCard';
 import { en } from '@src/constants/lang/en';
@@ -15,11 +15,11 @@ import {
   fetchUserProgress,
   selectUserProgress,
 } from '@src/store/features/userProgressSlice';
-import { useEffect } from 'react';
 import {
   calculateRoadmapProgress,
   calculateCourseProgress,
 } from '@src/utils/helpers';
+import { store } from '@src/store/store';
 
 const AnimatedProgressCard = motion(ProgressCard);
 
@@ -40,16 +40,71 @@ const containerVariants = {
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
-  const { roadmaps, courses, status, isInitialized } =
-    useAppSelector(selectDashboardData);
-  const userProgress = useAppSelector(selectUserProgress);
+  const [isStoreReady, setIsStoreReady] = useState(false);
+  const [storeError, setStoreError] = useState<string | null>(null);
 
+  // Check store initialization
   useEffect(() => {
-    Promise.all([
-      dispatch(fetchDashboardData()),
-      dispatch(fetchUserProgress()),
-    ]);
-  }, [dispatch]);
+    try {
+      const storeState = store.getState();
+      if ('dashboard' in storeState) {
+        setIsStoreReady(true);
+      } else {
+        setStoreError('Dashboard store not properly initialized');
+        console.error('Dashboard slice not registered in Redux store');
+      }
+    } catch (error) {
+      setStoreError('Failed to access Redux store');
+      console.error('Error accessing Redux store:', error);
+    }
+  }, []);
+
+  // Only select from store if it's ready
+  const { roadmaps, courses, status, isInitialized } = useAppSelector((state) =>
+    isStoreReady
+      ? selectDashboardData(state)
+      : {
+          roadmaps: [],
+          courses: [],
+          status: 'loading',
+          isInitialized: false,
+        },
+  );
+
+  const userProgress = useAppSelector((state) =>
+    isStoreReady ? selectUserProgress(state) : [],
+  );
+
+  // Only fetch data if store is ready
+  useEffect(() => {
+    if (isStoreReady) {
+      Promise.all([
+        dispatch(fetchDashboardData()),
+        dispatch(fetchUserProgress()),
+      ]);
+    }
+  }, [dispatch, isStoreReady]);
+
+  // Handle store initialization error
+  if (storeError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center p-8">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            Unable to load dashboard
+          </h2>
+          <p className="text-gray-600">
+            Please refresh the page or contact support if the problem persists.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state while store is initializing or data is loading
+  if (!isStoreReady || (!isInitialized && status === 'loading')) {
+    return <DashboardSkeleton />;
+  }
 
   const renderRoadmapsSection = () => (
     <>
@@ -170,10 +225,6 @@ const Dashboard = () => {
       </div>
     </>
   );
-
-  if (!isInitialized && status === 'loading') {
-    return <DashboardSkeleton />;
-  }
 
   return (
     <motion.div

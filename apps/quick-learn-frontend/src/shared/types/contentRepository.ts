@@ -93,6 +93,7 @@ export type TUserCourse = {
   percentage?: number;
   lessons?: TUserLesson[];
   lesson_ids?: number[];
+  roadmaps?: TUserRoadmap[];
 };
 
 export type TUserLesson = {

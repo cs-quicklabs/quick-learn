@@ -7,7 +7,7 @@ import RoadmapCourseSkeleton from '@src/shared/components/roadmapCourseSkeleton'
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { getLearningPathCourse } from '@src/apiServices/learningPathService';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
-import { TCourse } from '@src/shared/types/contentRepository';
+import { TUserCourse } from '@src/shared/types/contentRepository';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import ProgressCard from '@src/shared/components/ProgressCard';
@@ -19,6 +19,41 @@ import {
 } from '@src/store/features/userProgressSlice';
 import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
 import { getUserProgress } from '@src/apiServices/lessonsService';
+import { motion } from 'framer-motion';
+import { AxiosErrorObject } from '@src/apiServices/axios';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
+
+const headerVariants = {
+  hidden: { opacity: 0, y: -20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: 'easeOut',
+    },
+  },
+};
 
 const CourseDetails = () => {
   const { member, roadmap, course } = useParams<{
@@ -51,7 +86,8 @@ const CourseDetails = () => {
   }, [member, baseLink]);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
-  const [courseData, setCourseData] = useState<TCourse>();
+  const [courseData, setCourseData] = useState<TUserCourse>();
+
   const [memberUserProgress, setMemberUserProgress] = useState<
     UserLessonProgress[]
   >([]);
@@ -65,42 +101,59 @@ const CourseDetails = () => {
   const progressStatus = useAppSelector(selectUserProgressStatus);
 
   useEffect(() => {
-    !member && dispatch(fetchUserProgress());
-  }, [dispatch, member]);
+    const fetchData = async () => {
+      // Only fetch progress if it's not already loaded
+      if (progressStatus === 'idle') {
+        await dispatch(fetchUserProgress());
+      }
 
-  // Fetch course data
-  useEffect(() => {
-    setIsPageLoading(true);
-    getLearningPathCourse(course, !isNaN(+roadmap) ? roadmap : undefined)
-      .then((res) => {
-        setCourseData(res.data);
-        const tempLinks = [...defaultlinks];
-        if (roadmap && !isNaN(+roadmap)) {
+      // Fetch course data only if progress is loaded or failed
+      if (progressStatus === 'succeeded' || progressStatus === 'failed') {
+        setIsPageLoading(true);
+        try {
+          const res = await getLearningPathCourse(
+            course,
+            !isNaN(+roadmap) ? roadmap : undefined,
+          );
+          setCourseData(res.data);
+          const tempLinks = [...defaultlinks];
+          if (roadmap && !isNaN(+roadmap)) {
+            tempLinks.push({
+              name: res.data?.roadmaps?.[0]?.name ?? '',
+              link: `${baseLink}/${roadmap}`,
+            });
+          }
           tempLinks.push({
-            name: res.data?.roadmaps?.[0]?.name ?? '',
-            link: `${baseLink}/${roadmap}`,
+            name: res.data?.name ?? '',
+            link: `${baseLink}/${roadmap}/${course}`,
           });
+          setLinks(tempLinks);
+        } catch (err) {
+          showApiErrorInToast(err as AxiosErrorObject);
+          router.push(RouteEnum.MY_LEARNING_PATH);
+        } finally {
+          setIsPageLoading(false);
         }
-        tempLinks.push({
-          name: res.data?.name ?? '',
-          link: `${baseLink}/${roadmap}/${course}`,
-        });
-        setLinks(tempLinks);
-      })
-      .catch((err) => {
-        showApiErrorInToast(err);
-        router.push(baseLink);
-      })
-      .finally(() => setIsPageLoading(false));
+      }
+    };
 
+    fetchData();
     if (member) {
       getUserProgress(Number(member))
         .then((res) => setMemberUserProgress(res.data))
         .catch((e) => showApiErrorInToast(e));
     }
-  }, [router, roadmap, course, member, defaultlinks, baseLink]);
+  }, [
+    dispatch,
+    progressStatus,
+    roadmap,
+    course,
+    router,
+    member,
+    defaultlinks,
+    baseLink,
+  ]);
 
-  // Get progress data for this course
   const courseLessonProgress = useMemo(() => {
     const courseProgress = member
       ? memberUserProgress?.find(
@@ -110,7 +163,6 @@ const CourseDetails = () => {
     return courseProgress?.lessons || [];
   }, [userProgress, memberUserProgress, course, member]);
 
-  // Calculate overall course progress
   const progressPercentage = useMemo(() => {
     if (!courseData?.lessons?.length) return 0;
 
@@ -124,16 +176,20 @@ const CourseDetails = () => {
     return Math.round((completedCount / courseData.lessons.length) * 100);
   }, [courseLessonProgress, courseData]);
 
-  const isLoading = isPageLoading || progressStatus === 'loading';
+  const isLoading =
+    isPageLoading || progressStatus === 'loading' || progressStatus === 'idle';
 
   if (isLoading) {
     return <RoadmapCourseSkeleton />;
   }
 
   return (
-    <>
-      <Breadcrumb links={links} />
-      <div className="items-baseline mb-8">
+    <motion.div initial="hidden" animate="visible" variants={containerVariants}>
+      <motion.div variants={headerVariants}>
+        <Breadcrumb links={links} />
+      </motion.div>
+
+      <motion.div className="items-baseline mb-8" variants={headerVariants}>
         <h1 className="text-center text-5xl font-extrabold leading-tight capitalize">
           {courseData?.name}
         </h1>
@@ -144,9 +200,12 @@ const CourseDetails = () => {
             : `${progressPercentage}% ${en.common.complete}`}
           )
         </p>
-      </div>
+      </motion.div>
 
-      <div className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <motion.div
+        className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
+        variants={headerVariants}
+      >
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
           <h1 className="text-3xl font-bold leading-tight">
             {en.common.lessons}
@@ -158,44 +217,56 @@ const CourseDetails = () => {
             )}
           </p>
         </div>
-      </div>
+      </motion.div>
 
       <div className="relative px-6 grid gap-10 pb-16">
         {!courseData?.lessons?.length ? (
           <EmptyState type="lessons" />
         ) : (
-          <div>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
               {courseData.lessons.map((lesson) => {
                 const lessonProgress = courseLessonProgress.find(
                   (progress) => progress.lesson_id === lesson.id,
                 );
 
                 return (
-                  <ProgressCard
+                  <motion.li
                     key={lesson.id}
-                    id={+lesson.id}
-                    name={lesson.name}
-                    title={lesson.content}
-                    link={`${baseLink}/${roadmap}/${course}/${lesson.id}`}
-                    isCompleted={
-                      lessonProgress
-                        ? {
-                            lesson_id: lessonProgress.lesson_id,
-                            completed_date: new Date(
-                              lessonProgress.completed_date,
-                            ),
-                          }
-                        : undefined
-                    }
-                  />
+                    variants={cardVariants}
+                    whileHover={{
+                      scale: 1.02,
+                      transition: { duration: 0.2 },
+                    }}
+                  >
+                    <ProgressCard
+                      id={+lesson.id}
+                      name={lesson.name}
+                      title={lesson.content}
+                      link={`${RouteEnum.MY_LEARNING_PATH}/${roadmap}/${course}/${lesson.id}`}
+                      isCompleted={
+                        lessonProgress
+                          ? {
+                              lesson_id: lessonProgress.lesson_id,
+                              completed_date: new Date(
+                                lessonProgress.completed_date,
+                              ),
+                            }
+                          : undefined
+                      }
+                    />
+                  </motion.li>
                 );
               })}
-            </ul>
-          </div>
+            </motion.ul>
+          </motion.div>
         )}
       </div>
-    </>
+    </motion.div>
   );
 };
 

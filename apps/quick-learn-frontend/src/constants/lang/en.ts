@@ -356,10 +356,10 @@ export const en = {
       return `You marked this lesson completed on ${format(
         completedOn,
         DateFormats.shortDate,
-      )}.If you wish to be reminded about this lesson again, you can`;
+      )}. If you wish to be reminded about this lesson again, you can`;
     },
     markRead: 'Mark as read',
-    alreadyCompleted: 'Already completed !!',
+    alreadyCompleted: 'Already completed!',
     markAsUnread: 'mark it unread',
     learning_path: 'Learning Path',
   },
