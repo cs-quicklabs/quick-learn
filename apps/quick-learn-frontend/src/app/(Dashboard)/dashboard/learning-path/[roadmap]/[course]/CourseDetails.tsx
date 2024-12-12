@@ -130,7 +130,7 @@ const CourseDetails = () => {
           setLinks(tempLinks);
         } catch (err) {
           showApiErrorInToast(err as AxiosErrorObject);
-          router.push(RouteEnum.MY_LEARNING_PATH);
+          router.push(member ? baseLink : RouteEnum.MY_LEARNING_PATH);
         } finally {
           setIsPageLoading(false);
         }

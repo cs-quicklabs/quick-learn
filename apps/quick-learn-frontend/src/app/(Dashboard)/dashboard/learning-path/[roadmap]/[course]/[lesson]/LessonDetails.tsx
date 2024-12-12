@@ -74,7 +74,7 @@ const LessonDetails = () => {
 
   const markLessionAsUnread = async () => {
     try {
-      const res = await markAsDone(lesson, course, false, Number(member));
+      const res = await markAsDone(lesson, course, false, +member);
       await dispatch(fetchUserProgress());
       showApiMessageInToast(res);
       setIsRead(false);
@@ -111,10 +111,10 @@ const LessonDetails = () => {
       })
       .catch((err) => {
         showApiErrorInToast(err);
-        router.push(baseLink);
+        router.push(member ? baseLink : RouteEnum.MY_LEARNING_PATH);
       });
 
-    getLessonStatus(lesson, Number(member))
+    getLessonStatus(lesson, +member)
       .then((res) => {
         setIsRead(res.data.isRead);
         setCompletedOn(res.data.completed_date);
