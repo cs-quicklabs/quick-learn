@@ -88,7 +88,7 @@ export class UsersController {
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
-  @Get('myroadmaps/courses/:id')
+  @Get('myroadmaps/courses/:id/:userId?')
   @ApiOperation({ summary: "Get current user's course by id" })
   @ApiParam({
     name: 'id',
@@ -96,20 +96,27 @@ export class UsersController {
     type: String,
     description: 'Get the course by id',
   })
+  @ApiParam({
+    name: 'userId',
+    required: false,
+    type: Number, // Aligning with the actual type in the route
+    description: 'Optional user ID',
+  })
   async getCurrentUserCoursesById(
     @CurrentUser() user: UserEntity,
     @Param('id') id: string,
     @Query('roadmapId') roadmapId?: string,
+    @Param('userId') userId?: number,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getCourseDetails(
-      user.id,
+      userId ? userId : user?.id,
       +id,
       roadmapId ? +roadmapId : undefined,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
-  @Get('myroadmaps/lessons/:id')
+  @Get('myroadmaps/lessons/:id/:userId?')
   @ApiOperation({ summary: "Get current user's lesson by id" })
   @ApiParam({
     name: 'id',
@@ -117,13 +124,20 @@ export class UsersController {
     type: String,
     description: 'Get the lesson by id',
   })
+  @ApiParam({
+    name: 'userId',
+    required: false,
+    type: Number, // Aligning with the actual type in the route
+    description: 'Optional user ID',
+  })
   async getCurrentUserLessonsById(
     @CurrentUser() user: UserEntity,
     @Param('id') id: string,
     @Query() query: GetLessonByIdQueryDto,
+    @Param('userId') userId?: number,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getLessonDetails(
-      user.id,
+      userId ? userId : user?.id,
       +id,
       +query.courseId,
       query.roadmapId ? +query.roadmapId : undefined,
