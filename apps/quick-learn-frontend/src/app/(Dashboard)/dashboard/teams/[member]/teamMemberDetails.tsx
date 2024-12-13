@@ -38,7 +38,7 @@ import {
   calculateRoadmapProgress,
   calculateCourseProgress,
 } from '@src/utils/helpers';
-import ActivityGraph from '@src/shared/modals/ActivityGraph';
+import ActivityGraph, { Course } from '@src/shared/modals/ActivityGraph';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
@@ -74,10 +74,6 @@ const TeamMemberDetails = () => {
       .finally(() => setIsPageLoading(false));
     //get team memeber learning progress
   }, [userId]);
-
-  const toggleUserActivityModal = () => {
-    setUserActivityModal(!userActivityModal);
-  };
 
   const getMemberDetails = useCallback(() => {
     setIsPageLoading(true);
@@ -236,6 +232,7 @@ const TeamMemberDetails = () => {
               <button
                 type="button"
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                onClick={() => setUserActivityModal(!userActivityModal)}
               >
                 <CursorArrowRippleIcon className="h-4 w-4" />
               </button>
@@ -322,7 +319,7 @@ const TeamMemberDetails = () => {
         {/* UserActivity Section */}
         <div className="flex align-center justify-center mt-8 w-full">
           <ActivityGraph
-            userProgressData={userProgress}
+            userProgressData={userProgress as unknown as Course[]}
             isOpen={userActivityModal}
           />
         </div>

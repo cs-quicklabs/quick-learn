@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { CourseProgress } from '@src/store/features/userProgressSlice';
 import { Modal } from 'flowbite-react';
 import { CloseIcon } from '../components/UIElements';
 import { format, subMonths } from 'date-fns';
@@ -7,7 +6,7 @@ import { Tooltip } from 'flowbite-react';
 import { DateFormats } from '@src/constants/dateFormats';
 
 interface props {
-  userProgressData: CourseProgress[];
+  userProgressData: Course[];
   isOpen: boolean;
 }
 
@@ -16,15 +15,10 @@ interface Lesson {
   completed_date: string;
 }
 
-interface Course {
+export interface Course {
   course_id: number;
   lessons: Lesson[];
 }
-
-interface UserProgressData {
-  userProgressData: Course[];
-}
-
 interface DateCount {
   date: string;
   count: number;
@@ -41,15 +35,15 @@ interface OutputData {
   opacity: number;
 }
 
-const ActivityGraph: React.FC<props> = (userProgressData, isOpen) => {
+const ActivityGraph: React.FC<props> = (props) => {
   const [userProgressArray, setUserProgressArray] = useState<OutputData[]>([]);
   const [selectedTab, setSelectedTab] = useState(0);
 
-  const getDateCounts = (data: UserProgressData): DateCount[] => {
+  const getDateCounts = (data: Course[]): DateCount[] => {
     const dateCounts: Record<string, number> = {};
 
     // Loop through each course
-    data.userProgressData.forEach((course) => {
+    data.forEach((course) => {
       // Loop through each lesson in the course
       course.lessons.forEach((lesson) => {
         // Extract the date (ignoring time)
@@ -113,14 +107,16 @@ const ActivityGraph: React.FC<props> = (userProgressData, isOpen) => {
   }
 
   useEffect(() => {
-    if (userProgressData) {
-      setUserProgressArray(generateDailyData(getDateCounts(userProgressData)));
+    if (props.userProgressData && props.userProgressData.length) {
+      setUserProgressArray(
+        generateDailyData(getDateCounts(props.userProgressData)),
+      );
     }
-  }, [userProgressData]);
+  }, [props.userProgressData]);
 
   return (
     <Fragment>
-      <Modal show={isOpen} size="4xl">
+      <Modal show={props.isOpen} size="4xl">
         <Modal.Body>
           <div className="mb-4 flex items-center justify-between rounded-t dark:border-gray-700 sm:mb-5">
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -241,7 +237,9 @@ const ActivityGraph: React.FC<props> = (userProgressData, isOpen) => {
                                 placement="top"
                               >
                                 <div
-                                  className={`h-4 w-4 bg-lime-600 opacity-${item.opacity > 0 ? item.opacity : 10}`}
+                                  className={`h-4 w-4 bg-lime-600 opacity-${
+                                    item.opacity > 0 ? item.opacity : 20
+                                  }`}
                                 />
                               </Tooltip>
                             </Fragment>
