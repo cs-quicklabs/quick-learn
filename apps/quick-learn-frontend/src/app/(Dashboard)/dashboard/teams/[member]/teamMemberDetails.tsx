@@ -248,7 +248,16 @@ const TeamMemberDetails = () => {
               {en.common.roadmaps}
             </h2>
             <p className="ml-2 text-sm text-gray-500">
-              ({member?.assigned_roadmaps?.length ?? 0} {en.common.roadmaps})
+              {member?.assigned_roadmaps &&
+                (member?.assigned_roadmaps?.length > 1
+                  ? en.common.roadmapsCount.replace(
+                      '{count}',
+                      member?.assigned_roadmaps?.length?.toString() || '0',
+                    )
+                  : en.common.roadmapCount.replace(
+                      '{count}',
+                      member?.assigned_roadmaps?.length?.toString() || '0',
+                    ))}
             </p>
           </div>
 
@@ -300,7 +309,15 @@ const TeamMemberDetails = () => {
               {en.common.courses}
             </h2>
             <p className="ml-2 text-sm text-gray-500">
-              ({allCourses.length} {en.contentRepository.courses})
+              {allCourses.length > 1
+                ? en.common.coursesCount.replace(
+                    '{count}',
+                    allCourses?.length?.toString() || '0',
+                  )
+                : en.common.courseCount.replace(
+                    '{count}',
+                    allCourses?.length?.toString() || '0',
+                  )}
             </p>
           </div>
 
