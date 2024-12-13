@@ -27,10 +27,15 @@ import {
 } from '@src/shared/types/contentRepository';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  selectAllCourses,
+  updateRoadmap,
+  selectRoadmapById,
+} from '@src/store/features/roadmapsSlice';
+import {
   selectContentRepositoryMetadata,
   updateContentRepository,
 } from '@src/store/features/metadataSlice';
-import { AppDispatch } from '@src/store/store';
+import { AppDispatch, RootState } from '@src/store/store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -38,9 +43,10 @@ import {
 import { format } from 'date-fns';
 import { Tooltip } from 'flowbite-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import CourseDetailsSkeleton from './CourseDetailsSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
+import { AxiosErrorObject } from '@src/apiServices/axios';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
@@ -49,57 +55,78 @@ const defaultlinks: TBreadcrumb[] = [
 const CourseDetails = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+  const params = useParams<{ roadmap: string; course: string }>();
+  const courseId = params.course;
+  const roadmapId = params.roadmap;
+
+  // Selectors
+  const allCourses = useSelector(selectAllCourses);
+  const courseFromStore = allCourses.find((course) => course.id === +courseId);
+  const roadmapFromStore = useSelector((state: RootState) =>
+    roadmapId ? selectRoadmapById(state, parseInt(roadmapId)) : undefined,
+  );
   const contentRepositoryMetadata = useSelector(
     selectContentRepositoryMetadata,
   );
   const allCourseCategories = contentRepositoryMetadata.course_categories;
   const allRoadmapCategories = contentRepositoryMetadata.roadmap_categories;
 
-  const params = useParams<{ roadmap: string; course: string }>();
-  const courseId = params.course;
-  const roadmapId = params.roadmap;
-
-  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
-  const [courseData, setcourseData] = useState<TCourse>();
+  const [isPageLoading, setIsPageLoading] = useState(!courseFromStore);
+  const [courseData, setCourseData] = useState<TCourse | undefined>(
+    courseFromStore,
+  );
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [isloading, setIsLoading] = useState(false);
-  const [openAssignModal, SetOpenAssignModal] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [openAssignModal, setOpenAssignModal] = useState<boolean>(false);
   const [roadmapCategoriesData, setRoadmapCategoriesData] = useState<
     TAssignModalMetadata[]
   >([]);
   const [showConformationModal, setShowConformationModal] =
     useState<boolean>(false);
 
-  const getCourseDetails = useCallback(() => {
-    if (!courseId) return;
-    setIsPageLoading(true);
-    getCourse(courseId)
-      .then((res) => {
-        setcourseData(res.data);
-      })
-      .catch((err) => {
-        showApiErrorInToast(err);
-      })
-      .finally(() => setIsPageLoading(false));
+  useEffect(() => {
+    const fetchCourse = async () => {
+      if (!courseId) return;
+
+      try {
+        const res = await getCourse(courseId);
+        setCourseData(res.data);
+      } catch (err) {
+        showApiErrorInToast(err as AxiosErrorObject);
+      } finally {
+        setIsPageLoading(false);
+      }
+    };
+
+    if (!courseFromStore) {
+      fetchCourse();
+    }
+  }, [courseId, courseFromStore]);
+
+  useEffect(() => {
+    const fetchCoursesInBackground = async () => {
+      if (!courseId) return;
+
+      try {
+        const res = await getCourse(courseId);
+        setCourseData(res.data);
+      } catch (err) {
+        showApiErrorInToast(err as AxiosErrorObject);
+      }
+    };
+
+    fetchCoursesInBackground();
   }, [courseId]);
 
   useEffect(() => {
-    getCourseDetails();
-  }, [getCourseDetails]);
-
-  useEffect(() => {
-    const data = allRoadmapCategories.map((item) => {
-      return {
-        name: item.name,
-        list: item.roadmaps.map((course) => {
-          return {
-            name: course.name,
-            value: Number(course.id),
-          };
-        }),
-      };
-    });
+    const data = allRoadmapCategories.map((item) => ({
+      name: item.name,
+      list: item.roadmaps.map((course) => ({
+        name: course.name,
+        value: Number(course.id),
+      })),
+    }));
     setRoadmapCategoriesData(data);
   }, [allRoadmapCategories]);
 
@@ -111,7 +138,7 @@ const CourseDetails = () => {
       parseInt(roadmapId)
     ) {
       const roadmap = courseData.roadmaps.find(
-        (ele) => parseInt(ele.id) === parseInt(roadmapId),
+        (ele) => ele.id === parseInt(roadmapId),
       );
       if (!roadmap) return;
       setLinks([
@@ -142,7 +169,21 @@ const CourseDetails = () => {
       .then((res) => {
         setOpenAddModal(false);
         if (!courseData) return;
-        setcourseData({ ...courseData, ...data });
+
+        const updatedCourse = { ...courseData, ...data };
+        setCourseData(updatedCourse);
+
+        // Update course in roadmap if we're in roadmap context
+        if (roadmapFromStore && roadmapId) {
+          const updatedRoadmap = {
+            ...roadmapFromStore,
+            courses: roadmapFromStore.courses.map((c) =>
+              c.id === +courseId ? updatedCourse : c,
+            ),
+          };
+          dispatch(updateRoadmap(updatedRoadmap));
+        }
+
         showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
@@ -154,7 +195,7 @@ const CourseDetails = () => {
     assignRoadmapsToCourse(courseId, data)
       .then((res) => {
         showApiMessageInToast(res);
-        SetOpenAssignModal(false);
+        setOpenAssignModal(false);
 
         // Check if the current roadmap is still assigned
         const isCurrentRoadmapAssigned = data.includes(roadmapId);
@@ -162,7 +203,10 @@ const CourseDetails = () => {
         if (!isCurrentRoadmapAssigned && roadmapId) {
           router.replace(`${RouteEnum.CONTENT}/${roadmapId}`);
         } else {
-          getCourseDetails();
+          // Refresh course data to get updated roadmaps
+          getCourse(courseId).then((res) => {
+            setCourseData(res.data);
+          });
         }
       })
       .catch((err) => showApiErrorInToast(err))
@@ -174,9 +218,11 @@ const CourseDetails = () => {
     activateCourse({ id: Number(courseId), active: false })
       .then((res) => {
         showApiMessageInToast(res);
+
+        // Update metadata
         const updatedCourseCategories = allCourseCategories.map((category) => ({
           ...category,
-          courses: category.courses.filter((course) => course.id !== courseId),
+          courses: category.courses.filter((course) => course.id !== +courseId),
         }));
 
         dispatch(
@@ -185,11 +231,17 @@ const CourseDetails = () => {
           }),
         );
 
-        if (roadmapId && parseInt(roadmapId)) {
-          router.replace(RouteEnum.CONTENT + `/${roadmapId}`);
-        } else {
-          router.replace(RouteEnum.CONTENT);
+        // Update roadmap if in roadmap context
+        if (roadmapFromStore && roadmapId) {
+          const updatedRoadmap = {
+            ...roadmapFromStore,
+            courses: roadmapFromStore.courses.filter((c) => c.id !== +courseId),
+          };
+          dispatch(updateRoadmap(updatedRoadmap));
         }
+
+        router.push(RouteEnum.CONTENT);
+
         setShowConformationModal(false);
       })
       .catch((err) => showApiErrorInToast(err))
@@ -204,7 +256,11 @@ const CourseDetails = () => {
     return <CourseDetailsSkeleton />;
   }
 
-  const hasLessons = courseData?.lessons && courseData.lessons.length > 0;
+  if (!courseData) {
+    return null;
+  }
+
+  const hasLessons = courseData.lessons && courseData.lessons.length > 0;
 
   return (
     <>
@@ -213,18 +269,18 @@ const CourseDetails = () => {
         setOpen={setOpenAddModal}
         isAdd={false}
         onSubmit={onEdit}
-        isloading={isloading}
+        isloading={isLoading}
         initialData={courseData}
       />
       <AssignDataModal
         show={openAssignModal}
-        setShow={SetOpenAssignModal}
+        setShow={setOpenAssignModal}
         heading={en.courseDetails.addExistingRoadmaps}
         sub_heading={en.common.selectRoadmaps}
-        isLoading={isloading}
+        isLoading={isLoading}
         data={roadmapCategoriesData}
         initialValues={{
-          selected: courseData?.roadmaps?.map((item) => String(item.id)) || [],
+          selected: courseData.roadmaps?.map((item) => String(item.id)) || [],
         }}
         onSubmit={assignRoadmaps}
       />
@@ -242,21 +298,21 @@ const CourseDetails = () => {
         {/* Course Header */}
         <div className="flex flex-col items-center justify-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">
-            {courseData?.name}
+            {courseData.name}
           </h1>
           <p className="text-sm text-gray-500 text-center">
             <span className="capitalize">
-              {courseData?.created_by
+              {courseData.created_by
                 ? `${courseData.created_by.first_name} ${courseData.created_by.last_name}`
                 : 'Admin'}
             </span>
             &nbsp;{en.contentRepository.createdThisRoadmapOn}&nbsp;
-            {courseData?.created_at &&
+            {courseData.created_at &&
               format(courseData.created_at, DateFormats.shortDate)}
           </p>
           <p className="text-sm text-gray-500 text-center">
-            ({courseData?.lessons?.length ?? 0} {en.common.lessons}, &nbsp;
-            {courseData?.users_count ?? 0} {en.common.participants})
+            ({courseData.lessons?.length ?? 0} {en.common.lessons}, &nbsp;
+            {courseData.users_count ?? 0} {en.common.participants})
           </p>
 
           {/* Action Buttons */}
@@ -275,7 +331,7 @@ const CourseDetails = () => {
               <button
                 type="button"
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-                onClick={() => SetOpenAssignModal(true)}
+                onClick={() => setOpenAssignModal(true)}
               >
                 <ArrowRightEndOnRectangleIcon className="h-4 w-4" />
               </button>

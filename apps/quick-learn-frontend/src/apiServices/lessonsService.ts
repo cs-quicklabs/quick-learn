@@ -59,11 +59,16 @@ export const updateLesson = async (
 export const markAsDone = async (
   lessonId: string,
   courseId: string,
+  isCompleted: boolean,
+  userId: number,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId}`,
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId} ${
+      userId ? `/${userId}` : ''
+    }`,
     {
       courseId: parseInt(courseId),
+      isCompleted: isCompleted,
     },
   );
   return response.data;
@@ -81,18 +86,25 @@ export const getCourseProgress = async (
 
 export const getLessonStatus = async (
   LessonId: string,
+  userId?: number,
 ): Promise<AxiosSuccessResponse<LessonStatus>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<LessonStatus>>(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/check/${LessonId}`,
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/check/${LessonId} ${
+      userId ? `/${userId}` : ''
+    }`,
   );
   return response.data;
 };
 
-export const getUserProgress = async (): Promise<
-  AxiosSuccessResponse<UserLessonProgress[]>
-> => {
+export const getUserProgress = async (
+  userId?: number | null,
+): Promise<AxiosSuccessResponse<UserLessonProgress[]>> => {
   const response = await axiosInstance.get<
     AxiosSuccessResponse<UserLessonProgress[]>
-  >(`${ContentRepositoryApiEnum.LESSON_PROGRESS}/userprogress`);
+  >(
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/userprogress${
+      userId ? `/${userId}` : ''
+    }`,
+  );
   return response.data;
 };

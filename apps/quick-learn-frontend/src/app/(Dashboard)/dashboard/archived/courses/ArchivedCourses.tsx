@@ -161,8 +161,8 @@ const ArchivedCourses = () => {
                     : ''
                 }
                 deactivationDate={item.updated_at}
-                onClickDelete={() => setDeleteId(item.id)}
-                onClickRestore={() => setRestoreId(item.id)}
+                onClickDelete={() => setDeleteId(String(item.id))}
+                onClickRestore={() => setRestoreId(String(item.id))}
                 alternateButton
               />
             ))}

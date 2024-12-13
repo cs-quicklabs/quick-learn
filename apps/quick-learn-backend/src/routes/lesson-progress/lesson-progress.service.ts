@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
@@ -43,18 +39,21 @@ export class LessonProgressService {
     });
 
     if (existingProgress) {
-      throw new ConflictException('Lesson already marked as completed');
+      // throw new ConflictException('Lesson already marked as completed');
+      // DELETE MARKED AS COMPLETED RECORD
+      await this.userLessonProgressRepository.delete(existingProgress.id);
+    } else {
+      // DELETE MARKED AS COMPLETED RECORD
+      // Create new progress entry
+      const progress = this.userLessonProgressRepository.create({
+        user_id: userId,
+        lesson_id: lessonId,
+        course_id: courseId,
+        completed_date: new Date(),
+      });
+
+      return await this.userLessonProgressRepository.save(progress);
     }
-
-    // Create new progress entry
-    const progress = this.userLessonProgressRepository.create({
-      user_id: userId,
-      lesson_id: lessonId,
-      course_id: courseId,
-      completed_date: new Date(),
-    });
-
-    return await this.userLessonProgressRepository.save(progress);
   }
 
   async getLessonProgressArray(
@@ -151,17 +150,22 @@ export class LessonProgressService {
   async checkLessonRead(
     userId: number,
     lessonId: number,
-  ): Promise<{ isRead: boolean }> {
+  ): Promise<{ isRead: boolean; completed_date: Date | null }> {
     // Check if the lesson exists for the user
     const lessonProgress = await this.userLessonProgressRepository.findOne({
       where: {
         user_id: userId,
         lesson_id: lessonId,
       },
-      select: ['id'], // Fetch only the necessary field for existence check
+      select: ['id', 'completed_date'], // Fetch only the necessary field for existence check
     });
 
     // Return true if the lesson exists, false otherwise
-    return { isRead: !!lessonProgress };
+    return {
+      isRead: !!lessonProgress,
+      completed_date: lessonProgress?.completed_date
+        ? lessonProgress?.completed_date
+        : null,
+    };
   }
 }

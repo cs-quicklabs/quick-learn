@@ -1,13 +1,19 @@
 'use client';
 import { CameraIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
 import { FilePathType } from 'lib/shared/src';
 import Image from 'next/image';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { getInitials } from '@src/utils/helpers';
+import ConformationModal from '../modals/conformationModal'; // Assuming this is your confirmation modal component
+import { updateUserProfileService } from '@src/apiServices/profileService';
+import { UserContext } from '@src/context/userContext';
 
 interface Props {
   watch: UseFormWatch<z.TypeOf<z.ZodTypeAny>>;
@@ -33,7 +39,9 @@ const ImageInput: FC<Props> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imagePreview, setImagePreview] = useState<string | null>(src);
   const [error, setError] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false); // State to manage modal visibility
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user, setUser } = useContext(UserContext);
 
   const watchProfileImage = watch(name);
 
@@ -73,6 +81,27 @@ const ImageInput: FC<Props> = ({
             shouldDirty: true,
             shouldTouch: true,
           });
+          return res;
+        })
+        .then((res) => {
+          const serviceInput = {
+            first_name: user?.first_name,
+            last_name: user?.last_name,
+            profile_image: res.data.file,
+          };
+          if (user) {
+            setUser({
+              ...user,
+              profile_image: res.data.file,
+            });
+          }
+          updateUserProfileService(serviceInput)
+            .then((response) => {
+              showApiMessageInToast(response); // Show success message
+            })
+            .catch((err) => {
+              showApiErrorInToast(err); // Show error message if API fails
+            });
         })
         .catch((err) => showApiErrorInToast(err))
         .finally(() => setIsLoading(false));
@@ -90,6 +119,65 @@ const ImageInput: FC<Props> = ({
   useEffect(() => {
     typeof src === 'string' && setImagePreview(src);
   }, [src]);
+
+  // Handle Trash Icon Click - Open the confirmation modal
+  const handleImagedeletion = (e: React.MouseEvent) => {
+    if (imagePreview) {
+      e.stopPropagation(); // Prevent triggering `handleImageClick`
+      setIsDeleteModalOpen(true); // Open the confirmation modal
+    }
+  };
+
+  // Handle Deletion Confirmation - Remove the image and close the modal
+  const handleConfirmDeletion = () => {
+    setIsLoading(true);
+
+    // Prepare service input to update profile without image
+    const serviceInput = {
+      first_name: user?.first_name,
+      last_name: user?.last_name,
+      profile_image: '', // Use empty string
+    };
+    if (user) {
+      setUser({
+        ...user,
+        profile_image: '',
+      });
+    }
+    updateUserProfileService(serviceInput)
+      .then((response) => {
+        // Reset form value
+        setValue(name, '', {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true,
+        });
+
+        // Clear image preview
+        setImagePreview(null);
+
+        // Show success message
+        showApiMessageInToast(response);
+
+        // Update user context to remove profile image
+        if (user) {
+          const updatedUser = {
+            ...user,
+            profile_image: '',
+          };
+          setUser(updatedUser);
+        }
+      })
+      .catch((err) => {
+        // Show error message if deletion fails
+        showApiErrorInToast(err);
+      })
+      .finally(() => {
+        // Close modal and stop loading
+        setIsDeleteModalOpen(false);
+        setIsLoading(false);
+      });
+  };
 
   return (
     <div>
@@ -124,6 +212,7 @@ const ImageInput: FC<Props> = ({
             className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity ${
               isLoading ? 'opacity-100' : ''
             }`}
+            onClick={handleImagedeletion}
           >
             {isLoading ? (
               <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -147,6 +236,16 @@ const ImageInput: FC<Props> = ({
         <p className="mt-1 text-sm text-red-500">
           File should be less than 1MB.
         </p>
+      )}
+
+      {isDeleteModalOpen && (
+        <ConformationModal
+          open={isDeleteModalOpen}
+          setOpen={setIsDeleteModalOpen}
+          onConfirm={handleConfirmDeletion}
+          title="Delete Image"
+          subTitle="Are you sure you want to delete this image?"
+        />
       )}
     </div>
   );

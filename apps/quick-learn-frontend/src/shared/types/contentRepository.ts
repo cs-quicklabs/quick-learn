@@ -20,7 +20,7 @@ export interface TCreateCourse {
 }
 
 export interface TRoadmap extends TCreateRoadmap {
-  id: string;
+  id: number;
   archived: boolean;
   roadmap_category: TRoadmapCategories;
   courses: TCourse[];
@@ -35,7 +35,7 @@ export interface TRoadmap extends TCreateRoadmap {
 }
 
 export interface TCourse extends TCreateCourse {
-  id: string;
+  id: number;
   archived: boolean;
   roadmaps?: TRoadmap[];
   course_category: TCourseCategories;
@@ -45,7 +45,7 @@ export interface TCourse extends TCreateCourse {
   created_by?: TUser;
   created_at: string;
   updated_at: string;
-  lessons?: TLesson[];
+  lessons?: TLesson[] | [];
   updated_by?: TUser;
   lesson_ids?: number[];
 }
@@ -93,6 +93,7 @@ export type TUserCourse = {
   percentage?: number;
   lessons?: TUserLesson[];
   lesson_ids?: number[];
+  roadmaps?: TUserRoadmap[];
 };
 
 export type TUserLesson = {

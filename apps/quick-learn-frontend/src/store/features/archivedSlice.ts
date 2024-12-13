@@ -44,17 +44,17 @@ export const fetchArchivedUsers = createAsyncThunk(
 
 export const activateArchivedUser = createAsyncThunk(
   'archived/activateUser',
-  async ({ uuid }: { uuid: string }) => {
-    await archivedService.activateUser({ active: true, uuid });
-    return uuid;
+  async ({ userId }: { userId: number }) => {
+    await archivedService.activateUser({ active: true, userId });
+    return userId;
   },
 );
 
 export const deleteArchivedUser = createAsyncThunk(
   'archived/deleteUser',
-  async ({ uuid }: { uuid: string }) => {
-    await archivedService.deleteUser(uuid);
-    return uuid;
+  async ({ userId }: { userId: number }) => {
+    await archivedService.deleteUser(userId);
+    return userId;
   },
 );
 

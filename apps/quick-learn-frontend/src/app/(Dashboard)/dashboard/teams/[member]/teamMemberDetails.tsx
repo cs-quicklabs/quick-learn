@@ -16,15 +16,13 @@ import {
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
-import Card from '@src/shared/components/Card';
 import CreateNewCard from '@src/shared/components/CreateNewCard';
 import AssignDataModal from '@src/shared/modals/assignDataModal';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TRoadmapCategories } from '@src/shared/types/accountTypes';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
-import { TCourse } from '@src/shared/types/contentRepository';
+import { TUserCourse } from '@src/shared/types/contentRepository';
 import { TUser } from '@src/shared/types/userTypes';
-import { HTMLSanitizer } from '@src/utils/helpers';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -33,13 +31,23 @@ import { Tooltip } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import TeamMemberDetailsSkeleton from './TeamMemberDetailsSkeleton';
+import { getUserProgress } from '@src/apiServices/lessonsService';
+import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
+import ProgressCard from '@src/shared/components/ProgressCard';
+import {
+  calculateRoadmapProgress,
+  calculateCourseProgress,
+} from '@src/utils/helpers';
+import { useDispatch } from 'react-redux';
+import { decrementTotalUsers } from '@src/store/features/teamSlice';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
 const TeamMemberDetails = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const param = useParams<{ member: string }>();
-  const userUUID = param.member;
+  const userId = param.member;
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [member, setMember] = useState<TUser>();
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
@@ -49,7 +57,8 @@ const TeamMemberDetails = () => {
   const [allRoadmapCategories, setAllRoadmapCategories] = useState<
     TRoadmapCategories[]
   >([]);
-  const [allCourses, setAllCourses] = useState<TCourse[]>([]);
+  const [userProgress, setUserProgress] = useState<UserLessonProgress[]>([]);
+  const [allCourses, setAllCourses] = useState<TUserCourse[]>([]);
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -64,30 +73,34 @@ const TeamMemberDetails = () => {
         showApiErrorInToast(err);
       })
       .finally(() => setIsPageLoading(false));
-  }, []);
+    //get team memeber learning progress
+  }, [userId]);
 
   const getMemberDetails = useCallback(() => {
     setIsPageLoading(true);
-    getUserDetails(userUUID, {
+    getUserDetails(userId, {
       is_load_assigned_roadmaps: true,
       is_load_assigned_courses: true,
     })
       .then((res) => {
         setMember(res.data);
+        getUserProgress(Number(userId))
+          .then((res) => setUserProgress(res.data))
+          .catch((e) => showApiErrorInToast(e));
         setLinks([
           ...defaultlinks,
           {
             name: res.data.first_name + ' ' + res.data.last_name,
-            link: `${RouteEnum.TEAM}/${userUUID}`,
+            link: `${RouteEnum.TEAM}/${userId}`,
           },
         ]);
 
         // Create a Map to track unique courses by ID
-        const uniqueCoursesMap = new Map<number, TCourse>();
+        const uniqueCoursesMap = new Map<number, TUserCourse>();
 
         // Add each course to the map, only if it doesn't exist already
         res.data.assigned_roadmaps?.forEach((roadmap) => {
-          if (roadmap.courses?.length > 0) {
+          if (roadmap.courses && roadmap.courses?.length > 0) {
             roadmap.courses.forEach((course) => {
               if (!uniqueCoursesMap.has(Number(course.id))) {
                 uniqueCoursesMap.set(Number(course.id), course);
@@ -103,18 +116,19 @@ const TeamMemberDetails = () => {
         showApiErrorInToast(err);
       })
       .finally(() => setIsPageLoading(false));
-  }, [userUUID]);
+  }, [userId]);
 
   useEffect(() => {
     getMemberDetails();
-  }, [userUUID, getMemberDetails]);
+  }, [userId, getMemberDetails]);
 
   const onDeactivateUser = () => {
     if (!member) return;
     setIsPageLoading(true);
-    updateUser(userUUID, { active: 'false' })
+    updateUser(userId, { active: 'false' })
       .then((res) => {
         setMember({ ...member, active: false });
+        dispatch(decrementTotalUsers());
         showApiMessageInToast({
           ...res,
           message: 'User deactivated successfully',
@@ -127,7 +141,7 @@ const TeamMemberDetails = () => {
 
   const assignCourses = (data: string[]) => {
     setIsPageLoading(true);
-    assignRoadmapsToUser(userUUID, { roadmaps: data })
+    assignRoadmapsToUser(userId, { roadmaps: data })
       .then((res) => {
         showApiMessageInToast({
           ...res,
@@ -194,7 +208,7 @@ const TeamMemberDetails = () => {
           <div className="flex items-center justify-center gap-2 mt-4">
             <Tooltip content="Edit User">
               <Link
-                href={`${RouteEnum.TEAM_EDIT}/${userUUID}`}
+                href={`${RouteEnum.TEAM_EDIT}/${userId}`}
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
               >
                 <PencilIcon className="h-4 w-4" />
@@ -234,7 +248,16 @@ const TeamMemberDetails = () => {
               {en.common.roadmaps}
             </h2>
             <p className="ml-2 text-sm text-gray-500">
-              ({member?.assigned_roadmaps?.length ?? 0} {en.common.roadmaps})
+              {member?.assigned_roadmaps &&
+                (member?.assigned_roadmaps?.length > 1
+                  ? en.common.roadmapsCount.replace(
+                      '{count}',
+                      member?.assigned_roadmaps?.length?.toString() || '0',
+                    )
+                  : en.common.roadmapCount.replace(
+                      '{count}',
+                      member?.assigned_roadmaps?.length?.toString() || '0',
+                    ))}
             </p>
           </div>
 
@@ -244,15 +267,27 @@ const TeamMemberDetails = () => {
                 title={en.teamMemberDetails.assignNewRoadmap}
                 onAdd={() => setOpenAssignModal(true)}
               />
-              {member?.assigned_roadmaps?.map((item) => (
-                <Card
-                  key={item.id}
-                  id={item.id.toString()}
-                  title={item.name}
-                  description={HTMLSanitizer(item.description, false)}
-                  link={`/dashboard/content/${item.id}`}
-                />
-              ))}
+              {member?.assigned_roadmaps?.map((item) => {
+                if (
+                  item.courses &&
+                  item.courses.some(
+                    (course) => course.lessons && course.lessons.length > 0,
+                  )
+                ) {
+                  return (
+                    <ProgressCard
+                      key={item.id}
+                      className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-all duration-200 text-left transform"
+                      id={item?.id}
+                      name={item?.name || ''}
+                      title={item?.description || ''}
+                      link={`${RouteEnum.TEAM}/${userId}/${item.id}`}
+                      percentage={calculateRoadmapProgress(item, userProgress)}
+                    />
+                  );
+                }
+                return null;
+              })}
             </div>
           ) : (
             <EmptyState
@@ -274,21 +309,36 @@ const TeamMemberDetails = () => {
               {en.common.courses}
             </h2>
             <p className="ml-2 text-sm text-gray-500">
-              ({allCourses.length} {en.contentRepository.courses})
+              {allCourses.length > 1
+                ? en.common.coursesCount.replace(
+                    '{count}',
+                    allCourses?.length?.toString() || '0',
+                  )
+                : en.common.courseCount.replace(
+                    '{count}',
+                    allCourses?.length?.toString() || '0',
+                  )}
             </p>
           </div>
 
           {hasCourses ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
-              {allCourses.map((item) => (
-                <Card
-                  key={item.id}
-                  id={item.id}
-                  title={item.name}
-                  description={item.description}
-                  link={`/dashboard/content/courses/${item.id}`}
-                />
-              ))}
+              {allCourses.map((item) => {
+                if (item.lessons && item.lessons.length > 0) {
+                  return (
+                    <ProgressCard
+                      key={item.id}
+                      className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-all duration-200 text-left transform"
+                      id={item?.id}
+                      name={item?.name || ''}
+                      title={item?.description || ''}
+                      link={`${RouteEnum.TEAM}/${userId}/courses/${item.id}`}
+                      percentage={calculateCourseProgress(item, userProgress)}
+                    />
+                  );
+                }
+                return null;
+              })}
             </div>
           ) : (
             <EmptyState

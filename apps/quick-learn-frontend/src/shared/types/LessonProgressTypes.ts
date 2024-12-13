@@ -5,6 +5,7 @@ export type LessonProgress = {
 
 export type LessonStatus = {
   isRead: boolean;
+  completed_date: string;
 };
 
 export type UserLessonProgress = {

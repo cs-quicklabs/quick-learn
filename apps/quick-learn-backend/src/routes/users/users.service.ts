@@ -270,12 +270,72 @@ export class UsersService extends PaginationService<UserEntity> {
     });
   }
 
+  async findOneWithSelectedRelationData(
+    options: FindOptionsWhere<UserEntity>,
+    relations: string[] = [],
+  ): Promise<UserEntity> {
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .where({ ...options });
+
+    // Dynamically add joins based on relations array
+    if (relations.includes('assigned_roadmaps')) {
+      queryBuilder.leftJoinAndSelect(
+        'user.assigned_roadmaps',
+        'assigned_roadmaps',
+      );
+    }
+
+    if (relations.includes('assigned_roadmaps.courses')) {
+      queryBuilder.leftJoinAndSelect('assigned_roadmaps.courses', 'courses');
+    }
+
+    if (relations.includes('assigned_roadmaps.courses.lessons')) {
+      queryBuilder.leftJoinAndSelect(
+        'courses.lessons',
+        'lessons',
+        'lessons.id IS NOT NULL AND lessons.archived = :isArchived',
+        { isArchived: false },
+      );
+    }
+
+    // Select specific fields
+    const selectFields = ['user'];
+
+    if (relations.includes('assigned_roadmaps')) {
+      selectFields.push('assigned_roadmaps');
+    }
+
+    if (relations.includes('assigned_roadmaps.courses')) {
+      selectFields.push('courses');
+    }
+
+    if (relations.includes('assigned_roadmaps.courses.lessons')) {
+      selectFields.push('lessons.id');
+    }
+
+    queryBuilder.select(selectFields);
+
+    const user = await queryBuilder.getOne();
+
+    user.assigned_roadmaps = (user.assigned_roadmaps || []).filter(
+      (roadmap) => roadmap.archived === false,
+    );
+    user.assigned_roadmaps.forEach((roadmap) => {
+      roadmap.courses = (roadmap.courses || []).filter(
+        (course) => course.archived === false,
+      );
+    });
+
+    return user;
+  }
+
   async updateUser(
-    uuid: UserEntity['uuid'],
+    userId: UserEntity['id'],
     payload: Partial<UserEntity>,
     imageDeleteRequired = false,
   ) {
-    const user = await this.findOne({ uuid });
+    const user = await this.findOne({ id: userId });
 
     if (!user) {
       throw new BadRequestException(en.userNotFound);
@@ -305,27 +365,31 @@ export class UsersService extends PaginationService<UserEntity> {
       await this.sessionService.delete({ user: { id: user.id } });
     }
 
-    return this.userRepository.update({ uuid }, payload);
+    return this.userRepository.update({ id: userId }, payload);
   }
 
   async assignRoadmaps(
-    uuid: UserEntity['uuid'],
+    userId: UserEntity['id'],
     assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
   ) {
-    const user = await this.findOne({ uuid });
+    // Find the user by userId
+    const user = await this.findOne({ id: userId });
 
     if (!user) {
       throw new BadRequestException(en.userNotFound);
     }
 
+    // Find the roadmaps using the provided IDs
     const roadmaps = await this.roadmapService.getMany({
       id: In(assignRoadmapsToUserDto.roadmaps),
     });
 
-    if (roadmaps.length != assignRoadmapsToUserDto.roadmaps.length) {
+    // Check if the number of roadmaps matches the provided IDs
+    if (roadmaps.length !== assignRoadmapsToUserDto.roadmaps.length) {
       throw new BadRequestException(en.invalidRoadmaps);
     }
 
+    // Assign roadmaps to the user and save
     await this.userRepository.save({ ...user, assigned_roadmaps: roadmaps });
   }
 
