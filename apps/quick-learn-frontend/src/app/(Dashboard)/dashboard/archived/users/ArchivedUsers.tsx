@@ -30,8 +30,8 @@ const InactiveUsers = () => {
     searchValue,
   } = useAppSelector(selectArchivedUsers);
 
-  const [restoreId, setRestoreId] = useState<string | false>(false);
-  const [deleteId, setDeleteId] = useState<string | false>(false);
+  const [restoreId, setRestoreId] = useState<number | false>(false);
+  const [deleteId, setDeleteId] = useState<number | false>(false);
 
   const getNextUsers = useCallback(() => {
     if (!isLoading && hasMore) {
@@ -40,9 +40,9 @@ const InactiveUsers = () => {
   }, [dispatch, hasMore, isLoading, page, searchValue]);
 
   const handleDeleteUser = useCallback(
-    async (uuid: string) => {
+    async (userId: number) => {
       try {
-        await dispatch(deleteArchivedUser({ uuid })).unwrap();
+        await dispatch(deleteArchivedUser({ userId: +userId })).unwrap();
         dispatch(
           fetchArchivedUsers({ page: 1, search: searchValue, resetList: true }),
         );
@@ -57,9 +57,9 @@ const InactiveUsers = () => {
   );
 
   const restoreUser = useCallback(
-    async (uuid: string) => {
+    async (userId: number) => {
       try {
-        await dispatch(activateArchivedUser({ uuid })).unwrap();
+        await dispatch(activateArchivedUser({ userId: userId })).unwrap();
         dispatch(
           fetchArchivedUsers({ page: 1, search: searchValue, resetList: true }),
         );
@@ -140,7 +140,7 @@ const InactiveUsers = () => {
           >
             {usersList.map((item) => (
               <ArchivedCell
-                key={item.uuid}
+                key={item.id}
                 title={item.full_name || `${item.first_name} ${item.last_name}`}
                 subtitle={item.skill.name}
                 deactivatedBy={
@@ -149,8 +149,8 @@ const InactiveUsers = () => {
                     : ''
                 }
                 deactivationDate={item.updated_at}
-                onClickDelete={() => setDeleteId(item.uuid)}
-                onClickRestore={() => setRestoreId(item.uuid)}
+                onClickDelete={() => setDeleteId(item.id)}
+                onClickRestore={() => setRestoreId(item.id)}
                 alternateButton
               />
             ))}

@@ -57,6 +57,10 @@ const teamSlice = createSlice({
     setSearchQuery: (state, action) => {
       state.searchQuery = action.payload;
     },
+    decrementTotalUsers: (state) => {
+      state.totalUsers -= 1;
+      state.filterdTotal -= 1;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -67,18 +71,14 @@ const teamSlice = createSlice({
       .addCase(fetchTeamMembers.fulfilled, (state, action) => {
         state.isLoading = false;
         state.users = action.payload.items;
-        if (state.isInitialLoad) {
-          state.totalUsers = action.payload.total;
-        } else if (
-          state.filterdTotal > state.totalUsers ||
-          (state.searchQuery === '' && state.currentUserType === '')
-        ) {
-          state.totalUsers = state.filterdTotal; // Only set the totalUsers once on initial load
+        state.filterdTotal = action.payload.total;
+        if (state.filterdTotal > state.totalUsers || state.isInitialLoad) {
+          state.totalUsers = state.filterdTotal; // Only set the totalUsers once on initial load OR when added a Memeber
           state.searchQuery = '';
           state.currentUserType = '';
         }
-        state.isInitialLoad = false; // Set to false after first successful load
-        state.filterdTotal = action.payload.total;
+
+        state.isInitialLoad = false;
       })
       .addCase(fetchTeamMembers.rejected, (state, action) => {
         state.isLoading = false;
@@ -88,6 +88,10 @@ const teamSlice = createSlice({
   },
 });
 
-export const { setCurrentPage, setCurrentUserType, setSearchQuery } =
-  teamSlice.actions;
+export const {
+  setCurrentPage,
+  setCurrentUserType,
+  setSearchQuery,
+  decrementTotalUsers,
+} = teamSlice.actions;
 export default teamSlice.reducer;
