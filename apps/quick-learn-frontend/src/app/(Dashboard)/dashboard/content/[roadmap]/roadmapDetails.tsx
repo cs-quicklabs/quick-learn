@@ -34,7 +34,6 @@ import { selectContentRepositoryMetadata } from '@src/store/features/metadataSli
 import {
   selectRoadmapById,
   updateRoadmap as updateStoreRoadmap,
-  removeRoadmap as removeStoreRoadmap,
 } from '@src/store/features/roadmapsSlice';
 import { AppDispatch, RootState } from '@src/store/store';
 import {
@@ -227,7 +226,6 @@ const RoadmapDetails = () => {
         },
       });
 
-      dispatch(removeStoreRoadmap(roadmapId));
       setShowConformationModal(false);
       router.replace(RouteEnum.CONTENT);
     } catch (err) {

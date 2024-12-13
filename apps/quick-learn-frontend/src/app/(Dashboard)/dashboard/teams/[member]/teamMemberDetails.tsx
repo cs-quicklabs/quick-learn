@@ -21,7 +21,7 @@ import AssignDataModal from '@src/shared/modals/assignDataModal';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TRoadmapCategories } from '@src/shared/types/accountTypes';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
-import { TCourse } from '@src/shared/types/contentRepository';
+import { TUserCourse } from '@src/shared/types/contentRepository';
 import { TUser } from '@src/shared/types/userTypes';
 import {
   showApiErrorInToast,
@@ -58,7 +58,7 @@ const TeamMemberDetails = () => {
     TRoadmapCategories[]
   >([]);
   const [userProgress, setUserProgress] = useState<UserLessonProgress[]>([]);
-  const [allCourses, setAllCourses] = useState<TCourse[]>([]);
+  const [allCourses, setAllCourses] = useState<TUserCourse[]>([]);
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -96,11 +96,11 @@ const TeamMemberDetails = () => {
         ]);
 
         // Create a Map to track unique courses by ID
-        const uniqueCoursesMap = new Map<number, TCourse>();
+        const uniqueCoursesMap = new Map<number, TUserCourse>();
 
         // Add each course to the map, only if it doesn't exist already
         res.data.assigned_roadmaps?.forEach((roadmap) => {
-          if (roadmap.courses?.length > 0) {
+          if (roadmap.courses && roadmap.courses?.length > 0) {
             roadmap.courses.forEach((course) => {
               if (!uniqueCoursesMap.has(Number(course.id))) {
                 uniqueCoursesMap.set(Number(course.id), course);
@@ -258,17 +258,27 @@ const TeamMemberDetails = () => {
                 title={en.teamMemberDetails.assignNewRoadmap}
                 onAdd={() => setOpenAssignModal(true)}
               />
-              {member?.assigned_roadmaps?.map((item) => (
-                <ProgressCard
-                  key={item.id}
-                  className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-all duration-200 text-left transform"
-                  id={item?.id}
-                  name={item?.name || ''}
-                  title={item?.description || ''}
-                  link={`${RouteEnum.TEAM}/${userId}/${item.id}`}
-                  percentage={calculateRoadmapProgress(item, userProgress)}
-                />
-              ))}
+              {member?.assigned_roadmaps?.map((item) => {
+                if (
+                  item.courses &&
+                  item.courses.some(
+                    (course) => course.lessons && course.lessons.length > 0,
+                  )
+                ) {
+                  return (
+                    <ProgressCard
+                      key={item.id}
+                      className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-all duration-200 text-left transform"
+                      id={item?.id}
+                      name={item?.name || ''}
+                      title={item?.description || ''}
+                      link={`${RouteEnum.TEAM}/${userId}/${item.id}`}
+                      percentage={calculateRoadmapProgress(item, userProgress)}
+                    />
+                  );
+                }
+                return null;
+              })}
             </div>
           ) : (
             <EmptyState
@@ -296,17 +306,22 @@ const TeamMemberDetails = () => {
 
           {hasCourses ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
-              {allCourses.map((item) => (
-                <ProgressCard
-                  key={item.id}
-                  className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-all duration-200 text-left transform"
-                  id={item?.id}
-                  name={item?.name || ''}
-                  title={item?.description || ''}
-                  link={`${RouteEnum.TEAM}/${userId}/courses/${item.id}`}
-                  percentage={calculateCourseProgress(item, userProgress)}
-                />
-              ))}
+              {allCourses.map((item) => {
+                if (item.lessons && item.lessons.length > 0) {
+                  return (
+                    <ProgressCard
+                      key={item.id}
+                      className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-all duration-200 text-left transform"
+                      id={item?.id}
+                      name={item?.name || ''}
+                      title={item?.description || ''}
+                      link={`${RouteEnum.TEAM}/${userId}/courses/${item.id}`}
+                      percentage={calculateCourseProgress(item, userProgress)}
+                    />
+                  );
+                }
+                return null;
+              })}
             </div>
           ) : (
             <EmptyState
