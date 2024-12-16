@@ -32,7 +32,7 @@ const LessonDetails = () => {
   const defaultlinks: TBreadcrumb[] = useMemo(() => {
     const links: TBreadcrumb[] = [];
 
-    if (member !== undefined) {
+    if (member) {
       links.push({ name: 'Team', link: RouteEnum.TEAM });
     }
 
@@ -88,6 +88,7 @@ const LessonDetails = () => {
     getLearningPathLessionDetails(
       lesson,
       course,
+      Number(member),
       roadmap && !isNaN(+roadmap) ? roadmap : undefined,
     )
       .then((res) => {
@@ -114,7 +115,7 @@ const LessonDetails = () => {
         router.push(member ? baseLink : RouteEnum.MY_LEARNING_PATH);
       });
 
-    getLessonStatus(lesson, +member)
+    getLessonStatus(lesson, Number(member))
       .then((res) => {
         setIsRead(res.data.isRead);
         setCompletedOn(res.data.completed_date);

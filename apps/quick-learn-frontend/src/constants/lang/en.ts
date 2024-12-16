@@ -35,7 +35,9 @@ export const en = {
     complete: 'Complete',
     progress: '% Complete',
     roadmapsCount: '({count} roadmaps)',
+    roadmapCount: '({count} roadmap)',
     coursesCount: '({count} courses)',
+    courseCount: '({count} course)',
 
     // Content types
     lesson: 'lesson',

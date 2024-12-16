@@ -145,6 +145,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   async updateRoadmap(
     id: number,
     updateRoadmapDto: UpdateRoadmapDto,
+    userID: number,
   ): Promise<RoadmapEntity> {
     const roadmap = await this.roadmapRepository
       .createQueryBuilder('roadmap')
@@ -165,7 +166,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         { id },
         {
           archived: !updateRoadmapDto.active,
-          updated_by_id: updateRoadmapDto['updated_by']?.id,
+          updated_by_id: userID,
         },
       );
       return await this.getRoadmapById(id);

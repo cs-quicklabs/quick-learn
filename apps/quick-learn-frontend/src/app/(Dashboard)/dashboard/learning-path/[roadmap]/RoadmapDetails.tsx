@@ -113,7 +113,7 @@ const RoadmapDetails = () => {
       setRoadmapData(existingRoadmap);
 
       // Still fetch fresh data in background
-      getLearningPathRoadmap(roadmap, +member)
+      getLearningPathRoadmap(roadmap, Number(member))
         .then((res) => {
           setRoadmapData(res.data);
           setLinks([
@@ -129,7 +129,7 @@ const RoadmapDetails = () => {
         });
     } else {
       setIsPageLoading(true);
-      getLearningPathRoadmap(roadmap, +member)
+      getLearningPathRoadmap(roadmap, Number(member))
         .then((res) => {
           setRoadmapData(res.data);
           setLinks([

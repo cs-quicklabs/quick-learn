@@ -39,7 +39,7 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
       <Link href={link} id={id.toString()} className={baseClassName} ref={ref}>
         <div className="flex flex-col h-40">
           <div className="flex-1 py-4 px-6 text-gray-900 overflow-hidden">
-            <h3 className="font-medium text-gray-900 line-clamp-2 group-hover:underline">
+            <h3 className="font-medium text-gray-900 line-clamp-2 group-hover:underline capitalize">
               {name}
             </h3>
             <p

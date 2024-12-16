@@ -113,6 +113,7 @@ const CourseDetails = () => {
         try {
           const res = await getLearningPathCourse(
             course,
+            Number(member),
             !isNaN(+roadmap) ? roadmap : undefined,
           );
           setCourseData(res.data);

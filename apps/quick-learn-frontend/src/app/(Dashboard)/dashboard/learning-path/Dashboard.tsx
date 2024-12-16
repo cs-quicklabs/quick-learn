@@ -119,10 +119,15 @@ const Dashboard = () => {
             {en.common.myRoadmaps}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
-            {en.common.roadmapsCount.replace(
-              '{count}',
-              roadmaps?.length?.toString() || '0',
-            )}
+            {roadmaps.length > 1
+              ? en.common.roadmapsCount.replace(
+                  '{count}',
+                  roadmaps?.length?.toString() || '0',
+                )
+              : en.common.roadmapCount.replace(
+                  '{count}',
+                  roadmaps?.length?.toString() || '0',
+                )}
           </p>
         </div>
       </motion.div>
@@ -177,10 +182,15 @@ const Dashboard = () => {
             {en.common.myCourses}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
-            {en.common.coursesCount.replace(
-              '{count}',
-              courses?.length?.toString() || '0',
-            )}
+            {courses.length > 1
+              ? en.common.coursesCount.replace(
+                  '{count}',
+                  courses?.length?.toString() || '0',
+                )
+              : en.common.courseCount.replace(
+                  '{count}',
+                  courses?.length?.toString() || '0',
+                )}
           </p>
         </div>
       </motion.div>

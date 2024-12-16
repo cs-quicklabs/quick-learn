@@ -19,10 +19,12 @@ export const getLearningPathRoadmap = async (
 
 export const getLearningPathCourse = async (
   id: string,
+  userId?: number,
   roadmapId?: string,
 ): Promise<AxiosSuccessResponse<TUserCourse>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<TUserCourse>>(
     LearningPathAPIEnum.GET_LEARNING_PATH_COURSE.replace(':id', id) +
+      `${userId ? `/${userId}` : ''}` +
       (roadmapId ? `?roadmapId=${roadmapId}` : ''),
   );
   return response.data;
@@ -31,10 +33,12 @@ export const getLearningPathCourse = async (
 export const getLearningPathLessionDetails = async (
   id: string,
   courseId: string,
+  userId?: number,
   roadmapId?: string,
 ): Promise<AxiosSuccessResponse<TLesson>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<TLesson>>(
     LearningPathAPIEnum.GET_LEARNING_PATH_LESSON.replace(':id', id) +
+      `${userId ? `/${userId}` : ''}` +
       `?courseId=${courseId}` +
       (roadmapId ? `&roadmapId=${roadmapId}` : ''),
   );

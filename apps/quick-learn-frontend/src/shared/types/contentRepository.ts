@@ -45,7 +45,7 @@ export interface TCourse extends TCreateCourse {
   created_by?: TUser;
   created_at: string;
   updated_at: string;
-  lessons?: TLesson[];
+  lessons?: TLesson[] | [];
   updated_by?: TUser;
   lesson_ids?: number[];
 }
