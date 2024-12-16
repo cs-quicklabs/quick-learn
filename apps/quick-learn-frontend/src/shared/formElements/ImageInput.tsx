@@ -89,7 +89,12 @@ const ImageInput: FC<Props> = ({
             last_name: user?.last_name,
             profile_image: res.data.file,
           };
-
+          if (user) {
+            setUser({
+              ...user,
+              profile_image: res.data.file,
+            });
+          }
           updateUserProfileService(serviceInput)
             .then((response) => {
               showApiMessageInToast(response); // Show success message
@@ -133,7 +138,12 @@ const ImageInput: FC<Props> = ({
       last_name: user?.last_name,
       profile_image: '', // Use empty string
     };
-
+    if (user) {
+      setUser({
+        ...user,
+        profile_image: '',
+      });
+    }
     updateUserProfileService(serviceInput)
       .then((response) => {
         // Reset form value

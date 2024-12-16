@@ -13,7 +13,7 @@ import {
  */
 export const activateUser = async (payload: {
   active: boolean;
-  uuid: string;
+  userId: number;
 }): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     ArchivedApiEnum.ACTIVATE_USER,
@@ -26,10 +26,10 @@ export const activateUser = async (payload: {
  * Delete user permanently
  */
 export const deleteUser = async (
-  uuid: string,
+  userId: number,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.delete<AxiosSuccessResponse>(
-    `/${ArchivedApiEnum.USERS}/${uuid}`,
+    `/${ArchivedApiEnum.USERS}/${userId}`,
   );
   return response.data;
 };

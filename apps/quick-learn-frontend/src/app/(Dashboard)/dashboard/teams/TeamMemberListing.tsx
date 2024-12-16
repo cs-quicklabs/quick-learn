@@ -1,7 +1,7 @@
 'use client';
 import { RouteEnum } from '@src/constants/route.enum';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUserType } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
@@ -45,6 +45,18 @@ const TeamMemberListing = () => {
     );
   }
 
+  useEffect(() => {
+    const backgroundDataReload = (code: string) => {
+      dispatch(
+        fetchTeamMembers({
+          page: 1,
+          userTypeCode: code,
+          query: '',
+        }),
+      );
+    };
+    backgroundDataReload('');
+  }, [dispatch]);
   const debouncedSearch = useMemo(
     () =>
       debounce((value: string) => {

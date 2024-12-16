@@ -113,7 +113,7 @@ const RoadmapDetails = () => {
       setRoadmapData(existingRoadmap);
 
       // Still fetch fresh data in background
-      getLearningPathRoadmap(roadmap)
+      getLearningPathRoadmap(roadmap, +member)
         .then((res) => {
           setRoadmapData(res.data);
           setLinks([
@@ -129,7 +129,7 @@ const RoadmapDetails = () => {
         });
     } else {
       setIsPageLoading(true);
-      getLearningPathRoadmap(roadmap)
+      getLearningPathRoadmap(roadmap, +member)
         .then((res) => {
           setRoadmapData(res.data);
           setLinks([
@@ -142,7 +142,7 @@ const RoadmapDetails = () => {
         })
         .catch((err) => {
           showApiErrorInToast(err);
-          router.push(RouteEnum.MY_LEARNING_PATH);
+          router.push(member ? baseLink : RouteEnum.MY_LEARNING_PATH);
         })
         .finally(() => setIsPageLoading(false));
     }

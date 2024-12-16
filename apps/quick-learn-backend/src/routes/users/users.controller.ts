@@ -249,7 +249,7 @@ export class UsersController {
   }
 
   @Delete(':userId')
-  @ApiOperation({ summary: 'Permanently delete user by uuid' })
+  @ApiOperation({ summary: 'Permanently delete user by userId' })
   @ApiParam({
     name: 'userId',
     type: 'number',
