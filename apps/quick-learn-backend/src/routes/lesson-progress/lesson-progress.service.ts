@@ -118,23 +118,43 @@ export class LessonProgressService {
       lessons: { lesson_id: number; completed_date: Date | null }[];
     }[]
   > {
-    // Fetch all lessons completed by the user
-    const completedLessons = await this.userLessonProgressRepository.find({
-      where: { user_id: userId },
-      select: ['course_id', 'lesson_id', 'completed_date'], // Include completed_date
-    });
+    const completedLessons = await this.userLessonProgressRepository
+      .createQueryBuilder('userLessonProgress')
+      .innerJoinAndSelect(
+        'lesson',
+        'lesson',
+        'lesson.id = userLessonProgress.lesson_id',
+      )
+      .where('userLessonProgress.user_id = :userId', { userId })
+      .select([
+        'userLessonProgress.course_id AS course_id',
+        'userLessonProgress.lesson_id AS lesson_id',
+        'userLessonProgress.completed_date AS  completed_date',
+        'lesson.name AS lesson_name', // Select lesson name
+      ])
+      .getRawMany();
 
     // Group lessons by course_id
     const courseProgressMap: {
-      [course_id: number]: { lesson_id: number; completed_date: Date | null }[];
+      [course_id: number]: {
+        lesson_name: string;
+        lesson_id: number;
+        completed_date: Date | null;
+      }[];
     } = {};
 
-    completedLessons.forEach(({ course_id, lesson_id, completed_date }) => {
-      if (!courseProgressMap[course_id]) {
-        courseProgressMap[course_id] = [];
-      }
-      courseProgressMap[course_id].push({ lesson_id, completed_date });
-    });
+    completedLessons.forEach(
+      ({ course_id, lesson_name, lesson_id, completed_date }) => {
+        if (!courseProgressMap[course_id]) {
+          courseProgressMap[course_id] = [];
+        }
+        courseProgressMap[course_id].push({
+          lesson_id,
+          lesson_name,
+          completed_date,
+        });
+      },
+    );
 
     // Convert the grouped data to the desired format
     const userProgress = Object.entries(courseProgressMap).map(

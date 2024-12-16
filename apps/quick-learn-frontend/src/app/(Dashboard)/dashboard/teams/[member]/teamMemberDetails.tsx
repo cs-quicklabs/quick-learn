@@ -60,7 +60,7 @@ const TeamMemberDetails = () => {
   >([]);
   const [userProgress, setUserProgress] = useState<UserLessonProgress[]>([]);
   const [allCourses, setAllCourses] = useState<TCourse[]>([]);
-  const [userActivityModal, setUserActivityModal] = useState<boolean>(false);
+  const [userActivityModal, setUserActivityModal] = useState(false);
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -323,8 +323,10 @@ const TeamMemberDetails = () => {
         {/* UserActivity Section */}
         <div className="flex align-center justify-center mt-8 w-full">
           <ActivityGraph
-            userProgressData={userProgress as unknown as Course[]}
+            userProgressData={userProgress as Course[]}
             isOpen={userActivityModal}
+            setShow={setUserActivityModal}
+            memberDetail={member as TUser}
           />
         </div>
       </div>

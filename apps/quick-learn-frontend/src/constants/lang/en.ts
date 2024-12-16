@@ -406,6 +406,7 @@ export const en = {
     Status: 'Status',
     lastLogin: 'Last Login',
     addedOn: 'Added On',
+    markedCompletedOn: 'Marked completed on ',
   },
 
   component: {

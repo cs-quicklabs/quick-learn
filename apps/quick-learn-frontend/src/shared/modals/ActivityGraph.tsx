@@ -1,18 +1,23 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Modal } from 'flowbite-react';
-import { CloseIcon } from '../components/UIElements';
+import { CloseIcon, ReadFileIcon } from '../components/UIElements';
 import { format, subMonths } from 'date-fns';
 import { Tooltip } from 'flowbite-react';
 import { DateFormats } from '@src/constants/dateFormats';
+import { en } from '@src/constants/lang/en';
+import { TUser } from '../types/userTypes';
 
 interface props {
   userProgressData: Course[];
   isOpen: boolean;
+  setShow: (value: boolean) => void;
+  memberDetail: TUser;
 }
 
 interface Lesson {
   lesson_id: number;
   completed_date: string;
+  lesson_name: string;
 }
 
 export interface Course {
@@ -38,6 +43,7 @@ interface OutputData {
 const ActivityGraph: React.FC<props> = (props) => {
   const [userProgressArray, setUserProgressArray] = useState<OutputData[]>([]);
   const [selectedTab, setSelectedTab] = useState(0);
+  const [userActivityList, setUserActivityList] = useState<Lesson[]>([]);
 
   const getDateCounts = (data: Course[]): DateCount[] => {
     const dateCounts: Record<string, number> = {};
@@ -111,6 +117,21 @@ const ActivityGraph: React.FC<props> = (props) => {
       setUserProgressArray(
         generateDailyData(getDateCounts(props.userProgressData)),
       );
+
+      // Extract all lessons
+      const allLessons = props.userProgressData.flatMap(
+        (course) => course.lessons,
+      );
+      // SORT the lessons by completed_date in descending order
+      allLessons.sort(
+        (a, b) =>
+          new Date(b.completed_date).valueOf() -
+          new Date(a.completed_date).valueOf(),
+      );
+
+      setUserActivityList(allLessons);
+    } else {
+      setUserProgressArray(generateDailyData(getDateCounts([])));
     }
   }, [props.userProgressData]);
 
@@ -120,11 +141,16 @@ const ActivityGraph: React.FC<props> = (props) => {
         <Modal.Body>
           <div className="mb-4 flex items-center justify-between rounded-t dark:border-gray-700 sm:mb-5">
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
-              User Activity
+              {props.memberDetail?.first_name}{' '}
+              {props.memberDetail?.last_name.concat("'s")} Activities
             </p>
-            <div>
-              <CloseIcon />
-            </div>
+            <button
+              type="button"
+              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-2.5 ml-auto inline-flex items-center"
+              onClick={() => props.setShow(false)}
+            >
+              <CloseIcon className="w-3 h-3" />
+            </button>
           </div>
           <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
             <ul
@@ -158,31 +184,13 @@ const ActivityGraph: React.FC<props> = (props) => {
                       ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500'
                       : 'text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:border-transparent'
                   }`}
-                  id="advanced-filers-tab"
-                  data-tabs-target="#advanced-filters"
-                  type="button"
-                  role="tab"
-                  aria-controls="advanced-filters"
-                  aria-selected="false"
-                  onClick={() => setSelectedTab(1)}
-                >
-                  Events
-                </button>
-              </li>
-              <li className="mr-1">
-                <button
-                  className={`inline-block px-2 pb-2 ${
-                    selectedTab === 2
-                      ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500'
-                      : 'text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:border-transparent'
-                  }`}
                   id="consistency-tab"
                   data-tabs-target="#consistency"
                   type="button"
                   role="tab"
                   aria-controls="consistency"
                   aria-selected="false"
-                  onClick={() => setSelectedTab(2)}
+                  onClick={() => setSelectedTab(1)}
                 >
                   Consistency
                 </button>
@@ -191,9 +199,48 @@ const ActivityGraph: React.FC<props> = (props) => {
           </div>
 
           <div id="myTabContent">
-            {selectedTab === 0 && <Fragment></Fragment>}
-            {selectedTab === 1 && <Fragment></Fragment>}
-            {selectedTab === 2 && (
+            {selectedTab === 0 && (
+              <Fragment>
+                <div id="brandi" role="tabpanel" aria-labelledby="brand-tab">
+                  <div>
+                    {userActivityList && userActivityList.length ? (
+                      <>
+                        <ol className="relative ms-3 border-s border-dashed border-gray-200 dark:border-gray-700">
+                          {userActivityList.map(
+                            (item: Lesson, index: number) => (
+                              <Fragment key={index}>
+                                <li className="mb-6 ms-6">
+                                  <span className="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-white ring-4 ring-white dark:bg-gray-800 dark:ring-gray-800">
+                                    <ReadFileIcon />
+                                  </span>{' '}
+                                  <h3 className="mb-0.5 flex items-center pt-1 text-base font-semibold text-gray-900 dark:text-white">
+                                    {item.lesson_name}
+                                  </h3>{' '}
+                                  <time className="mb-2 block text-gray-500 dark:text-gray-400 text-xs">
+                                    {en.teams.markedCompletedOn}
+                                    {format(
+                                      new Date(item.completed_date),
+                                      DateFormats.fullDate,
+                                    )}
+                                  </time>
+                                </li>{' '}
+                              </Fragment>
+                            ),
+                          )}
+                        </ol>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-center">
+                          <p className="text-xl">No Record Found.</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </Fragment>
+            )}
+            {selectedTab === 1 && (
               <div className="grid place-items-center">
                 <div className="flex items-start gap-4">
                   <div className="flex flex-col gap-2 pt-6">
