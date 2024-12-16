@@ -21,6 +21,7 @@ import { UserTypeIdEnum } from 'lib/shared/src';
 import ConformationModal from '../modals/conformationModal';
 import { en } from '@src/constants/lang/en';
 import { getInitials } from '@src/utils/helpers';
+import WebsiteLogo from './WebsiteLogo';
 
 type TLink = { name: string; link: string; isExtended?: boolean };
 
@@ -148,7 +149,8 @@ const Navbar = () => {
                   href={RouteEnum.MY_LEARNING_PATH}
                   className="items-center justify-center text-white font-extrabold font-mono px-3 hidden lg:flex tracking-wider"
                 >
-                  {en.common.quickLearn}
+                  <WebsiteLogo width="55" />
+                  <p className='ml-3'>{en.common.quickLearn}</p>
                 </Link>
                 <span className="text-white font-medium px-3 block lg:hidden"></span>
               </div>
