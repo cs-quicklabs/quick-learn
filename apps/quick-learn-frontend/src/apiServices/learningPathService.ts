@@ -5,6 +5,7 @@ import {
 } from '@src/shared/types/contentRepository';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { LearningPathAPIEnum } from '@src/constants/api.enum';
+import { SearchedQuery } from '@src/shared/types/contentRepository';
 
 export const getLearningPathRoadmap = async (
   id: string,
@@ -41,6 +42,15 @@ export const getLearningPathLessionDetails = async (
       `${userId ? `/${userId}` : ''}` +
       `?courseId=${courseId}` +
       (roadmapId ? `&roadmapId=${roadmapId}` : ''),
+  );
+  return response.data;
+};
+
+export const getSearchQuery = async (
+  query: string,
+): Promise<AxiosSuccessResponse<SearchedQuery>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<SearchedQuery>>(
+    LearningPathAPIEnum.GET_USER_SEARCH + `?query=${query}`,
   );
   return response.data;
 };

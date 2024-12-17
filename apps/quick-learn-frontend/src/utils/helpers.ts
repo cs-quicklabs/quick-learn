@@ -145,8 +145,9 @@ export const calculateRoadmapProgress = (
       const completedLessonIds =
         courseProgress?.lessons?.map((lesson) => lesson.lesson_id) || [];
       const completedCount = course.lesson_ids
-        ? course.lesson_ids?.filter((id) => completedLessonIds.includes(id))
-            .length || 0
+        ? course.lesson_ids?.filter((lesson) =>
+            completedLessonIds.includes(lesson.id),
+          ).length || 0
         : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
             .length || 0;
 
@@ -174,8 +175,9 @@ export const calculateCourseProgress = (
   const totalLessons =
     course?.lesson_ids?.length || course?.lessons?.length || 0;
   const completedCount = course.lesson_ids
-    ? course.lesson_ids?.filter((id) => completedLessonIds.includes(id))
-        .length || 0
+    ? course.lesson_ids?.filter((lesson) =>
+        completedLessonIds.includes(lesson.id),
+      ).length || 0
     : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
         .length || 0;
 

@@ -15,7 +15,7 @@ const SearchBox: FC<Props> = ({ handleChange }) => {
         {en.component.search}
       </label>
       <div className="relative rounded-md shadow-sm">
-        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+        <div className="absolute inset-y-0 start-0 flex items-center  ps-3 pointer-events-none">
           <SearchIcon />
         </div>
         <input

@@ -11,7 +11,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+// import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { logoutApiCall } from '@src/apiServices/authService';
@@ -21,6 +21,7 @@ import { UserTypeIdEnum } from 'lib/shared/src';
 import ConformationModal from '../modals/conformationModal';
 import { en } from '@src/constants/lang/en';
 import { getInitials } from '@src/utils/helpers';
+import NavbarSearchBox from './NavbarSearchBox';
 
 type TLink = { name: string; link: string; isExtended?: boolean };
 
@@ -178,20 +179,9 @@ const Navbar = () => {
                 <label htmlFor="search" className="sr-only">
                   {en.component.searchRoadmapCourseLessons}
                 </label>
-                <div className="relative flex-1">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <MagnifyingGlassIcon
-                      className="h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <input
-                    id="search"
-                    name="search"
-                    type="search"
-                    placeholder="Search Roadmaps, Courses or Lessons"
-                    className="block w-full rounded-md border-0 bg-gray-700 py-1.5 pl-10 pr-3 text-gray-300 placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:ring-0 sm:text-sm sm:leading-6 outline-0"
-                  />
+                {/* Search functionality for Roadmap, courses and Lesson  */}
+                <div className="w-full">
+                  <NavbarSearchBox />
                 </div>
               </div>
             </div>
