@@ -65,6 +65,10 @@ export const en = {
   unarchiveLesson: 'Successfully unarchived lesson.',
   getArchivedLessons: 'Successfully retrieved archived lessons.',
   lessonDeleted: 'Lesson has been permanently deleted.',
+  invalidLessonToken: 'Invalid lesson token is provided.',
+  lessonTokenRequired: 'Lesson token is required.',
+  lessonTokenExpired: 'Lesson token is expired.',
+  lessonForTheDay: 'Lesson for the day.',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',

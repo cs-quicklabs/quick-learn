@@ -202,7 +202,7 @@ const ActivityGraph: React.FC<props> = (props) => {
             {selectedTab === 0 && (
               <Fragment>
                 <div id="brandi" role="tabpanel" aria-labelledby="brand-tab">
-                  <div>
+                  <div className="max-h-[230px] overflow-y-auto">
                     {userActivityList && userActivityList.length ? (
                       <>
                         <ol className="relative ms-3 border-s border-dashed border-gray-200 dark:border-gray-700">

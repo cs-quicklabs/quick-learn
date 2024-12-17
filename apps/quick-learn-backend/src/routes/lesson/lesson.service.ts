@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services';
-import { LessonEntity, UserEntity } from '@src/entities';
+import { LessonEntity, LessonTokenEntity, UserEntity } from '@src/entities';
 import { CreateLessonDto, UpdateLessonDto } from './dto';
 import { CourseService } from '../course/course.service';
 import { en } from '@src/lang/en';
@@ -17,6 +17,8 @@ export class LessonService extends PaginationService<LessonEntity> {
     @InjectRepository(LessonEntity) repo: Repository<LessonEntity>,
     private courseService: CourseService,
     private readonly FileService: FileService,
+    @InjectRepository(LessonTokenEntity)
+    private LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {
     super(repo);
   }
@@ -304,5 +306,60 @@ export class LessonService extends PaginationService<LessonEntity> {
       .andWhere('lesson.approved = :approved', { approved: false });
 
     return await queryBuilder.getMany();
+  }
+
+  async validateLessionToken(
+    token: string,
+    user_id: number,
+    course_id: number,
+    lesson_id: number,
+  ) {
+    // VALIDATE TOKEN
+    if (!token) {
+      throw new BadRequestException(en.lessonTokenRequired);
+    }
+
+    const tokenEntity = await this.LessonTokenRepository.createQueryBuilder(
+      'lesson_token',
+    ) // Alias for the table
+      .where('lesson_token.user_id = :user_id', { user_id })
+      .andWhere('lesson_token.token = :token', { token })
+      .andWhere('lesson_token.course_id = :course_id', { course_id })
+      .andWhere('lesson_token.lesson_id = :lesson_id', { lesson_id })
+      .getOne();
+
+    console.log(tokenEntity);
+
+    if (!tokenEntity) {
+      throw new BadRequestException(en.invalidLessonToken);
+    }
+
+    // CHECK IF TOKEN IS VALID
+    if (token !== tokenEntity.token) {
+      throw new BadRequestException(en.invalidLessonToken);
+    }
+
+    // CHECK IF TOKEN HAS EXPIRED
+    if (tokenEntity.expiresAt < new Date()) {
+      throw new BadRequestException(en.lessonTokenExpired);
+    }
+
+    return tokenEntity;
+  }
+
+  async FetchLesson(lessonId: number, courseId: number) {
+    const lessonDetail = await this.repository
+      .createQueryBuilder('lesson')
+      .leftJoinAndSelect('lesson.course', 'course')
+      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
+      .leftJoin('course.roadmaps', 'roadmaps')
+      .innerJoin('roadmaps.users', 'users')
+      .where('lesson.id = :id', { id: lessonId })
+      .andWhere('course.id = :courseId', { courseId })
+      .andWhere('lesson.archived = :archived', { archived: false })
+      .andWhere('lesson.approved = :approved', { approved: true })
+      .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .getOne();
+    return lessonDetail;
   }
 }
