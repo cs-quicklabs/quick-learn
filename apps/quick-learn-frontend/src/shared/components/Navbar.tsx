@@ -181,7 +181,9 @@ const Navbar = () => {
                 </label>
                 {/* Search functionality for Roadmap, courses and Lesson  */}
                 <div className="w-full">
-                  <NavbarSearchBox />
+                  <NavbarSearchBox
+                    isMember={user?.user_type_id === UserTypeIdEnum.MEMBER}
+                  />
                 </div>
               </div>
             </div>
