@@ -1,5 +1,6 @@
 import { Entity, Column } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
+import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
 
 @Entity('lesson_tokens')
 export class LessonTokenEntity extends BaseEntity {
@@ -15,7 +16,11 @@ export class LessonTokenEntity extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   course_id: number;
 
-  @Column({ type: 'varchar', nullable: false, default: 'pending' })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: DailyLessonEnum.PENDING,
+  })
   status: string;
 
   @Column()

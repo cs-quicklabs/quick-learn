@@ -229,7 +229,15 @@ export class LessonController {
       +courseId,
       +lessonId,
     );
-    const lessonDetail = await this.service.FetchLesson(+lessonId, +courseId);
+    const lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
+
+    await this.service.updateDailyLessonToken(
+      token,
+      +user.id,
+      +courseId,
+      +lessonId,
+    );
+
     return new SuccessResponse(en.lessonForTheDay, lessonDetail);
   }
 }

@@ -190,6 +190,7 @@ export const en = {
     archiveConfirmSubHeading: 'Are you sure you want to archive this lesson?',
     archiveConfirmDescription:
       'When this lesson is archived, it will be moved to archived lessons. Users will not be able to access this lesson anymore.',
+    NavigateToLearningPath: 'Navigate to learning path',
   },
 
   /**

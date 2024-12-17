@@ -32,11 +32,13 @@ export class LessonEmailService {
   // Runs every minute
   @Cron(CronExpression.EVERY_DAY_AT_9AM)
   handleMorningCron() {
+    this.sendLessonEmails();
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_5PM)
   handleEveningCron() {
+    this.sendLessonEmails();
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
@@ -76,7 +78,7 @@ export class LessonEmailService {
         const frontendURL = this.configService.get('app.frontendDomain', {
           infer: true,
         });
-        const lessonURL = `${frontendURL}/lesson/${userMailTokenRecord.lesson_id}?course_id=${userMailTokenRecord.course_id}&token=${userMailTokenRecord.token}`;
+        const lessonURL = `${frontendURL}/dashboard/daily-lesson/${userMailTokenRecord.lesson_id}?course_id=${userMailTokenRecord.course_id}&token=${userMailTokenRecord.token}`;
 
         const html = `<div>
                 <p>Please click on the link below to read today's lesson.</p><br/>

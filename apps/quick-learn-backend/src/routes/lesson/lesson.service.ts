@@ -11,6 +11,7 @@ import { PaginatedResult } from '@src/common/interfaces';
 import { Repository } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
+import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
   constructor(
@@ -328,8 +329,6 @@ export class LessonService extends PaginationService<LessonEntity> {
       .andWhere('lesson_token.lesson_id = :lesson_id', { lesson_id })
       .getOne();
 
-    console.log(tokenEntity);
-
     if (!tokenEntity) {
       throw new BadRequestException(en.invalidLessonToken);
     }
@@ -347,7 +346,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     return tokenEntity;
   }
 
-  async FetchLesson(lessonId: number, courseId: number) {
+  async fetchLesson(lessonId: number, courseId: number) {
     const lessonDetail = await this.repository
       .createQueryBuilder('lesson')
       .leftJoinAndSelect('lesson.course', 'course')
@@ -361,5 +360,24 @@ export class LessonService extends PaginationService<LessonEntity> {
       .andWhere('course.archived = :courseArchived', { courseArchived: false })
       .getOne();
     return lessonDetail;
+  }
+
+  async updateDailyLessonToken(
+    token: string,
+    user_id: number,
+    course_id: number,
+    lesson_id: number,
+  ) {
+    await this.LessonTokenRepository.update(
+      {
+        user_id: user_id,
+        course_id: course_id,
+        lesson_id: lesson_id,
+        token: token,
+      },
+      {
+        status: DailyLessonEnum.COMPLETED,
+      },
+    );
   }
 }
