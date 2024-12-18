@@ -12,7 +12,7 @@ import { EmailService } from '@src/common/modules/email/email.service';
 import { ConfigService } from '@nestjs/config';
 import { emailSubjects } from '@src/common/constants/email-subject';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { DailLessonGreetings } from '@src/common/enum/daily_lesson.enum';
+import { DailyLessonGreetings } from '@src/common/enum/daily_lesson.enum';
 
 @Injectable()
 export class LessonEmailService {
@@ -33,13 +33,13 @@ export class LessonEmailService {
   // Runs every minute
   @Cron(CronExpression.EVERY_DAY_AT_9AM)
   handleMorningCron() {
-    this.sendLessonEmails(DailLessonGreetings.GOOD_MORNING);
+    this.sendLessonEmails(DailyLessonGreetings.GOOD_MORNING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_5PM)
   handleEveningCron() {
-    this.sendLessonEmails(DailLessonGreetings.GOOD_EVENING);
+    this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 

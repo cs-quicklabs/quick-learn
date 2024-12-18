@@ -53,6 +53,7 @@ export const en = {
   successCourseStatusUpdate: 'Course status updated successfully.',
   unarchiveCourse: 'Successfully unarchived course.',
   CourseDeleted: 'Course has been permanently deleted',
+  courseCompletedLessons: 'Course completed lessons',
 
   // Lesson related messages
   getLessons: 'Successfully got all lessons.',
@@ -69,6 +70,12 @@ export const en = {
   lessonTokenRequired: 'Lesson token is required.',
   lessonTokenExpired: 'Lesson token is expired.',
   lessonForTheDay: 'Lesson for the day.',
+  allDailyLessons: 'All daily lessons activity for user.',
+  lessonMarkedUnRead: 'This lesson is marked as unread',
+  successfullyCompletedLesson: 'Successfully completed the lesson.',
+  userProgressGrouped: 'All user Progress grouped by course',
+  lessonStatus: 'Lesson Status',
+  searchResults: 'Search Results',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',

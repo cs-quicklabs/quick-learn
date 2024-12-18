@@ -3,7 +3,7 @@ export enum DailyLessonEnum {
   COMPLETED = 'COMPLETED',
 }
 
-export enum DailLessonGreetings {
+export enum DailyLessonGreetings {
   GOOD_MORNING = 'Good Morning',
   GOOD_EVENING = 'Good Evening',
 }
