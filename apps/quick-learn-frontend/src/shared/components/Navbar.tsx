@@ -10,9 +10,9 @@ import {
 } from '@headlessui/react';
 import Link from 'next/link';
 import Image from 'next/image';
+
 import { usePathname, useRouter } from 'next/navigation';
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { logoutApiCall } from '@src/apiServices/authService';
 import { useContext, useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ import ConformationModal from '../modals/conformationModal';
 import { en } from '@src/constants/lang/en';
 import { getInitials } from '@src/utils/helpers';
 import WebsiteLogo from './WebsiteLogo';
+import NavbarSearchBox from './NavbarSearchBox';
 
 type TLink = { name: string; link: string; isExtended?: boolean };
 
@@ -73,6 +74,7 @@ const menuItems: TLink[] = [
 const Navbar = () => {
   const [links, setLinks] = useState<TLink[]>([]);
   const [showConformationModal, setShowConformationModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(UserContext);
   const pathname = usePathname();
   const router = useRouter();
@@ -88,6 +90,14 @@ const Navbar = () => {
       setLinks(memberUserLinks);
     }
   }, [user]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   async function doLogout() {
     try {
@@ -180,19 +190,10 @@ const Navbar = () => {
                 <label htmlFor="search" className="sr-only">
                   {en.component.searchRoadmapCourseLessons}
                 </label>
-                <div className="relative flex-1">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <MagnifyingGlassIcon
-                      className="h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <input
-                    id="search"
-                    name="search"
-                    type="search"
-                    placeholder="Search Roadmaps, Courses or Lessons"
-                    className="block w-full rounded-md border-0 bg-gray-700 py-1.5 pl-10 pr-3 text-gray-300 placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:ring-0 sm:text-sm sm:leading-6 outline-0"
+                {/* Search functionality for Roadmap, courses and Lesson  */}
+                <div className="w-full h-full">
+                  <NavbarSearchBox
+                    isMember={user?.user_type_id === UserTypeIdEnum.MEMBER}
                   />
                 </div>
               </div>
@@ -223,7 +224,6 @@ const Navbar = () => {
                   <span className="sr-only">
                     {en.component.viewNotification}
                   </span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
 
                 {/* Updated Profile Menu */}
@@ -362,7 +362,6 @@ const Navbar = () => {
               >
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">{en.component.viewNotification}</span>
-                <BellIcon aria-hidden="true" className="h-6 w-6" />
               </button>
             </div>
             <div className="mt-3 space-y-1 px-2">
@@ -421,6 +420,18 @@ const Navbar = () => {
           </div>
         </DisclosurePanel>
       </Disclosure>
+      <div
+        style={{
+          position: 'fixed',
+          top: '56px',
+          left: 0,
+          height: '3px',
+          width: isLoading ? '100%' : '0',
+          backgroundColor: '#2563eb',
+          zIndex: 1000,
+          transition: 'width 0.3s ease-out',
+        }}
+      />
     </>
   );
 };
