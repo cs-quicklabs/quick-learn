@@ -443,4 +443,10 @@ export const en = {
 
     noDataFound: 'No data found',
   },
+
+  Search: {
+    default_text: 'Search Roadmaps, Courses or Lessons here',
+    no_search_result_found: 'No Lessons, Courses, or Roadmaps found',
+    Loading: 'Loading....',
+  },
 };
