@@ -69,6 +69,6 @@ export enum LearningPathAPIEnum {
   GET_LEARNING_PATH_LESSON = '/users/myroadmaps/lessons/:id',
 }
 
-export enum DailyLessionEnum{
+export enum DailyLessionEnum {
   GET_DAILY_LESSON_DETAILS = '/lesson/:lesson/:course/:token',
 }

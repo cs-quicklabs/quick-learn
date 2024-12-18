@@ -42,12 +42,6 @@ export class LessonEmailService {
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
-  // @Cron(CronExpression.EVERY_30_SECONDS)
-  // handelTestCron() {
-  //   this.sendLessonEmails();
-  //   this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
-  // }
-
   private async sendLessonEmails() {
     // FIND ALL ACTIVE USERS
     const allActiveUsers = await this.userRepository.find({
@@ -81,14 +75,19 @@ export class LessonEmailService {
         const lessonURL = `${frontendURL}/dashboard/daily-lesson/${userMailTokenRecord.lesson_id}?course_id=${userMailTokenRecord.course_id}&token=${userMailTokenRecord.token}`;
 
         const html = `<div>
+                <p>Here's your Lesson of the Day: ${randomLessionToSend.name}</p><br/>
                 <p>Please click on the link below to read today's lesson.</p><br/>
                 <a style="padding: 8px 16px;text-decoration: none;background-color: #10182a;border-radius: 4px;color: white;" target="_blank" href="${lessonURL}">Read Lesson</a><br/>
+                <p>Please note: This link will expire in <b>3 hours</b>.</p>
               <div>`;
 
         this.emailService.email({
           body: html,
           recipients: [users.email],
-          subject: emailSubjects.lessionForTheDay,
+          subject: emailSubjects.lessionForTheDay.replace(
+            ':username',
+            `${users.first_name} ${users.last_name}`,
+          ),
         });
       } else {
         if (userUnReadLessions.assignedRoadmapCount > 0) {
