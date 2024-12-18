@@ -261,7 +261,7 @@ const ActivityGraph: React.FC<props> = (props) => {
             {selectedTab === 0 && (
               <Fragment>
                 <div id="brandi" role="tabpanel" aria-labelledby="brand-tab">
-                  <div className="max-h-[230px] overflow-y-auto">
+                  <div className="max-h-[230px] overflow-y-auto scrollbar-width: 3;">
                     {userActivityList && userActivityList.length ? (
                       <>
                         <ol className="relative ms-3 border-s border-dashed border-gray-200 dark:border-gray-700">

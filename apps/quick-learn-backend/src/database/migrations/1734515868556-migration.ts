@@ -1,7 +1,12 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
 
-export class CreateLessonTokensTable1733456875434 implements MigrationInterface {
+export class Migration1734515868556 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -59,7 +64,7 @@ export class CreateLessonTokensTable1733456875434 implements MigrationInterface 
           },
         ],
       }),
-      true
+      true,
     );
 
     // Foreign Key for User
@@ -70,7 +75,7 @@ export class CreateLessonTokensTable1733456875434 implements MigrationInterface 
         referencedColumnNames: ['id'],
         referencedTableName: 'user',
         onDelete: 'CASCADE',
-      })
+      }),
     );
 
     // Foreign Key for Lesson
@@ -81,7 +86,7 @@ export class CreateLessonTokensTable1733456875434 implements MigrationInterface 
         referencedColumnNames: ['id'],
         referencedTableName: 'lesson',
         onDelete: 'CASCADE',
-      })
+      }),
     );
 
     // Foreign Key for Course
@@ -92,22 +97,22 @@ export class CreateLessonTokensTable1733456875434 implements MigrationInterface 
         referencedColumnNames: ['id'],
         referencedTableName: 'course',
         onDelete: 'CASCADE',
-      })
+      }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign keys first
     const table = await queryRunner.getTable('lesson_tokens');
-    
+
     const userForeignKey = table.foreignKeys.find(
-      (fk) => fk.columnNames.indexOf('user_id') !== -1
+      (fk) => fk.columnNames.indexOf('user_id') !== -1,
     );
     const lessonForeignKey = table.foreignKeys.find(
-      (fk) => fk.columnNames.indexOf('lesson_id') !== -1
+      (fk) => fk.columnNames.indexOf('lesson_id') !== -1,
     );
     const courseForeignKey = table.foreignKeys.find(
-      (fk) => fk.columnNames.indexOf('course_id') !== -1
+      (fk) => fk.columnNames.indexOf('course_id') !== -1,
     );
 
     if (userForeignKey) {
