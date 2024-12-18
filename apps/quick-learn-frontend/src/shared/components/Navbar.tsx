@@ -180,7 +180,7 @@ const Navbar = () => {
                   {en.component.searchRoadmapCourseLessons}
                 </label>
                 {/* Search functionality for Roadmap, courses and Lesson  */}
-                <div className="w-full">
+                <div className="w-full h-full">
                   <NavbarSearchBox
                     isMember={user?.user_type_id === UserTypeIdEnum.MEMBER}
                   />

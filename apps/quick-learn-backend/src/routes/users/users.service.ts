@@ -337,7 +337,7 @@ export class UsersService extends PaginationService<UserEntity> {
     return user;
   }
 
-  async getUserSearchedQuery(userId: number, query: string): Promise<any> {
+  async getUserSearchedQuery(userId: number, query: string) {
     if (!query || query.trim() === '') {
       return {
         Roadmaps: [],
@@ -356,45 +356,45 @@ export class UsersService extends PaginationService<UserEntity> {
     }
     //filtering roadmaps ,courses,lessons
     const roadmaps = data
-      .filter((roadmap: any) =>
+      .filter((roadmap) =>
         roadmap.name.toLowerCase().includes(query.toLowerCase()),
       )
-      .map((roadmap: any) => ({
+      .map((roadmap) => ({
         id: roadmap.id,
         name: roadmap.name,
       }));
 
     const courses = data
-      .flatMap((roadmap: any) =>
-        roadmap.courses.map((course: any) => ({
+      .flatMap((roadmap) =>
+        roadmap.courses.map((course) => ({
           id: course.id,
           name: course.name,
         })),
       )
-      .filter((course: any) =>
+      .filter((course) =>
         course.name.toLowerCase().includes(query.toLowerCase()),
       );
 
     const lessons = data
-      .flatMap((roadmap: any) =>
-        roadmap.courses.flatMap((course: any) => {
+      .flatMap((roadmap) =>
+        roadmap.courses.flatMap((course) => {
           const lessonsArray =
             course.lesson_ids ||
-            course.lessons.map((lesson: any) => ({
+            course.lessons.map((lesson) => ({
               id: lesson.id,
               name: lesson.name,
               course_id: course.id,
               roadmap_id: roadmap.id,
             }));
 
-          return lessonsArray.map((lesson: any) => ({
+          return lessonsArray.map((lesson) => ({
             ...lesson,
             course_id: course.id,
             roadmap_id: roadmap.id,
           }));
         }),
       )
-      .filter((lesson: any) =>
+      .filter((lesson) =>
         lesson.name.toLowerCase().includes(query.toLowerCase()),
       );
 

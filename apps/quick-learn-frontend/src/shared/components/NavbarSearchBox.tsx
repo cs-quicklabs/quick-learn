@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import {
-  SearchedQuery,
-  SearchedCourse,
-  SearchedRoadmap,
-  SearchedLesson,
-} from '../types/contentRepository';
+import { SearchedQuery, SearchedLesson } from '../types/contentRepository';
 import { getSearchQuery } from '@src/apiServices/learningPathService';
 import RouteTab from './RouteTab';
 
@@ -20,6 +15,7 @@ interface NavbarSearchBoxProps {
 const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
   const [isDropdownActive, setIsDropdownActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchedQuery>({
     Roadmaps: [],
     Courses: [],
@@ -36,19 +32,23 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
   useEffect(() => {
     const fetchResults = setTimeout(() => {
       if (searchQuery.trim().length >= MINIMUM_SEARCH_LENGTH) {
+        setIsLoading(true);
         getSearchQuery(searchQuery)
-          .then((res) =>
+          .then((res) => {
             setSearchResults(
               res?.data || { Roadmaps: [], Courses: [], Lessons: [] },
-            ),
-          )
+            );
+            setIsLoading(false);
+          })
           .catch((error) => console.error('Search query error:', error));
       } else {
         setSearchResults({ Roadmaps: [], Courses: [], Lessons: [] });
       }
     }, SEARCH_DELAY_MS);
 
-    return () => clearTimeout(fetchResults);
+    return () => {
+      clearTimeout(fetchResults);
+    };
   }, [searchQuery]);
 
   // Handle clicks outside dropdown
@@ -83,16 +83,15 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
 
     return (
       <div key={category}>
-        <div className="font-bold text-slate-700">
+        <div className="font-bold text-slate-700 border-b border-gray-300">
           # {category}{' '}
           <span className="text-sm text-gray-700 italic font-normal">
             ({items.length} {category.toLowerCase()})
           </span>
         </div>
         <div className="max-h-[120px] overflow-auto">
-          {items.map((item) => {
+          {items.map((item, i) => {
             const commonProps = {
-              key: item.id,
               id: item.id,
               name: item.name,
               baseLink: baseRoute,
@@ -104,6 +103,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
               return (
                 <RouteTab
                   {...commonProps}
+                  key={i}
                   type="lesson"
                   course_id={lesson.course_id}
                   roadmap_id={lesson.roadmap_id}
@@ -114,6 +114,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
             return (
               <RouteTab
                 {...commonProps}
+                key={i}
                 type={category.toLowerCase() as 'roadmaps' | 'courses'}
               />
             );
@@ -124,7 +125,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full h-full">
       <div className="relative flex-1" ref={dropdownRef}>
         {/* Search Input Icon */}
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -148,13 +149,15 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
 
         {/* Search Results Dropdown */}
         {isDropdownActive && (
-          <div className="absolute w-full top-[38px] text-black bg-white border rounded-md p-1 z-50">
+          <div className="absolute w-full top-[43px] text-black bg-white border rounded-md p-1 z-50">
             {searchQuery.length < MINIMUM_SEARCH_LENGTH ? (
-              <div className="text-center">
-                Enter at least {MINIMUM_SEARCH_LENGTH} characters
+              <div className="text-center text-sm text-gray-500 p-2">
+                Search Roadmaps, Courses or Lessons here
               </div>
+            ) : isLoading ? (
+              <div className="text-center text-gray-500 p-2">Loading....</div>
             ) : hasNoResults ? (
-              <div className="text-center text-gray-500 p-2">
+              <div className="text-center text-gray-500 p-2 text-sm">
                 No Lessons, Courses, or Roadmaps found
               </div>
             ) : (
