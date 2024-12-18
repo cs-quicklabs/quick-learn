@@ -3,6 +3,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { SearchedQuery, SearchedLesson } from '../types/contentRepository';
 import { getSearchQuery } from '@src/apiServices/learningPathService';
 import RouteTab from './RouteTab';
+import { en } from '@src/constants/lang/en';
 
 const SEARCH_CATEGORIES = ['Roadmaps', 'Courses', 'Lessons'] as const;
 const MINIMUM_SEARCH_LENGTH = 3;
@@ -152,13 +153,15 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
           <div className="absolute w-full top-[43px] text-black bg-white border rounded-md p-1 z-50">
             {searchQuery.length < MINIMUM_SEARCH_LENGTH ? (
               <div className="text-center text-sm text-gray-500 p-2">
-                Search Roadmaps, Courses or Lessons here
+                {en.Search.default_text}
               </div>
             ) : isLoading ? (
-              <div className="text-center text-gray-500 p-2">Loading....</div>
+              <div className="text-center text-gray-500 p-2">
+                {en.Search.Loading}
+              </div>
             ) : hasNoResults ? (
               <div className="text-center text-gray-500 p-2 text-sm">
-                No Lessons, Courses, or Roadmaps found
+                {en.Search.no_search_result_found}
               </div>
             ) : (
               <div>{SEARCH_CATEGORIES.map(renderCategoryResults)}</div>
