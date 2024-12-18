@@ -354,10 +354,10 @@ export const SearchIcon = () => {
   );
 };
 
-export const ReadFileIcon = () => {
+export const ReadFileIcon = ({ colorClass }: { colorClass: string }) => {
   return (
     <svg
-      className="h-5 w-5 text-green-500"
+      className={`w-4 h-4 ${colorClass}`}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"

@@ -96,6 +96,24 @@ export type TUserCourse = {
   roadmaps?: TUserRoadmap[];
 };
 
+interface Lesson {
+  name: string;
+}
+
+export type TUserDailyProgress = {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  token: string;
+  user_id: number;
+  lesson_id: number;
+  course_id: number;
+  status: string;
+  expiresAt: string;
+  lesson: Lesson;
+  event_at?: string;
+};
+
 export type TUserLesson = {
   id: number;
   name: string;

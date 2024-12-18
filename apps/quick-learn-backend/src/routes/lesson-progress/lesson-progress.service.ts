@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
-import { CourseEntity, LessonEntity } from '@src/entities';
+import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 
 @Injectable()
 export class LessonProgressService {
@@ -13,6 +13,8 @@ export class LessonProgressService {
     private lessonRepository: Repository<LessonEntity>,
     @InjectRepository(CourseEntity)
     private courseRepository: Repository<CourseEntity>,
+    @InjectRepository(LessonTokenEntity)
+    private LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {}
 
   async markLessonAsCompleted(
@@ -187,5 +189,15 @@ export class LessonProgressService {
         ? lessonProgress?.completed_date
         : null,
     };
+  }
+
+  async getDailyLessonProgress(userId: number) {
+    const userDailyLessonProgress =
+      await this.LessonTokenRepository.createQueryBuilder('lesson_tokens')
+        .leftJoinAndSelect('lesson_tokens.lesson', 'lesson')
+        .where('lesson_tokens.user_id = :userId', { userId })
+        .select(['lesson_tokens', 'lesson.name'])
+        .getMany();
+    return userDailyLessonProgress;
   }
 }

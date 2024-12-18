@@ -410,6 +410,8 @@ export const en = {
     lastLogin: 'Last Login',
     addedOn: 'Added On',
     markedCompletedOn: 'Marked completed on ',
+    missedDailyLessons: 'Missed daily lesson on ',
+    readDailyLessons: 'Read daily lesson on ',
   },
 
   component: {

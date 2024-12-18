@@ -12,6 +12,7 @@ import { EmailService } from '@src/common/modules/email/email.service';
 import { ConfigService } from '@nestjs/config';
 import { emailSubjects } from '@src/common/constants/email-subject';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { DailLessonGreetings } from '@src/common/enum/daily_lesson.enum';
 
 @Injectable()
 export class LessonEmailService {
@@ -32,17 +33,17 @@ export class LessonEmailService {
   // Runs every minute
   @Cron(CronExpression.EVERY_DAY_AT_9AM)
   handleMorningCron() {
-    this.sendLessonEmails();
+    this.sendLessonEmails(DailLessonGreetings.GOOD_MORNING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_5PM)
   handleEveningCron() {
-    this.sendLessonEmails();
+    this.sendLessonEmails(DailLessonGreetings.GOOD_EVENING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
-  private async sendLessonEmails() {
+  private async sendLessonEmails(greeting: string) {
     // FIND ALL ACTIVE USERS
     const allActiveUsers = await this.userRepository.find({
       where: { active: true },
@@ -75,19 +76,16 @@ export class LessonEmailService {
         const lessonURL = `${frontendURL}/dashboard/daily-lesson/${userMailTokenRecord.lesson_id}?course_id=${userMailTokenRecord.course_id}&token=${userMailTokenRecord.token}`;
 
         const html = `<div>
-                <p>Here's your Lesson of the Day: ${randomLessionToSend.name}</p><br/>
+                <p>${greeting}, ${users.first_name} ${users.last_name} Here's your Lesson of the Day: ${randomLessionToSend.name}</p><br/>
                 <p>Please click on the link below to read today's lesson.</p><br/>
-                <a style="padding: 8px 16px;text-decoration: none;background-color: #10182a;border-radius: 4px;color: white;" target="_blank" href="${lessonURL}">Read Lesson</a><br/>
+                <a style="padding: 8px 16px;text-decoration: none;background-color: #10182a;border-radius: 4px;color: white;" target="_blank" href="${lessonURL}">Read Lesson</a><br/><br/>
                 <p>Please note: This link will expire in <b>3 hours</b>.</p>
               <div>`;
 
         this.emailService.email({
           body: html,
           recipients: [users.email],
-          subject: emailSubjects.lessionForTheDay.replace(
-            ':username',
-            `${users.first_name} ${users.last_name}`,
-          ),
+          subject: emailSubjects.lessionForTheDay,
         });
       } else {
         if (userUnReadLessions.assignedRoadmapCount > 0) {

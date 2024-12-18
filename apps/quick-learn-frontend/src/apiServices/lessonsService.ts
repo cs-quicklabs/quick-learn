@@ -1,4 +1,7 @@
-import { TLesson } from '@src/shared/types/contentRepository';
+import {
+  TLesson,
+  TUserDailyProgress,
+} from '@src/shared/types/contentRepository';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 import {
   ContentRepositoryApiEnum,
@@ -109,6 +112,15 @@ export const getUserProgress = async (
       userId ? `/${userId}` : ''
     }`,
   );
+  return response.data;
+};
+
+export const getUserDailyLessonProgress = async (
+  userId: number,
+): Promise<AxiosSuccessResponse<TUserDailyProgress[]>> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<TUserDailyProgress[]>
+  >(`${ContentRepositoryApiEnum.LESSON_PROGRESS}/daily-lesson/${userId}`);
   return response.data;
 };
 

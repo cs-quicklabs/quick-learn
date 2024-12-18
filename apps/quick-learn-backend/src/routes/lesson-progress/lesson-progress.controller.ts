@@ -84,6 +84,20 @@ export class LessonProgressController {
     return new SuccessResponse('All user Progress grouped by course', data);
   }
 
+  @ApiParam({
+    name: 'userID',
+    required: false,
+    type: Number,
+    description: 'user ID',
+  })
+  @Get('daily-lesson/:userID')
+  async getAllDailyLesson(@Param('userID') userID?: number) {
+    const data = await this.lessonProgressService.getDailyLessonProgress(
+      userID,
+    );
+    return new SuccessResponse('All daily lesson', data);
+  }
+
   @Get('check/:lessonId/:userId?')
   @ApiParam({
     name: 'lessonId',

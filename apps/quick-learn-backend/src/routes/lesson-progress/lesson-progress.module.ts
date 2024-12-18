@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
-import { LessonEntity } from '@src/entities';
+import { LessonEntity, LessonTokenEntity } from '@src/entities';
 import { CourseEntity } from '@src/entities';
 import { UserEntity } from '@src/entities';
 
@@ -12,6 +12,7 @@ import { LessonProgressService } from './lesson-progress.service';
   imports: [
     TypeOrmModule.forFeature([
       UserLessonProgressEntity,
+      LessonTokenEntity,
       LessonEntity,
       CourseEntity,
       UserEntity,

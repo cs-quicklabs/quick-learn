@@ -1,6 +1,9 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
+import { CourseEntity } from './course.entity';
+import { LessonEntity } from './lesson.entity';
+import { UserEntity } from './user.entity';
 
 @Entity('lesson_tokens')
 export class LessonTokenEntity extends BaseEntity {
@@ -15,6 +18,18 @@ export class LessonTokenEntity extends BaseEntity {
 
   @Column({ type: 'int', nullable: false })
   course_id: number;
+
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: UserEntity;
+
+  @ManyToOne(() => LessonEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'lesson_id' })
+  lesson: LessonEntity;
+
+  @ManyToOne(() => CourseEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'course_id' })
+  course: CourseEntity;
 
   @Column({
     type: 'varchar',

@@ -21,7 +21,10 @@ import AssignDataModal from '@src/shared/modals/assignDataModal';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TRoadmapCategories } from '@src/shared/types/accountTypes';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
-import { TUserCourse } from '@src/shared/types/contentRepository';
+import {
+  TUserCourse,
+  TUserDailyProgress,
+} from '@src/shared/types/contentRepository';
 import { TUser } from '@src/shared/types/userTypes';
 import {
   showApiErrorInToast,
@@ -31,7 +34,10 @@ import { Tooltip } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import TeamMemberDetailsSkeleton from './TeamMemberDetailsSkeleton';
-import { getUserProgress } from '@src/apiServices/lessonsService';
+import {
+  getUserDailyLessonProgress,
+  getUserProgress,
+} from '@src/apiServices/lessonsService';
 import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
 import ProgressCard from '@src/shared/components/ProgressCard';
 import {
@@ -59,6 +65,9 @@ const TeamMemberDetails = () => {
     TRoadmapCategories[]
   >([]);
   const [userProgress, setUserProgress] = useState<UserLessonProgress[]>([]);
+  const [userDailyLessonProgressData, setUserDalyLessonProgressData] = useState<
+    TUserDailyProgress[]
+  >([]);
   const [allCourses, setAllCourses] = useState<TUserCourse[]>([]);
   const [userActivityModal, setUserActivityModal] = useState(false);
 
@@ -89,6 +98,12 @@ const TeamMemberDetails = () => {
         getUserProgress(Number(userId))
           .then((res) => setUserProgress(res.data))
           .catch((e) => showApiErrorInToast(e));
+
+        // Set the user's daily lesson progress data
+        getUserDailyLessonProgress(Number(userId))
+          .then((res) => setUserDalyLessonProgressData(res.data))
+          .catch((e) => showApiErrorInToast(e));
+
         setLinks([
           ...defaultlinks,
           {
@@ -356,6 +371,7 @@ const TeamMemberDetails = () => {
         <div className="flex align-center justify-center mt-8 w-full">
           <ActivityGraph
             userProgressData={userProgress as Course[]}
+            userDailyProgressData={userDailyLessonProgressData}
             isOpen={userActivityModal}
             setShow={setUserActivityModal}
             memberDetail={member as TUser}

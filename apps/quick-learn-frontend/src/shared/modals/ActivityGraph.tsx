@@ -6,9 +6,11 @@ import { Tooltip } from 'flowbite-react';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { TUser } from '../types/userTypes';
+import { TUserDailyProgress } from '../types/contentRepository';
 
 interface props {
   userProgressData: Course[];
+  userDailyProgressData: TUserDailyProgress[];
   isOpen: boolean;
   setShow: (value: boolean) => void;
   memberDetail: TUser;
@@ -18,6 +20,9 @@ interface Lesson {
   lesson_id: number;
   completed_date: string;
   lesson_name: string;
+  created_at?: string;
+  updated_at?: string;
+  event_at?: string;
 }
 
 export interface Course {
@@ -34,16 +39,40 @@ interface InputData {
   count: number;
 }
 
+interface DailyLessonProgress {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  token: string;
+  user_id: number;
+  lesson_id: number;
+  course_id: number;
+  status: string;
+  expiresAt: string;
+  lesson: {
+    name: string;
+  };
+}
 interface OutputData {
   timestamp: string;
   count: number;
   opacity: number;
 }
 
+interface ActivityList {
+  lesson_id: number;
+  event_at: string;
+  lesson_name?: string;
+  course_id?: number;
+  status?: string;
+  user_id?: number;
+  token?: string;
+}
+
 const ActivityGraph: React.FC<props> = (props) => {
   const [userProgressArray, setUserProgressArray] = useState<OutputData[]>([]);
   const [selectedTab, setSelectedTab] = useState(0);
-  const [userActivityList, setUserActivityList] = useState<Lesson[]>([]);
+  const [userActivityList, setUserActivityList] = useState<ActivityList[]>([]);
 
   const getDateCounts = (data: Course[]): DateCount[] => {
     const dateCounts: Record<string, number> = {};
@@ -112,6 +141,32 @@ const ActivityGraph: React.FC<props> = (props) => {
     return months;
   }
 
+  const mergeArrays = (
+    array1: Lesson[],
+    array2: DailyLessonProgress[],
+  ): ActivityList[] => {
+    // Process first array
+    const processedArray1 = array1.map((item) => ({
+      lesson_id: item.lesson_id,
+      lesson_name: item.lesson_name,
+      event_at: item.completed_date,
+    }));
+
+    // Process second array
+    const processedArray2 = array2.map((item) => ({
+      lesson_id: item.lesson_id,
+      course_id: item.course_id,
+      status: item.status,
+      user_id: item.user_id,
+      lesson_name: item.lesson.name,
+      token: item.token,
+      event_at:
+        item.created_at === item.updated_at ? item.expiresAt : item.updated_at,
+    }));
+
+    // Combine both arrays
+    return [...processedArray1, ...processedArray2];
+  };
   useEffect(() => {
     if (props.userProgressData && props.userProgressData.length) {
       setUserProgressArray(
@@ -122,18 +177,22 @@ const ActivityGraph: React.FC<props> = (props) => {
       const allLessons = props.userProgressData.flatMap(
         (course) => course.lessons,
       );
+
+      const mergedArray = mergeArrays(allLessons, props.userDailyProgressData);
+
       // SORT the lessons by completed_date in descending order
-      allLessons.sort(
+      mergedArray.sort(
         (a, b) =>
-          new Date(b.completed_date).valueOf() -
-          new Date(a.completed_date).valueOf(),
+          new Date(b.event_at).valueOf() - new Date(a.event_at).valueOf(),
       );
 
-      setUserActivityList(allLessons);
+      setUserActivityList(mergedArray);
     } else {
       setUserProgressArray(generateDailyData(getDateCounts([])));
     }
-  }, [props.userProgressData]);
+  }, [props.userDailyProgressData, props.userProgressData]);
+
+  console.log(userActivityList, 'userActivityList');
 
   return (
     <Fragment>
@@ -207,19 +266,31 @@ const ActivityGraph: React.FC<props> = (props) => {
                       <>
                         <ol className="relative ms-3 border-s border-dashed border-gray-200 dark:border-gray-700">
                           {userActivityList.map(
-                            (item: Lesson, index: number) => (
+                            (item: ActivityList, index: number) => (
                               <Fragment key={index}>
                                 <li className="mb-6 ms-6">
                                   <span className="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-white ring-4 ring-white dark:bg-gray-800 dark:ring-gray-800">
-                                    <ReadFileIcon />
+                                    <ReadFileIcon
+                                      colorClass={`${
+                                        item.status
+                                          ? item.status === 'COMPLETED'
+                                            ? 'text-blue-500'
+                                            : 'text-red-500'
+                                          : 'text-green-500'
+                                      }`}
+                                    />
                                   </span>{' '}
                                   <h3 className="mb-0.5 flex items-center pt-1 text-base font-semibold text-gray-900 dark:text-white">
                                     {item.lesson_name}
                                   </h3>{' '}
                                   <time className="mb-2 block text-gray-500 dark:text-gray-400 text-xs">
-                                    {en.teams.markedCompletedOn}
+                                    {item.status
+                                      ? item.status === 'COMPLETED'
+                                        ? en.teams.readDailyLessons
+                                        : en.teams.missedDailyLessons
+                                      : en.teams.markedCompletedOn}
                                     {format(
-                                      new Date(item.completed_date),
+                                      new Date(item.event_at),
                                       DateFormats.fullDate,
                                     )}
                                   </time>

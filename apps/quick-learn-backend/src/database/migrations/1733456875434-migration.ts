@@ -1,9 +1,7 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
 
-export class CreateLessonTokensTable1733456875434
-  implements MigrationInterface
-{
+export class CreateLessonTokensTable1733456875434 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -60,49 +58,67 @@ export class CreateLessonTokensTable1733456875434
             isNullable: false,
           },
         ],
-        foreignKeys: [
-          {
-            columnNames: ['user_id'],
-            referencedTableName: 'user',
-            referencedColumnNames: ['id'],
-            onDelete: 'CASCADE',
-          },
-          {
-            columnNames: ['lesson_id'],
-            referencedTableName: 'lesson',
-            referencedColumnNames: ['id'],
-            onDelete: 'CASCADE',
-          },
-          {
-            columnNames: ['course_id'],
-            referencedTableName: 'course',
-            referencedColumnNames: ['id'],
-            onDelete: 'CASCADE',
-          },
-        ],
       }),
-      true,
+      true
     );
 
-    // Create indexes for better query performance
-    await queryRunner.query(`
-      CREATE INDEX idx_lesson_tokens_user_id ON lesson_tokens(user_id);
-      CREATE INDEX idx_lesson_tokens_lesson_id ON lesson_tokens(lesson_id);
-      CREATE INDEX idx_lesson_tokens_course_id ON lesson_tokens(course_id);
-      CREATE INDEX idx_lesson_tokens_status ON lesson_tokens(status);
-      CREATE INDEX idx_lesson_tokens_expires_at ON lesson_tokens(expiresAt);
-    `);
+    // Foreign Key for User
+    await queryRunner.createForeignKey(
+      'lesson_tokens',
+      new TableForeignKey({
+        columnNames: ['user_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'user',
+        onDelete: 'CASCADE',
+      })
+    );
+
+    // Foreign Key for Lesson
+    await queryRunner.createForeignKey(
+      'lesson_tokens',
+      new TableForeignKey({
+        columnNames: ['lesson_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'lesson',
+        onDelete: 'CASCADE',
+      })
+    );
+
+    // Foreign Key for Course
+    await queryRunner.createForeignKey(
+      'lesson_tokens',
+      new TableForeignKey({
+        columnNames: ['course_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'course',
+        onDelete: 'CASCADE',
+      })
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop indexes first
-    await queryRunner.query(`
-      DROP INDEX IF EXISTS idx_lesson_tokens_user_id;
-      DROP INDEX IF EXISTS idx_lesson_tokens_lesson_id;
-      DROP INDEX IF EXISTS idx_lesson_tokens_course_id;
-      DROP INDEX IF EXISTS idx_lesson_tokens_status;
-      DROP INDEX IF EXISTS idx_lesson_tokens_expires_at;
-    `);
+    // Drop foreign keys first
+    const table = await queryRunner.getTable('lesson_tokens');
+    
+    const userForeignKey = table.foreignKeys.find(
+      (fk) => fk.columnNames.indexOf('user_id') !== -1
+    );
+    const lessonForeignKey = table.foreignKeys.find(
+      (fk) => fk.columnNames.indexOf('lesson_id') !== -1
+    );
+    const courseForeignKey = table.foreignKeys.find(
+      (fk) => fk.columnNames.indexOf('course_id') !== -1
+    );
+
+    if (userForeignKey) {
+      await queryRunner.dropForeignKey('lesson_tokens', userForeignKey);
+    }
+    if (lessonForeignKey) {
+      await queryRunner.dropForeignKey('lesson_tokens', lessonForeignKey);
+    }
+    if (courseForeignKey) {
+      await queryRunner.dropForeignKey('lesson_tokens', courseForeignKey);
+    }
 
     // Then drop the table
     await queryRunner.dropTable('lesson_tokens');
