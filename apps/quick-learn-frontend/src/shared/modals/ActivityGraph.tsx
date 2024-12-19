@@ -110,13 +110,13 @@ const ActivityGraph: React.FC<props> = (props) => {
       const count = inputMap.get(currentDate) || 0;
 
       // Calculate opacity based on the highest count and normalize
-      const normalizedOpacity = maxCount > 0 ? (count / maxCount) * 100 : 0;
-      const tailwindOpacity = Math.round(normalizedOpacity / 5) * 5;
+      const normalizedOpacity = maxCount > 0 ? count / maxCount : 0;
+      // const tailwindOpacity = Math.round(normalizedOpacity / 5) * 5;
 
       result.push({
         timestamp: currentDate,
         count,
-        opacity: tailwindOpacity,
+        opacity: normalizedOpacity,
       });
     }
 
@@ -182,7 +182,6 @@ const ActivityGraph: React.FC<props> = (props) => {
       setUserProgressArray(generateDailyData(getDateCounts([])));
     }
   }, [props.userDailyProgressData, props.userProgressData]);
-
 
   return (
     <Fragment>
@@ -345,9 +344,13 @@ const ActivityGraph: React.FC<props> = (props) => {
                                 placement="top"
                               >
                                 <div
-                                  className={`h-4 w-4 bg-lime-600 opacity-${
-                                    item.opacity > 0 ? item.opacity : 20
-                                  }`}
+                                  className={`h-4 w-4`}
+                                  style={{
+                                    backgroundColor:
+                                      item.count > 0
+                                        ? `rgba( 101,163 ,13 , ${item.opacity})`
+                                        : 'rgb(243, 243, 243)',
+                                  }}
                                 />
                               </Tooltip>
                             </Fragment>
