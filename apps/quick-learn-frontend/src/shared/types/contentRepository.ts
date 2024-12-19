@@ -127,7 +127,7 @@ export type SearchedLesson = {
   course_id: number;
   roadmap_id: number;
 };
-export type SearchedCourse = {
+export type SearchedCourseOrRoadpmap = {
   id: number;
   name: string;
 };
@@ -138,6 +138,6 @@ export type SearchedRoadmap = {
 
 export type SearchedQuery = {
   Roadmaps: SearchedRoadmap[];
-  Courses: SearchedCourse[];
-  Lessons: SearchedLesson[];
+  Courses: SearchedCourseOrRoadpmap[];
+  Lessons: SearchedCourseOrRoadpmap[];
 };
