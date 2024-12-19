@@ -78,7 +78,7 @@ export class LessonEmailService {
           greeting,
           users.first_name,
           users.last_name,
-          randomLessionToSend.lesson_name,
+          randomLessionToSend.name,
           LessonURL,
         );
 

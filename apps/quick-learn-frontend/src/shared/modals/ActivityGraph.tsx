@@ -183,7 +183,6 @@ const ActivityGraph: React.FC<props> = (props) => {
     }
   }, [props.userDailyProgressData, props.userProgressData]);
 
-  console.log(userActivityList, 'userActivityList');
 
   return (
     <Fragment>
