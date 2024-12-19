@@ -77,6 +77,7 @@ const DailyLessonDetail = () => {
   };
   useEffect(() => {
     if (courseId && token && lesson) {
+      // Fetch lesson details and status
       getDailyLessionDetail(lesson, courseId, token)
         .then((response) => {
           setLessonDetails(response.data);
@@ -94,7 +95,7 @@ const DailyLessonDetail = () => {
         })
         .catch((err) => console.log('err', err));
     }
-  }, [courseId, token, lesson, router, user]);
+  }, [courseId, token, lesson, router]);
 
   const navigateUserToLearningPath = () => {
     router.replace(RouteEnum.MY_LEARNING_PATH);
