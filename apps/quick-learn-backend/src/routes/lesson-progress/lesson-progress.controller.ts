@@ -14,6 +14,7 @@ import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam } from '@nestjs/swagger';
 import { UserEntity } from '@src/entities';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
+import { en } from '@src/lang/en';
 
 @Controller({ path: 'lessonprogress', version: '1' })
 @UseGuards(JwtAuthGuard)
@@ -54,12 +55,12 @@ export class LessonProgressController {
       dto.courseId,
     );
     if (dto.isCompleted) {
-      return new SuccessResponse('Successfully completed the lesson', {
+      return new SuccessResponse(en.successfullyCompletedLesson, {
         isRead: !!response,
         completed_date: response.completed_date,
       });
     } else {
-      return new SuccessResponse('This lesson is marked as unread');
+      return new SuccessResponse(en.lessonMarkedUnRead);
     }
   }
 
@@ -69,7 +70,7 @@ export class LessonProgressController {
       req.user.id,
       courseId,
     );
-    return new SuccessResponse('Course completed lessons', data);
+    return new SuccessResponse(en.courseCompletedLessons, data);
   }
 
   @Get('/userprogress/:userID?')
@@ -81,7 +82,21 @@ export class LessonProgressController {
       await this.lessonProgressService.getUserLessonProgressViaCourse(
         userID ? userID : curentUser.id,
       );
-    return new SuccessResponse('All user Progress grouped by course', data);
+    return new SuccessResponse(en.userProgressGrouped, data);
+  }
+
+  @ApiParam({
+    name: 'userID',
+    required: false,
+    type: Number,
+    description: 'user ID',
+  })
+  @Get('daily-lesson/:userID')
+  async getAllDailyLesson(@Param('userID') userID?: number) {
+    const data = await this.lessonProgressService.getDailyLessonProgress(
+      userID,
+    );
+    return new SuccessResponse(en.allDailyLessons, data);
   }
 
   @Get('check/:lessonId/:userId?')
@@ -107,6 +122,6 @@ export class LessonProgressController {
       currentUserViewed,
       lessonId,
     );
-    return new SuccessResponse('Lesson Status ', data);
+    return new SuccessResponse(en.lessonStatus, data);
   }
 }

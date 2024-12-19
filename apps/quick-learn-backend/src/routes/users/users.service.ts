@@ -319,6 +319,7 @@ export class UsersService extends PaginationService<UserEntity> {
 
     if (relations.includes('assigned_roadmaps.courses.lessons')) {
       selectFields.push('lessons.id');
+      selectFields.push('lessons.name');
     }
 
     queryBuilder.select(selectFields);

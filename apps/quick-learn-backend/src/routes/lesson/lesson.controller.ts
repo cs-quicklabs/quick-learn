@@ -20,6 +20,7 @@ import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
 import { PaginationDto } from '../users/dto';
 import { CourseArchiveDto } from '../course/dto/course-archive.dto';
+import { LessonEmailService } from './lesson-email-cron.service';
 
 @ApiTags('Lessons')
 @Controller({
@@ -28,7 +29,10 @@ import { CourseArchiveDto } from '../course/dto/course-archive.dto';
 })
 @UseGuards(JwtAuthGuard)
 export class LessonController {
-  constructor(private readonly service: LessonService) {}
+  constructor(
+    private readonly service: LessonService,
+    private readonly LessonEmailService: LessonEmailService,
+  ) {}
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()
@@ -182,5 +186,58 @@ export class LessonController {
   async deleteLesson(@Param('id') id: string): Promise<SuccessResponse> {
     await this.service.deleteLesson(+id);
     return new SuccessResponse(en.lessonDeleted);
+  }
+
+  /**
+   *
+   * @param user current user id
+   * @param lessonId lesson id
+   * @param courseId course id
+   * @param token validatation token sent on mail
+   * @returns lesson details
+   */
+
+  @Get(':lessonId/:courseId/:token')
+  @ApiOperation({ summary: "Get current user's lesson by id and course id" })
+  @ApiParam({
+    name: 'lessonId',
+    required: true,
+    type: String,
+    description: 'Get the lesson by id',
+  })
+  @ApiParam({
+    name: 'courseId',
+    required: true,
+    type: String,
+    description: 'Get lesson by course id',
+  })
+  @ApiParam({
+    name: 'token',
+    required: true,
+    type: String,
+    description: 'validate lesson url using token',
+  })
+  async getCurrentUserLessonsByIdAndCourseId(
+    @CurrentUser() user: UserEntity,
+    @Param('lessonId') lessonId: string,
+    @Param('courseId') courseId: string,
+    @Param('token') token: string,
+  ): Promise<SuccessResponse> {
+    await this.service.validateLessionToken(
+      token,
+      +user.id,
+      +courseId,
+      +lessonId,
+    );
+    const lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
+
+    await this.service.updateDailyLessonToken(
+      token,
+      +user.id,
+      +courseId,
+      +lessonId,
+    );
+
+    return new SuccessResponse(en.lessonForTheDay, lessonDetail);
   }
 }

@@ -151,16 +151,12 @@ export class UsersController {
     @CurrentUser() user: UserEntity,
     @Query('query') query: string,
   ): Promise<SuccessResponse> {
-    console.log('query= ', query);
     const searchedQueryResult = await this.usersService.getUserSearchedQuery(
       user.id,
       query,
     );
 
-    return new SuccessResponse(
-      'Here are you Search results',
-      searchedQueryResult,
-    );
+    return new SuccessResponse(en.searchResults, searchedQueryResult);
   }
 
   @Post()
