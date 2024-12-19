@@ -43,12 +43,6 @@ export class LessonEmailService {
     this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
-  // WILL BE REMOVED AFTER TESTING
-  @Cron(CronExpression.EVERY_DAY_AT_6PM)
-  handleTestCron() {
-    this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
-    this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
-  }
 
   private async sendLessonEmails(greeting: string) {
     // FIND ALL ACTIVE USERS
