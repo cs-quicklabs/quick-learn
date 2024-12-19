@@ -111,7 +111,6 @@ const ActivityGraph: React.FC<props> = (props) => {
 
       // Calculate opacity based on the highest count and normalize
       const normalizedOpacity = maxCount > 0 ? count / maxCount : 0;
-      // const tailwindOpacity = Math.round(normalizedOpacity / 5) * 5;
 
       result.push({
         timestamp: currentDate,
