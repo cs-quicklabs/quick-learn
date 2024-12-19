@@ -71,7 +71,7 @@ export const en = {
   lessonTokenExpired: 'Lesson token is expired.',
   lessonForTheDay: 'Lesson for the day.',
   allDailyLessons: 'All daily lessons activity for user.',
-  lessonMarkedUnRead: 'This lesson is marked as unread',
+  lessonMarkedUnRead: 'This lesson has been marked as unread',
   successfullyCompletedLesson: 'Successfully completed the lesson.',
   userProgressGrouped: 'All user Progress grouped by course',
   lessonStatus: 'Lesson Status',

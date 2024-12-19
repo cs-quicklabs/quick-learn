@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { emailSubjects } from '@src/common/constants/email-subject';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DailyLessonGreetings } from '@src/common/enum/daily_lesson.enum';
+import { EMAIL_BODY } from '@src/common/constants/emailBody';
 
 @Injectable()
 export class LessonEmailService {
@@ -68,38 +69,35 @@ export class LessonEmailService {
           randomLessionToSend.lesson_id,
           randomLessionToSend.course_id,
         );
-        // SEND EMAIL TO USER
-        // TODO: IMPLEMENT EMAIL SERVICE
-        const frontendURL = this.configService.get('app.frontendDomain', {
-          infer: true,
-        });
-        const lessonURL = `${frontendURL}/dashboard/daily-lesson/${userMailTokenRecord.lesson_id}?course_id=${userMailTokenRecord.course_id}&token=${userMailTokenRecord.token}`;
-
-        const html = `<div>
-                <p>${greeting}, ${users.first_name} ${users.last_name} Here's your Lesson of the Day: ${randomLessionToSend.name}</p><br/>
-                <p>Please click on the link below to read today's lesson.</p><br/>
-                <a style="padding: 8px 16px;text-decoration: none;background-color: #10182a;border-radius: 4px;color: white;" target="_blank" href="${lessonURL}">Read Lesson</a><br/><br/>
-                <p>Please note: This link will expire in <b>3 hours</b>.</p>
-              <div>`;
+        const LessonURL = this.generateURL(
+          randomLessionToSend.lesson_id,
+          randomLessionToSend.course_id,
+          userMailTokenRecord.token,
+        );
+        const MAIL_BODY = EMAIL_BODY.DAILY_LESSON_EMAIL(
+          greeting,
+          users.first_name,
+          users.last_name,
+          randomLessionToSend.lesson_name,
+          LessonURL,
+        );
 
         this.emailService.email({
-          body: html,
+          body: MAIL_BODY,
           recipients: [users.email],
-          subject: emailSubjects.lessionForTheDay,
+          subject: emailSubjects.LESSON_FOR_THE_DAY,
         });
       } else {
         if (userUnReadLessions.assignedRoadmapCount > 0) {
           // RESET USER READ HISTORY AND SEND EMAIL TO USER
           this.resetUserReadingHistory(currentUserID);
           // TODO: IMPLEMENT EMAIL SERVICE
-          const html = `<div>
-                <p>Congratulations !! You have read all assigned lessons, we are going to reset your reading history so that you can keep going with your learning journey.</p><br/>
-              <div>`;
+          const MAIL_BODY = EMAIL_BODY.RESET_READING_HISTORY();
 
           this.emailService.email({
-            body: html,
+            body: MAIL_BODY,
             recipients: [users.email],
-            subject: emailSubjects.accountReadingHistoryReset,
+            subject: emailSubjects.RESET_READING_HISTORY,
           });
         }
       }
@@ -193,4 +191,16 @@ export class LessonEmailService {
 
     return tokenEntityResponse;
   }
+
+  private generateURL = (
+    lesson_id: number,
+    course_id: number,
+    token: string,
+  ) => {
+    // SEND EMAIL TO USER
+    const frontendURL = this.configService.get('app.frontendDomain', {
+      infer: true,
+    });
+    return `${frontendURL}/dashboard/daily-lesson/${lesson_id}?course_id=${course_id}&token=${token}`;
+  };
 }

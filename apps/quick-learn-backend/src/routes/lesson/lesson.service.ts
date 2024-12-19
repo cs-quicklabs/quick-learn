@@ -320,15 +320,14 @@ export class LessonService extends PaginationService<LessonEntity> {
       throw new BadRequestException(en.lessonTokenRequired);
     }
 
-    const tokenEntity = await this.LessonTokenRepository.createQueryBuilder(
-      'lesson_token',
-    ) // Alias for the table
-      .where('lesson_token.user_id = :user_id', { user_id })
-      .andWhere('lesson_token.token = :token', { token })
-      .andWhere('lesson_token.course_id = :course_id', { course_id })
-      .andWhere('lesson_token.lesson_id = :lesson_id', { lesson_id })
-      .getOne();
-
+    const tokenEntity = await this.LessonTokenRepository.findOne({
+      where: {
+        user_id,
+        token,
+        course_id,
+        lesson_id,
+      },
+    });
     if (!tokenEntity) {
       throw new BadRequestException(en.invalidLessonToken);
     }

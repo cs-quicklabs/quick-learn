@@ -74,25 +74,16 @@ const ActivityGraph: React.FC<props> = (props) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [userActivityList, setUserActivityList] = useState<ActivityList[]>([]);
 
-  const getDateCounts = (data: Course[]): DateCount[] => {
+  const getDateCounts = (courses: Course[]): DateCount[] => {
     const dateCounts: Record<string, number> = {};
-
-    // Loop through each course
-    data.forEach((course) => {
-      // Loop through each lesson in the course
+    courses.forEach((course) => {
       course.lessons.forEach((lesson) => {
         // Extract the date (ignoring time)
         const date = lesson.completed_date.split('T')[0];
-
         // Increment the count for this date
-        if (dateCounts[date]) {
-          dateCounts[date]++;
-        } else {
-          dateCounts[date] = 1;
-        }
+        dateCounts[date] ? dateCounts[date]++ : (dateCounts[date] = 1);
       });
     });
-
     // Convert the dateCounts object to an array of objects
     return Object.entries(dateCounts).map(([date, count]) => ({ date, count }));
   };
