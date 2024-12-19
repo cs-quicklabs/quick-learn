@@ -198,9 +198,7 @@ export class LessonEmailService {
     token: string,
   ) => {
     // SEND EMAIL TO USER
-    const frontendURL = this.configService.get('app.frontendDomain', {
-      infer: true,
-    });
+    const frontendURL = process.env.FRONTEND_DOMAIN || 'http://localhost:3000';
     return `${frontendURL}/dashboard/daily-lesson/${lesson_id}?course_id=${course_id}&token=${token}`;
   };
 }
