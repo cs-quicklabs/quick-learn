@@ -106,7 +106,7 @@ const DailyLessonDetail = () => {
   }, [courseId, token, lesson, router]);
 
   const navigateUserToLearningPath = () => {
-    router.replace(RouteEnum.MY_LEARNING_PATH);
+    router.replace(RouteEnum.LOGIN);
   };
 
   if (!lessonDetails) return <FullPageLoader />;
