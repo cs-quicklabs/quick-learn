@@ -180,7 +180,10 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
             ({items.length} {category.toLowerCase()})
           </span>
         </div>
-        <div className="max-h-[120px] overflow-auto">
+        <div
+          className="max-h-[120px] overflow-auto"
+          style={{ scrollbarWidth: 'thin' }}
+        >
           {items.map((item, i) => {
             const commonProps = {
               id: item.id,
@@ -240,7 +243,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
 
         {/* Search Results Dropdown */}
         {isDropdownActive && (
-          <div className="absolute w-full top-[43px] text-black bg-white border rounded-md p-1 z-50">
+          <div className="absolute w-full top-[43px] text-black bg-white border rounded-md p-1  overflow-y-auto">
             {searchQuery.length < MINIMUM_SEARCH_LENGTH ? (
               hasHistory ? (
                 <div>
