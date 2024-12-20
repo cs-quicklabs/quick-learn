@@ -1,4 +1,4 @@
-import DailyLessonDetail from './dailyLessonDetail';
+import DailyLessonDetail from './DailyLessonDetail';
 
 export const metadata = {
   title: 'Daily Lesson Details • Quick Learn',
