@@ -106,6 +106,7 @@ const DailyLessonDetail = () => {
   }, [courseId, token, lesson, router]);
 
   const navigateUserToLearningPath = () => {
+    // NAVIGATE TO LOGIN PATH
     router.replace(RouteEnum.LOGIN);
   };
 
