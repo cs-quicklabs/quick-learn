@@ -67,7 +67,7 @@ export const markAsDone = async (
   lessonId: string,
   courseId: string,
   isCompleted: boolean,
-  userId: number,
+  userId?: number,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId}${

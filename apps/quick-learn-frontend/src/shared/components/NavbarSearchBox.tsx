@@ -176,7 +176,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
         <div className="font-bold text-slate-700 border-b border-gray-300">
           {isHistoryView && <ClockIcon className="inline-block h-4 w-4 mr-1" />}
           # {category}{' '}
-          <span className="text-sm text-gray-700 italic font-normal">
+          <span className="text-sm text-gray-700 italic font-normal capitalize">
             ({items.length} {category.toLowerCase()})
           </span>
         </div>
