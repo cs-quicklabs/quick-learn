@@ -32,13 +32,19 @@ export class LessonEmailService {
     this.logger = new Logger(LessonEmailService.name);
   }
   // Runs every minute
-  @Cron(CronExpression.EVERY_DAY_AT_9AM)
+  @Cron(CronExpression.EVERY_DAY_AT_9AM, {
+    name: 'sendMorningLessonEmails',
+    timeZone: 'Asia/Kolkata',
+  })
   handleMorningCron() {
     this.sendLessonEmails(DailyLessonGreetings.GOOD_MORNING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_5PM)
+  @Cron(CronExpression.EVERY_DAY_AT_5PM, {
+    name: 'sendEveningLessonEmails',
+    timeZone: 'Asia/Kolkata',
+  })
   handleEveningCron() {
     this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
