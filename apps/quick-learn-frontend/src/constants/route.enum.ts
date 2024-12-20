@@ -2,6 +2,7 @@ export enum RouteEnum {
   LOGIN = '/',
   RESET_PASSWORD = '/reset-password',
   FORGOT_PASSWORD = '/forgot-password',
+  DAILY_LESSONS = '/daily-lesson',
   DASHBOARD = '/dashboard',
   TEAM = '/dashboard/teams',
   TEAM_EDIT = '/dashboard/teams/edit',

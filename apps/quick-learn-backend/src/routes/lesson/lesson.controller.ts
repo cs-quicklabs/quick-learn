@@ -21,6 +21,7 @@ import { UserEntity } from '@src/entities';
 import { PaginationDto } from '../users/dto';
 import { CourseArchiveDto } from '../course/dto/course-archive.dto';
 import { LessonEmailService } from './lesson-email-cron.service';
+import { Public } from '@src/common/decorators/public.decorator';
 
 @ApiTags('Lessons')
 @Controller({
@@ -198,6 +199,7 @@ export class LessonController {
    */
 
   @Get(':lessonId/:courseId/:token')
+  @Public()
   @ApiOperation({ summary: "Get current user's lesson by id and course id" })
   @ApiParam({
     name: 'lessonId',
@@ -218,26 +220,20 @@ export class LessonController {
     description: 'validate lesson url using token',
   })
   async getCurrentUserLessonsByIdAndCourseId(
-    @CurrentUser() user: UserEntity,
     @Param('lessonId') lessonId: string,
     @Param('courseId') courseId: string,
     @Param('token') token: string,
   ): Promise<SuccessResponse> {
-    await this.service.validateLessionToken(
+    const userTokenDetal = await this.service.validateLessionToken(
       token,
-      +user.id,
       +courseId,
       +lessonId,
     );
     const lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
-
-    await this.service.updateDailyLessonToken(
-      token,
-      +user.id,
-      +courseId,
-      +lessonId,
-    );
-
-    return new SuccessResponse(en.lessonForTheDay, lessonDetail);
+    await this.service.updateDailyLessonToken(token, +courseId, +lessonId);
+    return new SuccessResponse(en.lessonForTheDay, {
+      lessonDetail: lessonDetail,
+      userDetail: userTokenDetal.user,
+    });
   }
 }

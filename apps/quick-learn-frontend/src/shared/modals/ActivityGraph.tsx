@@ -94,6 +94,13 @@ const ActivityGraph: React.FC<props> = (props) => {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(now.getMonth() - 6);
 
+    // Check if sixMonthsAgo is not a Sunday (0 is Sunday in JavaScript)
+    if (sixMonthsAgo.getDay() !== 0) {
+      // Calculate the difference to the next Sunday
+      const daysUntilSunday = 7 - sixMonthsAgo.getDay();
+      sixMonthsAgo.setDate(sixMonthsAgo.getDate() + daysUntilSunday);
+    }
+
     const inputMap = new Map<string, number>();
     let maxCount = 0;
 
