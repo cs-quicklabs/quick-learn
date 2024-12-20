@@ -147,6 +147,13 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
     }
   };
 
+  //loading skeleton
+  const SearchSkeleton = () => (
+    <div className="animate-pulse">
+      <div className="h-6 bg-gray-200 rounded w-full mb-2"></div>
+    </div>
+  );
+
   // Check if there are any results across all categories
   const hasNoResults =
     searchQuery.length >= MINIMUM_SEARCH_LENGTH &&
@@ -169,11 +176,14 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
         <div className="font-bold text-slate-700 border-b border-gray-300">
           {isHistoryView && <ClockIcon className="inline-block h-4 w-4 mr-1" />}
           # {category}{' '}
-          <span className="text-sm text-gray-700 italic font-normal">
+          <span className="text-sm text-gray-700 italic font-normal capitalize">
             ({items.length} {category.toLowerCase()})
           </span>
         </div>
-        <div className="max-h-[120px] overflow-auto">
+        <div
+          className="max-h-[120px] overflow-auto"
+          style={{ scrollbarWidth: 'thin' }}
+        >
           {items.map((item, i) => {
             const commonProps = {
               id: item.id,
@@ -233,7 +243,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
 
         {/* Search Results Dropdown */}
         {isDropdownActive && (
-          <div className="absolute w-full top-[43px] text-black bg-white border rounded-md p-1 z-50">
+          <div className="absolute w-full top-[43px] text-black bg-white border rounded-md p-1  overflow-y-auto">
             {searchQuery.length < MINIMUM_SEARCH_LENGTH ? (
               hasHistory ? (
                 <div>
@@ -262,7 +272,9 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
               )
             ) : isLoading ? (
               <div className="text-center text-gray-500 p-2">
-                {en.Search.Loading}
+                {/* add a loading skeleton */}
+                <SearchSkeleton />
+                {/* {en.Search.Loading} */}
               </div>
             ) : hasNoResults ? (
               <div className="text-center text-gray-500 p-2 text-sm">

@@ -355,7 +355,12 @@ export class UsersService extends PaginationService<UserEntity> {
     } else {
       data = await this.roadmapService.getAllRoadmaps();
     }
-    //filtering roadmaps ,courses,lessons
+
+    // Set to track unique IDs
+    const courseIds = new Set<number>();
+    const lessonIds = new Set<number>();
+
+    // Filtering roadmaps
     const roadmaps = data
       .filter((roadmap) =>
         roadmap.name.toLowerCase().includes(query.toLowerCase()),
@@ -365,39 +370,49 @@ export class UsersService extends PaginationService<UserEntity> {
         name: roadmap.name,
       }));
 
-    const courses = data
-      .flatMap((roadmap) =>
-        roadmap.courses.map((course) => ({
+    // Filtering courses with duplicate check
+    const courses = data.flatMap((roadmap) =>
+      roadmap.courses
+        .filter((course) => {
+          if (courseIds.has(course.id)) {
+            return false;
+          }
+          courseIds.add(course.id);
+          return course.name.toLowerCase().includes(query.toLowerCase());
+        })
+        .map((course) => ({
           id: course.id,
           name: course.name,
         })),
-      )
-      .filter((course) =>
-        course.name.toLowerCase().includes(query.toLowerCase()),
-      );
+    );
 
-    const lessons = data
-      .flatMap((roadmap) =>
-        roadmap.courses.flatMap((course) => {
-          const lessonsArray =
-            course.lesson_ids ||
-            course.lessons.map((lesson) => ({
-              id: lesson.id,
-              name: lesson.name,
-              course_id: course.id,
-              roadmap_id: roadmap.id,
-            }));
+    // Filtering lessons with duplicate check
+    const lessons = data.flatMap((roadmap) =>
+      roadmap.courses.flatMap((course) => {
+        const lessonsArray =
+          course.lesson_ids ||
+          course.lessons.map((lesson) => ({
+            id: lesson.id,
+            name: lesson.name,
+            course_id: course.id,
+            roadmap_id: roadmap.id,
+          }));
 
-          return lessonsArray.map((lesson) => ({
+        return lessonsArray
+          .filter((lesson) => {
+            if (lessonIds.has(lesson.id)) {
+              return false;
+            }
+            lessonIds.add(lesson.id);
+            return lesson.name.toLowerCase().includes(query.toLowerCase());
+          })
+          .map((lesson) => ({
             ...lesson,
             course_id: course.id,
             roadmap_id: roadmap.id,
           }));
-        }),
-      )
-      .filter((lesson) =>
-        lesson.name.toLowerCase().includes(query.toLowerCase()),
-      );
+      }),
+    );
 
     return {
       Roadmaps: roadmaps,
@@ -405,7 +420,6 @@ export class UsersService extends PaginationService<UserEntity> {
       Lessons: lessons,
     };
   }
-
   async updateUser(
     userId: UserEntity['id'],
     payload: Partial<UserEntity>,

@@ -7,7 +7,8 @@ export const EMAIL_BODY = {
     lessonURL: string,
   ) {
     return `<div>
-            <p>${greetingText}, ${first_name} ${last_name} Here's your Lesson of the Day: ${randomLessionToSendName}</p><br/>
+            <p>${greetingText}, <b>${first_name} ${last_name}</b><br/>
+            Here's your Lesson of the Day: ${randomLessionToSendName}</p><br/>
             <p>Please click on the link below to read today's lesson.</p><br/>
             <a style="padding: 8px 16px;text-decoration: none;background-color: #10182a;border-radius: 4px;color: white;" target="_blank" href="${lessonURL}">Read Lesson</a><br/><br/>
             <p>Please note: This link will expire in <b>3 hours</b>.</p>
