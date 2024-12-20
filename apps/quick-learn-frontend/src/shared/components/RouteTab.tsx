@@ -35,10 +35,10 @@ const RouteTab: React.FC<RouteTabProps> = ({
     <Link href={link}>
       <div
         onClick={onClick}
-        className="cursor-pointer flex justify-between items-center hover:bg-slate-200 px-5 py-2  line-clamp-1 active:bg-slate-500"
+        className="cursor-pointer flex justify-between items-center hover:bg-slate-200 px-5 py-2 active:bg-slate-500"
       >
-        <span className="capitalize">{name}</span>
-        <span className="text-xs border text-gray-400 border-gray-400 rounded-md p-1 hover:scale-105">
+        <span className="capitalize line-clamp-1 w-[75%]">{name}</span>
+        <span className="text-xs border text-gray-400 border-gray-400 w-[21%] rounded-md p-1 hover:scale-105">
           Jump to
         </span>
       </div>

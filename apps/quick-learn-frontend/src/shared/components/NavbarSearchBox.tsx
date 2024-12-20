@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { SearchedQuery, SearchedLesson } from '../types/contentRepository';
+import {
+  MagnifyingGlassIcon,
+  ClockIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
+import {
+  SearchedQuery,
+  SearchedLesson,
+  SearchedCourseOrRoadpmap,
+} from '../types/contentRepository';
 import { getSearchQuery } from '@src/apiServices/learningPathService';
 import RouteTab from './RouteTab';
 import { en } from '@src/constants/lang/en';
@@ -8,6 +16,7 @@ import { en } from '@src/constants/lang/en';
 const SEARCH_CATEGORIES = ['Roadmaps', 'Courses', 'Lessons'] as const;
 const MINIMUM_SEARCH_LENGTH = 3;
 const SEARCH_DELAY_MS = 500;
+const STORAGE_KEY = 'searchHistory';
 
 interface NavbarSearchBoxProps {
   isMember: boolean;
@@ -22,12 +31,33 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
     Courses: [],
     Lessons: [],
   });
+  const [searchHistory, setSearchHistory] = useState<SearchedQuery>({
+    Roadmaps: [],
+    Courses: [],
+    Lessons: [],
+  });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const baseRoute = useMemo(
     () => (isMember ? '/dashboard/learning-path' : '/dashboard/content'),
     [isMember],
   );
+
+  // Load search history on component mount
+  useEffect(() => {
+    isDropdownActive && loadSearchHistory();
+  }, [isDropdownActive]);
+
+  const loadSearchHistory = () => {
+    try {
+      const history = localStorage.getItem(STORAGE_KEY);
+      if (history) {
+        setSearchHistory(JSON.parse(history));
+      }
+    } catch (error) {
+      console.error('Error loading search history:', error);
+    }
+  };
 
   // Fetch search results
   useEffect(() => {
@@ -69,22 +99,75 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
     };
   }, []);
 
+  const handleSaveToHistory = (
+    category: keyof SearchedQuery,
+    item: SearchedLesson | SearchedCourseOrRoadpmap,
+  ): SearchedQuery => {
+    try {
+      const existingHistory = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) ||
+          JSON.stringify({ Roadmaps: [], Courses: [], Lessons: [] }),
+      );
+
+      // Check if item already exists in history
+      const categoryHistory = existingHistory[category];
+      const itemExists = categoryHistory.some(
+        (historyItem: SearchedLesson | SearchedCourseOrRoadpmap) =>
+          historyItem.id === item.id,
+      );
+
+      if (!itemExists) {
+        // Add new item to the beginning of the array
+        existingHistory[category] = [item, ...categoryHistory].slice(0, 10); // Keep last 10 items
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(existingHistory));
+      }
+
+      return existingHistory;
+    } catch (error) {
+      console.error('Error saving to search history:', error);
+      return searchHistory; // Return current history if error occurs
+    }
+  };
+
+  const handleClick = (
+    category: keyof SearchedQuery,
+    item: SearchedCourseOrRoadpmap | SearchedLesson,
+  ) => {
+    const updatedHistory = handleSaveToHistory(category, item);
+    setSearchHistory(updatedHistory); // Immediately update the history state
+    setIsDropdownActive(false);
+  };
+
+  const handleClearHistory = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      setSearchHistory({ Roadmaps: [], Courses: [], Lessons: [] });
+    } catch (error) {
+      console.error('Error clearing search history:', error);
+    }
+  };
+
   // Check if there are any results across all categories
   const hasNoResults =
     searchQuery.length >= MINIMUM_SEARCH_LENGTH &&
     SEARCH_CATEGORIES.every((category) => searchResults[category].length === 0);
 
-  // Render search results for a specific category
+  const hasHistory = SEARCH_CATEGORIES.some(
+    (category) => searchHistory[category].length > 0,
+  );
+
+  // Render results for a specific category (either search results or history)
   const renderCategoryResults = (
     category: (typeof SEARCH_CATEGORIES)[number],
+    items: SearchedLesson[] | SearchedCourseOrRoadpmap[],
+    isHistoryView = false,
   ) => {
-    const items = searchResults[category];
-
     if (items.length === 0) return null;
 
     return (
       <div key={category}>
         <div className="font-bold text-slate-700 border-b border-gray-300">
+          {isHistoryView && <ClockIcon className="inline-block h-4 w-4 mr-1" />}
           # {category}{' '}
           <span className="text-sm text-gray-700 italic font-normal">
             ({items.length} {category.toLowerCase()})
@@ -96,7 +179,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
               id: item.id,
               name: item.name,
               baseLink: baseRoute,
-              onClick: () => setIsDropdownActive(false),
+              onClick: () => handleClick(category, item),
             };
 
             if (category === 'Lessons') {
@@ -152,9 +235,31 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
         {isDropdownActive && (
           <div className="absolute w-full top-[43px] text-black bg-white border rounded-md p-1 z-50">
             {searchQuery.length < MINIMUM_SEARCH_LENGTH ? (
-              <div className="text-center text-sm text-gray-500 p-2">
-                {en.Search.default_text}
-              </div>
+              hasHistory ? (
+                <div>
+                  <div className="flex justify-between items-center text-sm text-gray-500 p-2 border-b">
+                    <span>{'Recent search'}</span>
+                    <button
+                      onClick={handleClearHistory}
+                      className="flex items-center gap-1 px-2 py-1 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                      <span>Clear History</span>
+                    </button>
+                  </div>
+                  {SEARCH_CATEGORIES.map((category) =>
+                    renderCategoryResults(
+                      category,
+                      searchHistory[category],
+                      true,
+                    ),
+                  )}
+                </div>
+              ) : (
+                <div className="text-center text-sm text-gray-500 p-2">
+                  {en.Search.default_text}
+                </div>
+              )
             ) : isLoading ? (
               <div className="text-center text-gray-500 p-2">
                 {en.Search.Loading}
@@ -164,7 +269,11 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
                 {en.Search.no_search_result_found}
               </div>
             ) : (
-              <div>{SEARCH_CATEGORIES.map(renderCategoryResults)}</div>
+              <div>
+                {SEARCH_CATEGORIES.map((category) =>
+                  renderCategoryResults(category, searchResults[category]),
+                )}
+              </div>
             )}
           </div>
         )}
