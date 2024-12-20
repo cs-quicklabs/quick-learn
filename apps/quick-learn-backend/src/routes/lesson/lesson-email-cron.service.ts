@@ -32,23 +32,29 @@ export class LessonEmailService {
     this.logger = new Logger(LessonEmailService.name);
   }
   // Runs every minute
-  @Cron(CronExpression.EVERY_DAY_AT_9AM)
+  @Cron(CronExpression.EVERY_DAY_AT_9AM, {
+    name: 'sendMorningLessonEmails',
+    timeZone: 'Asia/Kolkata',
+  })
   handleMorningCron() {
     this.sendLessonEmails(DailyLessonGreetings.GOOD_MORNING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_5PM)
+  @Cron(CronExpression.EVERY_DAY_AT_5PM, {
+    name: 'sendEveningLessonEmails',
+    timeZone: 'Asia/Kolkata',
+  })
   handleEveningCron() {
     this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
-  // WILL BE REMOVED AFTER TESTING
-  @Cron(CronExpression.EVERY_DAY_AT_6PM)
-  handleTestCron() {
-    this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
-    this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
-  }
+
+  // @Cron(CronExpression.EVERY_30_SECONDS)
+  // handleTestCron() {
+  //   this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
+  //   this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
+  // }
 
   private async sendLessonEmails(greeting: string) {
     // FIND ALL ACTIVE USERS
@@ -205,6 +211,6 @@ export class LessonEmailService {
   ) => {
     // SEND EMAIL TO USER
     const frontendURL = process.env.FRONTEND_DOMAIN || 'http://localhost:3000';
-    return `${frontendURL}/dashboard/daily-lesson/${lesson_id}?course_id=${course_id}&token=${token}`;
+    return `${frontendURL}/daily-lesson/${lesson_id}?course_id=${course_id}&token=${token}`;
   };
 }

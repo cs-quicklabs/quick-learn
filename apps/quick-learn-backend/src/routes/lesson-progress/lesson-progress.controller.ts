@@ -13,8 +13,8 @@ import {
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam } from '@nestjs/swagger';
 import { UserEntity } from '@src/entities';
-import { UserTypeId } from '@src/common/enum/user_role.enum';
 import { en } from '@src/lang/en';
+import { Public } from '@src/common/decorators/public.decorator';
 
 @Controller({ path: 'lessonprogress', version: '1' })
 @UseGuards(JwtAuthGuard)
@@ -22,6 +22,7 @@ export class LessonProgressController {
   constructor(private readonly lessonProgressService: LessonProgressService) {}
 
   @Post('complete/:lessonId/:userId?')
+  @Public()
   @ApiParam({
     name: 'lessonId',
     required: true,
@@ -40,15 +41,7 @@ export class LessonProgressController {
     @Param('lessonId') lessonId: number,
     @Param('userId') userId?: number,
   ) {
-    let currentUser = user.id;
-    if (
-      userId &&
-      (user.user_type_id === UserTypeId.SUPER_ADMIN || UserTypeId.ADMIN)
-    ) {
-      //check if current user is SUPER ADMIN or ADMIN
-      currentUser = userId;
-    }
-
+    const currentUser = (user && user.id) || userId;
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
       lessonId,
@@ -100,6 +93,7 @@ export class LessonProgressController {
   }
 
   @Get('check/:lessonId/:userId?')
+  @Public()
   @ApiParam({
     name: 'lessonId',
     required: true,

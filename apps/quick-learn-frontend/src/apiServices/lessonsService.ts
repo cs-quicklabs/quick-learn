@@ -12,6 +12,7 @@ import {
   LessonStatus,
   UserLessonProgress,
 } from '@src/shared/types/LessonProgressTypes';
+import { TUser } from '@src/shared/types/userTypes';
 
 export const getArchivedLessons = async (): Promise<
   AxiosSuccessResponse<TLesson[]>
@@ -69,7 +70,7 @@ export const markAsDone = async (
   userId: number,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId} ${
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId}${
       userId ? `/${userId}` : ''
     }`,
     {
@@ -128,8 +129,12 @@ export const getDailyLessionDetail = async (
   lessonId: string,
   courseId: string,
   token: string,
-): Promise<AxiosSuccessResponse<TLesson>> => {
-  const response = await axiosInstance.get<AxiosSuccessResponse<TLesson>>(
+): Promise<
+  AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
+> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
+  >(
     `${DailyLessionEnum.GET_DAILY_LESSON_DETAILS.replace(':lesson', lessonId)
       .replace(':course', courseId)
       .replace(':token', token)}`,

@@ -311,7 +311,6 @@ export class LessonService extends PaginationService<LessonEntity> {
 
   async validateLessionToken(
     token: string,
-    user_id: number,
     course_id: number,
     lesson_id: number,
   ) {
@@ -322,11 +321,11 @@ export class LessonService extends PaginationService<LessonEntity> {
 
     const tokenEntity = await this.LessonTokenRepository.findOne({
       where: {
-        user_id,
         token,
         course_id,
         lesson_id,
       },
+      relations: ['user'],
     });
     if (!tokenEntity) {
       throw new BadRequestException(en.invalidLessonToken);
@@ -363,13 +362,11 @@ export class LessonService extends PaginationService<LessonEntity> {
 
   async updateDailyLessonToken(
     token: string,
-    user_id: number,
     course_id: number,
     lesson_id: number,
   ) {
     await this.LessonTokenRepository.update(
       {
-        user_id: user_id,
         course_id: course_id,
         lesson_id: lesson_id,
         token: token,

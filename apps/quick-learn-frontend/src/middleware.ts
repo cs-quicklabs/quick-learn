@@ -8,6 +8,7 @@ const PUBLIC_ROUTES = [
   RouteEnum.LOGIN,
   RouteEnum.FORGOT_PASSWORD,
   RouteEnum.RESET_PASSWORD,
+  RouteEnum.DAILY_LESSONS,
 ];
 const LOGIN_ROUTE = RouteEnum.LOGIN;
 const ADMIN_ROUTES = [
