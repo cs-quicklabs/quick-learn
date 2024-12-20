@@ -147,6 +147,13 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
     }
   };
 
+  //loading skeleton
+  const SearchSkeleton = () => (
+    <div className="animate-pulse">
+      <div className="h-6 bg-gray-200 rounded w-full mb-2"></div>
+    </div>
+  );
+
   // Check if there are any results across all categories
   const hasNoResults =
     searchQuery.length >= MINIMUM_SEARCH_LENGTH &&
@@ -262,7 +269,9 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
               )
             ) : isLoading ? (
               <div className="text-center text-gray-500 p-2">
-                {en.Search.Loading}
+                {/* add a loading skeleton */}
+                <SearchSkeleton />
+                {/* {en.Search.Loading} */}
               </div>
             ) : hasNoResults ? (
               <div className="text-center text-gray-500 p-2 text-sm">
