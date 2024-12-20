@@ -144,8 +144,6 @@ export class LessonProgressController {
     @CurrentUser() user: UserEntity,
     @Param('userId') userId?: number,
   ) {
-    console.log(user, userId, 'currentUserViewed');
-
     const currentUserViewed = userId ? userId : user.id;
     const data = await this.lessonProgressService.checkLessonRead(
       currentUserViewed,
