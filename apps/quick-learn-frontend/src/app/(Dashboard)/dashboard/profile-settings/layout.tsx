@@ -23,11 +23,12 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
         <LockClosedIcon aria-hidden="true" className="h-5 w-5 text-black-400" />
       ),
     },
-    {
-      title: 'Email Preference',
-      linkTo: RouteEnum.EMAIL_PREFERENCE,
-      icon: <ClipboardWithTick />,
-    },
+    // Not Required now may need in the future
+    // {
+    //   title: 'Email Preference',
+    //   linkTo: RouteEnum.EMAIL_PREFERENCE,
+    //   icon: <ClipboardWithTick />,
+    // },
   ];
 
   useEffect(() => {

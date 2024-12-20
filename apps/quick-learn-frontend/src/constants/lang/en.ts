@@ -419,6 +419,7 @@ export const en = {
     addedBy: 'Added By',
     Added: 'Added',
     on: 'On',
+    CompletedOn: 'Completed on',
 
     //Editor Toolbar
 
