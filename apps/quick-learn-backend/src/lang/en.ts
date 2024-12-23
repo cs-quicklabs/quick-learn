@@ -76,6 +76,7 @@ export const en = {
   userProgressGrouped: 'All user Progress grouped by course',
   lessonStatus: 'Lesson Status',
   searchResults: 'Search Results',
+  triggeredDailyLessonMails: 'Successfully triggered daily lesson mails',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',
