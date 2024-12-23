@@ -12,7 +12,10 @@ import { EmailService } from '@src/common/modules/email/email.service';
 import { ConfigService } from '@nestjs/config';
 import { emailSubjects } from '@src/common/constants/email-subject';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { DailyLessonGreetings } from '@src/common/enum/daily_lesson.enum';
+import {
+  CRON_TIMEZONE,
+  DailyLessonGreetings,
+} from '@src/common/enum/daily_lesson.enum';
 import { EMAIL_BODY } from '@src/common/constants/emailBody';
 
 @Injectable()
@@ -34,7 +37,7 @@ export class LessonEmailService {
   // Runs every minute
   @Cron(CronExpression.EVERY_DAY_AT_9AM, {
     name: 'sendMorningLessonEmails',
-    timeZone: 'Asia/Kolkata',
+    timeZone: CRON_TIMEZONE,
   })
   handleMorningCron() {
     this.sendLessonEmails(DailyLessonGreetings.GOOD_MORNING);
@@ -43,17 +46,17 @@ export class LessonEmailService {
 
   @Cron(CronExpression.EVERY_DAY_AT_5PM, {
     name: 'sendEveningLessonEmails',
-    timeZone: 'Asia/Kolkata',
+    timeZone: CRON_TIMEZONE,
   })
   handleEveningCron() {
     this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
     this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
-  private async sendLessonEmails(greeting: string) {
+  async sendLessonEmails(greeting: string) {
     // FIND ALL ACTIVE USERS
     const allActiveUsers = await this.userRepository.find({
-      where: { active: true },
+      where: { active: true, email_alert_preference: true },
     });
     allActiveUsers.forEach(async (users: UserEntity) => {
       const currentUserID = users.id;
