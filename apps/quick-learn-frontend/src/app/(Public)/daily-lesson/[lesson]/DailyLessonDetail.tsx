@@ -1,8 +1,8 @@
 'use client';
 import {
   getDailyLessionDetail,
-  getLessonStatus,
-  markAsDone,
+  getLessonStatusPublic,
+  markAsDonePublic,
 } from '@src/apiServices/lessonsService';
 import { TLesson } from '@src/shared/types/contentRepository';
 import {
@@ -50,7 +50,7 @@ const DailyLessonDetail = () => {
     const checked = event.target.checked;
     setIsChecked(checked);
     try {
-      const res = await markAsDone(
+      const res = await markAsDonePublic(
         lesson,
         courseId,
         true,
@@ -67,7 +67,7 @@ const DailyLessonDetail = () => {
 
   const markLessionAsUnread = async () => {
     try {
-      const res = await markAsDone(
+      const res = await markAsDonePublic(
         lesson,
         courseId,
         false,
@@ -90,7 +90,7 @@ const DailyLessonDetail = () => {
           return response.data.userDetail;
         })
         .then((response) => {
-          getLessonStatus(lesson, Number(response.id))
+          getLessonStatusPublic(lesson, Number(response.id))
             .then((res) => {
               setIsRead(res.data.isRead);
               setCompletedOn(res.data.completed_date);
