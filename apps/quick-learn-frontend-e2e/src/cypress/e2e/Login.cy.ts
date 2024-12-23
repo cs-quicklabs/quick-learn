@@ -4,9 +4,9 @@ import { validCredentials } from '../fixtures/credential';
 describe('Login Test', () => {
   const loginPage = new LoginPage();
 
-  beforeEach(() => {
-    loginPage.visit();
-  });
+  // beforeEach(() => {
+  //   loginPage.visit();
+  // }); //test commit
 
   it('should display the login page', () => {
     cy.get('.text-xl').contains('Sign in to your account');
