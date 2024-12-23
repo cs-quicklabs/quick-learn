@@ -145,6 +145,20 @@ export class UsersController {
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
+  @Get('search')
+  @ApiOperation({ summary: 'Get search queries' })
+  async getSearchQuery(
+    @CurrentUser() user: UserEntity,
+    @Query('query') query: string,
+  ): Promise<SuccessResponse> {
+    const searchedQueryResult = await this.usersService.getUserSearchedQuery(
+      user.id,
+      query,
+    );
+
+    return new SuccessResponse(en.searchResults, searchedQueryResult);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create new user' })
   async create(

@@ -21,7 +21,10 @@ import AssignDataModal from '@src/shared/modals/assignDataModal';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TRoadmapCategories } from '@src/shared/types/accountTypes';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
-import { TUserCourse } from '@src/shared/types/contentRepository';
+import {
+  TUserCourse,
+  TUserDailyProgress,
+} from '@src/shared/types/contentRepository';
 import { TUser } from '@src/shared/types/userTypes';
 import {
   showApiErrorInToast,
@@ -31,13 +34,17 @@ import { Tooltip } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import TeamMemberDetailsSkeleton from './TeamMemberDetailsSkeleton';
-import { getUserProgress } from '@src/apiServices/lessonsService';
+import {
+  getUserDailyLessonProgress,
+  getUserProgress,
+} from '@src/apiServices/lessonsService';
 import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
 import ProgressCard from '@src/shared/components/ProgressCard';
 import {
   calculateRoadmapProgress,
   calculateCourseProgress,
 } from '@src/utils/helpers';
+import ActivityGraph, { Course } from '@src/shared/modals/ActivityGraph';
 import { useDispatch } from 'react-redux';
 import { decrementTotalUsers } from '@src/store/features/teamSlice';
 
@@ -58,7 +65,11 @@ const TeamMemberDetails = () => {
     TRoadmapCategories[]
   >([]);
   const [userProgress, setUserProgress] = useState<UserLessonProgress[]>([]);
+  const [userDailyLessonProgressData, setUserDalyLessonProgressData] = useState<
+    TUserDailyProgress[]
+  >([]);
   const [allCourses, setAllCourses] = useState<TUserCourse[]>([]);
+  const [userActivityModal, setUserActivityModal] = useState(false);
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -87,6 +98,12 @@ const TeamMemberDetails = () => {
         getUserProgress(Number(userId))
           .then((res) => setUserProgress(res.data))
           .catch((e) => showApiErrorInToast(e));
+
+        // Set the user's daily lesson progress data
+        getUserDailyLessonProgress(Number(userId))
+          .then((res) => setUserDalyLessonProgressData(res.data))
+          .catch((e) => showApiErrorInToast(e));
+
         setLinks([
           ...defaultlinks,
           {
@@ -234,6 +251,7 @@ const TeamMemberDetails = () => {
               <button
                 type="button"
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                onClick={() => setUserActivityModal(!userActivityModal)}
               >
                 <CursorArrowRippleIcon className="h-4 w-4" />
               </button>
@@ -348,6 +366,17 @@ const TeamMemberDetails = () => {
             />
           )}
         </section>
+
+        {/* UserActivity Section */}
+        <div className="flex align-center justify-center mt-8 w-full">
+          <ActivityGraph
+            userProgressData={userProgress as Course[]}
+            userDailyProgressData={userDailyLessonProgressData}
+            isOpen={userActivityModal}
+            setShow={setUserActivityModal}
+            memberDetail={member as TUser}
+          />
+        </div>
       </div>
     </>
   );

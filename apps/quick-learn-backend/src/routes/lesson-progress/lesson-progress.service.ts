@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
-import { CourseEntity, LessonEntity } from '@src/entities';
+import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 
 @Injectable()
 export class LessonProgressService {
@@ -13,6 +13,8 @@ export class LessonProgressService {
     private lessonRepository: Repository<LessonEntity>,
     @InjectRepository(CourseEntity)
     private courseRepository: Repository<CourseEntity>,
+    @InjectRepository(LessonTokenEntity)
+    private LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {}
 
   async markLessonAsCompleted(
@@ -118,23 +120,43 @@ export class LessonProgressService {
       lessons: { lesson_id: number; completed_date: Date | null }[];
     }[]
   > {
-    // Fetch all lessons completed by the user
-    const completedLessons = await this.userLessonProgressRepository.find({
-      where: { user_id: userId },
-      select: ['course_id', 'lesson_id', 'completed_date'], // Include completed_date
-    });
+    const completedLessons = await this.userLessonProgressRepository
+      .createQueryBuilder('userLessonProgress')
+      .innerJoinAndSelect(
+        'lesson',
+        'lesson',
+        'lesson.id = userLessonProgress.lesson_id',
+      )
+      .where('userLessonProgress.user_id = :userId', { userId })
+      .select([
+        'userLessonProgress.course_id AS course_id',
+        'userLessonProgress.lesson_id AS lesson_id',
+        'userLessonProgress.completed_date AS  completed_date',
+        'lesson.name AS lesson_name', // Select lesson name
+      ])
+      .getRawMany();
 
     // Group lessons by course_id
     const courseProgressMap: {
-      [course_id: number]: { lesson_id: number; completed_date: Date | null }[];
+      [course_id: number]: {
+        lesson_name: string;
+        lesson_id: number;
+        completed_date: Date | null;
+      }[];
     } = {};
 
-    completedLessons.forEach(({ course_id, lesson_id, completed_date }) => {
-      if (!courseProgressMap[course_id]) {
-        courseProgressMap[course_id] = [];
-      }
-      courseProgressMap[course_id].push({ lesson_id, completed_date });
-    });
+    completedLessons.forEach(
+      ({ course_id, lesson_name, lesson_id, completed_date }) => {
+        if (!courseProgressMap[course_id]) {
+          courseProgressMap[course_id] = [];
+        }
+        courseProgressMap[course_id].push({
+          lesson_id,
+          lesson_name,
+          completed_date,
+        });
+      },
+    );
 
     // Convert the grouped data to the desired format
     const userProgress = Object.entries(courseProgressMap).map(
@@ -167,5 +189,15 @@ export class LessonProgressService {
         ? lessonProgress?.completed_date
         : null,
     };
+  }
+
+  async getDailyLessonProgress(userId: number) {
+    const userDailyLessonProgress =
+      await this.LessonTokenRepository.createQueryBuilder('lesson_tokens')
+        .leftJoinAndSelect('lesson_tokens.lesson', 'lesson')
+        .where('lesson_tokens.user_id = :userId', { userId })
+        .select(['lesson_tokens', 'lesson.name'])
+        .getMany();
+    return userDailyLessonProgress;
   }
 }

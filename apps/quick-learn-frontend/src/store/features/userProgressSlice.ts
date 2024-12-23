@@ -8,7 +8,7 @@ interface UserLessonProgress {
   completed_date: string;
 }
 
-interface CourseProgress {
+export interface CourseProgress {
   course_id: number;
   lessons: UserLessonProgress[];
 }

@@ -93,7 +93,10 @@ const ContentRepository = () => {
           </div>
 
           {roadmaps.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div
+              style={{ scrollbarWidth: 'thin' }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 max-h-[60vh] overflow-y-auto pr-2"
+            >
               <CreateNewCard
                 title={en.contentRepository.createNewRoadmap}
                 onAdd={() => setOpenAddModal(true)}
@@ -138,7 +141,10 @@ const ContentRepository = () => {
           </div>
 
           {courses.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div
+              style={{ scrollbarWidth: 'thin' }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 max-h-[60vh] overflow-y-auto pr-2"
+            >
               {courses.map((item) => (
                 <Card
                   key={item.id}

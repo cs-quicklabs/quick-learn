@@ -13,7 +13,8 @@ import {
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam } from '@nestjs/swagger';
 import { UserEntity } from '@src/entities';
-import { UserTypeId } from '@src/common/enum/user_role.enum';
+import { en } from '@src/lang/en';
+import { Public } from '@src/common/decorators/public.decorator';
 
 @Controller({ path: 'lessonprogress', version: '1' })
 @UseGuards(JwtAuthGuard)
@@ -39,27 +40,54 @@ export class LessonProgressController {
     @Param('lessonId') lessonId: number,
     @Param('userId') userId?: number,
   ) {
-    let currentUser = user.id;
-    if (
-      userId &&
-      (user.user_type_id === UserTypeId.SUPER_ADMIN || UserTypeId.ADMIN)
-    ) {
-      //check if current user is SUPER ADMIN or ADMIN
-      currentUser = userId;
-    }
-
+    const currentUser = userId ? userId : user.id;
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
       lessonId,
       dto.courseId,
     );
     if (dto.isCompleted) {
-      return new SuccessResponse('Successfully completed the lesson', {
+      return new SuccessResponse(en.successfullyCompletedLesson, {
         isRead: !!response,
         completed_date: response.completed_date,
       });
     } else {
-      return new SuccessResponse('This lesson is marked as unread');
+      return new SuccessResponse(en.lessonMarkedUnRead);
+    }
+  }
+
+  @Post('complete-public/:lessonId/:userId')
+  @Public()
+  @ApiParam({
+    name: 'lessonId',
+    required: true,
+    type: String,
+    description: 'The lesson ID to be marked as completed or unread',
+  })
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    type: Number,
+    description: 'Optional user ID',
+  })
+  async markLessonAsCompletedPublic(
+    @Body() dto: { courseId: number; isCompleted: boolean },
+    @Param('lessonId') lessonId: number,
+    @Param('userId') userId: number,
+  ) {
+    const currentUser = userId;
+    const response = await this.lessonProgressService.markLessonAsCompleted(
+      currentUser,
+      lessonId,
+      dto.courseId,
+    );
+    if (dto.isCompleted) {
+      return new SuccessResponse(en.successfullyCompletedLesson, {
+        isRead: !!response,
+        completed_date: response.completed_date,
+      });
+    } else {
+      return new SuccessResponse(en.lessonMarkedUnRead);
     }
   }
 
@@ -69,7 +97,7 @@ export class LessonProgressController {
       req.user.id,
       courseId,
     );
-    return new SuccessResponse('Course completed lessons', data);
+    return new SuccessResponse(en.courseCompletedLessons, data);
   }
 
   @Get('/userprogress/:userID?')
@@ -81,7 +109,21 @@ export class LessonProgressController {
       await this.lessonProgressService.getUserLessonProgressViaCourse(
         userID ? userID : curentUser.id,
       );
-    return new SuccessResponse('All user Progress grouped by course', data);
+    return new SuccessResponse(en.userProgressGrouped, data);
+  }
+
+  @ApiParam({
+    name: 'userID',
+    required: false,
+    type: Number,
+    description: 'user ID',
+  })
+  @Get('daily-lesson/:userID')
+  async getAllDailyLesson(@Param('userID') userID?: number) {
+    const data = await this.lessonProgressService.getDailyLessonProgress(
+      userID,
+    );
+    return new SuccessResponse(en.allDailyLessons, data);
   }
 
   @Get('check/:lessonId/:userId?')
@@ -107,6 +149,32 @@ export class LessonProgressController {
       currentUserViewed,
       lessonId,
     );
-    return new SuccessResponse('Lesson Status ', data);
+    return new SuccessResponse(en.lessonStatus, data);
+  }
+
+  @Get('check-public/:lessonId/:userId')
+  @Public()
+  @ApiParam({
+    name: 'lessonId',
+    required: true,
+    type: String, // Route parameters are strings by default
+    description: 'The lesson ID to check if marked or not',
+  })
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    type: Number, // Route parameters are strings by default
+    description: 'Optional user ID',
+  })
+  async checkIsReadPublic(
+    @Param('lessonId') lessonId: number,
+    @Param('userId') userId: number,
+  ) {
+    const currentUserViewed = userId;
+    const data = await this.lessonProgressService.checkLessonRead(
+      currentUserViewed,
+      lessonId,
+    );
+    return new SuccessResponse(en.lessonStatus, data);
   }
 }

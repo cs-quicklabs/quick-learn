@@ -34,17 +34,17 @@ export const en = {
     myCourses: 'My Courses',
     complete: 'Complete',
     progress: '% Complete',
-    roadmapsCount: '({count} roadmaps)',
-    roadmapCount: '({count} roadmap)',
-    coursesCount: '({count} courses)',
-    courseCount: '({count} course)',
+    roadmapsCount: '({count} Roadmaps)',
+    roadmapCount: '({count} Roadmap)',
+    coursesCount: '({count} Courses)',
+    courseCount: '({count} Course)',
 
     // Content types
-    lesson: 'lesson',
+    lesson: 'Lesson',
     lessons: 'Lessons',
-    roadmaps: 'roadmaps',
-    courses: 'courses',
-    participants: 'participants',
+    roadmaps: 'Roadmaps',
+    courses: 'Courses',
+    participants: 'Participants',
 
     // Form fields
     name: 'Name',
@@ -99,7 +99,7 @@ export const en = {
     contentRepository: 'Content Repository',
     // Roadmaps
     allRoadmaps: 'All Roadmaps',
-    roadmaps: 'roadmaps',
+    roadmaps: 'Roadmaps',
     createNewRoadmap: 'Create New Roadmap',
     editRoadmap: 'Edit Roadmap',
     createdThisRoadmapOn: 'created this roadmap on',
@@ -110,7 +110,7 @@ export const en = {
     noCoursesDescription: 'There are no courses yet',
 
     // Courses
-    courses: 'courses',
+    courses: 'Courses',
     allCourses: 'All Courses',
     editCourse: 'Edit Course',
     addOnAlreadyExistingCourse: 'Add already existing courses to this roadmap',
@@ -190,6 +190,7 @@ export const en = {
     archiveConfirmSubHeading: 'Are you sure you want to archive this lesson?',
     archiveConfirmDescription:
       'When this lesson is archived, it will be moved to archived lessons. Users will not be able to access this lesson anymore.',
+    NavigateToLearningPath: 'Navigate to Learning Path',
   },
 
   /**
@@ -408,6 +409,9 @@ export const en = {
     Status: 'Status',
     lastLogin: 'Last Login',
     addedOn: 'Added On',
+    markedCompletedOn: 'Marked completed on ',
+    missedDailyLessons: 'Missed daily lesson on ',
+    readDailyLessons: 'Read daily lesson on ',
   },
 
   component: {
@@ -415,6 +419,7 @@ export const en = {
     addedBy: 'Added By',
     Added: 'Added',
     on: 'On',
+    CompletedOn: 'Completed on',
 
     //Editor Toolbar
 
@@ -442,5 +447,11 @@ export const en = {
     // asssign data model
 
     noDataFound: 'No data found',
+  },
+
+  Search: {
+    default_text: 'Enter atleast 3 character to search',
+    no_search_result_found: 'No Lessons, Courses, or Roadmaps found',
+    Loading: 'Loading....',
   },
 };
