@@ -40,7 +40,7 @@ export class LessonProgressController {
     @Param('lessonId') lessonId: number,
     @Param('userId') userId?: number,
   ) {
-    const currentUser = (user && user.id) || userId;
+    const currentUser = userId ? userId : user.id;
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
       lessonId,
