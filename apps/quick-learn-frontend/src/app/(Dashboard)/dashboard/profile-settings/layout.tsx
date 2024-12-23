@@ -5,7 +5,7 @@ import { RouteEnum } from '@src/constants/route.enum';
 import { LockClosedIcon } from '@heroicons/react/20/solid';
 import { ChildrenProp } from '@src/shared/interfaces/propInterface';
 import {
-  // ClipboardWithTick,
+  ClipboardWithTick,
   ProfileIdentificationCard,
 } from '@src/shared/components/UIElements';
 
@@ -23,12 +23,11 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
         <LockClosedIcon aria-hidden="true" className="h-5 w-5 text-black-400" />
       ),
     },
-    // Not Required now may need in the future
-    // {
-    //   title: 'Email Preference',
-    //   linkTo: RouteEnum.EMAIL_PREFERENCE,
-    //   icon: <ClipboardWithTick />,
-    // },
+    {
+      title: 'Email Preference',
+      linkTo: RouteEnum.EMAIL_PREFERENCE,
+      icon: <ClipboardWithTick />,
+    },
   ];
 
   useEffect(() => {
