@@ -23,6 +23,22 @@ export class LessonService extends PaginationService<LessonEntity> {
   ) {
     super(repo);
   }
+  /**
+   * Get a lesson
+   * @param LessonId - The id of the Lesson
+   * @throws BadRequestException if the course doesn't exist
+   * @returns The lesson entity
+   */
+  private async getLesson(lessonId: number): Promise<LessonEntity> {
+    const lesson = await this.repository.findOne({
+      where: { id: lessonId },
+    });
+
+    if (!lesson) {
+      throw new BadRequestException(en.lessonNotFound);
+    }
+    return lesson;
+  }
 
   /**
    * Creates a new lesson
@@ -76,11 +92,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     id: LessonEntity['id'],
     updateLessonDto: UpdateLessonDto,
   ) {
-    const lesson = await this.get({ id });
-
-    if (!lesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
+    const lesson = await this.getLesson(id);
 
     // GET ALL IMAGE URL USED IN EXISTING LESSION CONTENT
     const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
@@ -137,10 +149,8 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @returns nothing
    */
   async approveLesson(lessonId: LessonEntity['id'], userId: UserEntity['id']) {
-    const lesson = await this.get({ id: lessonId });
-    if (!lesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
+    const lesson = await this.getLesson(lessonId);
+
     await this.update(
       { id: lessonId },
       {
@@ -203,7 +213,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    */
   async unarchiveLesson(lessonId: LessonEntity['id']) {
-    const lesson = await this.get({ id: lessonId });
+    const lesson = await this.getLesson(lessonId);
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);
     }
@@ -238,11 +248,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    */
   async deleteLesson(id: number): Promise<void> {
-    const lesson = await this.get({ id });
-
-    if (!lesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
+    const lesson = await this.getLesson(id);
 
     // GET ALL IMAGE URL USED IN EXISTING LESSION CONTENT
     const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(

@@ -17,12 +17,10 @@ export class LessonProgressService {
     private LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {}
 
-  async markLessonAsCompleted(
-    userId: number,
+  private async validateLesson(
     lessonId: number,
     courseId: number,
-  ): Promise<UserLessonProgressEntity> {
-    // Verify the lesson exists and belongs to the course
+  ): Promise<void> {
     const lesson = await this.lessonRepository.findOne({
       where: { id: lessonId, course_id: courseId },
     });
@@ -30,6 +28,32 @@ export class LessonProgressService {
     if (!lesson) {
       throw new NotFoundException('Lesson not found in this course');
     }
+  }
+
+  private async validateCourse(courseId: number): Promise<void> {
+    const course = await this.courseRepository.findOne({
+      where: { id: courseId },
+    });
+
+    if (!course) {
+      throw new NotFoundException('Course not found');
+    }
+  }
+
+  /**
+   * Marks a lesson as completed for a user. If already marked, removes the completion record.
+   * @param userId - The ID of the user completing the lesson.
+   * @param lessonId - The ID of the lesson being marked as completed.
+   * @param courseId - The ID of the course containing the lesson.
+   * @returns A `UserLessonProgressEntity` representing the completion record.
+   */
+
+  async markLessonAsCompleted(
+    userId: number,
+    lessonId: number,
+    courseId: number,
+  ): Promise<UserLessonProgressEntity> {
+    await this.validateLesson(lessonId, courseId);
 
     // Check if progress already exists
     const existingProgress = await this.userLessonProgressRepository.findOne({
@@ -41,12 +65,8 @@ export class LessonProgressService {
     });
 
     if (existingProgress) {
-      // throw new ConflictException('Lesson already marked as completed');
-      // DELETE MARKED AS COMPLETED RECORD
       await this.userLessonProgressRepository.delete(existingProgress.id);
     } else {
-      // DELETE MARKED AS COMPLETED RECORD
-      // Create new progress entry
       const progress = this.userLessonProgressRepository.create({
         user_id: userId,
         lesson_id: lessonId,
@@ -58,17 +78,17 @@ export class LessonProgressService {
     }
   }
 
+  /**
+   * Retrieves the lesson progress for a specific course for a user.
+   * @param userId - The ID of the user.
+   * @param courseId - The ID of the course.
+   * @returns An array of objects containing lesson IDs and their completion dates.
+   */
   async getLessonProgressArray(
     userId: number,
     courseId: number,
   ): Promise<{ lesson_id: number; completed_date: Date | null }[]> {
-    const course = await this.courseRepository.findOne({
-      where: { id: courseId },
-    });
-
-    if (!course) {
-      throw new NotFoundException('Course not found');
-    }
+    await this.validateCourse(courseId);
 
     const completedLessons = await this.userLessonProgressRepository.find({
       where: {
@@ -84,36 +104,11 @@ export class LessonProgressService {
     }));
   }
 
-  // async getCourseLessonCount(
-  //   userId: number,
-  //   courseId: number,
-  // ): Promise<{ total: number; completedLessons: number }> {
-  //   const course = await this.courseRepository.findOne({
-  //     where: { id: courseId },
-  //     relations: ['lessons'],
-  //   });
-
-  //   if (!course) {
-  //     throw new NotFoundException('Course not found');
-  //   }
-
-  //   const totalLessons = course.lessons.filter(
-  //     (lesson) => !lesson.archived && lesson.approved,
-  //   ).length;
-
-  //   const completedLessons = await this.userLessonProgressRepository.count({
-  //     where: {
-  //       user_id: userId,
-  //       course_id: courseId,
-  //     },
-  //   });
-
-  //   return {
-  //     total: totalLessons,
-  //     completedLessons,
-  //   };
-  // }
-
+  /**
+   * Retrieves all lesson progress for a user grouped by course.
+   * @param userId - The ID of the user.
+   * @returns An array of objects where each object contains a course ID and its completed lessons.
+   */
   async getUserLessonProgressViaCourse(userId: number): Promise<
     {
       course_id: number;
@@ -158,7 +153,6 @@ export class LessonProgressService {
       },
     );
 
-    // Convert the grouped data to the desired format
     const userProgress = Object.entries(courseProgressMap).map(
       ([course_id, lessons]) => ({
         course_id: Number(course_id),
@@ -168,7 +162,12 @@ export class LessonProgressService {
 
     return userProgress;
   }
-
+  /**
+   * Checks whether a lesson is marked as read by the user.
+   * @param userId - The ID of the user.
+   * @param lessonId - The ID of the lesson to check.
+   * @returns An object indicating whether the lesson is read and its completion date (if applicable).
+   */
   async checkLessonRead(
     userId: number,
     lessonId: number,
@@ -182,7 +181,6 @@ export class LessonProgressService {
       select: ['id', 'completed_date'], // Fetch only the necessary field for existence check
     });
 
-    // Return true if the lesson exists, false otherwise
     return {
       isRead: !!lessonProgress,
       completed_date: lessonProgress?.completed_date
@@ -190,6 +188,11 @@ export class LessonProgressService {
         : null,
     };
   }
+  /**
+   * Retrieves the daily lesson progress for a user, including associated lesson details.
+   * @param userId - The ID of the user.
+   * @returns An array of daily lesson progress records with lesson details.
+   */
 
   async getDailyLessonProgress(userId: number) {
     const userDailyLessonProgress =
