@@ -370,6 +370,7 @@ export class LessonService extends PaginationService<LessonEntity> {
         course_id: course_id,
         lesson_id: lesson_id,
         token: token,
+        status: DailyLessonEnum.PENDING,
       },
       {
         status: DailyLessonEnum.COMPLETED,
