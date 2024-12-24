@@ -17,9 +17,11 @@ import {
   DailyLessonGreetings,
 } from '@src/common/enum/daily_lesson.enum';
 import { EMAIL_BODY } from '@src/common/constants/emailBody';
+import { EnvironmentEnum } from '@src/common/constants/constants';
 
 @Injectable()
 export class LessonEmailService {
+  private env: string = EnvironmentEnum.Developemnt;
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
@@ -33,15 +35,19 @@ export class LessonEmailService {
     private readonly logger: Logger,
   ) {
     this.logger = new Logger(LessonEmailService.name);
+    this.env = configService.getOrThrow('app.env', { infer: true });
   }
+
   // Runs every minute
   @Cron(CronExpression.EVERY_DAY_AT_9AM, {
     name: 'sendMorningLessonEmails',
     timeZone: CRON_TIMEZONE,
   })
   handleMorningCron() {
-    this.sendLessonEmails(DailyLessonGreetings.GOOD_MORNING);
-    this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
+    if (this.env === EnvironmentEnum.Production) {
+      this.sendLessonEmails(DailyLessonGreetings.GOOD_MORNING);
+      this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
+    }
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_5PM, {
@@ -49,8 +55,10 @@ export class LessonEmailService {
     timeZone: CRON_TIMEZONE,
   })
   handleEveningCron() {
-    this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
-    this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
+    if (this.env === EnvironmentEnum.Production) {
+      this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
+      this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
+    }
   }
 
   async sendLessonEmails(greeting: string) {
