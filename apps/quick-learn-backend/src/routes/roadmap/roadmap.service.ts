@@ -157,11 +157,8 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       throw new BadRequestException(en.RoadmapNotFound);
     }
 
-    // Handle active status update
-    if (
-      Object.keys(updateRoadmapDto).length === 1 &&
-      'active' in updateRoadmapDto
-    ) {
+    const handleActiveStatus = Object.keys(updateRoadmapDto).length === 1 && 'active' in updateRoadmapDto
+    if (handleActiveStatus) {
       await this.roadmapRepository.update(
         { id },
         {
@@ -186,9 +183,8 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         throw new BadRequestException(en.RoadmapAlreadyExists);
       }
     }
-
-    // Verify roadmap category if it's being updated
-    if (updateRoadmapDto.roadmap_category_id) {
+    const verifyRoadmapCategory = updateRoadmapDto.roadmap_category_id
+    if (verifyRoadmapCategory) {
       const roadmapCategory = await this.roadmapCategoryService.get({
         id: +updateRoadmapDto.roadmap_category_id,
       });

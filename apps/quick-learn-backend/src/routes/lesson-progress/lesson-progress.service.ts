@@ -22,16 +22,16 @@ export class LessonProgressService {
     lessonId: number,
     courseId: number,
   ): Promise<UserLessonProgressEntity> {
-    // Verify the lesson exists and belongs to the course
-    const lesson = await this.lessonRepository.findOne({
+  
+    const lessonExists = await this.lessonRepository.findOne({
       where: { id: lessonId, course_id: courseId },
     });
 
-    if (!lesson) {
+    if (!lessonExists) {
       throw new NotFoundException('Lesson not found in this course');
     }
 
-    // Check if progress already exists
+    
     const existingProgress = await this.userLessonProgressRepository.findOne({
       where: {
         user_id: userId,
@@ -41,20 +41,16 @@ export class LessonProgressService {
     });
 
     if (existingProgress) {
-      // throw new ConflictException('Lesson already marked as completed');
-      // DELETE MARKED AS COMPLETED RECORD
       await this.userLessonProgressRepository.delete(existingProgress.id);
     } else {
-      // DELETE MARKED AS COMPLETED RECORD
-      // Create new progress entry
-      const progress = this.userLessonProgressRepository.create({
+      const newProgressEntry = this.userLessonProgressRepository.create({
         user_id: userId,
         lesson_id: lessonId,
         course_id: courseId,
         completed_date: new Date(),
       });
 
-      return await this.userLessonProgressRepository.save(progress);
+      return await this.userLessonProgressRepository.save(newProgressEntry);
     }
   }
 
@@ -83,37 +79,6 @@ export class LessonProgressService {
       completed_date,
     }));
   }
-
-  // async getCourseLessonCount(
-  //   userId: number,
-  //   courseId: number,
-  // ): Promise<{ total: number; completedLessons: number }> {
-  //   const course = await this.courseRepository.findOne({
-  //     where: { id: courseId },
-  //     relations: ['lessons'],
-  //   });
-
-  //   if (!course) {
-  //     throw new NotFoundException('Course not found');
-  //   }
-
-  //   const totalLessons = course.lessons.filter(
-  //     (lesson) => !lesson.archived && lesson.approved,
-  //   ).length;
-
-  //   const completedLessons = await this.userLessonProgressRepository.count({
-  //     where: {
-  //       user_id: userId,
-  //       course_id: courseId,
-  //     },
-  //   });
-
-  //   return {
-  //     total: totalLessons,
-  //     completedLessons,
-  //   };
-  // }
-
   async getUserLessonProgressViaCourse(userId: number): Promise<
     {
       course_id: number;
@@ -136,7 +101,6 @@ export class LessonProgressService {
       ])
       .getRawMany();
 
-    // Group lessons by course_id
     const courseProgressMap: {
       [course_id: number]: {
         lesson_name: string;
@@ -158,35 +122,38 @@ export class LessonProgressService {
       },
     );
 
-    // Convert the grouped data to the desired format
-    const userProgress = Object.entries(courseProgressMap).map(
+   
+    function groupDateToDesireFormatr(){
+     const userProgress = Object.entries(courseProgressMap).map(
       ([course_id, lessons]) => ({
         course_id: Number(course_id),
         lessons,
       }),
     );
-
-    return userProgress;
+    return userProgress; 
+    }
+    
+   return groupDateToDesireFormatr(); 
+    
   }
 
   async checkLessonRead(
     userId: number,
     lessonId: number,
   ): Promise<{ isRead: boolean; completed_date: Date | null }> {
-    // Check if the lesson exists for the user
-    const lessonProgress = await this.userLessonProgressRepository.findOne({
+    
+    const checkLessonExist = await this.userLessonProgressRepository.findOne({
       where: {
         user_id: userId,
         lesson_id: lessonId,
       },
-      select: ['id', 'completed_date'], // Fetch only the necessary field for existence check
+      select: ['id', 'completed_date'],
     });
 
-    // Return true if the lesson exists, false otherwise
     return {
-      isRead: !!lessonProgress,
-      completed_date: lessonProgress?.completed_date
-        ? lessonProgress?.completed_date
+      isRead: !!checkLessonExist,
+      completed_date: checkLessonExist?.completed_date
+        ? checkLessonExist?.completed_date
         : null,
     };
   }
