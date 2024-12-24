@@ -332,7 +332,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       id: In(assignRoadmapsToCourseDto.roadmaps),
     });
 
-    if (roadmaps.length !== assignRoadmapsToCourseDto.roadmaps.length) {
+    const isLengthEqual = roadmaps.length !== assignRoadmapsToCourseDto.roadmaps.length;
+
+    if (isLengthEqual) {
       throw new BadRequestException(en.invalidRoadmaps);
     }
 
@@ -370,23 +372,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
    * Archives a course
    */
   async archiveCourse(id: number, currentUser: UserEntity): Promise<void> {
-    // For archiving, we don't need lessons
-    const course = await this.repository.findOne({
-      where: { id },
-      relations: ['course_category'], // Only include necessary relations
-    });
-
-    if (!course) {
-      throw new BadRequestException(en.CourseNotFound);
-    }
-
-    await this.update(
-      { id },
-      {
-        archived: true,
-        updated_by_id: currentUser.id,
-      },
-    );
+    await this.updateCourseArchiveStatus(id, true, currentUser);
   }
 
   /**

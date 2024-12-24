@@ -37,7 +37,7 @@ export class AuthService {
     private configService: ConfigService,
     private emailService: EmailService,
     private sessionService: SessionService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
     const user = await this.usersService.findOne({ email });
@@ -49,9 +49,8 @@ export class AuthService {
       throw new ForbiddenException(en.accountDeactiveMessage);
     }
 
-    // Comparing password
-    const isVerified = await bcrypt.compare(password, user.password);
-    if (isVerified) {
+    const comparePassword = await bcrypt.compare(password, user.password);
+    if (comparePassword) {
       await this.usersService.updateUser(user.id, {
         last_login_timestamp: new Date(),
       });
@@ -114,10 +113,10 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    //Check that user exists
-    const user = await this.usersService.findOne({ email, active: true });
 
-    if (user) {
+    const checkUserExistance = await this.usersService.findOne({ email, active: true });
+
+    if (checkUserExistance) {
       // If user exists, generate password reset link (with token) and save token in the db
 
       const expiryDate = new Date();
@@ -126,7 +125,7 @@ export class AuthService {
 
       await this.resetTokenRepository.save({
         token: resetToken,
-        user_id: user.uuid,
+        user_id: checkUserExistance.uuid,
         expiry_date: expiryDate,
       });
 
@@ -155,8 +154,7 @@ export class AuthService {
 
   // TODO: reset password > get token from email, decode token, update password & delete token from db
   async resetPassword(resetToken: string, newPassword: string) {
-    // find a valid reset token
-    const token = await this.resetTokenRepository.findOne({
+    const findValidToken = await this.resetTokenRepository.findOne({
       where: {
         token: resetToken,
         active: true,
@@ -164,13 +162,13 @@ export class AuthService {
       },
     });
 
-    if (!token) {
+    if (!findValidToken) {
       throw new UnauthorizedException('Invalid Link');
     }
 
     // change user password
     // Todo: uuid should be used as a foreign key. uuid is generated column not primary key
-    const user = await this.usersService.findOne({ uuid: token.user_id });
+    const user = await this.usersService.findOne({ uuid: findValidToken.user_id });
 
     if (!user) {
       throw new InternalServerErrorException();
@@ -183,22 +181,21 @@ export class AuthService {
     }
 
     // TODO: delete expired tokens using cronjobs
-    await this.resetTokenRepository.delete({
-      token: resetToken,
-      active: true,
-    });
+    const deleteExpiredToken = [
+      { token: resetToken, active: true, },
+      { expiry_date: LessThan(new Date()), }
+    ]
 
-    // TODO: delete expired tokens using cronjobs
-    await this.resetTokenRepository.delete({
-      expiry_date: LessThan(new Date()),
-    });
+    for (const condition of deleteExpiredToken) {
+      await this.resetTokenRepository.delete(condition);
+    }
 
     user.password = await bcrypt.hash(newPassword, 10);
     // Todo: update the below to use update function rather than save method
     await this.userRepository.create({
       password: user.password,
     });
-    await this.userRepository.save(user);
+    await this.userRepository.update(user.id, { password: user.password });
 
     const emailData = {
       body: '<p>Your password has been reset successfully.</p>',

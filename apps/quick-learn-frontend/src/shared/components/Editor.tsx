@@ -126,7 +126,8 @@ const Editor: FC<Props> = ({
     input.click();
     input.onchange = async () => {
       const files = input.files;
-      if (files === null || files.length === 0) return;
+      const fileLength = files === null || files.length === 0;
+      if (fileLength) return;
       await handleImageUpload(files[0]);
     };
   }, []);

@@ -13,9 +13,13 @@ export class LessonProgressService {
     private lessonRepository: Repository<LessonEntity>,
     @InjectRepository(CourseEntity)
     private courseRepository: Repository<CourseEntity>,
+<<<<<<< Updated upstream
     @InjectRepository(LessonTokenEntity)
     private LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {}
+=======
+  ) { }
+>>>>>>> Stashed changes
 
   async markLessonAsCompleted(
     userId: number,
@@ -83,36 +87,6 @@ export class LessonProgressService {
       completed_date,
     }));
   }
-
-  // async getCourseLessonCount(
-  //   userId: number,
-  //   courseId: number,
-  // ): Promise<{ total: number; completedLessons: number }> {
-  //   const course = await this.courseRepository.findOne({
-  //     where: { id: courseId },
-  //     relations: ['lessons'],
-  //   });
-
-  //   if (!course) {
-  //     throw new NotFoundException('Course not found');
-  //   }
-
-  //   const totalLessons = course.lessons.filter(
-  //     (lesson) => !lesson.archived && lesson.approved,
-  //   ).length;
-
-  //   const completedLessons = await this.userLessonProgressRepository.count({
-  //     where: {
-  //       user_id: userId,
-  //       course_id: courseId,
-  //     },
-  //   });
-
-  //   return {
-  //     total: totalLessons,
-  //     completedLessons,
-  //   };
-  // }
 
   async getUserLessonProgressViaCourse(userId: number): Promise<
     {

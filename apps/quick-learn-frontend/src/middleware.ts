@@ -47,12 +47,9 @@ export async function middleware(request: NextRequest) {
 
   // Check if the route is admin-only and user has the correct role
   if (isAdminRoute(pathname)) {
-    if (
-      (userRole &&
-        parseInt(userRole) !== UserTypeIdEnum.ADMIN &&
-        parseInt(userRole) !== UserTypeIdEnum.SUPERADMIN) ||
-      !userRole
-    ) {
+
+    const userRoleComparison = (userRole && parseInt(userRole) !== UserTypeIdEnum.ADMIN && parseInt(userRole) !== UserTypeIdEnum.SUPERADMIN) || !userRole
+    if (userRoleComparison) {
       return NextResponse.redirect(
         new URL(RouteEnum.MY_LEARNING_PATH, request.url),
       );
@@ -62,10 +59,9 @@ export async function middleware(request: NextRequest) {
 
   // Check if the route is editor-only and user has the correct role
   if (isEditorRoute(pathname)) {
-    if (
-      (userRole && parseInt(userRole) === UserTypeIdEnum.MEMBER) ||
-      !userRole
-    ) {
+
+    const userRoleComparison = (userRole && parseInt(userRole) === UserTypeIdEnum.MEMBER) || !userRole
+    if (userRoleComparison) {
       return NextResponse.redirect(
         new URL(RouteEnum.MY_LEARNING_PATH, request.url),
       );

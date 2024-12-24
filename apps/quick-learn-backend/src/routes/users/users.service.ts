@@ -285,19 +285,23 @@ export class UsersService extends PaginationService<UserEntity> {
       .createQueryBuilder('user')
       .where({ ...options });
 
+    const assignRoadmapRelation = relations.includes('assigned_roadmaps');
+    const assignRoadmapCourseRelation = relations.includes('assigned_roadmaps.courses');
+    const assignRoadmapCoursesLessonRelation = relations.includes('assigned_roadmaps.courses.lessons')
+
     // Dynamically add joins based on relations array
-    if (relations.includes('assigned_roadmaps')) {
+    if (assignRoadmapRelation) {
       queryBuilder.leftJoinAndSelect(
         'user.assigned_roadmaps',
         'assigned_roadmaps',
       );
     }
 
-    if (relations.includes('assigned_roadmaps.courses')) {
+    if (assignRoadmapCourseRelation) {
       queryBuilder.leftJoinAndSelect('assigned_roadmaps.courses', 'courses');
     }
 
-    if (relations.includes('assigned_roadmaps.courses.lessons')) {
+    if (assignRoadmapCoursesLessonRelation) {
       queryBuilder.leftJoinAndSelect(
         'courses.lessons',
         'lessons',
@@ -309,15 +313,15 @@ export class UsersService extends PaginationService<UserEntity> {
     // Select specific fields
     const selectFields = ['user'];
 
-    if (relations.includes('assigned_roadmaps')) {
+    if (assignRoadmapRelation) {
       selectFields.push('assigned_roadmaps');
     }
 
-    if (relations.includes('assigned_roadmaps.courses')) {
+    if (assignRoadmapCourseRelation) {
       selectFields.push('courses');
     }
 
-    if (relations.includes('assigned_roadmaps.courses.lessons')) {
+    if (assignRoadmapCoursesLessonRelation) {
       selectFields.push('lessons.id');
       selectFields.push('lessons.name');
     }
@@ -432,12 +436,8 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     // ON PROFILE CHANGE VERIFY IF LOGO HAS CHANGED AND PERVIOUS IMAGE IS NOT EMPTY STRING
-    if (
-      imageDeleteRequired &&
-      user.profile_image !== payload.profile_image &&
-      user.profile_image !== '' &&
-      user.profile_image !== null
-    ) {
+    const verifyProfileLogoChange = imageDeleteRequired && user.profile_image !== payload.profile_image && user.profile_image !== '' && user.profile_image !== null
+    if (verifyProfileLogoChange) {
       // DELETE OLD IMAGE FROM S3 BUCKET
       await this.FileService.deleteFiles([user.profile_image]);
     }
@@ -450,8 +450,8 @@ export class UsersService extends PaginationService<UserEntity> {
         );
       }
     }
-
-    if (!!payload.user_type_id && payload.user_type_id != user.user_type_id) {
+    const payloadUserId = !!payload.user_type_id && payload.user_type_id != user.user_type_id
+    if (payloadUserId) {
       await this.sessionService.delete({ user: { id: user.id } });
     }
 

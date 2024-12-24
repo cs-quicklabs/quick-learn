@@ -47,8 +47,9 @@ export class JwtRefreshStrategy extends PassportStrategy(
         throw new UnauthorizedException('Invalid session');
       }
 
-      // Check if token is expired
-      if (Number(session.expires) < Date.now()) {
+      const checkTokenExpiration = Number(session.expires) < Date.now();
+
+      if (checkTokenExpiration) {
         Helpers.clearCookies(req.res);
         throw new UnauthorizedException('Refresh token expired');
       }
