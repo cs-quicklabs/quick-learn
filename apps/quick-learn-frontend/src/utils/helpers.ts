@@ -81,17 +81,17 @@ export function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
     value,
     isDefaultTagsAllowed
       ? {
-        allowedTags: ['b', 'i', 'em', 'strong', 'a'],
-        allowedAttributes: {
-          a: ['href'],
-        },
-        allowedIframeHostnames: ['www.youtube.com'],
-      }
+          allowedTags: ['b', 'i', 'em', 'strong', 'a'],
+          allowedAttributes: {
+            a: ['href'],
+          },
+          allowedIframeHostnames: ['www.youtube.com'],
+        }
       : {
-        allowedTags: [],
-        allowedAttributes: {},
-        allowedIframeHostnames: [],
-      },
+          allowedTags: [],
+          allowedAttributes: {},
+          allowedIframeHostnames: [],
+        },
   );
 }
 
@@ -108,9 +108,9 @@ export function mapQueryParams(
   return (
     (Object.keys(params).length > 0 &&
       '?' +
-      Object.entries(params)
-        .map(([key, value]) => `${key}=${value}`)
-        .join('&')) ||
+        Object.entries(params)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&')) ||
     ''
   );
 }
@@ -145,16 +145,11 @@ export const calculateRoadmapProgress = (
       const completedLessonIds =
         courseProgress?.lessons?.map((lesson) => lesson.lesson_id) || [];
       const completedCount = course.lesson_ids
-<<<<<<< Updated upstream
         ? course.lesson_ids?.filter((lesson) =>
             completedLessonIds.includes(lesson.id),
           ).length || 0
-=======
-        ? course.lesson_ids?.filter((id) => completedLessonIds.includes(id))
-          .length || 0
->>>>>>> Stashed changes
         : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
-          .length || 0;
+            .length || 0;
 
       return total + completedCount;
     },
@@ -168,7 +163,8 @@ export const calculateCourseProgress = (
   course: TUserCourse | TCourse,
   userProgress: UserLessonProgress[],
 ) => {
-  const checkLessonInformation = !course || !Array.isArray(course.lesson_ids || course.lessons);
+  const checkLessonInformation =
+    !course || !Array.isArray(course.lesson_ids || course.lessons);
   if (checkLessonInformation) return 0;
 
   const courseProgress = userProgress?.find(
@@ -181,16 +177,11 @@ export const calculateCourseProgress = (
   const totalLessons =
     course?.lesson_ids?.length || course?.lessons?.length || 0;
   const completedCount = course.lesson_ids
-<<<<<<< Updated upstream
     ? course.lesson_ids?.filter((lesson) =>
         completedLessonIds.includes(lesson.id),
       ).length || 0
-=======
-    ? course.lesson_ids?.filter((id) => completedLessonIds.includes(id))
-      .length || 0
->>>>>>> Stashed changes
     : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
-      .length || 0;
+        .length || 0;
 
   return totalLessons > 0
     ? Math.round((completedCount / totalLessons) * 100)

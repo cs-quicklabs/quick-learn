@@ -286,8 +286,12 @@ export class UsersService extends PaginationService<UserEntity> {
       .where({ ...options });
 
     const assignRoadmapRelation = relations.includes('assigned_roadmaps');
-    const assignRoadmapCourseRelation = relations.includes('assigned_roadmaps.courses');
-    const assignRoadmapCoursesLessonRelation = relations.includes('assigned_roadmaps.courses.lessons')
+    const assignRoadmapCourseRelation = relations.includes(
+      'assigned_roadmaps.courses',
+    );
+    const assignRoadmapCoursesLessonRelation = relations.includes(
+      'assigned_roadmaps.courses.lessons',
+    );
 
     // Dynamically add joins based on relations array
     if (assignRoadmapRelation) {
@@ -436,7 +440,11 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     // ON PROFILE CHANGE VERIFY IF LOGO HAS CHANGED AND PERVIOUS IMAGE IS NOT EMPTY STRING
-    const verifyProfileLogoChange = imageDeleteRequired && user.profile_image !== payload.profile_image && user.profile_image !== '' && user.profile_image !== null
+    const verifyProfileLogoChange =
+      imageDeleteRequired &&
+      user.profile_image !== payload.profile_image &&
+      user.profile_image !== '' &&
+      user.profile_image !== null;
     if (verifyProfileLogoChange) {
       // DELETE OLD IMAGE FROM S3 BUCKET
       await this.FileService.deleteFiles([user.profile_image]);
@@ -450,7 +458,8 @@ export class UsersService extends PaginationService<UserEntity> {
         );
       }
     }
-    const payloadUserId = !!payload.user_type_id && payload.user_type_id != user.user_type_id
+    const payloadUserId =
+      !!payload.user_type_id && payload.user_type_id != user.user_type_id;
     if (payloadUserId) {
       await this.sessionService.delete({ user: { id: user.id } });
     }

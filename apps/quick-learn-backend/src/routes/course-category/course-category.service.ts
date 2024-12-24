@@ -36,7 +36,8 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
       name: ILike(createCourseCategoryDto.name),
     });
 
-    const checkCourseCategory = foundCourseCategory && foundCourseCategory.id !== courseCategory.id
+    const checkCourseCategory =
+      foundCourseCategory && foundCourseCategory.id !== courseCategory.id;
     if (checkCourseCategory) {
       throw new BadRequestException('Course Category already exists');
     }

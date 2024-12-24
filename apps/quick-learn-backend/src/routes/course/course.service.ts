@@ -332,7 +332,8 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       id: In(assignRoadmapsToCourseDto.roadmaps),
     });
 
-    const isLengthEqual = roadmaps.length !== assignRoadmapsToCourseDto.roadmaps.length;
+    const isLengthEqual =
+      roadmaps.length !== assignRoadmapsToCourseDto.roadmaps.length;
 
     if (isLengthEqual) {
       throw new BadRequestException(en.invalidRoadmaps);

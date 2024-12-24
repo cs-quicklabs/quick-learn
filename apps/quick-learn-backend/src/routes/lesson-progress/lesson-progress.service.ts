@@ -13,13 +13,7 @@ export class LessonProgressService {
     private lessonRepository: Repository<LessonEntity>,
     @InjectRepository(CourseEntity)
     private courseRepository: Repository<CourseEntity>,
-<<<<<<< Updated upstream
-    @InjectRepository(LessonTokenEntity)
-    private LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {}
-=======
-  ) { }
->>>>>>> Stashed changes
 
   async markLessonAsCompleted(
     userId: number,

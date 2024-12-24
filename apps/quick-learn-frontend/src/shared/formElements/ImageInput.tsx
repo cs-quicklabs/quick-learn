@@ -65,7 +65,7 @@ const ImageInput: FC<Props> = ({
     const file = event.target.files?.[0];
 
     if (file) {
-      const fileSize:any = file.size > 1024 * 1024
+      const fileSize: any = file.size > 1024 * 1024;
       if (fileSize) {
         setError(true);
         return;

@@ -37,7 +37,7 @@ export class AuthService {
     private configService: ConfigService,
     private emailService: EmailService,
     private sessionService: SessionService,
-  ) { }
+  ) {}
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
     const user = await this.usersService.findOne({ email });
@@ -113,8 +113,10 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-
-    const checkUserExistance = await this.usersService.findOne({ email, active: true });
+    const checkUserExistance = await this.usersService.findOne({
+      email,
+      active: true,
+    });
 
     if (checkUserExistance) {
       // If user exists, generate password reset link (with token) and save token in the db
@@ -168,7 +170,9 @@ export class AuthService {
 
     // change user password
     // Todo: uuid should be used as a foreign key. uuid is generated column not primary key
-    const user = await this.usersService.findOne({ uuid: findValidToken.user_id });
+    const user = await this.usersService.findOne({
+      uuid: findValidToken.user_id,
+    });
 
     if (!user) {
       throw new InternalServerErrorException();
@@ -182,9 +186,9 @@ export class AuthService {
 
     // TODO: delete expired tokens using cronjobs
     const deleteExpiredToken = [
-      { token: resetToken, active: true, },
-      { expiry_date: LessThan(new Date()), }
-    ]
+      { token: resetToken, active: true },
+      { expiry_date: LessThan(new Date()) },
+    ];
 
     for (const condition of deleteExpiredToken) {
       await this.resetTokenRepository.delete(condition);

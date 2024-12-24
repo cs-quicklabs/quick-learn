@@ -176,7 +176,7 @@ const Lesson = () => {
   // Optimize initial data fetching
   useEffect(() => {
     const fetchData = async () => {
-      const checkId = (isNaN(+roadmapId) || isNaN(+courseId))
+      const checkId = isNaN(+roadmapId) || isNaN(+courseId);
       try {
         if (!checkId) {
           const roadmapData = await getRoadmap(roadmapId, courseId);
