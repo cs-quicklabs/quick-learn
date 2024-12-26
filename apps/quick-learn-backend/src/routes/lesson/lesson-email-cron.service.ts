@@ -9,19 +9,19 @@ import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { nanoid } from 'nanoid';
 import { EmailService } from '@src/common/modules/email/email.service';
-import { ConfigService } from '@nestjs/config';
 import { emailSubjects } from '@src/common/constants/email-subject';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import {
   CRON_TIMEZONE,
   DailyLessonGreetings,
 } from '@src/common/enum/daily_lesson.enum';
 import { EMAIL_BODY } from '@src/common/constants/emailBody';
 import { EnvironmentEnum } from '@src/common/constants/constants';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class LessonEmailService {
-  private env: string = EnvironmentEnum.Developemnt;
+  private frontendURL: string;
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
@@ -31,34 +31,28 @@ export class LessonEmailService {
     @InjectRepository(LessonTokenEntity)
     private LessonTokenRepository: Repository<LessonTokenEntity>,
     private emailService: EmailService,
-    private configService: ConfigService,
     private readonly logger: Logger,
+    private readonly configService: ConfigService,
   ) {
     this.logger = new Logger(LessonEmailService.name);
-    this.env = configService.getOrThrow('app.env', { infer: true });
+    this.frontendURL = this.configService.getOrThrow('app.frontendDomain', {
+      infer: true,
+    });
   }
 
-  // Runs every minute
-  @Cron(CronExpression.EVERY_DAY_AT_9AM, {
-    name: 'sendMorningLessonEmails',
-    timeZone: CRON_TIMEZONE,
-  })
-  handleMorningCron() {
-    if (this.env === EnvironmentEnum.Production) {
-      this.sendLessonEmails(DailyLessonGreetings.GOOD_MORNING);
-      this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
-    }
-  }
-
-  @Cron(CronExpression.EVERY_DAY_AT_5PM, {
+  // Runs every day @ 9AM and 5PM
+  @Cron('0 9,17 * * *', {
     name: 'sendEveningLessonEmails',
     timeZone: CRON_TIMEZONE,
+    disabled: process.env.ENV !== EnvironmentEnum.Production,
   })
-  handleEveningCron() {
-    if (this.env === EnvironmentEnum.Production) {
-      this.sendLessonEmails(DailyLessonGreetings.GOOD_EVENING);
-      this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
-    }
+  handleLessonNotification() {
+    const greeting =
+      new Date().getHours() < 12
+        ? DailyLessonGreetings.GOOD_MORNING
+        : DailyLessonGreetings.GOOD_EVENING;
+    this.sendLessonEmails(greeting);
+    this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
   }
 
   async sendLessonEmails(greeting: string) {
@@ -209,13 +203,12 @@ export class LessonEmailService {
     return tokenEntityResponse;
   }
 
-  private generateURL = (
+  private readonly generateURL = (
     lesson_id: number,
     course_id: number,
     token: string,
   ) => {
     // SEND EMAIL TO USER
-    const frontendURL = process.env.FRONTEND_DOMAIN || 'http://localhost:3000';
-    return `${frontendURL}/daily-lesson/${lesson_id}?course_id=${course_id}&token=${token}`;
+    return `${this.frontendURL}/daily-lesson/${lesson_id}?course_id=${course_id}&token=${token}`;
   };
 }
