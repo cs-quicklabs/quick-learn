@@ -173,11 +173,10 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
 
     return (
       <div key={category}>
-        <div className="flex font-bold text-slate-700 border-b border-gray-300 pl-5 py-2 justify-between">
+        <div className="flex font-bold border-b border-gray-300 pl-3 py-1 justify-between">
           <span>
-            {category}{' '}
-            <span className="text-sm text-gray-700 font-normal capitalize">
-              ({items.length} {category.toLowerCase()})
+            <span className=' className="text-slate-600 text-md'>
+              {category}{' '}
             </span>
           </span>
           <span className="mr-6 flex items-center">
@@ -185,7 +184,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
           </span>
         </div>
         <div
-          className="max-h-[120px] overflow-auto"
+          className="max-h-[120px] overflow-none"
           style={{ scrollbarWidth: 'none' }}
         >
           {items.map((item, i) => {
@@ -243,12 +242,12 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
           placeholder="Search Roadmaps, Courses or Lessons"
           onFocus={() => setIsDropdownActive(true)}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="block w-full h-full rounded-md border-0 bg-gray-700 py-1.5 pl-10 pr-3 text-gray-300 placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:ring-0 sm:text-sm sm:leading-6 outline-0"
+          className="block w-full h-full rounded-md border-0 bg-gray-700 py-1.5 pl-10 pr-3 text-gray-300 placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:ring-0 text-sm sm:leading-6 outline-0"
         />
 
         {/* Search Results Dropdown */}
         {isDropdownActive && (
-          <div className="absolute w-full top-[43px] text-black bg-white border border-gray-400 rounded-md p-1 pb-3 overflow-y-auto">
+          <div className="absolute w-full top-[43px] text-gray-800 bg-white border border-gray-300 rounded-md p-1 pb-2 overflow-y-auto shadow-lg">
             {searchQuery.length < MINIMUM_SEARCH_LENGTH ? (
               hasHistory ? (
                 <div>

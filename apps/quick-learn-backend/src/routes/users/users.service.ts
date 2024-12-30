@@ -368,51 +368,56 @@ export class UsersService extends PaginationService<UserEntity> {
       .map((roadmap) => ({
         id: roadmap.id,
         name: roadmap.name,
-      }));
+      }))
+      .slice(0, 3);
 
     // Filtering courses with duplicate check
-    const courses = data.flatMap((roadmap) =>
-      roadmap.courses
-        .filter((course) => {
-          if (courseIds.has(course.id)) {
-            return false;
-          }
-          courseIds.add(course.id);
-          return course.name.toLowerCase().includes(query.toLowerCase());
-        })
-        .map((course) => ({
-          id: course.id,
-          name: course.name,
-        })),
-    );
-
-    // Filtering lessons with duplicate check
-    const lessons = data.flatMap((roadmap) =>
-      roadmap.courses.flatMap((course) => {
-        const lessonsArray =
-          course.lesson_ids ||
-          course.lessons.map((lesson) => ({
-            id: lesson.id,
-            name: lesson.name,
-            course_id: course.id,
-            roadmap_id: roadmap.id,
-          }));
-
-        return lessonsArray
-          .filter((lesson) => {
-            if (lessonIds.has(lesson.id)) {
+    const courses = data
+      .flatMap((roadmap) =>
+        roadmap.courses
+          .filter((course) => {
+            if (courseIds.has(course.id)) {
               return false;
             }
-            lessonIds.add(lesson.id);
-            return lesson.name.toLowerCase().includes(query.toLowerCase());
+            courseIds.add(course.id);
+            return course.name.toLowerCase().includes(query.toLowerCase());
           })
-          .map((lesson) => ({
-            ...lesson,
-            course_id: course.id,
-            roadmap_id: roadmap.id,
-          }));
-      }),
-    );
+          .map((course) => ({
+            id: course.id,
+            name: course.name,
+          })),
+      )
+      .slice(0, 3);
+
+    // Filtering lessons with duplicate check
+    const lessons = data
+      .flatMap((roadmap) =>
+        roadmap.courses.flatMap((course) => {
+          const lessonsArray =
+            course.lesson_ids ||
+            course.lessons.map((lesson) => ({
+              id: lesson.id,
+              name: lesson.name,
+              course_id: course.id,
+              roadmap_id: roadmap.id,
+            }));
+
+          return lessonsArray
+            .filter((lesson) => {
+              if (lessonIds.has(lesson.id)) {
+                return false;
+              }
+              lessonIds.add(lesson.id);
+              return lesson.name.toLowerCase().includes(query.toLowerCase());
+            })
+            .map((lesson) => ({
+              ...lesson,
+              course_id: course.id,
+              roadmap_id: roadmap.id,
+            }));
+        }),
+      )
+      .slice(0, 3);
 
     return {
       Roadmaps: roadmaps,
