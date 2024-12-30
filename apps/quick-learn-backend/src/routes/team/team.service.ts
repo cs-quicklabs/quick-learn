@@ -28,8 +28,11 @@ export class TeamService extends BasicCrudService<TeamEntity> {
     if (!teamId) {
       throw new BadRequestException('No team has assigned to the user.');
     }
-   
-    const verifyLogoChange =   user.team.logo !== payload.logo && user.team.logo !== '' && user.team.logo !== null
+
+    const verifyLogoChange =
+      user.team.logo !== payload.logo &&
+      user.team.logo !== '' &&
+      user.team.logo !== null;
     if (verifyLogoChange) {
       // DELETE OLD LOGO FROM S3 BUCKET
       await this.FileService.deleteFiles([user.team.logo]);

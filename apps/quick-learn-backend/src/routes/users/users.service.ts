@@ -285,9 +285,13 @@ export class UsersService extends PaginationService<UserEntity> {
       .createQueryBuilder('user')
       .where({ ...options });
 
-      const assignRoadmapRelation = relations.includes('assigned_roadmaps');
-      const assignRoadmapCoursesRelation=relations.includes('assigned_roadmaps.courses')
-      const assignRoadmapCoursesLessonRelation = relations.includes('assigned_roadmaps.courses.lessons')
+    const assignRoadmapRelation = relations.includes('assigned_roadmaps');
+    const assignRoadmapCoursesRelation = relations.includes(
+      'assigned_roadmaps.courses',
+    );
+    const assignRoadmapCoursesLessonRelation = relations.includes(
+      'assigned_roadmaps.courses.lessons',
+    );
 
     // Dynamically add joins based on relations array
     if (assignRoadmapRelation) {
@@ -435,7 +439,11 @@ export class UsersService extends PaginationService<UserEntity> {
       throw new BadRequestException(en.userNotFound);
     }
 
-    const verifyLogoChange = imageDeleteRequired && user.profile_image !== payload.profile_image && user.profile_image !== '' && user.profile_image !== null
+    const verifyLogoChange =
+      imageDeleteRequired &&
+      user.profile_image !== payload.profile_image &&
+      user.profile_image !== '' &&
+      user.profile_image !== null;
     if (verifyLogoChange) {
       // DELETE OLD IMAGE FROM S3 BUCKET
       await this.FileService.deleteFiles([user.profile_image]);

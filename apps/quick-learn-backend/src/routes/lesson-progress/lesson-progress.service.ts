@@ -22,7 +22,6 @@ export class LessonProgressService {
     lessonId: number,
     courseId: number,
   ): Promise<UserLessonProgressEntity> {
-  
     const lessonExists = await this.lessonRepository.findOne({
       where: { id: lessonId, course_id: courseId },
     });
@@ -31,7 +30,6 @@ export class LessonProgressService {
       throw new NotFoundException('Lesson not found in this course');
     }
 
-    
     const existingProgress = await this.userLessonProgressRepository.findOne({
       where: {
         user_id: userId,
@@ -122,26 +120,23 @@ export class LessonProgressService {
       },
     );
 
-   
-    function groupDateToDesireFormatr(){
-     const userProgress = Object.entries(courseProgressMap).map(
-      ([course_id, lessons]) => ({
-        course_id: Number(course_id),
-        lessons,
-      }),
-    );
-    return userProgress; 
+    function groupDateToDesireFormatr() {
+      const userProgress = Object.entries(courseProgressMap).map(
+        ([course_id, lessons]) => ({
+          course_id: Number(course_id),
+          lessons,
+        }),
+      );
+      return userProgress;
     }
-    
-   return groupDateToDesireFormatr(); 
-    
+
+    return groupDateToDesireFormatr();
   }
 
   async checkLessonRead(
     userId: number,
     lessonId: number,
   ): Promise<{ isRead: boolean; completed_date: Date | null }> {
-    
     const checkLessonExist = await this.userLessonProgressRepository.findOne({
       where: {
         user_id: userId,

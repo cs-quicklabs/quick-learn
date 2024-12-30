@@ -114,8 +114,10 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    
-    const checkUserExists = await this.usersService.findOne({ email, active: true });
+    const checkUserExists = await this.usersService.findOne({
+      email,
+      active: true,
+    });
 
     if (checkUserExists) {
       // If user exists, generate password reset link (with token) and save token in the db
@@ -169,13 +171,18 @@ export class AuthService {
 
     // change user password
     // Todo: uuid should be used as a foreign key. uuid is generated column not primary key
-    const user = await this.usersService.findOne({ uuid: findValidToken.user_id });
+    const user = await this.usersService.findOne({
+      uuid: findValidToken.user_id,
+    });
 
     if (!user) {
       throw new InternalServerErrorException();
     }
 
-    const validateNewOldPassword = await bcrypt.compare(newPassword, user.password);
+    const validateNewOldPassword = await bcrypt.compare(
+      newPassword,
+      user.password,
+    );
     if (validateNewOldPassword) {
       throw new BadRequestException(en.usingsamePassword);
     }

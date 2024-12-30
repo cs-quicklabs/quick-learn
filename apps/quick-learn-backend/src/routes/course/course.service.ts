@@ -296,12 +296,13 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       throw new BadRequestException(en.CourseNotFound);
     }
 
-     const checkCourseNameIdNotEqual = courseByname && courseByname.id !== course.id;
+    const checkCourseNameIdNotEqual =
+      courseByname && courseByname.id !== course.id;
     if (checkCourseNameIdNotEqual) {
       throw new BadRequestException(en.courseAlreadyExists);
     }
 
-     const courseCategoryExist = updateCourseDto?.course_category_id;
+    const courseCategoryExist = updateCourseDto?.course_category_id;
     if (courseCategoryExist) {
       const courseCategory = await this.courseCategoryService.get({
         id: +updateCourseDto.course_category_id,
@@ -334,7 +335,8 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       id: In(assignRoadmapsToCourseDto.roadmaps),
     });
 
-     const compareRoadmapLength = roadmaps.length !== assignRoadmapsToCourseDto.roadmaps.length;
+    const compareRoadmapLength =
+      roadmaps.length !== assignRoadmapsToCourseDto.roadmaps.length;
     if (compareRoadmapLength) {
       throw new BadRequestException(en.invalidRoadmaps);
     }
