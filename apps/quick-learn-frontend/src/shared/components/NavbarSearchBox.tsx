@@ -173,16 +173,20 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
 
     return (
       <div key={category}>
-        <div className="font-bold text-slate-700 border-b border-gray-300">
-          {isHistoryView && <ClockIcon className="inline-block h-4 w-4 mr-1" />}
-          # {category}{' '}
-          <span className="text-sm text-gray-700 italic font-normal capitalize">
-            ({items.length} {category.toLowerCase()})
+        <div className="flex font-bold text-slate-700 border-b border-gray-300 pl-5 py-2 justify-between">
+          <span>
+            {category}{' '}
+            <span className="text-sm text-gray-700 font-normal capitalize">
+              ({items.length} {category.toLowerCase()})
+            </span>
+          </span>
+          <span className="mr-6 flex items-center">
+            {isHistoryView && <ClockIcon className="inline-block h-5 w-5 " />}
           </span>
         </div>
         <div
           className="max-h-[120px] overflow-auto"
-          style={{ scrollbarWidth: 'thin' }}
+          style={{ scrollbarWidth: 'none' }}
         >
           {items.map((item, i) => {
             const commonProps = {
@@ -234,6 +238,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
           id="search"
           name="search"
           type="search"
+          autoComplete="off"
           value={searchQuery}
           placeholder="Search Roadmaps, Courses or Lessons"
           onFocus={() => setIsDropdownActive(true)}
@@ -243,7 +248,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
 
         {/* Search Results Dropdown */}
         {isDropdownActive && (
-          <div className="absolute w-full top-[43px] text-black bg-white border rounded-md p-1  overflow-y-auto">
+          <div className="absolute w-full top-[43px] text-black bg-white border border-gray-400 rounded-md p-1 pb-3 overflow-y-auto">
             {searchQuery.length < MINIMUM_SEARCH_LENGTH ? (
               hasHistory ? (
                 <div>
