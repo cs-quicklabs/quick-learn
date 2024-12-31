@@ -6,15 +6,24 @@ import { ConfigService } from '@nestjs/config';
 export class FileService {
   private readonly s3Client: S3Client;
 
-   constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     this.s3Client = this.createS3Client();
   }
 
   private createS3Client(): S3Client {
-  const region = this.configService.getOrThrow('file.awsS3Region', { infer: true });
-  const endpoint = this.configService.getOrThrow('file.endPoint', { infer: true });
-  const accessKeyId = this.configService.getOrThrow('file.accessKeyId', { infer: true });
-  const secretAccessKey = this.configService.getOrThrow('file.secretAccessKey', { infer: true });
+    const region = this.configService.getOrThrow('file.awsS3Region', {
+      infer: true,
+    });
+    const endpoint = this.configService.getOrThrow('file.endPoint', {
+      infer: true,
+    });
+    const accessKeyId = this.configService.getOrThrow('file.accessKeyId', {
+      infer: true,
+    });
+    const secretAccessKey = this.configService.getOrThrow(
+      'file.secretAccessKey',
+      { infer: true },
+    );
 
     return new S3Client({
       region,
@@ -23,10 +32,10 @@ export class FileService {
     });
   }
 
-   private extractFileName(url: string) {
-      const urlObj = new URL(url);
-      return urlObj.pathname.substring(1);
-    };
+  private extractFileName(url: string) {
+    const urlObj = new URL(url);
+    return urlObj.pathname.substring(1);
+  }
 
   async deleteFiles(fileKeys: string[]): Promise<void> {
     const deletePromises = fileKeys.map((url: string) => {

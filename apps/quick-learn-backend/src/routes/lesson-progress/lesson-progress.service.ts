@@ -26,10 +26,8 @@ export class LessonProgressService {
       where: { id: lessonId, course_id: courseId },
     });
 
-    
     if (!lessonExists) {
       throw new NotFoundException(en.lessonNotFoundInCourse);
-     
     }
     const existingProgress = await this.userLessonProgressRepository.findOne({
       where: {

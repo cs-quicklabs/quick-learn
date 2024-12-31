@@ -53,9 +53,14 @@ export class AuthService {
     private emailService: EmailService,
     private sessionService: SessionService,
   ) {
-    this.accessTokenExpiresIn = this.getTokenExpiresInMilliSeconds('auth.expires');
-    this.refreshTokenExpiresIn = this.getTokenExpiresInMilliSeconds('auth.refreshExpires');
-    this.refreshTokenRememberMeExpiresIn = this.getTokenExpiresInMilliSeconds('auth.refreshRememberMeExpires');
+    this.accessTokenExpiresIn =
+      this.getTokenExpiresInMilliSeconds('auth.expires');
+    this.refreshTokenExpiresIn = this.getTokenExpiresInMilliSeconds(
+      'auth.refreshExpires',
+    );
+    this.refreshTokenRememberMeExpiresIn = this.getTokenExpiresInMilliSeconds(
+      'auth.refreshRememberMeExpires',
+    );
   }
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
@@ -232,7 +237,7 @@ export class AuthService {
         sessionId: session.id,
       },
       'auth.secret',
-       this.accessTokenExpiresIn
+      this.accessTokenExpiresIn,
     );
 
     await this.userRepository.update(
@@ -253,7 +258,9 @@ export class AuthService {
     hash: SessionEntity['hash'];
     rememberMe?: boolean;
   }): Promise<ITokenData> {
-    const expires = data.rememberMe ? this.refreshTokenRememberMeExpiresIn : this.refreshTokenExpiresIn;
+    const expires = data.rememberMe
+      ? this.refreshTokenRememberMeExpiresIn
+      : this.refreshTokenExpiresIn;
     const [token, refreshToken] = await Promise.all([
       await this.generateToken(
         {
@@ -261,8 +268,8 @@ export class AuthService {
           role: data.role,
           sessionId: data.sessionId,
         },
-       'auth.secret',
-        this.accessTokenExpiresIn
+        'auth.secret',
+        this.accessTokenExpiresIn,
       ),
       await this.generateToken(
         {
@@ -270,7 +277,7 @@ export class AuthService {
           hash: data.hash,
         },
         'auth.refreshSecret',
-        expires
+        expires,
       ),
     ]);
 
@@ -283,11 +290,17 @@ export class AuthService {
   }
 
   private getTokenExpiresInMilliSeconds(configKey: string): number {
-    const tokenExpiresIn = this.configService.getOrThrow<string>(configKey, { infer: true });
+    const tokenExpiresIn = this.configService.getOrThrow<string>(configKey, {
+      infer: true,
+    });
     return ms(tokenExpiresIn);
   }
 
-  private async generateToken(payload: IRefreshTokenPayload | IAccessTokenPayload, secretConfigKey: string, expiresIn: number): Promise<string> {
+  private async generateToken(
+    payload: IRefreshTokenPayload | IAccessTokenPayload,
+    secretConfigKey: string,
+    expiresIn: number,
+  ): Promise<string> {
     return this.jwtService.signAsync(payload, {
       secret: this.configService.getOrThrow(secretConfigKey, { infer: true }),
       expiresIn: Date.now() + expiresIn,
