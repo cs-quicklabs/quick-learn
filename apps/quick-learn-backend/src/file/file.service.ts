@@ -5,34 +5,32 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class FileService {
   private readonly s3Client: S3Client;
-  static readonly deleteFiles: unknown;
 
-  constructor(readonly configService: ConfigService) {
-    this.s3Client = new S3Client({
-      region: this.configService.getOrThrow('file.awsS3Region', {
-        infer: true,
-      }),
-      endpoint: this.configService.getOrThrow('file.endPoint', { infer: true }),
-      credentials: {
-        accessKeyId: this.configService.getOrThrow('file.accessKeyId', {
-          infer: true,
-        }),
-        secretAccessKey: this.configService.getOrThrow('file.secretAccessKey', {
-          infer: true,
-        }),
-      },
+   constructor(private readonly configService: ConfigService) {
+    this.s3Client = this.createS3Client();
+  }
+
+  private createS3Client(): S3Client {
+  const region = this.configService.getOrThrow('file.awsS3Region', { infer: true });
+  const endpoint = this.configService.getOrThrow('file.endPoint', { infer: true });
+  const accessKeyId = this.configService.getOrThrow('file.accessKeyId', { infer: true });
+  const secretAccessKey = this.configService.getOrThrow('file.secretAccessKey', { infer: true });
+
+    return new S3Client({
+      region,
+      endpoint,
+      credentials: { accessKeyId, secretAccessKey },
     });
   }
 
-  async deleteFiles(fileKeys: string[]): Promise<void> {
-    const extractFileName = (url: string) => {
+   private extractFileName(url: string) {
       const urlObj = new URL(url);
-      const path = urlObj.pathname;
-      return path.substring(1);
+      return urlObj.pathname.substring(1);
     };
 
+  async deleteFiles(fileKeys: string[]): Promise<void> {
     const deletePromises = fileKeys.map((url: string) => {
-      const fileName = extractFileName(url);
+      const fileName = this.extractFileName(url);
 
       const params = {
         Bucket: process.env.AWS_DEFAULT_S3_BUCKET,

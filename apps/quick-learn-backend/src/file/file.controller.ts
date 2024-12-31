@@ -7,6 +7,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { en } from '@src/lang/en';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@src/routes/auth/guards';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -41,15 +42,15 @@ export class FileController {
     @Query() query: FileQueryDto,
   ): Promise<SuccessResponse> {
     if (!query.path) {
-      throw new BadRequestException('Path is not provided.');
+      throw new BadRequestException(en.pathNotProvided);
     }
 
     if (!file) {
-      throw new BadRequestException('File is not provided.');
+      throw new BadRequestException(en.pathNotProvided);
     }
 
     const location = file.location; //TODO: Send only path name and then update the expose method to return the full URL
-    return new SuccessResponse('File upload successfully.', {
+    return new SuccessResponse(en.fileUploaded, {
       file: location,
       type: file.mimetype,
     });
