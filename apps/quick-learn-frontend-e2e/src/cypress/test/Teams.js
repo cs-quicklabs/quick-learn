@@ -2,6 +2,7 @@ class Teams {
   visitTeamPage() {
     return cy.get('[href="/dashboard/teams"]');
   }
+
   getColumnsData() {
     const expectedHeaders = [
       'User',
@@ -24,41 +25,46 @@ class Teams {
 
   getAdminList() {
     cy.get('#admin').click();
-    cy.wait(5000);
-    cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
-      cy.wrap($el)
-        .invoke('text')
-        .then((text) => {
-          // Assert that the text contains the expected value 'admin'
-          expect(text.trim()).to.contain('Admin');
-        });
-    });
+    cy.get('table tbody tr td:nth-child(2)')
+      .should('be.visible')
+      .each(($el) => {
+        cy.wrap($el)
+          .invoke('text')
+          .then((text) => {
+            // Assert that the text contains the expected value 'admin'
+            expect(text.trim()).to.contain('Admin');
+          });
+      });
   }
+
   getEditorList() {
     cy.get('#editor').click();
-    cy.wait(5000);
-    cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
-      cy.wrap($el)
-        .invoke('text')
-        .then((text) => {
-          // Assert that the text contains the expected value 'admin'
-          expect(text.trim()).to.contain('Editor');
-        });
-    });
+    cy.get('table tbody tr td:nth-child(2)')
+      .should('be.visible')
+      .each(($el) => {
+        cy.wrap($el)
+          .invoke('text')
+          .then((text) => {
+            // Assert that the text contains the expected value 'admin'
+            expect(text.trim()).to.contain('Editor');
+          });
+      });
   }
 
   getMemberList() {
     cy.get('#member').click();
-    cy.wait(5000);
-    cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
-      cy.wrap($el)
-        .invoke('text')
-        .then((text) => {
-          // Assert that the text contains the expected value 'admin'
-          expect(text.trim()).to.contain('Member');
-        });
-    });
+    cy.get('table tbody tr td:nth-child(2)')
+      .should('be.visible')
+      .each(($el) => {
+        cy.wrap($el)
+          .invoke('text')
+          .then((text) => {
+            // Assert that the text contains the expected value 'admin'
+            expect(text.trim()).to.contain('Member');
+          });
+      });
   }
+
   getTeamsColumnData() {
     this.visitTeamPage().click();
     this.getColumnsData();
@@ -83,9 +89,11 @@ class Teams {
     this.visitTeamPage().click();
     this.getEditorList();
   }
+
   filterMemberList() {
     this.visitTeamPage().click();
     this.getMemberList();
   }
 }
+
 module.exports = Teams;

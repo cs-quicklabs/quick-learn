@@ -1,4 +1,4 @@
-class updateGeneralSettings {
+class UpdateGeneralSettings {
   visitTeamPage() {
     return cy.get('[href="/dashboard/teams"]');
   }
@@ -44,4 +44,4 @@ class updateGeneralSettings {
     this.getAccountSettings().click();
   }
 }
-module.exports = updateGeneralSettings;
+module.exports = UpdateGeneralSettings;

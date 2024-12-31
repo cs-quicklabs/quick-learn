@@ -1,5 +1,5 @@
-const { defineConfig } = require('cypress');
-const dotenv = require('dotenv');
+import { defineConfig } from 'cypress';
+import * as dotenv from 'dotenv';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -11,4 +11,3 @@ module.exports = defineConfig({
   viewportWidth: 1440,
   viewportHeight: 720,
 });
-

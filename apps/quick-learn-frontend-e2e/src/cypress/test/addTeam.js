@@ -62,13 +62,11 @@ class AddTeam {
   }
 
   fieldNameRequired() {
-    const mail = this.generateRandomEmail();
     this.visitTeamPage().click();
     this.getAddTeamButton().click();
     this.submitAddTeamButton();
   }
   validateFieldWithEmptySpaces() {
-    const mail = this.generateRandomEmail();
     this.visitTeamPage().click();
     this.getAddTeamButton().click();
     this.getFirstName().type('    ');

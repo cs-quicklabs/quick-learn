@@ -1,4 +1,4 @@
-class addCourses {
+class AddCourses {
   visitTeamPage() {
     return cy.get('[href="/dashboard/teams"]');
   }
@@ -6,22 +6,28 @@ class addCourses {
   userMenu() {
     return cy.contains('Open user menu');
   }
+
   getAccountSettings() {
     return cy.contains('Account Settings');
   }
+
   openCourses() {
     return cy.contains('Courses Categories').click();
   }
+
   clickCourses() {
     return cy.get('#courses_categories_input_text');
   }
+
   addCourses() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     return cy.get('#courses_categories_input_text').type('ReactJs' + Numeric);
   }
+
   addCoursesWithOnlySpaces() {
     return cy.get('#courses_categories_input_text').type('    ');
   }
+
   addCoursesWithMoreLimit() {
     return cy
       .get('#courses_categories_input_text')
@@ -33,6 +39,7 @@ class addCourses {
   saveButton() {
     return cy.get('.flex-wrap > .false').click();
   }
+
   getErrorMessage() {
     return cy.get('.mt-1');
   }
@@ -44,6 +51,7 @@ class addCourses {
     cy.get('#courses_categories_name_edit').type('React' + Numeric);
     cy.get('.ml-5').click();
   }
+
   editCourseCategoriesWithEmptySpaces() {
     cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
     cy.get('#courses_categories_name_edit').clear();
@@ -55,13 +63,11 @@ class addCourses {
   deleteCourseCategories() {
     cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
   }
-  getErrorMessage() {
-    return cy.get('.mt-1');
-  }
 
   OpenAccountSettings() {
     this.userMenu().click();
     this.getAccountSettings().click();
   }
 }
-module.exports = addCourses;
+
+module.exports = AddCourses;
