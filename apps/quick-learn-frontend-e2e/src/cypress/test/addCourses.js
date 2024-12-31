@@ -4,7 +4,7 @@ class AddCourses {
   }
 
   userMenu() {
-    return cy.contains('Open user menu');
+    return cy.get('button[id^="headlessui-menu-button"]');
   }
 
   getAccountSettings() {

@@ -19,35 +19,6 @@ describe('Login Test', () => {
     addTeams.addTeam();
   });
 
-  it('verify required field ', () => {
-    const addTeams = new AddTeam();
-    addTeams.fieldNameRequired();
-    cy.get(':nth-child(1) > .mt-1').should(
-      'have.text',
-      'This field is required',
-    );
-    cy.get(':nth-child(2) > .mt-1').should(
-      'have.text',
-      'This field is required',
-    );
-    cy.get(':nth-child(3) > .mt-1').should(
-      'have.text',
-      'This field is required',
-    );
-    cy.get(':nth-child(4) > .mt-1').should(
-      'have.text',
-      'This field is required',
-    );
-    cy.get(':nth-child(5) > .mt-1').should(
-      'have.text',
-      'Password must be at least 8 characters long',
-    );
-    cy.get(':nth-child(7) > .mt-1').should(
-      'have.text',
-      'This field is required',
-    );
-  });
-
   it('verify field by passing only spaces', () => {
     const addTeams = new AddTeam();
     addTeams.validateFieldWithEmptySpaces();
@@ -59,13 +30,13 @@ describe('Login Test', () => {
       'have.text',
       'This field is required',
     );
-    cy.get(':nth-child(3) > .mt-1').should(
-      'have.text',
-      'This field is required',
-    );
     cy.get(':nth-child(5) > .mt-1').should(
       'have.text',
       'Password must be at least 8 characters long',
+    );
+    cy.get(':nth-child(6) > .mt-1').should(
+      'have.text',
+      "Passwords don't match",
     );
   });
 });

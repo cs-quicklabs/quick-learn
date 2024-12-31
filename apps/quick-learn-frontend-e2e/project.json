@@ -8,6 +8,13 @@
   ],
   "// targets": "to see all targets run: nx show project quick-learn-frontend-e2e --web",
   "targets": {
+    "test:e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/quick-learn-frontend-e2e/src/cypress.config.ts",
+        "watch": true
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": [

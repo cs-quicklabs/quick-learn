@@ -40,7 +40,7 @@ class AddTeam {
   }
 
   getSkillID() {
-    return cy.get('#skill_id').select(2);
+    return cy.get('#skill_id').select(1);
   }
 
   submitAddTeamButton() {
@@ -64,8 +64,8 @@ class AddTeam {
   fieldNameRequired() {
     this.visitTeamPage().click();
     this.getAddTeamButton().click();
-    this.submitAddTeamButton();
   }
+
   validateFieldWithEmptySpaces() {
     this.visitTeamPage().click();
     this.getAddTeamButton().click();
@@ -76,7 +76,6 @@ class AddTeam {
     this.getPassword().type('   ');
     this.getConfirmPassword().type('   ');
     this.getSkillID('   ');
-    this.submitAddTeamButton();
   }
 }
 

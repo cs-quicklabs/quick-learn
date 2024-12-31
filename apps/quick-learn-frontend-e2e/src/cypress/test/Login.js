@@ -25,15 +25,16 @@ class LoginPage {
 
   login(mail, password) {
     this.getUsernameInput().type(mail);
-    this.getPasswordInput().type(password);
+    this.getPasswordInput().type(password).blur();
     this.getSubmitButton().click();
   }
 
   loginWithInvalidCredential(username, password) {
     this.getUsernameInput().type(username);
-    this.getPasswordInput().type(password);
+    this.getPasswordInput().type(password).blur();
     this.getSubmitButton().click();
   }
+
   loginWithEmptyValue() {
     this.getSubmitButton().should('be.disabled');
   }

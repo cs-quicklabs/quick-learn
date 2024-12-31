@@ -4,7 +4,7 @@ class addPrimarySkill {
   }
 
   userMenu() {
-    return cy.contains('Open user menu');
+    return cy.get('button[id^="headlessui-menu-button"]');
   }
   getAccountSettings() {
     return cy.contains('Account Settings');
@@ -47,7 +47,7 @@ class addPrimarySkill {
   }
 
   deletePrimarySkill() {
-    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get(':nth-child(2) > .inline-flex > .ml-2').click();
   }
   getErrorMessage() {
     return cy.get('.mt-1');

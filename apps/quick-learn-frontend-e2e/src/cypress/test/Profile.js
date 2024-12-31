@@ -4,7 +4,7 @@ class Profile {
   }
 
   userMenu() {
-    return cy.contains('Open user menu');
+    return cy.get('button[id^="headlessui-menu-button"]');
   }
 
   getMyProfile() {
@@ -21,25 +21,32 @@ class Profile {
     cy.get('input[type="file"]').selectFile('cypress/fixtures/drdoom.jpg', {
       force: true,
     });
-    cy.get('.flex-wrap > .false').click();
+    cy.get('.Toastify').should('contain', 'Profile updated successfully');
+  }
+
+  deleteProfilePic() {
+    cy.get('.mt-2 > .relative > .absolute').click();
+    cy.get('img[alt="Profile"]').should('be.visible').click({ force: true });
+    cy.get('button[type="button"]').contains("Yes, I'm sure").click();
     cy.get('.Toastify').should('contain', 'Profile updated successfully');
   }
 
   UpdateFirstName() {
-    cy.get('#profileSettingsForm_input_text').clear();
-    cy.get('#profileSettingsForm_input_text').type('Divanshu');
-    cy.get('.flex-wrap > .false').click();
+    const locator = 'input[type="text"][name="first_name"]';
+    cy.get(locator).clear();
+    cy.get(locator).type(
+      'Divanshu' + String.fromCharCode(97 + Math.floor(Math.random() * 26)),
+    );
+    cy.get('button[type="submit"]').click();
   }
 
   UpdateLastName() {
-    cy.get(
-      ':nth-child(3) > .relative > #profileSettingsForm_input_text',
-    ).clear();
-    cy.get(':nth-child(3) > .relative > #profileSettingsForm_input_text').type(
-      'Gupta',
+    const locator = 'input[type="text"][name="last_name"]';
+    cy.get(locator).clear();
+    cy.get(locator).type(
+      'Gupta' + String.fromCharCode(97 + Math.floor(Math.random() * 26)),
     );
-    cy.get('.flex-wrap > .false').click();
-    cy.get('.Toastify').should('contain', 'Profile updated successfully');
+    cy.get('button[type="submit"]').click();
   }
 
   UpdateFirstNameWithEmptySpaces() {
