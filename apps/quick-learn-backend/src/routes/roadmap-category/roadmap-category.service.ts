@@ -54,4 +54,13 @@ export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEnti
 
     await this.repository.delete({ id });
   }
+  async getRoadmapCatergoriesWithRoadmap() {
+    return await this.repository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.roadmaps', 'roadmaps')
+      .where('roadmaps.archived = :archived', { archived: false })
+      .orderBy('category.name', 'ASC')
+      .addOrderBy('category.created_at', 'DESC')
+      .getMany();
+  }
 }
