@@ -213,9 +213,6 @@ export class LessonService extends PaginationService<LessonEntity> {
    */
   async unarchiveLesson(lessonId: LessonEntity['id']) {
     const lesson = await this.getLesson(lessonId);
-    if (!lesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
 
     await this.update(
       { id: lessonId },
