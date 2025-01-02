@@ -114,26 +114,28 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    //Check that user exists
-    const user = await this.usersService.findOne({ email, active: true });
+    const checkUserExists = await this.usersService.findOne({
+      email,
+      active: true,
+    });
 
-    if (user) {
+    if (checkUserExists) {
       // If user exists, generate password reset link (with token) and save token in the db
 
       const expiryDate = new Date();
       expiryDate.setMinutes(expiryDate.getMinutes() + 15);
-      const resetToken = nanoid(64);
+      const generateResetToken = nanoid(64);
 
       await this.resetTokenRepository.save({
-        token: resetToken,
-        user_id: user.uuid,
+        token: generateResetToken,
+        user_id: checkUserExists.uuid,
         expiry_date: expiryDate,
       });
 
       const frontendURL = this.configService.get('app.frontendDomain', {
         infer: true,
       });
-      const resetURL = `${frontendURL}/reset-password?token=${resetToken}`;
+      const resetURL = `${frontendURL}/reset-password?token=${generateResetToken}`;
 
       const html = `<div>
         <p>Please click on the link below to reset your password.</p><br/>
@@ -155,8 +157,7 @@ export class AuthService {
 
   // TODO: reset password > get token from email, decode token, update password & delete token from db
   async resetPassword(resetToken: string, newPassword: string) {
-    // find a valid reset token
-    const token = await this.resetTokenRepository.findOne({
+    const findValidToken = await this.resetTokenRepository.findOne({
       where: {
         token: resetToken,
         active: true,
@@ -164,21 +165,25 @@ export class AuthService {
       },
     });
 
-    if (!token) {
+    if (!findValidToken) {
       throw new UnauthorizedException('Invalid Link');
     }
 
     // change user password
     // Todo: uuid should be used as a foreign key. uuid is generated column not primary key
-    const user = await this.usersService.findOne({ uuid: token.user_id });
+    const user = await this.usersService.findOne({
+      uuid: findValidToken.user_id,
+    });
 
     if (!user) {
       throw new InternalServerErrorException();
     }
 
-    // VALIDATE IF NEW PASSWORD IS SAME AS OLD PASSWORD
-    const isSamePassword = await bcrypt.compare(newPassword, user.password);
-    if (isSamePassword) {
+    const validateNewOldPassword = await bcrypt.compare(
+      newPassword,
+      user.password,
+    );
+    if (validateNewOldPassword) {
       throw new BadRequestException(en.usingsamePassword);
     }
 

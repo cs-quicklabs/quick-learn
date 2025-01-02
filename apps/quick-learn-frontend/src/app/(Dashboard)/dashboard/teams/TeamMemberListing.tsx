@@ -46,17 +46,17 @@ const TeamMemberListing = () => {
   }
 
   useEffect(() => {
-    const backgroundDataReload = (code: string) => {
+    const backgroundDataReload = () => {
       dispatch(
         fetchTeamMembers({
           page: 1,
-          userTypeCode: code,
+          userTypeCode: currentUserType,
           query: '',
         }),
       );
     };
-    backgroundDataReload('');
-  }, [dispatch]);
+    backgroundDataReload();
+  }, [dispatch, currentUserType]);
   const debouncedSearch = useMemo(
     () =>
       debounce((value: string) => {
