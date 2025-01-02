@@ -285,19 +285,27 @@ export class UsersService extends PaginationService<UserEntity> {
       .createQueryBuilder('user')
       .where({ ...options });
 
+    const assignRoadmapRelation = relations.includes('assigned_roadmaps');
+    const assignRoadmapCoursesRelation = relations.includes(
+      'assigned_roadmaps.courses',
+    );
+    const assignRoadmapCoursesLessonRelation = relations.includes(
+      'assigned_roadmaps.courses.lessons',
+    );
+
     // Dynamically add joins based on relations array
-    if (relations.includes('assigned_roadmaps')) {
+    if (assignRoadmapRelation) {
       queryBuilder.leftJoinAndSelect(
         'user.assigned_roadmaps',
         'assigned_roadmaps',
       );
     }
 
-    if (relations.includes('assigned_roadmaps.courses')) {
+    if (assignRoadmapCoursesRelation) {
       queryBuilder.leftJoinAndSelect('assigned_roadmaps.courses', 'courses');
     }
 
-    if (relations.includes('assigned_roadmaps.courses.lessons')) {
+    if (assignRoadmapCoursesLessonRelation) {
       queryBuilder.leftJoinAndSelect(
         'courses.lessons',
         'lessons',
@@ -309,15 +317,15 @@ export class UsersService extends PaginationService<UserEntity> {
     // Select specific fields
     const selectFields = ['user'];
 
-    if (relations.includes('assigned_roadmaps')) {
+    if (assignRoadmapRelation) {
       selectFields.push('assigned_roadmaps');
     }
 
-    if (relations.includes('assigned_roadmaps.courses')) {
+    if (assignRoadmapCoursesRelation) {
       selectFields.push('courses');
     }
 
-    if (relations.includes('assigned_roadmaps.courses.lessons')) {
+    if (assignRoadmapCoursesLessonRelation) {
       selectFields.push('lessons.id');
       selectFields.push('lessons.name');
     }
@@ -436,13 +444,12 @@ export class UsersService extends PaginationService<UserEntity> {
       throw new BadRequestException(en.userNotFound);
     }
 
-    // ON PROFILE CHANGE VERIFY IF LOGO HAS CHANGED AND PERVIOUS IMAGE IS NOT EMPTY STRING
-    if (
+    const verifyLogoChange =
       imageDeleteRequired &&
       user.profile_image !== payload.profile_image &&
       user.profile_image !== '' &&
-      user.profile_image !== null
-    ) {
+      user.profile_image !== null;
+    if (verifyLogoChange) {
       // DELETE OLD IMAGE FROM S3 BUCKET
       await this.FileService.deleteFiles([user.profile_image]);
     }
