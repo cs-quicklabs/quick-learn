@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loginFormSchema } from './loginFormSchema';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
@@ -13,6 +13,8 @@ import { toast } from 'react-toastify';
 const Login = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
+
   const loginFields: FieldConfig[] = [
     {
       label: 'Email',
@@ -29,11 +31,23 @@ const Login = () => {
     { label: 'Remember me', name: 'rememberMe', type: 'checkbox' },
   ];
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Extract 'redirect' parameter from the URL query string
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      if (redirect) {
+        setRedirectUrl(decodeURIComponent(redirect as string));
+      } else {
+        setRedirectUrl(RouteEnum.MY_LEARNING_PATH);
+      }
+    }
+  }, []);
   const handleLogin = async (data: LoginCredentials) => {
     setIsLoading(true);
     loginApiCall(data)
       .then((res) => {
-        router.push(RouteEnum.MY_LEARNING_PATH);
+        router.replace(redirectUrl as string);
         toast.success(res.message);
         setIsLoading(false);
       })

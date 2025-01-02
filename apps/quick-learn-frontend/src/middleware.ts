@@ -8,6 +8,7 @@ const PUBLIC_ROUTES = [
   RouteEnum.LOGIN,
   RouteEnum.FORGOT_PASSWORD,
   RouteEnum.RESET_PASSWORD,
+  RouteEnum.DAILY_LESSONS,
 ];
 const LOGIN_ROUTE = RouteEnum.LOGIN;
 const ADMIN_ROUTES = [
@@ -25,7 +26,7 @@ const isEditorRoute = (path: string) =>
   EDITOR_ROUTES.some((route) => path.startsWith(route));
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search, origin } = request.nextUrl;
   const authToken = request.cookies.get('refresh_token')?.value;
   const userRole = request.cookies.get('user_role')?.value;
   // Public routes
@@ -37,7 +38,11 @@ export async function middleware(request: NextRequest) {
 
   // Protected routes
   if (!authToken) {
-    return NextResponse.redirect(new URL(LOGIN_ROUTE, request.url));
+    // Preserve the original URL (path + search params) in the redirect query parameter
+    const redirectUrl = encodeURIComponent(`${pathname}${search}`);
+    const loginUrl = new URL(LOGIN_ROUTE, origin);
+    loginUrl.searchParams.set('redirect', redirectUrl);
+    return NextResponse.redirect(loginUrl);
   }
 
   // Check if the route is admin-only and user has the correct role

@@ -154,7 +154,7 @@ const AssignDataModal: FC<Props> = ({
               className="overflow-y-auto h-[35rem] scrollbar-hide"
             >
               <div
-                className="grid grid-cols-2 gap-4 md:grid-cols-4"
+                className="columns-2 md:columns-4 gap-4"
                 id="brand"
                 role="tabpanel"
                 aria-labelledby="brand-tab"
@@ -166,7 +166,7 @@ const AssignDataModal: FC<Props> = ({
                   );
                   const isOpen = openAccordions.includes(ele.name);
                   return (
-                    <div key={ele.name}>
+                    <div key={ele.name} className="break-inside-avoid mb-4">
                       {
                         <Accordion
                           collapseAll

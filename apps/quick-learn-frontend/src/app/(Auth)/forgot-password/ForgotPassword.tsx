@@ -1,7 +1,7 @@
 'use client';
 import { z } from 'zod';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { forgotPasswordSchema } from './forgotPasswordSchema';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
@@ -14,6 +14,7 @@ import { en } from '@src/constants/lang/en';
 
 const ForgotPassword = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const forgotPasswordFields: FieldConfig[] = [
     {
       label: 'Your Email',
@@ -25,12 +26,15 @@ const ForgotPassword = () => {
   type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
   const handleForgotPassword = async (data: ForgotPasswordFormData) => {
+    setIsLoading(true);
     forgotPasswordApiCall({ email: data.email })
       .then((res) => {
         toast.success(res.message);
         router.push(RouteEnum.LOGIN);
       })
-      .catch((err) => showApiErrorInToast(err));
+      .catch((err) => {
+        showApiErrorInToast(err);
+      });
   };
   return (
     <>
@@ -40,6 +44,7 @@ const ForgotPassword = () => {
         onSubmit={handleForgotPassword}
         buttonText="Request Password Reset Instructions"
         id="forgotPasswordForm"
+        isLoading={isLoading}
         bigButton={true}
       />
       <p className="text-sm font-light text-gray-500 dark:text-gray-400">

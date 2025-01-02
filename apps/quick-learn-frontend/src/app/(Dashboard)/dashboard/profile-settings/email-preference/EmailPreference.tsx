@@ -3,7 +3,10 @@ import {
   getUserPreferencesService,
   updateUserPreferencesService,
 } from '@src/apiServices/profileService';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
+import {
+  showApiErrorInToast,
+  showApiMessageInToast,
+} from '@src/utils/toastUtils';
 import React, { useEffect, useState } from 'react';
 import EmailPreferenceSkeleton from './EmailPreferenceSkeleton';
 import { en } from '@src/constants/lang/en';
@@ -14,7 +17,10 @@ const EmailPreference = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsLoading(true);
     updateUserPreferencesService(e.target.checked)
-      .then((res) => setIsEmailChecked(res.data.preference))
+      .then((res) => {
+        setIsEmailChecked(res.data.preference);
+        showApiMessageInToast(res);
+      })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };

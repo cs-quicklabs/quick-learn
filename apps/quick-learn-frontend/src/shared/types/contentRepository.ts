@@ -47,7 +47,7 @@ export interface TCourse extends TCreateCourse {
   updated_at: string;
   lessons?: TLesson[] | [];
   updated_by?: TUser;
-  lesson_ids?: number[];
+  lesson_ids?: { id: number; name: string }[];
 }
 
 export type TAssignModalMetadata = {
@@ -92,8 +92,26 @@ export type TUserCourse = {
   description: string;
   percentage?: number;
   lessons?: TUserLesson[];
-  lesson_ids?: number[];
+  lesson_ids?: { id: number; name: string }[];
   roadmaps?: TUserRoadmap[];
+};
+
+interface Lesson {
+  name: string;
+}
+
+export type TUserDailyProgress = {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  token: string;
+  user_id: number;
+  lesson_id: number;
+  course_id: number;
+  status: string;
+  expiresAt: string;
+  lesson: Lesson;
+  event_at?: string;
 };
 
 export type TUserLesson = {
@@ -101,4 +119,25 @@ export type TUserLesson = {
   name: string;
   content: string;
   completed: boolean;
+};
+
+export type SearchedLesson = {
+  id: number;
+  name: string;
+  course_id: number;
+  roadmap_id: number;
+};
+export type SearchedCourseOrRoadpmap = {
+  id: number;
+  name: string;
+};
+export type SearchedRoadmap = {
+  id: number;
+  name: string;
+};
+
+export type SearchedQuery = {
+  Roadmaps: SearchedRoadmap[];
+  Courses: SearchedCourseOrRoadpmap[];
+  Lessons: SearchedCourseOrRoadpmap[];
 };

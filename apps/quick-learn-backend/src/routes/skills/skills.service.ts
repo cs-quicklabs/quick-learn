@@ -28,7 +28,8 @@ export class SkillsService extends BasicCrudService<SkillEntity> {
   async updateSkill(id: number, updateSkillDto: UpdateSkillDto) {
     const skill = await this.get({ id });
     const skillByName = await this.get({ name: ILike(updateSkillDto.name) });
-    if (skillByName && skillByName.id !== skill.id) {
+    const skillNameId = skillByName && skillByName.id !== skill.id;
+    if (skillNameId) {
       throw new BadRequestException('Skill already exists.');
     }
     await this.update({ id }, updateSkillDto);

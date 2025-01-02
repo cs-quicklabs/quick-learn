@@ -40,10 +40,22 @@ const ContentRepository = () => {
   const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
 
   useEffect(() => {
-    dispatch(fetchRoadmaps());
-    dispatch(fetchMetadata());
+    const fetchData = async () => {
+      try {
+        // Fetch the roadmaps and metadata concurrently
+        await Promise.all([
+          dispatch(fetchRoadmaps()),
+          dispatch(fetchMetadata()),
+        ]);
+      } catch (err) {
+        // Log the error to the console for debugging
+        console.error('Error fetching roadmaps and metadata:', err);
+      }
+    };
+
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch]);
 
   function onSubmit(data: AddEditRoadmapData) {
     setIsModalLoading(true);
@@ -93,7 +105,10 @@ const ContentRepository = () => {
           </div>
 
           {roadmaps.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div
+              style={{ scrollbarWidth: 'thin' }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4  pr-2"
+            >
               <CreateNewCard
                 title={en.contentRepository.createNewRoadmap}
                 onAdd={() => setOpenAddModal(true)}
@@ -138,7 +153,10 @@ const ContentRepository = () => {
           </div>
 
           {courses.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div
+              style={{ scrollbarWidth: 'thin' }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 pr-2"
+            >
               {courses.map((item) => (
                 <Card
                   key={item.id}

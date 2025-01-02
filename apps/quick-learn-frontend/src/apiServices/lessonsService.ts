@@ -1,11 +1,18 @@
-import { TLesson } from '@src/shared/types/contentRepository';
+import {
+  TLesson,
+  TUserDailyProgress,
+} from '@src/shared/types/contentRepository';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
-import { ContentRepositoryApiEnum } from '@src/constants/api.enum';
+import {
+  ContentRepositoryApiEnum,
+  DailyLessionEnum,
+} from '@src/constants/api.enum';
 import {
   LessonProgress,
   LessonStatus,
   UserLessonProgress,
 } from '@src/shared/types/LessonProgressTypes';
+import { TUser } from '@src/shared/types/userTypes';
 
 export const getArchivedLessons = async (): Promise<
   AxiosSuccessResponse<TLesson[]>
@@ -60,12 +67,28 @@ export const markAsDone = async (
   lessonId: string,
   courseId: string,
   isCompleted: boolean,
+  userId?: number,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId}${
+      userId ? `/${userId}` : ''
+    }`,
+    {
+      courseId: parseInt(courseId),
+      isCompleted: isCompleted,
+    },
+  );
+  return response.data;
+};
+
+export const markAsDonePublic = async (
+  lessonId: string,
+  courseId: string,
+  isCompleted: boolean,
   userId: number,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId} ${
-      userId ? `/${userId}` : ''
-    }`,
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete-public/${lessonId}/${userId}`,
     {
       courseId: parseInt(courseId),
       isCompleted: isCompleted,
@@ -96,6 +119,16 @@ export const getLessonStatus = async (
   return response.data;
 };
 
+export const getLessonStatusPublic = async (
+  LessonId: string,
+  userId?: number,
+): Promise<AxiosSuccessResponse<LessonStatus>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<LessonStatus>>(
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/check-public/${LessonId}/${userId}`,
+  );
+  return response.data;
+};
+
 export const getUserProgress = async (
   userId?: number | null,
 ): Promise<AxiosSuccessResponse<UserLessonProgress[]>> => {
@@ -105,6 +138,32 @@ export const getUserProgress = async (
     `${ContentRepositoryApiEnum.LESSON_PROGRESS}/userprogress${
       userId ? `/${userId}` : ''
     }`,
+  );
+  return response.data;
+};
+
+export const getUserDailyLessonProgress = async (
+  userId: number,
+): Promise<AxiosSuccessResponse<TUserDailyProgress[]>> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<TUserDailyProgress[]>
+  >(`${ContentRepositoryApiEnum.LESSON_PROGRESS}/daily-lesson/${userId}`);
+  return response.data;
+};
+
+export const getDailyLessionDetail = async (
+  lessonId: string,
+  courseId: string,
+  token: string,
+): Promise<
+  AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
+> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
+  >(
+    `${DailyLessionEnum.GET_DAILY_LESSON_DETAILS.replace(':lesson', lessonId)
+      .replace(':course', courseId)
+      .replace(':token', token)}`,
   );
   return response.data;
 };

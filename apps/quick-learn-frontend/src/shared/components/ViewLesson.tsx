@@ -16,19 +16,23 @@ const LessonHeader = memo(
     firstName,
     lastName,
     createdAt,
+    showCreatedBy,
   }: {
     name: string;
     firstName?: string;
     lastName?: string;
     createdAt?: string | Date;
+    showCreatedBy?: boolean;
   }) => (
     <div className="px-4 mb-8 text-center sm:px-6 lg:px-8">
       <div className="items-baseline">
         <h1 className="text-5xl font-extrabold leading-tight">{name}</h1>
-        <p className="mt-1 ml-1 text-sm text-gray-500">
-          {firstName} {lastName} {en.component.addLessonOn}{' '}
-          {createdAt && format(new Date(createdAt), DateFormats.shortDate)}
-        </p>
+        {showCreatedBy && (
+          <p className="mt-1 ml-1 text-sm text-gray-500">
+            {firstName} {lastName} {en.component.addLessonOn}{' '}
+            {createdAt && format(new Date(createdAt), DateFormats.shortDate)}
+          </p>
+        )}
       </div>
     </div>
   ),
@@ -115,6 +119,7 @@ interface Props {
   isApproved?: boolean;
   setIsApproved?: (value: boolean) => void;
   isPending?: boolean;
+  showCreatedBy?: boolean;
 }
 
 const ViewLesson: FC<Props> = ({
@@ -123,6 +128,7 @@ const ViewLesson: FC<Props> = ({
   setIsApproved,
   links,
   isPending = false,
+  showCreatedBy = true,
 }) => {
   useNavbarManagement();
 
@@ -138,6 +144,7 @@ const ViewLesson: FC<Props> = ({
         firstName={lesson?.created_by_user?.first_name}
         lastName={lesson?.created_by_user?.last_name}
         createdAt={lesson?.created_at}
+        showCreatedBy={showCreatedBy}
       />
 
       <LessonContent content={content} />

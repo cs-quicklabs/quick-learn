@@ -121,10 +121,8 @@ const RoadmapDetails = () => {
       return;
     }
 
-    if (!roadmapFromStore) {
-      fetchRoadmap();
-    }
-  }, [roadmapId, roadmapFromStore, dispatch, router]);
+    fetchRoadmap();
+  }, [roadmapId, dispatch, router]);
 
   useEffect(() => {
     const data = allCourseCategories.map((item) => ({

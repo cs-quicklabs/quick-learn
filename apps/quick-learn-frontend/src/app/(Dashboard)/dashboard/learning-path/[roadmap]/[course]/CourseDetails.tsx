@@ -261,6 +261,7 @@ const CourseDetails = () => {
                             }
                           : undefined
                       }
+                      isLesson={true}
                     />
                   </motion.li>
                 );

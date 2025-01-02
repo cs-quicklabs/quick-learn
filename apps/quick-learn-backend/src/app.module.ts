@@ -5,6 +5,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigModule } from '@nestjs/config';
 import databaseConfig from './database/config/database.config';
 import appConfig from './config/app.config';
+import { ScheduleModule } from '@nestjs/schedule';
 import {
   AuthModule,
   HealthCheckModule,
@@ -36,6 +37,7 @@ import { LessonProgressModule } from './routes/lesson-progress/lesson-progress.m
         return new DataSource(options).initialize();
       },
     }),
+    ScheduleModule.forRoot(),
     HealthCheckModule,
     MetadataModule,
     FileModule,
