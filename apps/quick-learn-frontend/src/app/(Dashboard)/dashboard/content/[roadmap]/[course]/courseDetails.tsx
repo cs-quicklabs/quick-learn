@@ -99,9 +99,7 @@ const CourseDetails = () => {
       }
     };
 
-    if (!courseFromStore) {
-      fetchCourse();
-    }
+    fetchCourse();
   }, [courseId, courseFromStore]);
 
   useEffect(() => {

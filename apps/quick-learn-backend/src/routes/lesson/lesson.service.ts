@@ -94,23 +94,22 @@ export class LessonService extends PaginationService<LessonEntity> {
   ) {
     const lesson = await this.getLesson(id);
 
-    // GET ALL IMAGE URL USED IN EXISTING LESSION CONTENT
     const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
       lesson.content,
       undefined,
       true,
     );
-    // GET ALL IMAGE URL USED IN INCOMING LESSION CONTENT
+
     const incomingContentImageUrl = Helpers.extractImageUrlsFromHtml(
       updateLessonDto.content,
       undefined,
       true,
     );
-    // CHECK IF ANY IMAGE URL IS NOW NOT USED IN UPDATED CONTENT
+
     const UrlsToBeDeletedFromBucket = existingContentImageUrl.filter(
       (urls) => !incomingContentImageUrl.includes(urls),
     );
-    // DELETE IMAGE FROM BUCKET (FOR UPDATE LESSION)
+
     if (UrlsToBeDeletedFromBucket && UrlsToBeDeletedFromBucket.length) {
       await this.FileService.deleteFiles(UrlsToBeDeletedFromBucket);
     }
@@ -123,11 +122,11 @@ export class LessonService extends PaginationService<LessonEntity> {
 
     // checking if the user is admin or not
     // if user is admin then approve the lesson
-    if (
-      [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
-        user.user_type_id,
-      )
-    ) {
+    const checkUserAdminOrNot = [
+      UserTypeIdEnum.SUPERADMIN,
+      UserTypeIdEnum.ADMIN,
+    ].includes(user.user_type_id);
+    if (checkUserAdminOrNot) {
       payload = {
         ...payload,
         approved: true,
@@ -250,13 +249,15 @@ export class LessonService extends PaginationService<LessonEntity> {
   async deleteLesson(id: number): Promise<void> {
     const lesson = await this.getLesson(id);
 
-    // GET ALL IMAGE URL USED IN EXISTING LESSION CONTENT
     const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
       lesson.content,
       undefined,
       true,
     );
-    if (existingContentImageUrl && existingContentImageUrl.length) {
+
+    const compareImgUrlLength =
+      existingContentImageUrl && existingContentImageUrl.length;
+    if (compareImgUrlLength) {
       await this.FileService.deleteFiles(existingContentImageUrl);
     }
 
@@ -376,6 +377,7 @@ export class LessonService extends PaginationService<LessonEntity> {
         course_id: course_id,
         lesson_id: lesson_id,
         token: token,
+        status: DailyLessonEnum.PENDING,
       },
       {
         status: DailyLessonEnum.COMPLETED,

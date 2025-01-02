@@ -100,7 +100,7 @@ const DailyLessonDetail = () => {
         })
         .catch((err) => {
           showApiErrorInToast(err);
-          router.replace(RouteEnum.MY_LEARNING_PATH);
+          router.replace(RouteEnum.LOGIN);
         });
     }
   }, [courseId, token, lesson, router]);
