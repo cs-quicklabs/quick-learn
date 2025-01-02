@@ -13,16 +13,19 @@ import { en } from '@src/constants/lang/en';
 const EmailPreference = () => {
   const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false); // New state for tracking update
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsLoading(true);
-    updateUserPreferencesService(e.target.checked)
+    const newPreference = e.target.checked;
+    setIsUpdating(true); // Set updating to true when user clicks checkbox
+    setIsEmailChecked(newPreference); // Immediately update the checkbox state
+
+    updateUserPreferencesService(newPreference)
       .then((res) => {
-        setIsEmailChecked(res.data.preference);
         showApiMessageInToast(res);
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsUpdating(false)); // Reset updating state after request completes
   };
 
   useEffect(() => {
@@ -31,7 +34,7 @@ const EmailPreference = () => {
       .then((res) => setIsEmailChecked(res.data.preference))
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
-  }, [isEmailChecked]);
+  }, []);
 
   if (isLoading) return <EmailPreferenceSkeleton />;
   return (
@@ -52,7 +55,8 @@ const EmailPreference = () => {
               type="checkbox"
               checked={isEmailChecked}
               onChange={handleChange}
-              className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-none transition duration-100"
+              disabled={isUpdating}
+              className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-none "
             />
           </div>
           <div className="ms-2 text-sm">
