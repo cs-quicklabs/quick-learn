@@ -60,7 +60,7 @@ export default registerAs<AppConfig>('app', () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {
-    env: process.env.NODE_ENV || EnvironmentEnum.Production,
+    env: process.env.ENV || EnvironmentEnum.Production,
     name: process.env.APP_NAME || 'Quick Learn',
     workingDirectory: process.env.PWD || process.cwd(),
     frontendDomain: process.env.FRONTEND_DOMAIN ?? 'http://localhost:3000',
