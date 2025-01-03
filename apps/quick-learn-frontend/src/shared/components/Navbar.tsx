@@ -186,7 +186,7 @@ const Navbar = () => {
             </div>
 
             <div className="flex flex-1 justify-center align-center px-2 lg:ml-6 lg:justify-end">
-              <div className="flex align-center w-full max-w-lg lg:max-w-xs">
+              <div className="flex align-center w-full max-w-lg ">
                 <label htmlFor="search" className="sr-only">
                   {en.component.searchRoadmapCourseLessons}
                 </label>

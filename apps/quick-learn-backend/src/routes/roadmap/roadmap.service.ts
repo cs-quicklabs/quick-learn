@@ -30,7 +30,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   }
 
   async getAllRoadmaps(): Promise<RoadmapEntity[]> {
-    return await this.roadmapRepository
+    return this.roadmapRepository
       .createQueryBuilder('roadmap')
       .andWhere('roadmap.archived = :archived', { archived: false })
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
@@ -62,6 +62,45 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       )
       .orderBy('roadmap.created_at', 'DESC')
       .getMany();
+  }
+
+  async findSearchedRoadmap(isMember = false, query = '', userId) {
+    const queryBuilder = this.repository
+      .createQueryBuilder('roadmap')
+      .andWhere('roadmap.archived = :roadmapArchived', {
+        roadmapArchived: false,
+      })
+      .leftJoin(
+        'roadmap.courses',
+        'courses',
+        'courses.archived = :courseArchived',
+        {
+          courseArchived: false,
+        },
+      )
+      .leftJoin(
+        'courses.lessons',
+        'lessons',
+        'lessons.archived = :lessonArchived',
+        {
+          lessonArchived: false,
+        },
+      )
+      .addSelect('COUNT(DISTINCT courses.id)', 'courseCount')
+      .addSelect('COUNT(DISTINCT lessons.id)', 'lessonCount')
+      .andHaving('COUNT(DISTINCT courses.id) > 0')
+      .andHaving('COUNT(DISTINCT lessons.id) > 0')
+      .andWhere('roadmap.name ILIKE :query', { query: `%${query}%` })
+      .groupBy('roadmap.id') // Group by roadmap to use aggregate functions
+      .select(['roadmap.id', 'roadmap.name']); // Correctly selecting multiple columns
+
+    if (isMember) {
+      queryBuilder
+        .innerJoin('roadmap.users', 'users')
+        .andWhere('users.id = :userId', { userId });
+    }
+
+    return queryBuilder.limit(3).getMany();
   }
 
   async findAllArchived(

@@ -378,4 +378,39 @@ export class LessonService extends PaginationService<LessonEntity> {
       },
     );
   }
+
+  async getSearchedLessons(isMember = false, query = '', userId) {
+    const queryBuilder = this.repository
+      .createQueryBuilder('lesson')
+      .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
+      .leftJoin(
+        'lesson.course',
+        'course',
+        'course.archived = :courseArchived',
+        { courseArchived: false },
+      )
+      .leftJoin(
+        'course.roadmaps',
+        'roadmaps',
+        'roadmaps.archived = :roadmapArchived',
+        { roadmapArchived: false },
+      )
+      .andWhere('lesson.name ILIKE :query', { query: `%${query}%` });
+
+    if (isMember) {
+      queryBuilder
+        .innerJoin('roadmaps.users', 'users')
+        .andWhere('users.id = :userId', { userId });
+    }
+
+    return queryBuilder
+      .select([
+        'lesson.id AS id',
+        'lesson.name AS name',
+        'course.id AS course_id',
+        'roadmaps.id AS roadmap_id',
+      ])
+      .limit(3)
+      .getRawMany(); // Changed from getMany() to getRawMany()
+  }
 }
