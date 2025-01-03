@@ -5,7 +5,7 @@ import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { SessionService } from '../session.service';
 import Helpers from '@src/common/utils/helper';
-
+import { en } from '@src/lang/en';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -40,7 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Check if token is expired
     if (Number(session.expires) < Date.now()) {
       Helpers.clearCookies(req.res);
-      throw new UnauthorizedException('Refresh token expired');
+      throw new UnauthorizedException(en.refreshTokenExpired);
     }
 
     return session.user;

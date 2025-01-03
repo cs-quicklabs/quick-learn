@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../../../common/decorators/roles.decorator';
 import { IS_PUBLIC_KEY } from '../../../common/decorators/public.decorator';
-
+import { en } from '@src/lang/en';
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
@@ -31,7 +31,7 @@ export class RolesGuard implements CanActivate {
 
     // If no user types are specified, deny access
     if (!allowedUserTypes || allowedUserTypes.length === 0) {
-      throw new UnauthorizedException('No user types defined for this route');
+      throw new UnauthorizedException(en.userTypeDefined);
     }
 
     // Get the request from the execution context
@@ -44,7 +44,7 @@ export class RolesGuard implements CanActivate {
     );
 
     if (!hasAllowedUserType) {
-      throw new UnauthorizedException('Insufficient permissions');
+      throw new UnauthorizedException(en.insufficientPermission);
     }
 
     return true;
