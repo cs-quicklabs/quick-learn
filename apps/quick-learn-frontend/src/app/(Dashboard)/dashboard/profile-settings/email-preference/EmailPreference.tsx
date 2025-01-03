@@ -14,24 +14,36 @@ const EmailPreference = () => {
   const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsLoading(true);
-    updateUserPreferencesService(e.target.checked)
-      .then((res) => {
-        setIsEmailChecked(res.data.preference);
-        showApiMessageInToast(res);
-      })
-      .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
-  };
-
   useEffect(() => {
     setIsLoading(true);
     getUserPreferencesService()
-      .then((res) => setIsEmailChecked(res.data.preference))
+      .then((res) => {
+        if (res?.data?.preference !== undefined) {
+          setIsEmailChecked(res.data.preference);
+        }
+      })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
-  }, [isEmailChecked]);
+  }, []); // Dependency array is empty to ensure this runs only once
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPreference = e.target.checked;
+    // Optimistic update
+    setIsEmailChecked(newPreference);
+    setIsLoading(true);
+    // API call to update preference
+    updateUserPreferencesService(newPreference)
+      .then((res) => {
+        if (res?.data?.preference !== undefined) {
+          setIsEmailChecked(res.data.preference); // Sync state with server
+        }
+        showApiMessageInToast(res);
+      })
+      .catch((err) => {
+        setIsEmailChecked(!newPreference); // Revert state on error
+        showApiErrorInToast(err);
+      })
+      .finally(() => setIsLoading(false));
+  };
 
   if (isLoading) return <EmailPreferenceSkeleton />;
   return (
