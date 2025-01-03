@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
-
+import { en } from '@src/lang/en';
 @Injectable()
 export class LessonProgressService {
   constructor(
@@ -27,9 +27,8 @@ export class LessonProgressService {
     });
 
     if (!lessonExists) {
-      throw new NotFoundException('Lesson not found in this course');
+      throw new NotFoundException(en.lessonNotFoundInCourse);
     }
-
     const existingProgress = await this.userLessonProgressRepository.findOne({
       where: {
         user_id: userId,
