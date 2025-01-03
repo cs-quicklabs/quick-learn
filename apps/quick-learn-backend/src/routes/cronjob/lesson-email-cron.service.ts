@@ -1,10 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  LessonTokenEntity,
-  UserEntity,
-  UserLessonProgressEntity,
-} from '@src/entities';
+import { LessonTokenEntity, UserEntity } from '@src/entities';
 import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { nanoid } from 'nanoid';
@@ -18,23 +14,22 @@ import {
 import { EMAIL_BODY } from '@src/common/constants/emailBody';
 import { EnvironmentEnum } from '@src/common/constants/constants';
 import { ConfigService } from '@nestjs/config';
+import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 
 @Injectable()
 export class LessonEmailService {
   private frontendURL: string;
+  private readonly logger = new Logger(LessonEmailService.name);
+
   constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
     private readonly usersService: UsersService,
-    @InjectRepository(UserLessonProgressEntity)
-    private userProgresssRepository: Repository<UserLessonProgressEntity>,
-    @InjectRepository(LessonTokenEntity)
-    private LessonTokenRepository: Repository<LessonTokenEntity>,
-    private emailService: EmailService,
-    private readonly logger: Logger,
+    private readonly emailService: EmailService,
     private readonly configService: ConfigService,
+    private readonly lessonProgresssService: LessonProgressService,
+    // TODO: Replace this repository injection with a service
+    @InjectRepository(LessonTokenEntity)
+    private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {
-    this.logger = new Logger(LessonEmailService.name);
     this.frontendURL = this.configService.getOrThrow('app.frontendDomain', {
       infer: true,
     });
@@ -57,9 +52,11 @@ export class LessonEmailService {
 
   async sendLessonEmails(greeting: string) {
     // FIND ALL ACTIVE USERS
-    const allActiveUsers = await this.userRepository.find({
-      where: { active: true, email_alert_preference: true },
+    const allActiveUsers = await this.usersService.getMany({
+      active: true,
+      email_alert_preference: true,
     });
+
     allActiveUsers.forEach(async (users: UserEntity) => {
       const currentUserID = users.id;
       // GET USER READ LESSONS
@@ -147,10 +144,8 @@ export class LessonEmailService {
     });
 
     // FIND ALL LESSIONS THAT HAVE NOT BEEN COMPLETED
-    const userReadLessions = await this.userProgresssRepository.find({
-      where: {
-        user_id: userID,
-      },
+    const userReadLessions = await this.lessonProgresssService.getMany({
+      user_id: userID,
     });
 
     // FIND ALL LESSIONS THAT HAVE NOT BEEN COMPLETED
@@ -169,8 +164,9 @@ export class LessonEmailService {
     };
   }
 
+  // RESET USER READING HISTORY
   private async resetUserReadingHistory(userID: number) {
-    await this.userProgresssRepository.delete({
+    await this.lessonProgresssService.delete({
       user_id: userID,
     });
   }

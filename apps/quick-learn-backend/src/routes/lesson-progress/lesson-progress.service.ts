@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
+import { BasicCrudService } from '@src/common/services';
 
 @Injectable()
-export class LessonProgressService {
+export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
     @InjectRepository(UserLessonProgressEntity)
     private userLessonProgressRepository: Repository<UserLessonProgressEntity>,
@@ -15,7 +16,9 @@ export class LessonProgressService {
     private courseRepository: Repository<CourseEntity>,
     @InjectRepository(LessonTokenEntity)
     private LessonTokenRepository: Repository<LessonTokenEntity>,
-  ) {}
+  ) {
+    super(userLessonProgressRepository);
+  }
 
   async markLessonAsCompleted(
     userId: number,

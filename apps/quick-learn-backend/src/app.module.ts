@@ -18,12 +18,13 @@ import {
   RoadmapModule,
   CourseModule,
   LessonModule,
+  MetadataModule,
+  LessonProgressModule,
+  CronjobModule,
 } from './routes';
 import { FileModule } from './file/file.module';
 import fileConfig from './file/config/file.config';
 import authConfig from './routes/auth/config/auth.config';
-import { MetadataModule } from './routes/metadata/metadata.module';
-import { LessonProgressModule } from './routes/lesson-progress/lesson-progress.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { LessonProgressModule } from './routes/lesson-progress/lesson-progress.m
     }),
     ScheduleModule.forRoot(),
     HealthCheckModule,
+    CronjobModule,
     MetadataModule,
     FileModule,
     UsersModule,
