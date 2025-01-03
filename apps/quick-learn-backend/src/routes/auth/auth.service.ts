@@ -311,7 +311,7 @@ export class AuthService {
     expiresIn: number,
   ): Promise<string> {
     return this.jwtService.signAsync(payload, {
-      secret:secretConfigKey,
+      secret: secretConfigKey,
       expiresIn: Date.now() + expiresIn,
     });
   }
