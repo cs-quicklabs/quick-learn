@@ -42,6 +42,8 @@ export class AuthService {
   private accessTokenExpiresIn: number;
   private refreshTokenExpiresIn: number;
   private refreshTokenRememberMeExpiresIn: number;
+  private authSecret: string;
+  private authRefreshSecret: string;
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -60,6 +62,13 @@ export class AuthService {
     );
     this.refreshTokenRememberMeExpiresIn = this.getTokenExpiresInMilliSeconds(
       'auth.refreshRememberMeExpires',
+    );
+    this.authSecret = this.configService.getOrThrow('auth.secret', {
+      infer: true,
+    });
+    this.authRefreshSecret = this.configService.getOrThrow(
+      'auth.refreshSecret',
+      { infer: true },
     );
   }
 
@@ -236,7 +245,7 @@ export class AuthService {
         role: session.user.user_type_id,
         sessionId: session.id,
       },
-      'auth.secret',
+      this.authSecret,
       this.accessTokenExpiresIn,
     );
 
@@ -268,7 +277,7 @@ export class AuthService {
           role: data.role,
           sessionId: data.sessionId,
         },
-        'auth.secret',
+        this.authSecret,
         this.accessTokenExpiresIn,
       ),
       await this.generateToken(
@@ -276,7 +285,7 @@ export class AuthService {
           sessionId: data.sessionId,
           hash: data.hash,
         },
-        'auth.refreshSecret',
+        this.authRefreshSecret,
         expires,
       ),
     ]);
