@@ -292,7 +292,7 @@ const Lesson = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-
+      setIsUpdating(true);
       // Set new timeout for 2 seconds after user stops typing
       timeoutRef.current = setTimeout(() => {
         updateContent(field, value);
