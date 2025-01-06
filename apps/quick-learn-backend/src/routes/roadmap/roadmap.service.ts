@@ -85,22 +85,24 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         {
           lessonArchived: false,
         },
-      )
-      .addSelect('COUNT(DISTINCT courses.id)', 'courseCount')
-      .addSelect('COUNT(DISTINCT lessons.id)', 'lessonCount')
-      .andHaving('COUNT(DISTINCT courses.id) > 0')
-      .andHaving('COUNT(DISTINCT lessons.id) > 0')
-      .andWhere('roadmap.name ILIKE :query', { query: `%${query}%` })
-      .groupBy('roadmap.id') // Group by roadmap to use aggregate functions
-      .select(['roadmap.id', 'roadmap.name']); // Correctly selecting multiple columns
+      );
 
     if (isMember) {
       queryBuilder
         .innerJoin('roadmap.users', 'users')
-        .andWhere('users.id = :userId', { userId });
+        .andWhere('users.id = :userId', { userId })
+        .addSelect('COUNT(DISTINCT courses.id)', 'courseCount')
+        .addSelect('COUNT(DISTINCT lessons.id)', 'lessonCount')
+        .andHaving('COUNT(DISTINCT courses.id) > 0')
+        .andHaving('COUNT(DISTINCT lessons.id) > 0');
     }
 
-    return queryBuilder.limit(3).getMany();
+    return queryBuilder
+      .andWhere('roadmap.name ILIKE :query', { query: `%${query}%` })
+      .groupBy('roadmap.id')
+      .select(['roadmap.id', 'roadmap.name'])
+      .limit(3)
+      .getMany();
   }
 
   async findAllArchived(

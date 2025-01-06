@@ -15,7 +15,6 @@ const RouteTab: React.FC<RouteTabProps> = ({
   id,
   name,
   course_id,
-  roadmap_id,
   baseLink,
   type,
   onClick,
@@ -23,10 +22,7 @@ const RouteTab: React.FC<RouteTabProps> = ({
   const navLinks: Record<'roadmaps' | 'courses' | 'lesson', string> = {
     roadmaps: `${baseLink}/${id}`,
     courses: `${baseLink}/course/${id}`,
-    lesson:
-      roadmap_id && course_id
-        ? `${baseLink}/${roadmap_id}/${course_id}/${id}`
-        : '#',
+    lesson: course_id ? `${baseLink}/course/${course_id}/${id}` : '#',
   };
 
   const link = navLinks[type];

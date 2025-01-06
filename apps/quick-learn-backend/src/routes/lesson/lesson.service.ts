@@ -389,7 +389,7 @@ export class LessonService extends PaginationService<LessonEntity> {
         'course.archived = :courseArchived',
         { courseArchived: false },
       )
-      .leftJoin(
+      .innerJoin(
         'course.roadmaps',
         'roadmaps',
         'roadmaps.archived = :roadmapArchived',
@@ -408,8 +408,10 @@ export class LessonService extends PaginationService<LessonEntity> {
         'lesson.id AS id',
         'lesson.name AS name',
         'course.id AS course_id',
-        'roadmaps.id AS roadmap_id',
       ])
+      .groupBy('lesson.id')
+      .addGroupBy('lesson.name')
+      .addGroupBy('course.id')
       .limit(3)
       .getRawMany(); // Changed from getMany() to getRawMany()
   }
