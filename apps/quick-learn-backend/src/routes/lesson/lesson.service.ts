@@ -379,11 +379,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     );
   }
 
-  async getSearchedLessons(
-    userId: number,
-    isMember: boolean = false,
-    query: string = '',
-  ) {
+  async getSearchedLessons(userId: number, isMember = false, query = '') {
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
       .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
@@ -393,7 +389,6 @@ export class LessonService extends PaginationService<LessonEntity> {
         'course.archived = :courseArchived',
         { courseArchived: false },
       )
-
       .andWhere('lesson.name ILIKE :query', { query: `%${query}%` });
 
     if (isMember) {

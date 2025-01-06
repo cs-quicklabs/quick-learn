@@ -64,11 +64,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       .getMany();
   }
 
-  async findSearchedRoadmap(
-    userId: number,
-    isMember: boolean = false,
-    query: string = '',
-  ) {
+  async findSearchedRoadmap(userId: number, isMember = false, query = '') {
     const queryBuilder = this.repository
       .createQueryBuilder('roadmap')
       .andWhere('roadmap.archived = :roadmapArchived', {

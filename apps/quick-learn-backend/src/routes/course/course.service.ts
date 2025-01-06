@@ -498,11 +498,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     return courseDetails;
   }
 
-  async getSearchedCourses(
-    userId: number,
-    isMember: boolean = false,
-    query: string = '',
-  ) {
+  async getSearchedCourses(userId: number, isMember = false, query = '') {
     const queryBuilder = this.repository
       .createQueryBuilder('course')
       .andWhere('course.archived = :courseArchived', { courseArchived: false })
