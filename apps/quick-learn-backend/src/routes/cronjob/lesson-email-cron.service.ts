@@ -20,13 +20,14 @@ import { LessonProgressService } from '../lesson-progress/lesson-progress.servic
 export class LessonEmailService {
   private frontendURL: string;
   private readonly logger = new Logger(LessonEmailService.name);
+  private readonly BATCH_SIZE = 50;
+  private readonly TOKEN_EXPIRY = 3;
 
   constructor(
     private readonly usersService: UsersService,
     private readonly emailService: EmailService,
     private readonly configService: ConfigService,
     private readonly lessonProgresssService: LessonProgressService,
-    // TODO: Replace this repository injection with a service
     @InjectRepository(LessonTokenEntity)
     private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {
@@ -35,83 +36,145 @@ export class LessonEmailService {
     });
   }
 
-  // Runs every day @ 9AM and 5PM
   @Cron('0 9,17 * * *', {
     name: 'sendEveningLessonEmails',
     timeZone: CRON_TIMEZONE,
     disabled: process.env.ENV !== EnvironmentEnum.Production,
   })
-  handleLessonNotification() {
-    const greeting =
-      new Date().getHours() < 12
-        ? DailyLessonGreetings.GOOD_MORNING
-        : DailyLessonGreetings.GOOD_EVENING;
-    this.sendLessonEmails(greeting);
-    this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
+  async handleLessonNotification() {
+    const startTime = Date.now();
+    this.logger.log('Starting lesson notification cron job');
+
+    try {
+      const greeting =
+        new Date().getHours() < 12
+          ? DailyLessonGreetings.GOOD_MORNING
+          : DailyLessonGreetings.GOOD_EVENING;
+
+      await this.sendLessonEmails(greeting);
+
+      const duration = Date.now() - startTime;
+      this.logger.log(`Cron job completed successfully in ${duration}ms`);
+    } catch (error) {
+      this.logger.error(
+        'Failed to complete lesson notification cron job',
+        error,
+      );
+    }
   }
 
   async sendLessonEmails(greeting: string) {
-    // FIND ALL ACTIVE USERS
-    const allActiveUsers = await this.usersService.getMany({
-      active: true,
-      email_alert_preference: true,
-    });
+    let skip = 0;
+    let processedCount = 0;
 
-    allActiveUsers.forEach(async (users: UserEntity) => {
-      const currentUserID = users.id;
-      // GET USER READ LESSONS
-      const userUnReadLessions = await this.getUserUnReadLessions(
-        currentUserID,
-      );
-      if (userUnReadLessions.userUnReadLessions.length > 0) {
-        const randomLessionToSend =
-          userUnReadLessions.userUnReadLessions[
-            Math.floor(
-              Math.random() * userUnReadLessions.userUnReadLessions.length,
-            )
-          ];
-
-        //   CREATE RECORD IN LESSON TOKEN TABLE
-        const userMailTokenRecord = await this.createLessionMailRecord(
-          currentUserID,
-          randomLessionToSend.lesson_id,
-          randomLessionToSend.course_id,
+    try {
+      let userBatch: UserEntity[];
+      do {
+        userBatch = await this.usersService.getMany(
+          {
+            active: true,
+            email_alert_preference: true,
+          },
+          {},
+          [],
+          this.BATCH_SIZE,
+          skip,
         );
 
-        const LessonURL = this.generateURL(
-          randomLessionToSend.lesson_id,
-          randomLessionToSend.course_id,
-          userMailTokenRecord.token,
-        );
+        if (userBatch.length > 0) {
+          await Promise.all(
+            userBatch.map((user) => this.processUserLessons(user, greeting)),
+          );
 
-        const MAIL_BODY = EMAIL_BODY.DAILY_LESSON_EMAIL(
-          greeting,
-          users.first_name,
-          users.last_name,
-          randomLessionToSend.name,
-          LessonURL,
-        );
-
-        this.emailService.email({
-          body: MAIL_BODY,
-          recipients: [users.email],
-          subject: emailSubjects.LESSON_FOR_THE_DAY,
-        });
-      } else {
-        if (userUnReadLessions.assignedRoadmapCount > 0) {
-          // RESET USER READ HISTORY AND SEND EMAIL TO USER
-          this.resetUserReadingHistory(currentUserID);
-          // TODO: IMPLEMENT EMAIL SERVICE
-          const MAIL_BODY = EMAIL_BODY.RESET_READING_HISTORY();
-
-          this.emailService.email({
-            body: MAIL_BODY,
-            recipients: [users.email],
-            subject: emailSubjects.RESET_READING_HISTORY,
-          });
+          processedCount += userBatch.length;
+          this.logger.log(`Processed ${processedCount} users`);
+          skip += this.BATCH_SIZE;
         }
+      } while (userBatch.length > 0);
+    } catch (error) {
+      this.logger.error(`Error in batch processing at offset ${skip}`, error);
+      throw error;
+    }
+  }
+
+  private async processUserLessons(user: UserEntity, greeting: string) {
+    try {
+      const userUnReadLessions = await this.getUserUnReadLessions(user.id);
+
+      if (userUnReadLessions.userUnReadLessions.length > 0) {
+        await this.sendRandomLessonEmail(
+          user,
+          userUnReadLessions.userUnReadLessions,
+          greeting,
+        );
+      } else if (userUnReadLessions.assignedRoadmapCount > 0) {
+        await this.handleResetReadingHistory(user);
       }
-    });
+    } catch (error) {
+      this.logger.error(`Error processing user ${user.id}`, error);
+    }
+  }
+
+  private async sendRandomLessonEmail(
+    user: UserEntity,
+    unreadLessons: Array<{
+      lesson_id: number;
+      name: string;
+      course_id: number;
+      roadmap_id: number;
+    }>,
+    greeting: string,
+  ) {
+    const randomLesson =
+      unreadLessons[Math.floor(Math.random() * unreadLessons.length)];
+
+    try {
+      const userMailTokenRecord = await this.createLessionMailRecord(
+        user.id,
+        randomLesson.lesson_id,
+        randomLesson.course_id,
+      );
+
+      const lessonURL = this.generateURL(
+        randomLesson.lesson_id,
+        randomLesson.course_id,
+        userMailTokenRecord.token,
+      );
+
+      const mailBody = EMAIL_BODY.DAILY_LESSON_EMAIL(
+        greeting,
+        user.first_name,
+        user.last_name,
+        randomLesson.name,
+        lessonURL,
+      );
+
+      await this.emailService.email({
+        body: mailBody,
+        recipients: [user.email],
+        subject: emailSubjects.LESSON_FOR_THE_DAY,
+      });
+    } catch (error) {
+      this.logger.error(`Error sending lesson email to user ${user.id}`, error);
+    }
+  }
+
+  private async handleResetReadingHistory(user: UserEntity) {
+    try {
+      await this.resetUserReadingHistory(user.id);
+      const mailBody = EMAIL_BODY.RESET_READING_HISTORY();
+
+      await this.emailService.email({
+        body: mailBody,
+        recipients: [user.email],
+        subject: emailSubjects.RESET_READING_HISTORY,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error resetting reading history for user ${user.id}`,
+        error,
+      );
+    }
   }
 
   async getUserUnReadLessions(userID: number): Promise<{
@@ -123,28 +186,39 @@ export class LessonEmailService {
     }[];
     assignedRoadmapCount: number;
   }> {
-    const [unreadLessons, assignedRoadmaps] = await Promise.all([
-      this.usersService.getUnreadUserLessons(userID),
-      this.usersService.getUserAssignedRoadmaps(userID, true),
-    ]);
+    try {
+      const [unreadLessons, assignedRoadmaps] = await Promise.all([
+        this.usersService.getUnreadUserLessons(userID),
+        this.usersService.getUserAssignedRoadmaps(userID, true),
+      ]);
 
-    return {
-      userUnReadLessions: unreadLessons,
-      assignedRoadmapCount: assignedRoadmaps,
-    };
+      return {
+        userUnReadLessions: unreadLessons,
+        assignedRoadmapCount: assignedRoadmaps,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error fetching unread lessons for user ${userID}`,
+        error,
+      );
+      throw error;
+    }
   }
 
-  // RESET USER READING HISTORY
   private async resetUserReadingHistory(userID: number) {
-    await this.lessonProgresssService.delete({
-      user_id: userID,
-    });
+    try {
+      await this.lessonProgresssService.delete({
+        user_id: userID,
+      });
+    } catch (error) {
+      this.logger.error(`Error resetting history for user ${userID}`, error);
+      throw error;
+    }
   }
 
   private async generateLessonToken() {
-    // IMPLEMENTED TOKEN GENERATION
     const expiryTime = new Date();
-    expiryTime.setHours(expiryTime.getHours() + 3);
+    expiryTime.setHours(expiryTime.getHours() + this.TOKEN_EXPIRY);
     const token = nanoid(64);
     return {
       expiryTime,
@@ -157,16 +231,24 @@ export class LessonEmailService {
     lesson_id: number,
     course_id: number,
   ) {
-    const token = await this.generateLessonToken();
-    const tokenEntityResponse = await this.LessonTokenRepository.save({
-      user_id: user_id,
-      lesson_id: lesson_id,
-      course_id: course_id,
-      expiresAt: token.expiryTime,
-      token: token.token,
-    });
-
-    return tokenEntityResponse;
+    try {
+      const token = await this.generateLessonToken();
+      // TODO: Update this table rather than storing token for each lesson
+      // TODO: Need a better way to handle this
+      return await this.LessonTokenRepository.save({
+        user_id,
+        lesson_id,
+        course_id,
+        expiresAt: token.expiryTime,
+        token: token.token,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error creating lesson mail record for user ${user_id}`,
+        error,
+      );
+      throw error;
+    }
   }
 
   private readonly generateURL = (
@@ -174,7 +256,6 @@ export class LessonEmailService {
     course_id: number,
     token: string,
   ) => {
-    // SEND EMAIL TO USER
     return `${this.frontendURL}/daily-lesson/${lesson_id}?course_id=${course_id}&token=${token}`;
   };
 }
