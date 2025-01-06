@@ -151,7 +151,7 @@ export class LessonController {
   }
 
   @ApiOperation({ summary: 'Get all archived lessons.' })
-  @Get('archived')
+  @Post('archived')
   async findAllArchivedLessons(
     @CurrentUser() user: UserEntity,
     @Query() paginationDto: PaginationDto,

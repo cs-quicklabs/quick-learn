@@ -84,18 +84,15 @@ export const deleteRoadmap = async (
 export const getArchivedRoadmaps = async (
   page: number,
   q = '',
+  paginate = true,
 ): Promise<AxiosSuccessResponse<PaginateWrapper<TRoadmap[]>>> => {
-  // const body = {
-  //   mode: 'paginate',
-  //   page,
-  //   q,
-  // };
   const response = await axiosInstance.get<
     AxiosSuccessResponse<PaginateWrapper<TRoadmap[]>>
   >(ArchivedApiEnum.ARCHIVED_ROADMAPS, {
     params: {
-      page, // Adding `page` as a query parameter
-      q, // Adding `q` as a query parameter
+      page,
+      q,
+      paginate,
     },
   });
   return response.data;

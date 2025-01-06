@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -30,19 +29,6 @@ import { CourseArchiveDto } from './dto/course-archive.dto';
 @UseGuards(JwtAuthGuard)
 export class CourseController {
   constructor(private service: CourseService) {}
-
-  // @Get('/content')
-  // @ApiOperation({ summary: 'Get all content page courses' })
-  // async getCourses(
-  //   @Body() paginationDto: PaginationDto,
-  // ): Promise<SuccessResponse> {
-  //   const data = await this.service.getContentRepoCourses(
-  //     paginationDto,
-  //     { is_community_available: true, archived: false },
-  //     [],
-  //   );
-  //   return new SuccessResponse(en.GetAllCourses, data);
-  // }
 
   // @Get('/my-courses')
   // @ApiOperation({ summary: 'Get all assigned roadmap courses' })
