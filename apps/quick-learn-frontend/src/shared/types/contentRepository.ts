@@ -125,7 +125,6 @@ export type SearchedLesson = {
   id: number;
   name: string;
   course_id: number;
-  roadmap_id: number;
 };
 export type SearchedCourseOrRoadpmap = {
   id: number;
