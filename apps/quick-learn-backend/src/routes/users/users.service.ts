@@ -355,9 +355,9 @@ export class UsersService extends PaginationService<UserEntity> {
     const isMember = usertype_id === UserTypeId.MEMBER;
 
     const [roadmaps, courses, lessons] = await Promise.all([
-      this.roadmapService.findSearchedRoadmap(isMember, query, userId),
-      this.courseService.getSearchedCourses(isMember, query, userId),
-      this.lessonService.getSearchedLessons(isMember, query, userId),
+      this.roadmapService.findSearchedRoadmap(userId, isMember, query),
+      this.courseService.getSearchedCourses(userId, isMember, query),
+      this.lessonService.getSearchedLessons(userId, isMember, query),
     ]);
 
     return { Roadmaps: roadmaps, Courses: courses, Lessons: lessons };

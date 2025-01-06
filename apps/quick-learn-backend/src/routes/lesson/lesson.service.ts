@@ -379,7 +379,11 @@ export class LessonService extends PaginationService<LessonEntity> {
     );
   }
 
-  async getSearchedLessons(isMember = false, query = '', userId) {
+  async getSearchedLessons(
+    userId: number,
+    isMember: boolean = false,
+    query: string = '',
+  ) {
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
       .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
@@ -389,16 +393,12 @@ export class LessonService extends PaginationService<LessonEntity> {
         'course.archived = :courseArchived',
         { courseArchived: false },
       )
-      .innerJoin(
-        'course.roadmaps',
-        'roadmaps',
-        'roadmaps.archived = :roadmapArchived',
-        { roadmapArchived: false },
-      )
+
       .andWhere('lesson.name ILIKE :query', { query: `%${query}%` });
 
     if (isMember) {
       queryBuilder
+        .innerJoin('course.roadmaps', 'roadmaps')
         .innerJoin('roadmaps.users', 'users')
         .andWhere('users.id = :userId', { userId });
     }

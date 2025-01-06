@@ -64,31 +64,35 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       .getMany();
   }
 
-  async findSearchedRoadmap(isMember = false, query = '', userId) {
+  async findSearchedRoadmap(
+    userId: number,
+    isMember: boolean = false,
+    query: string = '',
+  ) {
     const queryBuilder = this.repository
       .createQueryBuilder('roadmap')
       .andWhere('roadmap.archived = :roadmapArchived', {
         roadmapArchived: false,
-      })
-      .leftJoin(
-        'roadmap.courses',
-        'courses',
-        'courses.archived = :courseArchived',
-        {
-          courseArchived: false,
-        },
-      )
-      .leftJoin(
-        'courses.lessons',
-        'lessons',
-        'lessons.archived = :lessonArchived',
-        {
-          lessonArchived: false,
-        },
-      );
+      });
 
     if (isMember) {
       queryBuilder
+        .leftJoin(
+          'roadmap.courses',
+          'courses',
+          'courses.archived = :courseArchived',
+          {
+            courseArchived: false,
+          },
+        )
+        .leftJoin(
+          'courses.lessons',
+          'lessons',
+          'lessons.archived = :lessonArchived',
+          {
+            lessonArchived: false,
+          },
+        )
         .innerJoin('roadmap.users', 'users')
         .andWhere('users.id = :userId', { userId })
         .addSelect('COUNT(DISTINCT courses.id)', 'courseCount')
