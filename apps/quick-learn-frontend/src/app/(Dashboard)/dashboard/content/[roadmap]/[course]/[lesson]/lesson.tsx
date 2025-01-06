@@ -288,15 +288,15 @@ const Lesson = () => {
         shouldDirty: true,
         shouldTouch: true,
       });
-    // Clear existing timeout
+      // Clear existing timeout
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      
+
       // Set new timeout for 2 seconds after user stops typing
       timeoutRef.current = setTimeout(() => {
         updateContent(field, value);
-      }, 2000); 
+      }, 2000);
     },
     [form.setValue, updateContent],
   );
@@ -304,11 +304,11 @@ const Lesson = () => {
   //Cleans up pending timeouts when component unmounts
   useEffect(() => {
     return () => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-}, []);
+  }, []);
 
   const handleArchiveLesson = useCallback(async () => {
     if (lessonId === 'add') return;
