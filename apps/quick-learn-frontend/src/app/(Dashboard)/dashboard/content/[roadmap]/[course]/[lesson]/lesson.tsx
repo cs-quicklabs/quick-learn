@@ -37,6 +37,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useRef,
 } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -131,6 +132,7 @@ const Lesson = () => {
       ),
     [user?.user_type_id],
   );
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   const [isEditing, setIsEditing] = useState<boolean>(lessonId === 'add');
   const [lesson, setLesson] = useState<TLesson>();
@@ -286,12 +288,27 @@ const Lesson = () => {
         shouldDirty: true,
         shouldTouch: true,
       });
-      // Debounce the update
-      const timeoutId = setTimeout(() => updateContent(field, value), 1000);
-      return () => clearTimeout(timeoutId);
+      // Clear existing timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      setIsUpdating(true);
+      // Set new timeout for 2 seconds after user stops typing
+      timeoutRef.current = setTimeout(() => {
+        updateContent(field, value);
+      }, 2000);
     },
     [form.setValue, updateContent],
   );
+
+  //Cleans up pending timeouts when component unmounts
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleArchiveLesson = useCallback(async () => {
     if (lessonId === 'add') return;
