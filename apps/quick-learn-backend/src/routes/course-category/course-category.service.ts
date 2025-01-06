@@ -74,4 +74,26 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
     }
     await this.repository.delete({ id });
   }
+
+  async getCourseCategoriesWithCourses() {
+    return await this.repository
+      .createQueryBuilder('course_category')
+      .leftJoinAndSelect(
+        'course_category.courses',
+        'courses',
+        'courses.archived = :archived',
+        { archived: false },
+      )
+      .orderBy('course_category.name', 'ASC')
+      .leftJoin('courses.lessons', 'lessons')
+      .loadRelationCountAndMap(
+        'courses.lessons_count',
+        'courses.lessons',
+        'lessons',
+        (qb) =>
+          qb.andWhere('lessons.archived = :archived', { archived: false }),
+      )
+      .addOrderBy('course_category.created_at', 'DESC')
+      .getMany();
+  }
 }

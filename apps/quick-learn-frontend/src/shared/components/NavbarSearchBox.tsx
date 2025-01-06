@@ -173,16 +173,19 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
 
     return (
       <div key={category}>
-        <div className="font-bold text-slate-700 border-b border-gray-300">
-          {isHistoryView && <ClockIcon className="inline-block h-4 w-4 mr-1" />}
-          # {category}{' '}
-          <span className="text-sm text-gray-700 italic font-normal capitalize">
-            ({items.length} {category.toLowerCase()})
+        <div className="flex font-bold border-b border-gray-300 pl-3 py-1 justify-between">
+          <span>
+            <span className=' className="text-slate-600 text-md'>
+              {category}{' '}
+            </span>
+          </span>
+          <span className="mr-6 flex items-center">
+            {isHistoryView && <ClockIcon className="inline-block h-5 w-5 " />}
           </span>
         </div>
         <div
-          className="max-h-[120px] overflow-auto"
-          style={{ scrollbarWidth: 'thin' }}
+          className="max-h-[120px] overflow-none"
+          style={{ scrollbarWidth: 'none' }}
         >
           {items.map((item, i) => {
             const commonProps = {
@@ -200,7 +203,6 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
                   key={i}
                   type="lesson"
                   course_id={lesson.course_id}
-                  roadmap_id={lesson.roadmap_id}
                 />
               );
             }
@@ -234,16 +236,17 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
           id="search"
           name="search"
           type="search"
+          autoComplete="off"
           value={searchQuery}
           placeholder="Search Roadmaps, Courses or Lessons"
           onFocus={() => setIsDropdownActive(true)}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="block w-full h-full rounded-md border-0 bg-gray-700 py-1.5 pl-10 pr-3 text-gray-300 placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:ring-0 sm:text-sm sm:leading-6 outline-0"
+          className="block w-full h-full rounded-md border-0 bg-gray-700 py-1.5 pl-10 pr-3 text-gray-300 placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:ring-0 text-sm sm:leading-6 outline-0"
         />
 
         {/* Search Results Dropdown */}
         {isDropdownActive && (
-          <div className="absolute w-full top-[43px] text-black bg-white border rounded-md p-1  overflow-y-auto">
+          <div className="absolute w-full top-[43px] text-gray-800 bg-white border border-gray-300 rounded-md p-1 pb-2 overflow-y-auto shadow-lg">
             {searchQuery.length < MINIMUM_SEARCH_LENGTH ? (
               hasHistory ? (
                 <div>

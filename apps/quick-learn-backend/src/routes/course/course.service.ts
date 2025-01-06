@@ -497,4 +497,25 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
     return courseDetails;
   }
+
+  async getSearchedCourses(userId: number, isMember = false, query = '') {
+    const queryBuilder = this.repository
+      .createQueryBuilder('course')
+      .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .leftJoin(
+        'course.roadmaps',
+        'roadmaps',
+        'roadmaps.archived = :roadmapArchived',
+        { roadmapArchived: false },
+      )
+      .andWhere('course.name ILIKE :query', { query: `%${query}%` });
+
+    if (isMember) {
+      queryBuilder
+        .innerJoin('roadmaps.users', 'users')
+        .andWhere('users.id = :userId', { userId });
+    }
+
+    return queryBuilder.select(['course.id', 'course.name']).limit(3).getMany();
+  }
 }
