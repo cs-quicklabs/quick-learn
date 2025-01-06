@@ -92,11 +92,12 @@ export const getArchivedRoadmaps = async (
   // };
   const response = await axiosInstance.get<
     AxiosSuccessResponse<PaginateWrapper<TRoadmap[]>>
-  >(ArchivedApiEnum.ARCHIVED_ROADMAPS, { params: {
-        page,  // Adding `page` as a query parameter
-        q,     // Adding `q` as a query parameter
-      }
-    });
+  >(ArchivedApiEnum.ARCHIVED_ROADMAPS, {
+    params: {
+      page, // Adding `page` as a query parameter
+      q, // Adding `q` as a query parameter
+    },
+  });
   return response.data;
 };
 
