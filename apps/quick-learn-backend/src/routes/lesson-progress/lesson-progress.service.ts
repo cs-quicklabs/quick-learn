@@ -52,18 +52,8 @@ export class LessonProgressService {
     lessonId: number,
     courseId: number,
   ): Promise<UserLessonProgressEntity> {
-<<<<<<< HEAD
     await this.validateLesson(lessonId, courseId);
 
-=======
-    const lessonExists = await this.lessonRepository.findOne({
-      where: { id: lessonId, course_id: courseId },
-    });
-
-    if (!lessonExists) {
-      throw new NotFoundException(en.lessonNotFoundInCourse);
-    }
->>>>>>> dev
     const existingProgress = await this.userLessonProgressRepository.findOne({
       where: {
         user_id: userId,
