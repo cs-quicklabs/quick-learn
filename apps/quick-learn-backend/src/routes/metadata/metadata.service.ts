@@ -11,10 +11,14 @@ export class MetadataService {
 
   async getContentRepositoryMetadata() {
     const metadata = {};
-    metadata['roadmap_categories'] =
-      await this.roadmapCategoryService.getRoadmapCatergoriesWithRoadmap();
-    metadata['course_categories'] =
-      await this.courseCategoryService.getCourseCategoriesWithCourses();
+    const [roadmapCategories, courseCategories] = await Promise.all([
+      this.roadmapCategoryService.getRoadmapCatergoriesWithRoadmap(),
+      this.courseCategoryService.getCourseCategoriesWithCourses(),
+    ]);
+
+    metadata['roadmap_categories'] = roadmapCategories;
+    metadata['course_categories'] = courseCategories;
+
     return metadata;
   }
 }

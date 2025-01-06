@@ -84,6 +84,7 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
         'courses.archived = :archived',
         { archived: false },
       )
+      .orderBy('course_category.name', 'ASC')
       .leftJoin('courses.lessons', 'lessons')
       .loadRelationCountAndMap(
         'courses.lessons_count',
@@ -92,7 +93,6 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
         (qb) =>
           qb.andWhere('lessons.archived = :archived', { archived: false }),
       )
-      .orderBy('courses.created_at', 'DESC')
       .addOrderBy('course_category.created_at', 'DESC')
       .getMany();
   }

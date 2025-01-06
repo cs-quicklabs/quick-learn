@@ -17,20 +17,18 @@ export class LessonProgressService {
     private LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {}
 
-  private async validateLesson(
-    lessonId: number,
-    courseId: number,
-  ): Promise<void> {
-    const lessonExists = await this.lessonRepository.findOne({
+  private async validateLesson(lessonId: number, courseId: number) {
+    const lesson = await this.lessonRepository.findOne({
       where: { id: lessonId, course_id: courseId },
     });
 
-    if (!lessonExists) {
+    if (!lesson) {
       throw new NotFoundException('Lesson not found in this course');
     }
+    return lesson;
   }
 
-  private async validateCourse(courseId: number): Promise<void> {
+  private async validateCourse(courseId: number) {
     const course = await this.courseRepository.findOne({
       where: { id: courseId },
     });
@@ -38,6 +36,7 @@ export class LessonProgressService {
     if (!course) {
       throw new NotFoundException('Course not found');
     }
+    return course;
   }
 
   /**
