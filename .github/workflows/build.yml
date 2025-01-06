@@ -1,0 +1,38 @@
+name: Build Checks
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Clean npm cache
+      run: |
+        npm cache clean --force
+        rm -rf node_modules
+        rm -rf package-lock.json
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Reset Nx cache
+      run: npx nx reset
+
+    - name: Run build
+      run: npx nx build quick-learn-frontend
