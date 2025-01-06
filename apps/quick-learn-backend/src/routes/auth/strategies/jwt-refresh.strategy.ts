@@ -6,6 +6,7 @@ import { AllConfigType } from '@src/config/config.type';
 import { Request } from 'express';
 import { SessionService } from '../session.service';
 import Helpers from '@src/common/utils/helper';
+import { en } from '@src/lang/en';
 
 type JwtRefreshPayloadType = {
   sessionId: number;
@@ -44,20 +45,20 @@ export class JwtRefreshStrategy extends PassportStrategy(
 
       if (!session) {
         Helpers.clearCookies(req.res);
-        throw new UnauthorizedException('Invalid session');
+        throw new UnauthorizedException(en.invalidSession);
       }
 
       // Check if token is expired
       const checkTokenExpiration = Number(session.expires) < Date.now();
       if (checkTokenExpiration) {
         Helpers.clearCookies(req.res);
-        throw new UnauthorizedException('Refresh token expired');
+        throw new UnauthorizedException(en.refreshTokenExpired);
       }
 
       return session;
     } catch (error) {
       Helpers.clearCookies(req.res);
-      throw new UnauthorizedException('Authentication failed');
+      throw new UnauthorizedException(en.authenticationFailed);
     }
   }
 }

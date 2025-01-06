@@ -30,7 +30,7 @@ export class ProfileController {
     });
   }
 
-  @Post()
+  @Patch()
   @ApiOperation({ summary: 'Set the profile values for the current user' })
   async updateProfile(
     @Body() updateProfileDto: UpdateProfileDto,
@@ -39,7 +39,7 @@ export class ProfileController {
     return this.profileService.updateUserProfile(user, updateProfileDto);
   }
 
-  @Post('/change-password')
+  @Patch('/change-password')
   @ApiOperation({ summary: 'Change the password for the current user' })
   async changePassword(
     @Body() changePasswordDTO: ChangePasswordDTO,

@@ -48,7 +48,7 @@ export class RoadmapController {
     return new SuccessResponse(en.CreateRoadmap, roadmap);
   }
 
-  @Post('archived')
+  @Get('archived')
   @ApiOperation({ summary: 'Get Archived Roadmaps' })
   async findAllArchivedRoadmaps(
     @CurrentUser() user: UserEntity,

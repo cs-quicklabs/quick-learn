@@ -31,29 +31,29 @@ import { CourseArchiveDto } from './dto/course-archive.dto';
 export class CourseController {
   constructor(private service: CourseService) {}
 
-  @Post('/content')
-  @ApiOperation({ summary: 'Get all content page courses' })
-  async getCourses(
-    @Body() paginationDto: PaginationDto,
-  ): Promise<SuccessResponse> {
-    const data = await this.service.getContentRepoCourses(
-      paginationDto,
-      { is_community_available: true, archived: false },
-      [],
-    );
-    return new SuccessResponse(en.GetAllCourses, data);
-  }
+  // @Get('/content')
+  // @ApiOperation({ summary: 'Get all content page courses' })
+  // async getCourses(
+  //   @Body() paginationDto: PaginationDto,
+  // ): Promise<SuccessResponse> {
+  //   const data = await this.service.getContentRepoCourses(
+  //     paginationDto,
+  //     { is_community_available: true, archived: false },
+  //     [],
+  //   );
+  //   return new SuccessResponse(en.GetAllCourses, data);
+  // }
 
-  @Get('/my-courses')
-  @ApiOperation({ summary: 'Get all assigned roadmap courses' })
-  async getMyCourses(@CurrentUser() user: UserEntity) {
-    // CHECK IF USER IS LOGGED IN
-    if (!user.id) {
-      throw new BadRequestException(en.userNotFound);
-    }
-    const data = await this.service.getUserAssignedRoadmapCourses(user.id);
-    return new SuccessResponse(en.GetAllCourses, data);
-  }
+  // @Get('/my-courses')
+  // @ApiOperation({ summary: 'Get all assigned roadmap courses' })
+  // async getMyCourses(@CurrentUser() user: UserEntity) {
+  //   // CHECK IF USER IS LOGGED IN
+  //   if (!user.id) {
+  //     throw new BadRequestException(en.userNotFound);
+  //   }
+  //   const data = await this.service.getUserAssignedRoadmapCourses(user.id);
+  //   return new SuccessResponse(en.GetAllCourses, data);
+  // }
 
   @Get('/community-course')
   @ApiOperation({ summary: 'Get all community courses' })

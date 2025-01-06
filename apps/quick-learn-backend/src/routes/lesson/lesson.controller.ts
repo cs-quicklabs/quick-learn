@@ -151,10 +151,10 @@ export class LessonController {
   }
 
   @ApiOperation({ summary: 'Get all archived lessons.' })
-  @Post('archived')
+  @Get('archived')
   async findAllArchivedLessons(
     @CurrentUser() user: UserEntity,
-    @Body() paginationDto: PaginationDto,
+    @Query() paginationDto: PaginationDto,
   ): Promise<SuccessResponse> {
     const lessons = await this.service.getArchivedLessons(paginationDto, [
       'course',

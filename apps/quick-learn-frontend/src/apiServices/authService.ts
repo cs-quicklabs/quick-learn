@@ -44,7 +44,7 @@ export const resetPasswordApiCall = async (
 };
 
 export const logoutApiCall = async (): Promise<LoginResponse> => {
-  const response = await axiosInstance.post(authApiEnum.LOGOUT);
+  const response = await axiosInstance.delete(authApiEnum.LOGOUT);
   return response.data;
 };
 
