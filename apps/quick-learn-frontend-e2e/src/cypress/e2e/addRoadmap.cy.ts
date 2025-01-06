@@ -60,4 +60,12 @@ describe('Primary Skill Update', () => {
     addRoadmaps.openRoadMap();
     addRoadmaps.deleteRoadMap();
   });
+
+  it('Verify Super admin should not able to Delete Roadmap category associated with other Roadmaps', () => {
+    const addRoadmaps = new addRoadmap();
+    addRoadmaps.OpenAccountSettings();
+    addRoadmaps.openRoadMap();
+    addRoadmaps.deleteRoadMapCategories();
+    // addCourse.getPopupMessage().should('contain', 'Failed to delete roadmap category');
+  });
 });

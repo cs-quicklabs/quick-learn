@@ -6,9 +6,10 @@ dotenv.config();
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: process.env.NEXT_PUBLIC_APP_BASE_URL, // Accessing the environment variable
+    baseUrl: "http://dev.learn.build-release.com/", // Accessing the environment variable
   },
-  viewportWidth: 1440,
-  viewportHeight: 720,
+  viewportWidth: 1920,
+  viewportHeight: 1080,
+  defaultCommandTimeout: 10000
 });
 

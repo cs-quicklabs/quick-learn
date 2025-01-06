@@ -1,13 +1,15 @@
 class addPrimarySkill {
-  visitTeamPage() {
-    return cy.get('[href="/dashboard/teams"]');
-  }
+  visitProfilePage() {
+    return cy.get('button[class="flex items-center"]').click();
+      }
 
-  userMenu() {
-    return cy.contains('Open user menu');
-  }
+  // userMenu() {
+  //   return cy.contains('Open user menu');
+  // }
   getAccountSettings() {
-    return cy.contains('Account Settings');
+    cy.get('button[class="flex items-center"]').click();
+    cy.get('[href="/dashboard/account-settings"]').click();
+    // return cy.contains('Account Settings');
   }
   openPrimarySkill() {
     return cy.contains('Primary Skills').click();
@@ -58,8 +60,8 @@ class addPrimarySkill {
   }
 
   OpenAccountSettings() {
-    this.userMenu().click();
-    this.getAccountSettings().click();
+    // this.userMenu().click();
+    this.getAccountSettings();
   }
 }
 module.exports = addPrimarySkill;

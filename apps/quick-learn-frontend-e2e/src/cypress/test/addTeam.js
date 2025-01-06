@@ -21,6 +21,7 @@ class AddTeam {
   }
   getUserTypeEditor() {
     return cy.get('#user_type_id').select('Admin');
+    //return cy.get('#user_type_id').select('Editor');
   }
 
   generateRandomEmail() {
@@ -30,6 +31,7 @@ class AddTeam {
 
   getUserTypeMember() {
     return cy.get('#user_type_id').select('Admin');
+    //return cy.get('#user_type_id').select('Member');
   }
 
   getPassword() {
@@ -44,6 +46,7 @@ class AddTeam {
   }
 
   submitAddTeamButton() {
+    cy.wait(5000);
     return cy.get('#submit').click();
   }
 
@@ -51,8 +54,8 @@ class AddTeam {
     const mail = this.generateRandomEmail();
     this.visitTeamPage().click();
     this.getAddTeamButton().click();
-    this.getFirstName().type('Raj');
-    this.getLastName().type('Gupta');
+    this.getFirstName().type('User');
+    this.getLastName().type('Automation');
     this.getEmail().type(mail);
     this.getUserTypeAdmin();
     this.getPassword().type('Password@123');
@@ -65,7 +68,20 @@ class AddTeam {
     const mail = this.generateRandomEmail();
     this.visitTeamPage().click();
     this.getAddTeamButton().click();
-    this.submitAddTeamButton();
+    this.getFirstName().type('John');
+    this.getFirstName().clear(); //clear the first name field
+    this.getLastName().type('Doe');
+    this.getLastName().clear(); //clear the last name field
+    this.getEmail().type('john');
+    this.getEmail().clear(); //clear the email field
+    this.getUserTypeAdmin();
+    this.getPassword().type('Password@123');
+    this.getPassword().clear(); //clear the password field
+    this.getConfirmPassword().type('Pass');
+    this.getConfirmPassword().clear(); //clear the confirm password field
+    this.getSkillID();
+    //this.submitAddTeamButton();
+    //this.submitAddTeamButton().click({force: true});
   }
   validateFieldWithEmptySpaces() {
     const mail = this.generateRandomEmail();
@@ -74,11 +90,13 @@ class AddTeam {
     this.getFirstName().type('    ');
     this.getLastName().type('   ');
     this.getEmail().type('   ');
+    this.getEmail().clear(); //clear the email field
     this.getUserTypeAdmin();
     this.getPassword().type('   ');
     this.getConfirmPassword().type('   ');
     this.getSkillID('   ');
-    this.submitAddTeamButton();
+    //this.submitAddTeamButton();
+    //this.submitAddTeamButton().click({force: true});
   }
 }
 

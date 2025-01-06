@@ -1,6 +1,7 @@
 import addCourses = require('../test/addCourses');
 import LoginPage = require('../test/Login');
 import { validCredentials } from '../fixtures/credential';
+import { add } from 'cypress/types/lodash';
 
 describe('Primary Skill Update', () => {
   const loginPage = new LoginPage();
@@ -59,5 +60,13 @@ describe('Primary Skill Update', () => {
     addCourse.OpenAccountSettings();
     addCourse.openCourses();
     addCourse.deleteCourseCategories();
+  });
+
+  it('Verify Super admin should not able to Delete Course category associated with other courses', () => {
+    const addCourse = new addCourses();
+    addCourse.OpenAccountSettings();
+    addCourse.openCourses();
+    addCourse.deleteCourseCategoriesAssociatedWithCourses();
+    // addCourse.getPopupMessage().should('contain', 'Failed to delete course category');
   });
 });

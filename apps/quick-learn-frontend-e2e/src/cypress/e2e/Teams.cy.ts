@@ -8,6 +8,7 @@ describe('Login Test', () => {
   beforeEach(() => {
     loginPage.visit();
     cy.get('.text-xl').contains('Sign in to your account');
+    cy.wait(2000);
     loginPage.login(validCredentials.mail, validCredentials.password);
 
     cy.url().should('include', '/dashboard');
@@ -26,9 +27,9 @@ describe('Login Test', () => {
     const Teams = new TeamsPage();
     Teams.filterEditorList();
   });
-  it('Verify User able to filter Member list', () => {
+  it('Verify User able to filter Members list', () => {
     const Teams = new TeamsPage();
-    Teams.filterMemberList();
+    Teams.filterMembersList();
   });
   it('Verify Super admin able to Search Users', () => {
     const Teams = new TeamsPage();

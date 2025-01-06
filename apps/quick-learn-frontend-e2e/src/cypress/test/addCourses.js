@@ -1,13 +1,18 @@
 class addCourses {
-  visitTeamPage() {
-    return cy.get('[href="/dashboard/teams"]');
-  }
+  visitProfilePage() {
+    return cy.get('button[class="flex items-center"]').click();
+      }
+  // visitTeamPage() {
+  //   return cy.get('[href="/dashboard/teams"]');
+  // }
 
-  userMenu() {
-    return cy.contains('Open user menu');
-  }
+  // userMenu() {
+  //   return cy.contains('Open user menu');
+  // }
   getAccountSettings() {
-    return cy.contains('Account Settings');
+    cy.get('button[class="flex items-center"]').click();
+    cy.get('[href="/dashboard/account-settings"]').click();
+    // return cy.contains('Account Settings');
   }
   openCourses() {
     return cy.contains('Courses Categories').click();
@@ -55,13 +60,24 @@ class addCourses {
   deleteCourseCategories() {
     cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
   }
+
+  deleteCourseCategoriesAssociatedWithCourses() {
+    cy.get(':nth-child(13) > .inline-flex > .ml-2').click();
+    cy.get('[class="flex-1 overflow-auto p-0"]');
+    cy.get('button.bg-white.uppercase').click();
+  }
+
+  // getPopupMessage() {
+  //   return cy.get('[class="flex-1 overflow-auto p-0"]');
+  // }
+
   getErrorMessage() {
     return cy.get('.mt-1');
   }
 
   OpenAccountSettings() {
-    this.userMenu().click();
-    this.getAccountSettings().click();
+    // this.userMenu().click();
+    this.getAccountSettings();
   }
 }
 module.exports = addCourses;
