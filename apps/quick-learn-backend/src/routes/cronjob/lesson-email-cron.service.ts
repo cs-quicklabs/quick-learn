@@ -77,11 +77,13 @@ export class LessonEmailService {
           randomLessionToSend.lesson_id,
           randomLessionToSend.course_id,
         );
+
         const LessonURL = this.generateURL(
           randomLessionToSend.lesson_id,
           randomLessionToSend.course_id,
           userMailTokenRecord.token,
         );
+
         const MAIL_BODY = EMAIL_BODY.DAILY_LESSON_EMAIL(
           greeting,
           users.first_name,
@@ -112,55 +114,23 @@ export class LessonEmailService {
     });
   }
 
-  async getUserUnReadLessions(userID: number) {
-    // FIND ASSIGNED ROADMAPS AND COURSES WITH LESSIONS
-    const dataRelations = [
-      'assigned_roadmaps',
-      'assigned_roadmaps.courses',
-      'assigned_roadmaps.courses.lessons',
-    ];
-
-    const userAssignedRoadmaps =
-      await this.usersService.findOneWithSelectedRelationData(
-        { id: userID },
-        dataRelations,
-      );
-
-    // EXTARCT ALL LESSIONS WITH RESPECTIVE COURSES AND ROADMAPS
-    const lessonsArray = [];
-    userAssignedRoadmaps.assigned_roadmaps.forEach((roadmap) => {
-      const roadmapId = roadmap.id;
-      roadmap.courses.forEach((course) => {
-        const courseId = course.id;
-        course.lessons.forEach((lesson) => {
-          lessonsArray.push({
-            ...lesson,
-            course_id: courseId,
-            roadmap_id: roadmapId,
-            lesson_id: lesson.id,
-          });
-        });
-      });
-    });
-
-    // FIND ALL LESSIONS THAT HAVE NOT BEEN COMPLETED
-    const userReadLessions = await this.lessonProgresssService.getMany({
-      user_id: userID,
-    });
-
-    // FIND ALL LESSIONS THAT HAVE NOT BEEN COMPLETED
-    const userUnReadLessions = lessonsArray.filter(
-      (obj1) =>
-        !userReadLessions.some(
-          (obj2) =>
-            obj1.lesson_id === obj2.lesson_id &&
-            obj1.course_id === obj2.course_id,
-        ),
-    );
+  async getUserUnReadLessions(userID: number): Promise<{
+    userUnReadLessions: {
+      lesson_id: number;
+      name: string;
+      roadmap_id: number;
+      course_id: number;
+    }[];
+    assignedRoadmapCount: number;
+  }> {
+    const [unreadLessons, assignedRoadmaps] = await Promise.all([
+      this.usersService.getUnreadUserLessons(userID),
+      this.usersService.getUserAssignedRoadmaps(userID, true),
+    ]);
 
     return {
-      userUnReadLessions: userUnReadLessions,
-      assignedRoadmapCount: userAssignedRoadmaps.assigned_roadmaps.length,
+      userUnReadLessions: unreadLessons,
+      assignedRoadmapCount: assignedRoadmaps,
     };
   }
 
