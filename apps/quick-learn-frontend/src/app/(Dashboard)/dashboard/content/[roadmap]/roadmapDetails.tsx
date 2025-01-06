@@ -310,7 +310,7 @@ const RoadmapDetails = () => {
               0,
             ) ?? 0}{' '}
             {en.common.lessons}, &nbsp;
-            {roadmapData.users_count ?? 0} {en.common.participants})
+            {roadmapData.userCount ?? 0} {en.common.participants})
           </p>
 
           {/* Action Buttons */}
