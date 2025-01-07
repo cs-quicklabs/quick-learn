@@ -29,5 +29,5 @@ jobs:
     - name: Reset Nx cache
       run: npx nx reset
 
-    - name: Run Affected build
-      run: npx nx quick-learn-backend:build
+    - name: Run build
+      run: npx nx run quick-learn-backend:build
