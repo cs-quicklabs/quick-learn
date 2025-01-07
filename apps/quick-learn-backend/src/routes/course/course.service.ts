@@ -206,6 +206,12 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     if (!course) {
       throw new BadRequestException(en.invalidCourse);
     }
+    const id = options.id;
+    if (typeof id !== 'number') {
+      throw new BadRequestException('Invalid course ID');
+    }
+    const courseCount = await this.getCourseCount(id);
+    course['userCount'] = courseCount;
 
     if (!course.lessons) {
       course.lessons = [];
@@ -222,53 +228,16 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     return course;
   }
 
-  // async getCourseDetailsWithCount(id: number) {
-  //   const queryBuilder = this.repository
-  //     .createQueryBuilder('course')
-  //     .leftJoinAndSelect('course.course_category', 'course_category')
-  //     .leftJoinAndSelect('course.created_by', 'created_by')
-  //     .leftJoinAndSelect('course.lessons', 'lessons')
-  //     .leftJoinAndSelect('lessons.created_by_user', 'created_by_user')
-  //     .leftJoinAndSelect('course.roadmaps', 'roadmap')
-  //     .leftJoin('roadmap.users', 'users')
-  //     .loadRelationCountAndMap('roadmap.userCount', 'roadmap.users')
-  //     .where('course.id = :id', { id })
-  //     .andWhere('course.archived = :archived', { archived: false });
-
-  //   const courseDetails = await queryBuilder.getOne();
-  //   return courseDetails;
-  // }
-  async getCourseDetailsWithCount(id: number) {
+  async getCourseCount(id: number) {
     const queryBuilder = this.repository
       .createQueryBuilder('course')
-      .leftJoinAndSelect('course.course_category', 'course_category')
-      .leftJoinAndSelect('course.created_by', 'created_by')
-      .leftJoinAndSelect('course.lessons', 'lessons')
-      .leftJoinAndSelect('lessons.created_by_user', 'created_by_user')
-      .leftJoinAndSelect('course.roadmaps', 'roadmap')
-      .leftJoin('roadmap.users', 'users')
-      .loadRelationCountAndMap('roadmap.userCount', 'roadmap.users')
-      .addSelect((subQuery) => {
-        return subQuery
-          .select('COUNT(DISTINCT u.id)')
-          .from('user', 'u')
-          .innerJoin('roadmap_courses', 'rc', 'rc.course_id = course.id')
-          .innerJoin('roadmap', 'r', 'r.id = rc.roadmap_id')
-          .innerJoin(
-            'user_roadmaps',
-            'ur',
-            'ur.roadmap_id = r.id AND ur.user_id = u.id',
-          );
-      }, 'totalUniqueUsers')
-      .where('course.id = :id', { id })
-      .andWhere('course.archived = :archived', { archived: false });
+      .leftJoin('course.roadmaps', 'roadmap')
+      .leftJoin('roadmap.users', 'user')
+      .where('course.id = :courseId', { courseId: id })
+      .select('COUNT(DISTINCT user.id)', 'userCount');
 
-    const courseDetails = await queryBuilder.getOne();
-
-    return {
-      ...courseDetails,
-      // totalUniqueUsers: parseInt(courseDetails['totalUniqueUsers'] || '0'),
-    };
+    const result = await queryBuilder.getRawOne();
+    return result?.userCount || 0;
   }
 
   /**

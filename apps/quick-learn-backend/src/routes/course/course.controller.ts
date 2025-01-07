@@ -79,11 +79,11 @@ export class CourseController {
   @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Get course details' })
   async getRoadmapDetails(@Param('id') id: string) {
-    // const data = await this.service.getCourseDetails({ id: +id }, [
-    //   'lessons',
-    //   'lessons.created_by_user',
-    // ]);
-    const data = await this.service.getCourseDetailsWithCount(+id);
+    const data = await this.service.getCourseDetails({ id: +id }, [
+      'lessons',
+      'lessons.created_by_user',
+    ]);
+    // const data = await this.service.getCourseDetailsWithCount(+id);
     return new SuccessResponse(en.GetCourseDetails, data);
   }
 

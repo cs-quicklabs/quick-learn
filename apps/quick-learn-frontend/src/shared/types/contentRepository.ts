@@ -42,7 +42,7 @@ export interface TCourse extends TCreateCourse {
   course_category: TCourseCategories;
   created_by_user_id: number;
   lessons_count?: number;
-  users_count?: number;
+  userCount?: number;
   created_by?: TUser;
   created_at: string;
   updated_at: string;
