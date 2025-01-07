@@ -14,7 +14,10 @@ import { getInitials } from '@src/utils/helpers';
 import ConformationModal from '../modals/conformationModal'; // Assuming this is your confirmation modal component
 import { updateUserProfileService } from '@src/apiServices/profileService';
 import { UserContext } from '@src/context/userContext';
-
+import { usePathname } from 'next/navigation';
+import { updateTeamDetails } from '@src/apiServices/accountService';
+import { TTeam } from '../types/accountTypes';
+import { AxiosSuccessResponse } from '@src/apiServices/axios';
 interface Props {
   watch: UseFormWatch<z.TypeOf<z.ZodTypeAny>>;
   setValue: UseFormSetValue<z.TypeOf<z.ZodTypeAny>>;
@@ -42,6 +45,7 @@ const ImageInput: FC<Props> = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false); // State to manage modal visibility
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user, setUser } = useContext(UserContext);
+  const pathname = usePathname();
 
   const watchProfileImage = watch(name);
 
@@ -84,24 +88,46 @@ const ImageInput: FC<Props> = ({
           return res;
         })
         .then((res) => {
-          const serviceInput = {
-            first_name: user?.first_name,
-            last_name: user?.last_name,
-            profile_image: res.data.file,
-          };
-          if (user) {
-            setUser({
-              ...user,
+          //for profile-setting when upload
+          if (pathname.includes('profile-settings')) {
+            const serviceInput = {
+              first_name: user?.first_name,
+              last_name: user?.last_name,
               profile_image: res.data.file,
-            });
+            };
+            if (user) {
+              setUser({
+                ...user,
+                profile_image: res.data.file,
+              });
+            }
+            updateUserProfileService(serviceInput)
+              .then((response) => {
+                showApiMessageInToast(response);
+              })
+              .catch((err) => {
+                showApiErrorInToast(err);
+              });
+          } else {
+            //for team organization call when upload
+            const teamService = {
+              name: user?.team.name || '',
+              logo: res.data.file,
+            };
+
+            updateTeamDetails(teamService as TTeam)
+              .then((res) => {
+                showApiMessageInToast(res);
+                if (user) {
+                  setUser({
+                    ...user,
+                    team: { ...user.team, name: teamService?.name },
+                  });
+                }
+              })
+              .catch((err) => showApiErrorInToast(err))
+              .finally(() => setIsLoading(false));
           }
-          updateUserProfileService(serviceInput)
-            .then((response) => {
-              showApiMessageInToast(response); // Show success message
-            })
-            .catch((err) => {
-              showApiErrorInToast(err); // Show error message if API fails
-            });
         })
         .catch((err) => showApiErrorInToast(err))
         .finally(() => setIsLoading(false));
@@ -131,52 +157,77 @@ const ImageInput: FC<Props> = ({
   // Handle Deletion Confirmation - Remove the image and close the modal
   const handleConfirmDeletion = () => {
     setIsLoading(true);
-
-    // Prepare service input to update profile without image
-    const serviceInput = {
-      first_name: user?.first_name,
-      last_name: user?.last_name,
-      profile_image: '', // Use empty string
-    };
-    if (user) {
-      setUser({
-        ...user,
-        profile_image: '',
-      });
-    }
-    updateUserProfileService(serviceInput)
-      .then((response) => {
-        // Reset form value
-        setValue(name, '', {
-          shouldValidate: true,
-          shouldDirty: true,
-          shouldTouch: true,
+    // Delete profile Image
+    if (pathname.includes('profile-settings')) {
+      const serviceInput = {
+        first_name: user?.first_name,
+        last_name: user?.last_name,
+        profile_image: '', // Use empty string
+      };
+      if (user) {
+        setUser({
+          ...user,
+          profile_image: '',
         });
+      }
+      updateUserProfileService(serviceInput)
+        .then((response) => {
+          if (user) {
+            const updatedUser = {
+              ...user,
+              profile_image: '',
+            };
+            setUser(updatedUser);
+          }
+          handleSuccessfulUpdate(response);
+        })
+        .catch((err) => {
+          showApiErrorInToast(err);
+        })
+        .finally(() => {
+          setIsDeleteModalOpen(false);
+          setIsLoading(false);
+        });
+    } else {
+      //Delete team Image
+      const teamService = {
+        name: user?.team.name || '',
+        logo: '',
+      };
+      updateTeamDetails(teamService as TTeam)
+        .then((response) => {
+          if (user) {
+            setUser({
+              ...user,
+              team: { ...user.team, name: teamService?.name },
+            });
+          }
+          handleSuccessfulUpdate(response);
+        })
+        .catch((err) => {
+          showApiErrorInToast(err);
+        })
+        .finally(() => {
+          setIsDeleteModalOpen(false);
+          setIsLoading(false);
+        });
+    }
+  };
 
-        // Clear image preview
-        setImagePreview(null);
+  const handleSuccessfulUpdate = (
+    response: AxiosSuccessResponse<TTeam> | AxiosSuccessResponse,
+  ) => {
+    // Reset form
+    setValue(name, '', {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    // Clear UI state
+    setImagePreview(null);
 
-        // Show success message
-        showApiMessageInToast(response);
-
-        // Update user context to remove profile image
-        if (user) {
-          const updatedUser = {
-            ...user,
-            profile_image: '',
-          };
-          setUser(updatedUser);
-        }
-      })
-      .catch((err) => {
-        // Show error message if deletion fails
-        showApiErrorInToast(err);
-      })
-      .finally(() => {
-        // Close modal and stop loading
-        setIsDeleteModalOpen(false);
-        setIsLoading(false);
-      });
+    // Show success message
+    showApiMessageInToast(response);
   };
 
   return (

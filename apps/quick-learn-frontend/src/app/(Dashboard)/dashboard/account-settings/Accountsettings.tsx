@@ -33,7 +33,6 @@ const AccountSettingSechema = z.object({
 });
 
 type AccountSettingsData = z.infer<typeof AccountSettingSechema>;
-
 const AccountSettings = () => {
   const { user, setUser } = useContext(UserContext);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
@@ -41,6 +40,10 @@ const AccountSettings = () => {
   const methods = useForm<AccountSettingsData>({
     resolver: zodResolver(AccountSettingSechema),
     mode: 'onChange',
+    defaultValues: {
+      name: '',
+      logo: '',
+    },
   });
   const { setValue } = methods;
 
@@ -59,17 +62,17 @@ const AccountSettings = () => {
       placeholder: 'Team name',
     },
   ];
+  const { reset } = methods;
 
   useEffect(() => {
     setIsPageLoading(true);
     getTeamDetails()
       .then((res) => {
-        setValue('name', res.data.name);
-        setValue('logo', res.data.logo ?? '');
+        reset({ name: res?.data?.name, logo: res?.data?.logo });
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsPageLoading(false));
-  }, [setValue]);
+  }, [setValue, reset]);
 
   function onSubmit(data: AccountSettingsData) {
     updateTeamDetails(data as TTeam)
