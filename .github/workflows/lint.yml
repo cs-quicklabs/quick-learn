@@ -7,7 +7,7 @@ on:
     branches: [dev]
 
 jobs:
-  affected-lint:
+  lint:
     runs-on: ubuntu-latest
 
     strategy:
@@ -30,9 +30,9 @@ jobs:
       run: npx nx reset
 
     - name: Run Affected Lint
-      run: npx nx affected -t lint
+      run: npx nx run-many --target=lint
 
-  affected-format:
+  format:
     runs-on: ubuntu-latest
 
     strategy:
@@ -55,4 +55,4 @@ jobs:
       run: npx nx reset
 
     - name: Run Affected Format Check
-      run: npx nx affected -t format:check
+      run: npx nx run-many --target=format:check
