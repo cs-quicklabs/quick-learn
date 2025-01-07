@@ -3,3 +3,4 @@ dist
 tmp
 /out-tsc
 .next
+.next/**/*
