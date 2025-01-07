@@ -18,6 +18,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import AccountSettingsSkeleton from './AccountSettingsSkeleton';
+import { FileUploadResponse } from '@src/shared/types/utilTypes';
+import { AxiosSuccessResponse } from '@src/apiServices/axios';
 
 const AccountSettingSechema = z.object({
   name: z
@@ -74,6 +76,28 @@ const AccountSettings = () => {
       .finally(() => setIsPageLoading(false));
   }, [setValue, reset]);
 
+  function onChangeImage(
+    response: AxiosSuccessResponse<FileUploadResponse> | undefined,
+  ) {
+    const teamService = {
+      name: user?.team.name || '',
+      logo: response ? response.data.file : '',
+    };
+
+    updateTeamDetails(teamService as TTeam)
+      .then((res) => {
+        showApiMessageInToast(res);
+        if (user) {
+          reset({
+            name: user.team.name,
+            logo: response ? response.data.file : '',
+          });
+        }
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
+  }
+
   function onSubmit(data: AccountSettingsData) {
     updateTeamDetails(data as TTeam)
       .then((res) => {
@@ -84,6 +108,7 @@ const AccountSettings = () => {
             team: { ...user.team, name: data.name },
           });
         }
+        reset({ name: data.name, logo: data.logo });
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
@@ -106,6 +131,7 @@ const AccountSettings = () => {
             methods={methods}
             isLoading={isLoading}
             buttonText="Save"
+            onChangeImage={onChangeImage}
             id="accountSettingsForm"
           />
         </FormProvider>

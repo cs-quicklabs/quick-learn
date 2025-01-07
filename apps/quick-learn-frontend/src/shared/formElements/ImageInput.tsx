@@ -1,23 +1,17 @@
 'use client';
 import { CameraIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
-import {
-  showApiErrorInToast,
-  showApiMessageInToast,
-} from '@src/utils/toastUtils';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { FilePathType } from 'lib/shared/src';
 import Image from 'next/image';
-import React, { FC, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { getInitials } from '@src/utils/helpers';
 import ConformationModal from '../modals/conformationModal'; // Assuming this is your confirmation modal component
-import { updateUserProfileService } from '@src/apiServices/profileService';
-import { UserContext } from '@src/context/userContext';
-import { usePathname } from 'next/navigation';
-import { updateTeamDetails } from '@src/apiServices/accountService';
-import { TTeam } from '../types/accountTypes';
 import { AxiosSuccessResponse } from '@src/apiServices/axios';
+import { FileUploadResponse } from '@src/shared/types/utilTypes';
+
 interface Props {
   watch: UseFormWatch<z.TypeOf<z.ZodTypeAny>>;
   setValue: UseFormSetValue<z.TypeOf<z.ZodTypeAny>>;
@@ -27,6 +21,9 @@ interface Props {
   imageType: FilePathType;
   firstName?: string;
   lastName?: string;
+  readonly onChangeImage?: (
+    res: AxiosSuccessResponse<FileUploadResponse> | undefined,
+  ) => void;
 }
 
 const ImageInput: FC<Props> = ({
@@ -38,14 +35,13 @@ const ImageInput: FC<Props> = ({
   imageType,
   firstName,
   lastName,
+  onChangeImage,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imagePreview, setImagePreview] = useState<string | null>(src);
   const [error, setError] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false); // State to manage modal visibility
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user, setUser } = useContext(UserContext);
-  const pathname = usePathname();
 
   const watchProfileImage = watch(name);
 
@@ -65,7 +61,9 @@ const ImageInput: FC<Props> = ({
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
 
     if (file) {
@@ -88,45 +86,9 @@ const ImageInput: FC<Props> = ({
           return res;
         })
         .then((res) => {
-          //for profile-setting when upload
-          if (pathname.includes('profile-settings')) {
-            const serviceInput = {
-              first_name: user?.first_name,
-              last_name: user?.last_name,
-              profile_image: res.data.file,
-            };
-            if (user) {
-              setUser({
-                ...user,
-                profile_image: res.data.file,
-              });
-            }
-            updateUserProfileService(serviceInput)
-              .then((response) => {
-                showApiMessageInToast(response);
-              })
-              .catch((err) => {
-                showApiErrorInToast(err);
-              });
-          } else {
-            //for team organization call when upload
-            const teamService = {
-              name: user?.team.name || '',
-              logo: res.data.file,
-            };
-
-            updateTeamDetails(teamService as TTeam)
-              .then((res) => {
-                showApiMessageInToast(res);
-                if (user) {
-                  setUser({
-                    ...user,
-                    team: { ...user.team, name: teamService?.name },
-                  });
-                }
-              })
-              .catch((err) => showApiErrorInToast(err))
-              .finally(() => setIsLoading(false));
+          if (onChangeImage) {
+            //runs API call to update the Image
+            onChangeImage(res);
           }
         })
         .catch((err) => showApiErrorInToast(err))
@@ -155,79 +117,24 @@ const ImageInput: FC<Props> = ({
   };
 
   // Handle Deletion Confirmation - Remove the image and close the modal
-  const handleConfirmDeletion = () => {
+  const handleConfirmDeletion = async () => {
     setIsLoading(true);
-    // Delete profile Image
-    if (pathname.includes('profile-settings')) {
-      const serviceInput = {
-        first_name: user?.first_name,
-        last_name: user?.last_name,
-        profile_image: '', // Use empty string
-      };
-      if (user) {
-        setUser({
-          ...user,
-          profile_image: '',
-        });
+    try {
+      if (onChangeImage) {
+        await onChangeImage(undefined);
       }
-      updateUserProfileService(serviceInput)
-        .then((response) => {
-          if (user) {
-            const updatedUser = {
-              ...user,
-              profile_image: '',
-            };
-            setUser(updatedUser);
-          }
-          handleSuccessfulUpdate(response);
-        })
-        .catch((err) => {
-          showApiErrorInToast(err);
-        })
-        .finally(() => {
-          setIsDeleteModalOpen(false);
-          setIsLoading(false);
-        });
-    } else {
-      //Delete team Image
-      const teamService = {
-        name: user?.team.name || '',
-        logo: '',
-      };
-      updateTeamDetails(teamService as TTeam)
-        .then((response) => {
-          if (user) {
-            setUser({
-              ...user,
-              team: { ...user.team, name: teamService?.name },
-            });
-          }
-          handleSuccessfulUpdate(response);
-        })
-        .catch((err) => {
-          showApiErrorInToast(err);
-        })
-        .finally(() => {
-          setIsDeleteModalOpen(false);
-          setIsLoading(false);
-        });
+      // Update form value
+      setValue(name, '', {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+      // Clear image preview
+      setImagePreview(null);
+    } finally {
+      setIsDeleteModalOpen(false);
+      setIsLoading(false);
     }
-  };
-
-  const handleSuccessfulUpdate = (
-    response: AxiosSuccessResponse<TTeam> | AxiosSuccessResponse,
-  ) => {
-    // Reset form
-    setValue(name, '', {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-    // Clear UI state
-    setImagePreview(null);
-
-    // Show success message
-    showApiMessageInToast(response);
   };
 
   return (
