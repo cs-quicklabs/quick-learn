@@ -310,7 +310,7 @@ const CourseDetails = () => {
           </p>
           <p className="text-sm text-gray-500 text-center">
             ({courseData.lessons?.length ?? 0} {en.common.lessons}, &nbsp;
-            {courseData.users_count ?? 0} {en.common.participants})
+            {courseData.userCount ?? 0} {en.common.participants})
           </p>
 
           {/* Action Buttons */}
