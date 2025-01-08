@@ -16,7 +16,6 @@ import {
   DailyLessonGreetings,
 } from '@src/common/enum/daily_lesson.enum';
 import { EMAIL_BODY } from '@src/common/constants/emailBody';
-import { EnvironmentEnum } from '@src/common/constants/constants';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -44,7 +43,7 @@ export class LessonEmailService {
   @Cron('0 9,17 * * *', {
     name: 'sendEveningLessonEmails',
     timeZone: CRON_TIMEZONE,
-    disabled: process.env.ENV !== EnvironmentEnum.Production,
+    disabled: process.env.CRONJOB_ENABLED === 'true',
   })
   handleLessonNotification() {
     const greeting =

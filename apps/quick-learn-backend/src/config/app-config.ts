@@ -5,6 +5,7 @@ export type AppConfig = {
   frontendDomain: string;
   backendDomain: string;
   port: number;
+  cronjobEnabled: boolean;
   apiPrefix: string;
   smtpEmail?: string;
   smtpHost?: string;

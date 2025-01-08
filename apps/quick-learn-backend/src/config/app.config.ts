@@ -1,5 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import {
+  IsBoolean,
   IsEnum,
   IsInt,
   IsOptional,
@@ -54,6 +55,10 @@ class EnvironmentVariablesValidator {
   @IsString()
   @IsOptional()
   SMTP_PASS: string;
+
+  @IsOptional()
+  @IsBoolean()
+  CRONJOB_ENABLED: boolean;
 }
 
 export default registerAs<AppConfig>('app', () => {
@@ -65,6 +70,7 @@ export default registerAs<AppConfig>('app', () => {
     workingDirectory: process.env.PWD || process.cwd(),
     frontendDomain: process.env.FRONTEND_DOMAIN ?? 'http://localhost:3000',
     backendDomain: process.env.BACKEND_DOMAIN ?? 'http://localhost',
+    cronjobEnabled: process.env.CRONJOB_ENABLED === 'true',
     port: process.env.APP_PORT ? parseInt(process.env.APP_PORT, 10) : 3001,
     apiPrefix: process.env.API_PREFIX || 'api',
     smtpEmail: process.env.SMTP_EMAIL,
