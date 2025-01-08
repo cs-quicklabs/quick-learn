@@ -1,6 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AxiosErrorObject } from '@src/apiServices/axios';
+import { AxiosErrorObject, AxiosSuccessResponse } from '@src/apiServices/axios';
 import { updateUserProfileService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
 import { UserContext } from '@src/context/userContext';
@@ -15,6 +15,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import ProfileSettingsSkeleton from './ProfileSettingsSkeleton';
+import { FileUploadResponse } from '@src/shared/types/utilTypes';
 
 // Define the service input type
 interface ProfileUpdateServiceInput {
@@ -98,7 +99,29 @@ const ProfileSettings = () => {
       disabled: true,
     },
   ];
-
+  //change umage only
+  function onChangeImage(
+    res: AxiosSuccessResponse<FileUploadResponse> | undefined,
+  ) {
+    const serviceInput = {
+      first_name: user?.first_name,
+      last_name: user?.last_name,
+      profile_image: res ? res.data.file : '', //handle upload and delete
+    };
+    if (user) {
+      setUser({
+        ...user,
+        profile_image: res ? res.data.file : '',
+      });
+    }
+    updateUserProfileService(serviceInput)
+      .then((response) => {
+        showApiMessageInToast(response);
+      })
+      .catch((err) => {
+        showApiErrorInToast(err);
+      });
+  }
   const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true);
     try {
@@ -162,6 +185,7 @@ const ProfileSettings = () => {
           onSubmit={onSubmit}
           methods={methods}
           buttonText="Save"
+          onChangeImage={onChangeImage}
           id="profileSettingsForm"
         />
       </FormProvider>
