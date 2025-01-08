@@ -117,26 +117,24 @@ const AccountSettings = () => {
     return <AccountSettingsSkeleton />;
   }
   return (
-    <>
-      <div>
-        <h1 className="text-lg font-semibold">{en.common.teamSettings}</h1>
-        <p className="text-gray-500 text-sm mb-6">
-          {en.common.changeSettingsOfYourTeam}
-        </p>
-        <FormProvider {...methods}>
-          <FormFieldsMapper
-            fields={accountSettingsFields}
-            schema={AccountSettingSechema}
-            onSubmit={onSubmit}
-            methods={methods}
-            isLoading={isLoading}
-            buttonText="Save"
-            onChangeImage={onChangeImage}
-            id="accountSettingsForm"
-          />
-        </FormProvider>
-      </div>
-    </>
+    <div>
+      <h1 className="text-lg font-semibold">{en.common.teamSettings}</h1>
+      <p className="text-gray-500 text-sm mb-6">
+        {en.common.changeSettingsOfYourTeam}
+      </p>
+      <FormProvider {...methods}>
+        <FormFieldsMapper
+          fields={accountSettingsFields}
+          schema={AccountSettingSechema}
+          onSubmit={onSubmit}
+          methods={methods}
+          isLoading={isLoading}
+          buttonText="Save"
+          onChangeImage={onChangeImage}
+          id="accountSettingsForm"
+        />
+      </FormProvider>
+    </div>
   );
 };
 

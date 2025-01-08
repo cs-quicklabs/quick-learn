@@ -1,6 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AxiosErrorObject } from '@src/apiServices/axios';
+import { AxiosErrorObject, AxiosSuccessResponse } from '@src/apiServices/axios';
 import { updateUserProfileService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
 import { UserContext } from '@src/context/userContext';
@@ -16,7 +16,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import ProfileSettingsSkeleton from './ProfileSettingsSkeleton';
 import { FileUploadResponse } from '@src/shared/types/utilTypes';
-import { AxiosSuccessResponse } from '@src/apiServices/axios';
 
 // Define the service input type
 interface ProfileUpdateServiceInput {
