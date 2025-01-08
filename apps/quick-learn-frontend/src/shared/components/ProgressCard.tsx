@@ -43,11 +43,11 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
       return () => clearTimeout(timer);
     }, [percentage]);
 
-    const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border border-gray-100 group w-full relative transition-shadow duration-200 ${className}`;
+    const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border border-gray-100 group w-[274px] relative transition-shadow duration-200 ${className}`;
 
     return (
       <Link href={link} id={id.toString()} className={baseClassName} ref={ref}>
-        <div className="flex flex-col h-52">
+        <div className="flex flex-col h-48">
           <div className="flex-1 py-4 px-6 text-gray-900 overflow-hidden">
             <h3 className="font-medium text-gray-900 line-clamp-2 group-hover:underline capitalize">
               {name}
