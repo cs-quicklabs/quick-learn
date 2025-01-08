@@ -13,6 +13,11 @@ describe('Login Test', () => {
     loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
   });
 
+  it('Verify user able to upload logo', () => {
+    const updateSetting = new updateSettings();
+    updateSetting.uploadLogo();
+  });
+
   it('Verify User should able to Navigate to Account settings Page', () => {
     const updateSetting = new updateSettings();
     updateSetting.getAccountSettings();

@@ -14,7 +14,7 @@ describe('Login Test', () => {
 
   it('should display an error for invalid credentials', () => {
     loginPage.loginWithInvalidCredential(
-      'super.admin@yopmail.com',
+      validCredentials.mail,
       'InvalidPassword',
     );
     loginPage.getErrorMessage().should('contain', 'Wrong Credentials!');

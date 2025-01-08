@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable cypress/no-unnecessary-waiting */
 class Teams {
   visitTeamPage() {
@@ -44,10 +43,11 @@ class Teams {
     cy.get('#editor').click();
     cy.contains('Editor').should('be.visible');
     cy.wait(10000);
-    cy.get('table tbody tr td:nth-child(2)').each(($el, _index) => {
+    cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
+          cy.log(`Element ${index} text: ${text.trim()}`);
           expect(text.trim()).to.contain('Editor'); // Assert that the text contains the expected value 'Editor'
         });
     });
@@ -58,10 +58,11 @@ class Teams {
     cy.get('#member').click();
     cy.wait(10000);
     cy.contains('Members').should('be.visible');
-    cy.get('table tbody tr td:nth-child(2)').each(($el, _index) => {
+    cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
+          cy.log(`Element ${index} text: ${text.trim()}`);
           expect(text.trim()).to.contain('Member'); // Assert that the text contains the expected value 'Member'
         });
     });

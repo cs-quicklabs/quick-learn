@@ -41,7 +41,7 @@ class addRoadMap {
   }
 
   deleteRoadMapCategories() {
-    cy.get(':nth-child(13) > .inline-flex > .ml-2').click();
+    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
     cy.get('[class="flex-1 overflow-auto p-0"]');
     cy.get('button.bg-white.uppercase').click();
   }

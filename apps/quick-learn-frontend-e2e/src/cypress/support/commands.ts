@@ -23,35 +23,6 @@ Cypress.Commands.add('login', (email, password) => {
   console.log('Custom command example: Login', email, password);
 });
 
-// Cypress.Commands.add('login', (email, password) => {
-//   cy.request('GET', 'http://dev.learn.build-release.com/', {
-//     email: 'super.admin@yopmail.com',
-//     password: 'password@123P',
-//     rememberMe: false,
-//   }).then(function (response) {
-//     expect(response.status).to.eq(200);
-//     Cypress.env('token', response.body.token);
-//   });
-// });
-
-// before(() => {
-//   cy.request("GET", "http://dev.learn.build-release.com/", {
-//     email: "super.admin@yopmail.com",
-//     password: "password@123P",
-//     rememberMe: false,
-//   }).then((response) => {
-//     expect(response.status).to.eq(200);
-//     Cypress.env('token', response.body.token);
-
-//     // Set the token in localStorage
-//     window.localStorage.setItem('authToken', response.body.token);
-//   });
-// });
-// beforeEach(() => {
-//   // Reload token in localStorage before each test
-//   cy.visit('/');
-//   cy.window()});
-
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })

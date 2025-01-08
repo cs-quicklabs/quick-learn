@@ -62,4 +62,11 @@ describe('Primary Skill Update', () => {
     addSkill.openPrimarySkill();
     addSkill.deletePrimarySkill();
   });
+
+  it('Verify Super admin should not able to Delete Skill associated to team members', () => {
+    const addSkill = new addPrimarySkill();
+    addSkill.OpenAccountSettings();
+    addSkill.openPrimarySkill();
+    addSkill.deleteSkillCategories();
+  });
 });
