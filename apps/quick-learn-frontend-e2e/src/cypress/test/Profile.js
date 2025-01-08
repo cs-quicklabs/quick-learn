@@ -61,5 +61,6 @@ return cy.get('button[class="flex items-center"]').click();
     cy.get('.mt-1').should('contain', 'First name is required');
   }
 }
+//}
 
 module.exports = profile;
