@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { defineConfig } from 'cypress';
 import dotenv = require('dotenv');
 

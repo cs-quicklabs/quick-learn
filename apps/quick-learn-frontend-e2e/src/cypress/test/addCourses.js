@@ -58,7 +58,7 @@ class addCourses {
     cy.get('[class="flex-1 overflow-auto p-0"]');
     cy.get('button.bg-white.uppercase').click();
   }
-  
+
   OpenAccountSettings() {
     this.getAccountSettings();
   }

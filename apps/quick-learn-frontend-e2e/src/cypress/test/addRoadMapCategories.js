@@ -49,7 +49,7 @@ class addRoadMap {
   OpenAccountSettings() {
     this.getAccountSettings();
   }
-  
+
   addRoadmapCategoriesWithOnlySpaces() {
     return cy.get('#roadmap_categories_input_text').type('    ');
   }

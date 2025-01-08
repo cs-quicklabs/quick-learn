@@ -32,6 +32,6 @@ class updateGeneralSettings {
     this.editTeamName().type('   ');
     this.getError().contains('This field is mandatory');
   }
-  };
+}
 
 module.exports = updateGeneralSettings;
