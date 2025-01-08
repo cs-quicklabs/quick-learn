@@ -250,12 +250,12 @@ export class LessonController {
     type: String,
     description: 'Get what is the greeting for the mail',
   })
-  @Get('/cron/daily-lessons')
+  @Get('/cron/daily-lessons:greeting')
   @UseGuards(RolesGuard)
   @Roles(UserTypeId.SUPER_ADMIN)
   @ApiOperation({ summary: 'Get daily lessons' })
   async triggerCronJobmaunually(
-    @Query('greeting') greeting: string,
+    @Param('greeting') greeting: string,
   ): Promise<SuccessResponse> {
     await this.LessonEmailService.sendLessonEmails(greeting);
     return new SuccessResponse(en.triggeredDailyLessonMails);

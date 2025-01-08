@@ -9,13 +9,11 @@ import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { nanoid } from 'nanoid';
 import { EmailService } from '@src/common/modules/email/email.service';
-import { emailSubjects } from '@src/common/constants/email-subject';
 import { Cron } from '@nestjs/schedule';
 import {
   CRON_TIMEZONE,
   DailyLessonGreetings,
 } from '@src/common/enum/daily_lesson.enum';
-import { EMAIL_BODY } from '@src/common/constants/emailBody';
 import { EnvironmentEnum } from '@src/common/constants/constants';
 import { ConfigService } from '@nestjs/config';
 
@@ -47,12 +45,16 @@ export class LessonEmailService {
     disabled: process.env.ENV !== EnvironmentEnum.Production,
   })
   handleLessonNotification() {
+    const currentHour = new Date().getHours();
+    console.log('Current Hour:', currentHour);
     const greeting =
-      new Date().getHours() < 12
+      currentHour < 12
         ? DailyLessonGreetings.GOOD_MORNING
         : DailyLessonGreetings.GOOD_EVENING;
     this.sendLessonEmails(greeting);
-    this.logger.log(`Cron job executed at ${new Date().toISOString()}`);
+    this.logger.log(
+      `Cron job executed at ${new Date().toISOString()} with greeting: ${greeting}`,
+    );
   }
 
   async sendLessonEmails(greeting: string) {
@@ -85,31 +87,20 @@ export class LessonEmailService {
           randomLessionToSend.course_id,
           userMailTokenRecord.token,
         );
-        const MAIL_BODY = EMAIL_BODY.DAILY_LESSON_EMAIL(
-          greeting,
-          users.first_name,
-          users.last_name,
-          randomLessionToSend.name,
-          LessonURL,
-        );
-
-        this.emailService.email({
-          body: MAIL_BODY,
-          recipients: [users.email],
-          subject: emailSubjects.LESSON_FOR_THE_DAY,
-        });
+        const mailBody = {
+          greetings: greeting,
+          fullName: `${users.first_name} ${users.last_name}`,
+          lessonName: randomLessionToSend.name,
+          lessonURL: LessonURL,
+          userEmail: users.email,
+        };
+        this.emailService.dailyLessonTemplate(mailBody);
       } else {
         if (userUnReadLessions.assignedRoadmapCount > 0) {
           // RESET USER READ HISTORY AND SEND EMAIL TO USER
           this.resetUserReadingHistory(currentUserID);
           // TODO: IMPLEMENT EMAIL SERVICE
-          const MAIL_BODY = EMAIL_BODY.RESET_READING_HISTORY();
-
-          this.emailService.email({
-            body: MAIL_BODY,
-            recipients: [users.email],
-            subject: emailSubjects.RESET_READING_HISTORY,
-          });
+          this.emailService.readAllLessonSucess(users.email);
         }
       }
     });
