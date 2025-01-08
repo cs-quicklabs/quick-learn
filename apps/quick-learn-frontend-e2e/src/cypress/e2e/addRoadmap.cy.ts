@@ -22,7 +22,7 @@ describe('Primary Skill Update', () => {
     addRoadmaps.saveButton();
   });
 
-  it('Verify User should not able to add empty courses', () => {
+  it('Verify User should not able to add empty roadmap', () => {
     const addRoadmaps = new addRoadmap();
     addRoadmaps.OpenAccountSettings();
     addRoadmaps.openRoadMap();
@@ -30,7 +30,7 @@ describe('Primary Skill Update', () => {
     addRoadmaps.addRoadmapCategoriesWithOnlySpaces();
     addRoadmaps.getErrorMessage().should('contain', 'This field is mandatory');
   });
-  it('Verify Course field should not expect more than 30 characters', () => {
+  it('Verify Roadmap field should not expect more than 30 characters', () => {
     const addRoadmaps = new addRoadmap();
     addRoadmaps.OpenAccountSettings();
     addRoadmaps.openRoadMap();
@@ -66,6 +66,5 @@ describe('Primary Skill Update', () => {
     addRoadmaps.OpenAccountSettings();
     addRoadmaps.openRoadMap();
     addRoadmaps.deleteRoadMapCategories();
-    // addCourse.getPopupMessage().should('contain', 'Failed to delete roadmap category');
   });
 });

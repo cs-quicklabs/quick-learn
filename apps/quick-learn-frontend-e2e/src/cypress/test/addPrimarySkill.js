@@ -3,13 +3,9 @@ class addPrimarySkill {
     return cy.get('button[class="flex items-center"]').click();
   }
 
-  // userMenu() {
-  //   return cy.contains('Open user menu');
-  // }
   getAccountSettings() {
     cy.get('button[class="flex items-center"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();
-    // return cy.contains('Account Settings');
   }
   openPrimarySkill() {
     return cy.contains('Primary Skills').click();
@@ -60,7 +56,6 @@ class addPrimarySkill {
   }
 
   OpenAccountSettings() {
-    // this.userMenu().click();
     this.getAccountSettings();
   }
 }

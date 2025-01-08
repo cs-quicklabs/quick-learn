@@ -2,17 +2,9 @@ class addCourses {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
   }
-  // visitTeamPage() {
-  //   return cy.get('[href="/dashboard/teams"]');
-  // }
-
-  // userMenu() {
-  //   return cy.contains('Open user menu');
-  // }
   getAccountSettings() {
     cy.get('button[class="flex items-center"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();
-    // return cy.contains('Account Settings');
   }
   openCourses() {
     return cy.contains('Courses Categories').click();
@@ -66,13 +58,8 @@ class addCourses {
     cy.get('[class="flex-1 overflow-auto p-0"]');
     cy.get('button.bg-white.uppercase').click();
   }
-
-  // getPopupMessage() {
-  //   return cy.get('[class="flex-1 overflow-auto p-0"]');
-  // }
   
   OpenAccountSettings() {
-    // this.userMenu().click();
     this.getAccountSettings();
   }
 }

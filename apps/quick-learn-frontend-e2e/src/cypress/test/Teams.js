@@ -15,10 +15,6 @@ class Teams {
       'Added On',
     ];
     cy.wait(5000);
-
-    // cy.get('section.bg-white.shadow-md').should('exist');
-    // cy.get('Show records only for:').should('be.visible');
-    // cy.contains('table thead tr th');
     cy.get('table thead tr th').each(($el, index) => {
       cy.wrap($el)
         .invoke('text')
@@ -35,14 +31,11 @@ class Teams {
     cy.wait(8000);
     cy.contains('Role').should('be.visible');
     cy.get('td:nth-child(2) > div').each(($el, index) => {
-      // cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
-          // Log the text for debugging purposes
           cy.log(`Element ${index} text: ${text.trim()}`);
-          // Assert that the text contains the expected value 'admin'
-          expect(text.trim()).to.contain('Admin');
+          expect(text.trim()).to.contain('Admin'); // Assert that the text contains the expected value 'admin'
         });
     });
   }
@@ -55,8 +48,7 @@ class Teams {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
-          // Assert that the text contains the expected value 'Editor'
-          expect(text.trim()).to.contain('Editor');
+          expect(text.trim()).to.contain('Editor'); // Assert that the text contains the expected value 'Editor'
         });
     });
   }
@@ -70,8 +62,7 @@ class Teams {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
-          // Assert that the text contains the expected value 'Member'
-          expect(text.trim()).to.contain('Member');
+          expect(text.trim()).to.contain('Member'); // Assert that the text contains the expected value 'Member'
         });
     });
   }
@@ -82,15 +73,7 @@ class Teams {
 
   searchUser() {
     cy.get('.flex > #search').type('Auto');
-    // cy.wait(5000);
     cy.contains('User Automation').should('be.visible');
-
-    // cy.get('table tbody tr:nth-child(1) td:nth-child(1)')
-    // .should('have.text', 'User Automation');
-    // .invoke('text')
-    // .then((text) => {
-    //   expect(text.trim()).to.equal('Anishkaa Rai');
-    // });
   }
 
   filterAdminList() {

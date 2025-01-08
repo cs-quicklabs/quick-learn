@@ -21,7 +21,6 @@ class AddTeam {
   }
   getUserTypeEditor() {
     return cy.get('#user_type_id').select('Admin');
-    //return cy.get('#user_type_id').select('Editor');
   }
 
   generateRandomEmail() {
@@ -31,7 +30,6 @@ class AddTeam {
 
   getUserTypeMember() {
     return cy.get('#user_type_id').select('Admin');
-    //return cy.get('#user_type_id').select('Member');
   }
 
   getPassword() {
@@ -46,7 +44,6 @@ class AddTeam {
   }
 
   submitAddTeamButton() {
-    // cy.wait(5000);
     return cy.get('#submit').click();
   }
 
@@ -80,8 +77,6 @@ class AddTeam {
     this.getConfirmPassword().type('Pass');
     this.getConfirmPassword().clear(); //clear the confirm password field
     this.getSkillID();
-    //this.submitAddTeamButton();
-    //this.submitAddTeamButton().click({force: true});
   }
   validateFieldWithEmptySpaces() {
     this.visitTeamPage().click();
@@ -94,8 +89,6 @@ class AddTeam {
     this.getPassword().type('   ');
     this.getConfirmPassword().type('   ');
     this.getSkillID('   ');
-    //this.submitAddTeamButton();
-    //this.submitAddTeamButton().click({force: true});
   }
 }
 

@@ -1,7 +1,6 @@
 import addCourses = require('../test/addCourses');
 import LoginPage = require('../test/Login');
 import { validCredentials } from '../fixtures/credential';
-// import { add } from 'cypress/types/lodash';
 
 describe('Primary Skill Update', () => {
   const loginPage = new LoginPage();
@@ -67,6 +66,5 @@ describe('Primary Skill Update', () => {
     addCourse.OpenAccountSettings();
     addCourse.openCourses();
     addCourse.deleteCourseCategoriesAssociatedWithCourses();
-    // addCourse.getPopupMessage().should('contain', 'Failed to delete course category');
   });
 });

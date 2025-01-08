@@ -2,17 +2,9 @@ class addRoadMap {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
   }
-  // visitTeamPage() {
-  //   return cy.get('[href="/dashboard/teams"]');
-  // }
-
-  // userMenu() {
-  //   return cy.contains('Open user menu');
-  // }
   getAccountSettings() {
     cy.get('button[class="flex items-center"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();
-    // return cy.contains('Account Settings');
   }
 
   openRoadMap() {
@@ -55,7 +47,6 @@ class addRoadMap {
   }
 
   OpenAccountSettings() {
-    // this.userMenu().click();
     this.getAccountSettings();
   }
   

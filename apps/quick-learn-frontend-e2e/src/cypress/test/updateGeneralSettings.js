@@ -2,71 +2,36 @@ class updateGeneralSettings {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
   }
-  // visitTeamPage() {
-  //   return cy.get('[href="/dashboard/teams"]');
-  // }
-
-  // userMenu() {
-  //   return cy.contains('Open user menu');
-  // }
   getAccountSettings() {
     cy.get('button[class="flex items-center"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();
-    //return cy.contains('Account Settings');
   }
   editTeamName() {
-    // cy.wait(6000)
     return cy.get('#accountSettingsForm_input_text');
   }
   getError() {
     return cy.get('.mt-1');
   }
   saveButton() {
-    //return cy.get('.flex-wrap > .false').click();
     return cy.get('[type="submit"]').click();
   }
 
   OpenAccountSettings() {
-    // this.userMenu().click();
     this.getAccountSettings().click();
   }
 
   editSettings() {
-    // this.userMenu().click();
-    //this.getAccountSettings().click();
     this.getAccountSettings();
     this.editTeamName().clear();
     this.editTeamName().type('crownstack pvt');
     this.saveButton().click();
   }
   editTeamNameWithOnlySpaces() {
-    // this.userMenu().click();
-    //this.getAccountSettings().click();
     this.getAccountSettings();
     this.editTeamName().clear();
     this.editTeamName().type('   ');
     this.getError().contains('This field is mandatory');
   }
-
-  // uploadLogo() {
-  //   //   // this.userMenu().click();
-  //   // this.getAccountSettings().click();
-  //   this.getAccountSettings();
-  //   // cy.wait(2000);
-  //   cy.contains('Upload Team Logo').should('be.visible');
-  //   cy.get('.mt-2 > .relative > .absolute').click();
-  //   cy.contains("Yes, I'm sure").should('be.visible');
-  //   cy.get('button.text-white.bg-red-600').click();
-  //   cy.contains('Profile updated successfully').should('be.visible');
-  //   cy.get('.mt-2 > .relative > .absolute').click();
-  //   cy.get('input[type="file"]').selectFile('cypress/fixtures/Team.jpg', {
-  //     force: true,
-  //   });
-  //   cy.get('[type="submit"]').click();
-  //   cy.get('body > div.Toastify > div').should(
-  //     'contain',
-  //     'Successfully updated team details.',
-  //   );
-  }
+  };
 
 module.exports = updateGeneralSettings;

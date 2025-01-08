@@ -4,10 +4,6 @@ import { validCredentials } from '../fixtures/credential';
 describe('Login Test', () => {
   const loginPage = new LoginPage();
 
-  // beforeEach(() => {
-  //   loginPage.visit();
-  // });
-
   beforeEach(function () {
     loginPage.visit();
   });
