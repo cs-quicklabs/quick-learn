@@ -206,11 +206,8 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     if (!course) {
       throw new BadRequestException(en.invalidCourse);
     }
-    const id = options.id;
-    if (typeof id !== 'number') {
-      throw new BadRequestException('Invalid course ID');
-    }
-    const courseCount = await this.getCourseParticipantCount(id);
+
+    const courseCount = await this.getCourseParticipantCount(course.id);
     course['userCount'] = courseCount;
 
     if (!course.lessons) {
