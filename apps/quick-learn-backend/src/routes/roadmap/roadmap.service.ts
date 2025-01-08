@@ -30,7 +30,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   }
 
   async getAllRoadmaps(): Promise<RoadmapEntity[]> {
-    return await this.roadmapRepository
+    return this.roadmapRepository
       .createQueryBuilder('roadmap')
       .andWhere('roadmap.archived = :archived', { archived: false })
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
@@ -61,6 +61,47 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
           qb.andWhere('lessons.archived = :archived', { archived: false }),
       )
       .orderBy('roadmap.created_at', 'DESC')
+      .getMany();
+  }
+
+  async findSearchedRoadmap(userId: number, isMember = false, query = '') {
+    const queryBuilder = this.repository
+      .createQueryBuilder('roadmap')
+      .andWhere('roadmap.archived = :roadmapArchived', {
+        roadmapArchived: false,
+      });
+
+    if (isMember) {
+      queryBuilder
+        .leftJoin(
+          'roadmap.courses',
+          'courses',
+          'courses.archived = :courseArchived',
+          {
+            courseArchived: false,
+          },
+        )
+        .leftJoin(
+          'courses.lessons',
+          'lessons',
+          'lessons.archived = :lessonArchived',
+          {
+            lessonArchived: false,
+          },
+        )
+        .innerJoin('roadmap.users', 'users')
+        .andWhere('users.id = :userId', { userId })
+        .addSelect('COUNT(DISTINCT courses.id)', 'courseCount')
+        .addSelect('COUNT(DISTINCT lessons.id)', 'lessonCount')
+        .andHaving('COUNT(DISTINCT courses.id) > 0')
+        .andHaving('COUNT(DISTINCT lessons.id) > 0');
+    }
+
+    return queryBuilder
+      .andWhere('roadmap.name ILIKE :query', { query: `%${query}%` })
+      .groupBy('roadmap.id')
+      .select(['roadmap.id', 'roadmap.name'])
+      .limit(3)
       .getMany();
   }
 
@@ -235,6 +276,8 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       .createQueryBuilder('roadmap')
       .where('roadmap.id = :id', { id: roadmapId })
       .andWhere('roadmap.archived = :archived', { archived: false })
+      .leftJoin('roadmap.users', 'users')
+      .loadRelationCountAndMap('roadmap.userCount', 'roadmap.users') // Count users assigned to each roadmap
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
       .leftJoinAndSelect(
         'roadmap.courses',
