@@ -210,7 +210,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     if (typeof id !== 'number') {
       throw new BadRequestException('Invalid course ID');
     }
-    const courseCount = await this.getCourseCount(id);
+    const courseCount = await this.getCourseParticipantCount(id);
     course['userCount'] = courseCount;
 
     if (!course.lessons) {
@@ -228,7 +228,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     return course;
   }
 
-  async getCourseCount(id: number) {
+  async getCourseParticipantCount(id: number) {
     const queryBuilder = this.repository
       .createQueryBuilder('course')
       .leftJoin('course.roadmaps', 'roadmap')

@@ -83,7 +83,6 @@ export class CourseController {
       'lessons',
       'lessons.created_by_user',
     ]);
-    // const data = await this.service.getCourseDetailsWithCount(+id);
     return new SuccessResponse(en.GetCourseDetails, data);
   }
 
