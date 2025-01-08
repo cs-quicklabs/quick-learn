@@ -1,7 +1,7 @@
 class addRoadMap {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
-      }
+  }
   // visitTeamPage() {
   //   return cy.get('[href="/dashboard/teams"]');
   // }
@@ -14,7 +14,7 @@ class addRoadMap {
     cy.get('[href="/dashboard/account-settings"]').click();
     // return cy.contains('Account Settings');
   }
-  
+
   openRoadMap() {
     return cy.contains('Roadmap Categories').click();
   }
@@ -52,15 +52,13 @@ class addRoadMap {
     cy.get(':nth-child(13) > .inline-flex > .ml-2').click();
     cy.get('[class="flex-1 overflow-auto p-0"]');
     cy.get('button.bg-white.uppercase').click();
-}
+  }
 
   OpenAccountSettings() {
     // this.userMenu().click();
     this.getAccountSettings();
   }
-  getErrorMessage() {
-    return cy.get('.mt-1');
-  }
+  
   addRoadmapCategoriesWithOnlySpaces() {
     return cy.get('#roadmap_categories_input_text').type('    ');
   }

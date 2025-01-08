@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable cypress/no-unnecessary-waiting */
 class Teams {
   visitTeamPage() {
     return cy.get('[href="/dashboard/teams"]');
@@ -13,7 +15,7 @@ class Teams {
       'Added On',
     ];
     cy.wait(5000);
-  
+
     // cy.get('section.bg-white.shadow-md').should('exist');
     // cy.get('Show records only for:').should('be.visible');
     // cy.contains('table thead tr th');
@@ -33,14 +35,14 @@ class Teams {
     cy.wait(8000);
     cy.contains('Role').should('be.visible');
     cy.get('td:nth-child(2) > div').each(($el, index) => {
-    // cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
+      // cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
           // Log the text for debugging purposes
-        cy.log(`Element ${index} text: ${text.trim()}`);
+          cy.log(`Element ${index} text: ${text.trim()}`);
           // Assert that the text contains the expected value 'admin'
-          expect(text.trim()).to.contain("Admin");
+          expect(text.trim()).to.contain('Admin');
         });
     });
   }
@@ -49,12 +51,12 @@ class Teams {
     cy.get('#editor').click();
     cy.contains('Editor').should('be.visible');
     cy.wait(10000);
-    cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
+    cy.get('table tbody tr td:nth-child(2)').each(($el, _index) => {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
           // Assert that the text contains the expected value 'Editor'
-          expect(text.trim()).to.contain('Editor'); 
+          expect(text.trim()).to.contain('Editor');
         });
     });
   }
@@ -64,7 +66,7 @@ class Teams {
     cy.get('#member').click();
     cy.wait(10000);
     cy.contains('Members').should('be.visible');
-    cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
+    cy.get('table tbody tr td:nth-child(2)').each(($el, _index) => {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
@@ -85,10 +87,10 @@ class Teams {
 
     // cy.get('table tbody tr:nth-child(1) td:nth-child(1)')
     // .should('have.text', 'User Automation');
-      // .invoke('text')
-      // .then((text) => {
-      //   expect(text.trim()).to.equal('Anishkaa Rai');
-      // });
+    // .invoke('text')
+    // .then((text) => {
+    //   expect(text.trim()).to.equal('Anishkaa Rai');
+    // });
   }
 
   filterAdminList() {

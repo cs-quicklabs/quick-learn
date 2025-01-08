@@ -1,7 +1,7 @@
 class addCourses {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
-      }
+  }
   // visitTeamPage() {
   //   return cy.get('[href="/dashboard/teams"]');
   // }
@@ -70,11 +70,7 @@ class addCourses {
   // getPopupMessage() {
   //   return cy.get('[class="flex-1 overflow-auto p-0"]');
   // }
-
-  getErrorMessage() {
-    return cy.get('.mt-1');
-  }
-
+  
   OpenAccountSettings() {
     // this.userMenu().click();
     this.getAccountSettings();

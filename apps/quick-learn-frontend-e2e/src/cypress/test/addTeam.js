@@ -46,7 +46,7 @@ class AddTeam {
   }
 
   submitAddTeamButton() {
-    cy.wait(5000);
+    // cy.wait(5000);
     return cy.get('#submit').click();
   }
 
@@ -72,7 +72,7 @@ class AddTeam {
     this.getFirstName().clear(); //clear the first name field
     this.getLastName().type('Doe');
     this.getLastName().clear(); //clear the last name field
-    this.getEmail().type('john');
+    this.getEmail().type(mail);
     this.getEmail().clear(); //clear the email field
     this.getUserTypeAdmin();
     this.getPassword().type('Password@123');
@@ -84,7 +84,6 @@ class AddTeam {
     //this.submitAddTeamButton().click({force: true});
   }
   validateFieldWithEmptySpaces() {
-    const mail = this.generateRandomEmail();
     this.visitTeamPage().click();
     this.getAddTeamButton().click();
     this.getFirstName().type('    ');

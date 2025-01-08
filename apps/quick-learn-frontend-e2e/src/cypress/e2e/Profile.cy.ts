@@ -8,14 +8,14 @@ describe('Primary Skill Update', () => {
   beforeEach(() => {
     loginPage.visit();
     cy.get('.text-xl').contains('Sign in to your account');
-    cy.wait(2000);
+    // cy.wait(2000);
     loginPage.login(validCredentials.mail, validCredentials.password);
 
     cy.url().should('include', '/dashboard');
     loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
   });
-  
-// before(function() {
+
+  // before(function() {
   //   loginPage.visit();
   //   loginPage.login(validCredentials.mail, validCredentials.password);
 

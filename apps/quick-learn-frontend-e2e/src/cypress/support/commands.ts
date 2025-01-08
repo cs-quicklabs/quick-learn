@@ -19,18 +19,20 @@ declare namespace Cypress {
 }
 
 // -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => {
-//   console.log('Custom command example: Login', email, password);
-// });
-
 Cypress.Commands.add('login', (email, password) => {
-  cy.request("GET", "http://dev.learn.build-release.com/", {email: "super.admin@yopmail.com", password: "password@123P", rememberMe: false})
-  .then(function(response)
-  {
-    expect(response.status).to.eq(200);
-    Cypress.env('token', response.body.token);
-  });
+  console.log('Custom command example: Login', email, password);
 });
+
+// Cypress.Commands.add('login', (email, password) => {
+//   cy.request('GET', 'http://dev.learn.build-release.com/', {
+//     email: 'super.admin@yopmail.com',
+//     password: 'password@123P',
+//     rememberMe: false,
+//   }).then(function (response) {
+//     expect(response.status).to.eq(200);
+//     Cypress.env('token', response.body.token);
+//   });
+// });
 
 // before(() => {
 //   cy.request("GET", "http://dev.learn.build-release.com/", {
@@ -49,7 +51,6 @@ Cypress.Commands.add('login', (email, password) => {
 //   // Reload token in localStorage before each test
 //   cy.visit('/');
 //   cy.window()});
-
 
 //
 // -- This is a child command --

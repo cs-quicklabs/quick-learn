@@ -1,7 +1,7 @@
 import addCourses = require('../test/addCourses');
 import LoginPage = require('../test/Login');
 import { validCredentials } from '../fixtures/credential';
-import { add } from 'cypress/types/lodash';
+// import { add } from 'cypress/types/lodash';
 
 describe('Primary Skill Update', () => {
   const loginPage = new LoginPage();

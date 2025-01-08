@@ -1,6 +1,6 @@
 class profile {
   visitProfilePage() {
-return cy.get('button[class="flex items-center"]').click();
+    return cy.get('button[class="flex items-center"]').click();
   }
   // visitTeamPage() {
   //   return cy.get('[href="/dashboard/teams"]');
@@ -11,7 +11,7 @@ return cy.get('button[class="flex items-center"]').click();
   // }
   getMyProfile() {
     cy.get('button[class="flex items-center"]').click();
-    cy.get('[href="/dashboard/profile-settings"]').click()
+    cy.get('[href="/dashboard/profile-settings"]').click();
     //cy.contains('My Profile');
   }
   // OpenProfile() {
@@ -55,7 +55,6 @@ return cy.get('button[class="flex items-center"]').click();
   }
   UpdateFirstNameWithEmptySpaces() {
     cy.contains('First Name');
-    const numeric = Math.floor(10000 + Math.random() * 90000).toString();
     cy.get('#profileSettingsForm_input_text').clear();
     cy.get('#profileSettingsForm_input_text').type('    ');
     cy.get('.mt-1').should('contain', 'First name is required');

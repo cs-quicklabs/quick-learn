@@ -1,7 +1,7 @@
 class addPrimarySkill {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
-      }
+  }
 
   // userMenu() {
   //   return cy.contains('Open user menu');

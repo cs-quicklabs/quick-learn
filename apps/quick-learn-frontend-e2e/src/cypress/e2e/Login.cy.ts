@@ -8,7 +8,7 @@ describe('Login Test', () => {
   //   loginPage.visit();
   // });
 
-  beforeEach(function() {
+  beforeEach(function () {
     loginPage.visit();
   });
 
@@ -17,7 +17,10 @@ describe('Login Test', () => {
   });
 
   it('should display an error for invalid credentials', () => {
-    loginPage.loginWithInvalidCredential('super.admin@yopmail.com', 'InvalidPassword');
+    loginPage.loginWithInvalidCredential(
+      'super.admin@yopmail.com',
+      'InvalidPassword',
+    );
     loginPage.getErrorMessage().should('contain', 'Wrong Credentials!');
   });
 

@@ -8,7 +8,7 @@ describe('Login Test', () => {
   beforeEach(() => {
     loginPage.visit();
     cy.get('.text-xl').contains('Sign in to your account');
-    cy.wait(2000);
+    // cy.wait(2000);
     loginPage.login(validCredentials.mail, validCredentials.password);
 
     cy.url().should('include', '/dashboard');

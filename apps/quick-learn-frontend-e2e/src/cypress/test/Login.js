@@ -2,21 +2,21 @@ class LoginPage {
   // visit() {
   //   cy.visit("http://dev.learn.build-release.com/");
   // }
-  visit(){
-    cy.visit('/')
+  visit() {
+    cy.visit('/');
   }
-// visit(){
-//   cy.login().then(function ()
-//   {
-//     cy.visit("http://dev.learn.build-release.com/",{
-//       onBeforeLoad :function(window)
-//       {
-//         window.localStorage.setItem('token',Cypress.env('token'));
-//         }
-//       })
-//     }
-//   )
-// }
+  // visit(){
+  //   cy.login().then(function ()
+  //   {
+  //     cy.visit("http://dev.learn.build-release.com/",{
+  //       onBeforeLoad :function(window)
+  //       {
+  //         window.localStorage.setItem('token',Cypress.env('token'));
+  //         }
+  //       })
+  //     }
+  //   )
+  // }
 
   getUsernameInput() {
     return cy.get('#loginForm_input_text');
@@ -67,6 +67,5 @@ class LoginPage {
     this.getSubmitButton().should('be.disabled');
   }
 }
-
 
 module.exports = LoginPage;

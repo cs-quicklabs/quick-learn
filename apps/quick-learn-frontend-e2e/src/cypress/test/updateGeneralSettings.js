@@ -1,7 +1,7 @@
 class updateGeneralSettings {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
-      }
+  }
   // visitTeamPage() {
   //   return cy.get('[href="/dashboard/teams"]');
   // }
@@ -15,8 +15,8 @@ class updateGeneralSettings {
     //return cy.contains('Account Settings');
   }
   editTeamName() {
-    cy.wait(6000)
-    return cy.get('#accountSettingsForm_input_text')
+    // cy.wait(6000)
+    return cy.get('#accountSettingsForm_input_text');
   }
   getError() {
     return cy.get('.mt-1');
@@ -48,21 +48,25 @@ class updateGeneralSettings {
     this.getError().contains('This field is mandatory');
   }
 
-  uploadLogo() {
-  //   // this.userMenu().click();
-  // this.getAccountSettings().click();
-  this.getAccountSettings();
-  cy.wait(2000);
-  cy.get('.mt-2 > .relative > .absolute').click();
-  cy.wait(2000);
-  cy.get('[type="button"]').eq(4).click();
-  cy.wait(2000);
-  cy.get('input[type="file"]').selectFile('cypress/fixtures/Team.jpg', {
-    force: true,
-  });
-  cy.wait(2000);
-  cy.get('[type="submit"]').click();
+  // uploadLogo() {
+  //   //   // this.userMenu().click();
+  //   // this.getAccountSettings().click();
+  //   this.getAccountSettings();
+  //   // cy.wait(2000);
+  //   cy.contains('Upload Team Logo').should('be.visible');
+  //   cy.get('.mt-2 > .relative > .absolute').click();
+  //   cy.contains("Yes, I'm sure").should('be.visible');
+  //   cy.get('button.text-white.bg-red-600').click();
+  //   cy.contains('Profile updated successfully').should('be.visible');
+  //   cy.get('.mt-2 > .relative > .absolute').click();
+  //   cy.get('input[type="file"]').selectFile('cypress/fixtures/Team.jpg', {
+  //     force: true,
+  //   });
+  //   cy.get('[type="submit"]').click();
+  //   cy.get('body > div.Toastify > div').should(
+  //     'contain',
+  //     'Successfully updated team details.',
+  //   );
+  }
 
-   }
-}
 module.exports = updateGeneralSettings;

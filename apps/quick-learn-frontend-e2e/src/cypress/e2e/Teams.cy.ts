@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import LoginPage = require('../test/Login');
 import TeamsPage = require('../test/Teams');
 import { validCredentials } from '../fixtures/credential';
