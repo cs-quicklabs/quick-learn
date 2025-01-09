@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EmailNotification, Message } from '@quick-learn/email';
 import mjml2html from 'mjml';
 import * as path from 'path';
-
 import * as Handlebars from 'handlebars';
 import { ConfigService } from '@nestjs/config';
 import { SuccessResponse } from '@src/common/dto';
@@ -21,11 +20,11 @@ interface mailBody {
   lessonURL: string;
   userEmail: string;
 }
-
 @Injectable()
 export class EmailService {
   private emailService: EmailNotification;
   private readonly logger = new Logger('Email Service');
+  private readonly frontendURL: string;
   constructor(private configService: ConfigService) {
     const email = this.configService.getOrThrow('app.smtpEmail', {
       infer: true,
@@ -38,7 +37,11 @@ export class EmailService {
         pass: this.configService.getOrThrow('app.smtpPass', { infer: true }),
       },
     };
+
     this.emailService = new EmailNotification(options, email);
+    this.frontendURL = this.configService.get('app.frontendDomain', {
+      infer: true,
+    });
   }
 
   /**
@@ -78,12 +81,9 @@ export class EmailService {
   }
 
   // This function is used to send the email to the user when the user forgets the password
-
   private async forgetPasswordEmail(emailBodies: string, email: string) {
-    const emailBody = emailBodies;
-
     await this.emailService.send({
-      body: emailBody,
+      body: emailBodies,
       recipients: [email],
       subject: emailSubjects.resetPassword,
     });
@@ -106,7 +106,6 @@ export class EmailService {
   }
 
   // The below function is used to sen dthe lesson for the day to the user
-
   async dailyEmail(emailBodies: { userEmail: string; body: string }) {
     try {
       await this.emailService.send({
@@ -147,11 +146,10 @@ export class EmailService {
     email: string,
     mjmlCompliedContent: string,
   ): Promise<void> {
-    const emailBody = mjmlCompliedContent;
     try {
       await this.emailService.send({
         recipients: [email],
-        body: emailBody,
+        body: mjmlCompliedContent,
         subject: emailSubjects.RESET_READING_HISTORY,
       });
     } catch (err) {
@@ -169,24 +167,16 @@ export class EmailService {
     const mjmlCompliedContent = compiledTemplate({});
     return this.readAllLessonSucessEmail(email, mjmlCompliedContent);
   }
-  private generateLoginLink(): string {
-    const frontendURL: string = this.configService.get('app.frontendDomain', {
-      infer: true,
-    });
-    const baseUrl: string = `${frontendURL}/`;
-    return baseUrl;
-  }
 
   // The below function is used to send the welcome email to the user
   private async welcomeEmailTemplate(
     email: string,
     mjmlCompliedContent: string,
   ) {
-    const emailBody = mjmlCompliedContent;
     try {
       await this.emailService.send({
         recipients: [email],
-        body: emailBody,
+        body: mjmlCompliedContent,
         subject: emailSubjects.welcome,
       });
     } catch (err) {
@@ -202,7 +192,7 @@ export class EmailService {
     );
     const mjmlContent = await fs.readFile(templatePath, 'utf8');
     const compiledTemplate = Handlebars.compile(mjmlContent);
-    const loginUrl = this.generateLoginLink();
+    const loginUrl = `${this.frontendURL}/`;
     const mjmlCompliedContent = compiledTemplate({ loginUrl });
     return this.welcomeEmailTemplate(email, mjmlCompliedContent);
   }
