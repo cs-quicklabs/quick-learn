@@ -15,7 +15,6 @@ import { SkillEntity } from '@src/entities/skill.entity';
 import { CreateUserDto, ListFilterDto, PaginationDto } from './dto';
 import { PaginatedResult } from '@src/common/interfaces';
 import { EmailService } from '@src/common/modules/email/email.service';
-import { emailSubjects } from '@src/common/constants/email-subject';
 import { CourseEntity, UserEntity, UserTypeEntity } from '@src/entities';
 import { SessionService } from '../auth/session.service';
 import { en } from '@src/lang/en';
@@ -85,13 +84,7 @@ export class UsersService extends PaginationService<UserEntity> {
     let user = this.userRepository.create(createUserDto);
     user = await this.userRepository.save(user);
 
-    // send email to the user
-    const emailData = {
-      body: '<p>Welcome to Quick Learn!</p><br/><p>You can now login to quick learn.</p>',
-      recipients: [user.email],
-      subject: emailSubjects.welcome,
-    };
-    this.emailService.email(emailData);
+    this.emailService.welcomeEmail(user.email);
 
     return user;
   }
