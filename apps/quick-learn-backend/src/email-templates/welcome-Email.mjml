@@ -1,0 +1,12 @@
+<mjml>
+  <mj-body width="100%">
+    <mj-section padding="0px" full-width="full-width">
+      <mj-column width="100%">
+        <mj-text padding="0">
+          Welcome to Quick Learn!<br/>
+          You can now <a target="_blank" href="{{loginUrl}}">login</a> to quick learn.<br/><br/>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

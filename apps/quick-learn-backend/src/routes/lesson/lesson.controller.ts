@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LessonService } from './lesson.service';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { CreateLessonDto, UpdateLessonDto } from './dto';
@@ -244,18 +244,18 @@ export class LessonController {
    *@ApiQueryParam greeting
    *@returns success response
    */
-  @ApiParam({
+  @ApiQuery({
     name: 'greeting',
     required: true,
     type: String,
     description: 'Get what is the greeting for the mail',
   })
-  @Get('/cron/daily-lessons:greeting')
+  @Get('/cron/daily-lessons')
   @UseGuards(RolesGuard)
   @Roles(UserTypeId.SUPER_ADMIN)
   @ApiOperation({ summary: 'Get daily lessons' })
   async triggerCronJobmaunually(
-    @Param('greeting') greeting: string,
+    @Query('greeting') greeting: string,
   ): Promise<SuccessResponse> {
     await this.LessonEmailService.sendLessonEmails(greeting);
     return new SuccessResponse(en.triggeredDailyLessonMails);

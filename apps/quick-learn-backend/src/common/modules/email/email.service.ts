@@ -21,6 +21,7 @@ interface mailBody {
   lessonURL: string;
   userEmail: string;
 }
+
 @Injectable()
 export class EmailService {
   private emailService: EmailNotification;
@@ -76,6 +77,8 @@ export class EmailService {
     return mjmlCompliedContent;
   }
 
+  // This function is used to send the email to the user when the user forgets the password
+
   private async forgetPasswordEmail(emailBodies: string, email: string) {
     const emailBody = emailBodies;
 
@@ -101,6 +104,8 @@ export class EmailService {
     const emailBodies = compiledTemplate({ resetURL });
     return this.forgetPasswordEmail(emailBodies, email);
   }
+
+  // The below function is used to sen dthe lesson for the day to the user
 
   async dailyEmail(emailBodies: { userEmail: string; body: string }) {
     try {
@@ -137,6 +142,7 @@ export class EmailService {
     }
   }
 
+  // The below function is used to send the email to the user when the user has read all the lessons
   private async readAllLessonSucessEmail(
     email: string,
     mjmlCompliedContent: string,
@@ -162,5 +168,42 @@ export class EmailService {
     const compiledTemplate = Handlebars.compile(mjmlContent);
     const mjmlCompliedContent = compiledTemplate({});
     return this.readAllLessonSucessEmail(email, mjmlCompliedContent);
+  }
+  private generateLoginLink(): string {
+    const frontendURL: string = this.configService.get('app.frontendDomain', {
+      infer: true,
+    });
+    const baseUrl: string = `${frontendURL}/`;
+    return baseUrl;
+  }
+
+  // The below function is used to send the welcome email to the user
+  private async welcomeEmailTemplate(
+    email: string,
+    mjmlCompliedContent: string,
+  ) {
+    const emailBody = mjmlCompliedContent;
+    try {
+      await this.emailService.send({
+        recipients: [email],
+        body: emailBody,
+        subject: emailSubjects.welcome,
+      });
+    } catch (err) {
+      this.logger.error('Something went wrong:', JSON.stringify(err));
+      throw new Error('Failed to send email.');
+    }
+  }
+
+  async welcomeEmail(email: string) {
+    const templatePath = path.join(
+      __dirname,
+      './email-templates/welcome-Email.mjml',
+    );
+    const mjmlContent = await fs.readFile(templatePath, 'utf8');
+    const compiledTemplate = Handlebars.compile(mjmlContent);
+    const loginUrl = this.generateLoginLink();
+    const mjmlCompliedContent = compiledTemplate({ loginUrl });
+    return this.welcomeEmailTemplate(email, mjmlCompliedContent);
   }
 }
