@@ -295,7 +295,7 @@ const TeamMemberDetails = () => {
                   return (
                     <ProgressCard
                       key={item.id}
-                      className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-all duration-200 text-left transform"
+                      className="bg-white rounded-lg shadow-sm hover:shadow-lg w-[274px] cursor-pointer transition-all duration-200 text-left transform"
                       id={item?.id}
                       name={item?.name || ''}
                       title={item?.description || ''}
@@ -346,7 +346,7 @@ const TeamMemberDetails = () => {
                   return (
                     <ProgressCard
                       key={item.id}
-                      className="bg-white rounded-lg shadow-sm hover:shadow-lg w-full cursor-pointer transition-all duration-200 text-left transform"
+                      className="bg-white rounded-lg shadow-sm hover:shadow-lg w-[274px] cursor-pointer transition-all duration-200 text-left transform"
                       id={item?.id}
                       name={item?.name || ''}
                       title={item?.description || ''}

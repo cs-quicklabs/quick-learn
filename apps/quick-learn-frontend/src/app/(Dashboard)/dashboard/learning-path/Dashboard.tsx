@@ -153,7 +153,7 @@ const Dashboard = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <AnimatedProgressCard
-                    className="hover:shadow-lg  cursor-pointer transition-all duration-200 text-left transform"
+                    className="hover:shadow-lg w-full cursor-pointer transition-all duration-200 text-left transform"
                     id={roadmap?.id}
                     name={roadmap?.name || ''}
                     title={roadmap?.description || ''}
@@ -219,7 +219,7 @@ const Dashboard = () => {
                     whileTap={{ scale: 0.98 }}
                   >
                     <AnimatedProgressCard
-                      className=" hover:shadow-lg cursor-pointer transition-all duration-200 text-left transform"
+                      className=" hover:shadow-lg cursor-pointer w-full transition-all duration-200 text-left transform"
                       id={course.id}
                       name={course.name || ''}
                       title={course.description || ''}
