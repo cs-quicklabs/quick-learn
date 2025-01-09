@@ -24,6 +24,22 @@ export class LessonService extends PaginationService<LessonEntity> {
   ) {
     super(repo);
   }
+  /**
+   * Get a lesson
+   * @param LessonId - The id of the Lesson
+   * @throws BadRequestException if the course doesn't exist
+   * @returns The lesson entity
+   */
+  private async getLesson(lessonId: number): Promise<LessonEntity> {
+    const lesson = await this.repository.findOne({
+      where: { id: lessonId },
+    });
+
+    if (!lesson) {
+      throw new BadRequestException(en.lessonNotFound);
+    }
+    return lesson;
+  }
 
   /**
    * Creates a new lesson
@@ -77,11 +93,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     id: LessonEntity['id'],
     updateLessonDto: UpdateLessonDto,
   ) {
-    const lesson = await this.get({ id });
-
-    if (!lesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
+    const lesson = await this.getLesson(id);
 
     const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
       lesson.content,
@@ -137,10 +149,8 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @returns nothing
    */
   async approveLesson(lessonId: LessonEntity['id'], userId: UserEntity['id']) {
-    const lesson = await this.get({ id: lessonId });
-    if (!lesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
+    const lesson = await this.getLesson(lessonId);
+
     await this.update(
       { id: lessonId },
       {
@@ -203,10 +213,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    */
   async unarchiveLesson(lessonId: LessonEntity['id']) {
-    const lesson = await this.get({ id: lessonId });
-    if (!lesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
+    await this.getLesson(lessonId);
 
     await this.update(
       { id: lessonId },
@@ -238,11 +245,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    */
   async deleteLesson(id: number): Promise<void> {
-    const lesson = await this.get({ id });
-
-    if (!lesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
+    const lesson = await this.getLesson(id);
 
     const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
       lesson.content,
@@ -378,5 +381,37 @@ export class LessonService extends PaginationService<LessonEntity> {
         status: DailyLessonEnum.COMPLETED,
       },
     );
+  }
+
+  async getSearchedLessons(userId: number, isMember = false, query = '') {
+    const queryBuilder = this.repository
+      .createQueryBuilder('lesson')
+      .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
+      .leftJoin(
+        'lesson.course',
+        'course',
+        'course.archived = :courseArchived',
+        { courseArchived: false },
+      )
+      .andWhere('lesson.name ILIKE :query', { query: `%${query}%` });
+
+    if (isMember) {
+      queryBuilder
+        .innerJoin('course.roadmaps', 'roadmaps')
+        .innerJoin('roadmaps.users', 'users')
+        .andWhere('users.id = :userId', { userId });
+    }
+
+    return queryBuilder
+      .select([
+        'lesson.id AS id',
+        'lesson.name AS name',
+        'course.id AS course_id',
+      ])
+      .groupBy('lesson.id')
+      .addGroupBy('lesson.name')
+      .addGroupBy('course.id')
+      .limit(3)
+      .getRawMany(); // Changed from getMany() to getRawMany()
   }
 }

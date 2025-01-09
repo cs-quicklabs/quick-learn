@@ -207,6 +207,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       throw new BadRequestException(en.invalidCourse);
     }
 
+    const courseCount = await this.getCourseParticipantCount(course.id);
+    course['userCount'] = courseCount;
+
     if (!course.lessons) {
       course.lessons = [];
     } else {
@@ -220,6 +223,18 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
 
     return course;
+  }
+
+  async getCourseParticipantCount(id: number) {
+    const queryBuilder = this.repository
+      .createQueryBuilder('course')
+      .leftJoin('course.roadmaps', 'roadmap')
+      .leftJoin('roadmap.users', 'user')
+      .where('course.id = :courseId', { courseId: id })
+      .select('COUNT(DISTINCT user.id)', 'userCount');
+
+    const result = await queryBuilder.getRawOne();
+    return result?.userCount || 0;
   }
 
   /**
@@ -496,5 +511,26 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       courseDetails.lessons = [];
     }
     return courseDetails;
+  }
+
+  async getSearchedCourses(userId: number, isMember = false, query = '') {
+    const queryBuilder = this.repository
+      .createQueryBuilder('course')
+      .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .leftJoin(
+        'course.roadmaps',
+        'roadmaps',
+        'roadmaps.archived = :roadmapArchived',
+        { roadmapArchived: false },
+      )
+      .andWhere('course.name ILIKE :query', { query: `%${query}%` });
+
+    if (isMember) {
+      queryBuilder
+        .innerJoin('roadmaps.users', 'users')
+        .andWhere('users.id = :userId', { userId });
+    }
+
+    return queryBuilder.select(['course.id', 'course.name']).limit(3).getMany();
   }
 }

@@ -2,7 +2,7 @@ import { Controller, Post, Query, UseGuards } from '@nestjs/common';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { LessonEmailService } from './lesson-email-cron.service';
@@ -25,7 +25,7 @@ export class CronjobController {
    *@ApiQueryParam greeting
    *@returns success response
    */
-  @ApiParam({
+  @ApiQuery({
     name: 'greeting',
     required: true,
     type: String,

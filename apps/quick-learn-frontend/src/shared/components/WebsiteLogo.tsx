@@ -22,7 +22,7 @@ const WebsiteLogo: FC<Props> = (props) => {
         height="1005"
         fill="white"
         stroke="#007AFF"
-        stroke-width="40"
+        strokeWidth="40"
       />
       <rect
         x="142.834"

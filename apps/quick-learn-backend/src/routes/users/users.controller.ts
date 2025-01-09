@@ -151,8 +151,9 @@ export class UsersController {
     @Query('query') query: string,
   ): Promise<SuccessResponse> {
     const searchedQueryResult = await this.usersService.getUserSearchedQuery(
-      user.id,
+      user.user_type_id,
       query,
+      user.id,
     );
 
     return new SuccessResponse(en.searchResults, searchedQueryResult);

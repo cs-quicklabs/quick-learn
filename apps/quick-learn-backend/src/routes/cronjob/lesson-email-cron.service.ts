@@ -5,13 +5,11 @@ import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { nanoid } from 'nanoid';
 import { EmailService } from '@src/common/modules/email/email.service';
-import { emailSubjects } from '@src/common/constants/email-subject';
 import { Cron } from '@nestjs/schedule';
 import {
   CRON_TIMEZONE,
   DailyLessonGreetings,
 } from '@src/common/enum/daily_lesson.enum';
-import { EMAIL_BODY } from '@src/common/constants/emailBody';
 import { EnvironmentEnum } from '@src/common/constants/constants';
 import { ConfigService } from '@nestjs/config';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
@@ -141,19 +139,15 @@ export class LessonEmailService {
         userMailTokenRecord.token,
       );
 
-      const mailBody = EMAIL_BODY.DAILY_LESSON_EMAIL(
-        greeting,
-        user.first_name,
-        user.last_name,
-        randomLesson.name,
-        lessonURL,
-      );
+      const mailBody = {
+        greetings: greeting,
+        fullName: `${user.full_name}`,
+        lessonName: randomLesson.name,
+        lessonURL: lessonURL,
+        userEmail: user.email,
+      };
 
-      await this.emailService.email({
-        body: mailBody,
-        recipients: [user.email],
-        subject: emailSubjects.LESSON_FOR_THE_DAY,
-      });
+      this.emailService.dailyLessonTemplate(mailBody);
     } catch (error) {
       this.logger.error(`Error sending lesson email to user ${user.id}`, error);
     }
@@ -162,13 +156,7 @@ export class LessonEmailService {
   private async handleResetReadingHistory(user: UserEntity) {
     try {
       await this.resetUserReadingHistory(user.id);
-      const mailBody = EMAIL_BODY.RESET_READING_HISTORY();
-
-      await this.emailService.email({
-        body: mailBody,
-        recipients: [user.email],
-        subject: emailSubjects.RESET_READING_HISTORY,
-      });
+      this.emailService.readAllLessonSucess(user.email);
     } catch (error) {
       this.logger.error(
         `Error resetting reading history for user ${user.id}`,

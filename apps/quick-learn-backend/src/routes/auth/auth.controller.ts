@@ -23,6 +23,7 @@ import { LoginDto } from './dto';
 import { JwtRefreshAuthGuard } from './guards';
 import { SessionEntity } from '@src/entities';
 import Helpers from '@src/common/utils/helper';
+import { en } from '@src/lang/en';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/auth/login
 @ApiTags('Authentication')
@@ -45,7 +46,7 @@ export class AuthController {
     Helpers.setCookies(res, 'access_token', token, tokenExpires);
     Helpers.setCookies(res, 'refresh_token', refreshToken);
     Helpers.setCookies(res, 'user_role', role.toString());
-    return new SuccessResponse('Successfully logged in.');
+    return new SuccessResponse(en.successfullyLoggedIn);
   }
 
   @Post('logout')
@@ -68,7 +69,7 @@ export class AuthController {
 
     await this.authService.logout(refresh_token);
     Helpers.clearCookies(res);
-    return new SuccessResponse('Successfully logged out.');
+    return new SuccessResponse(en.successfullyLoggedOut);
   }
 
   @Post('forgot/password')
@@ -89,7 +90,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@CurrentUser() user: UserEntity): SuccessResponse {
-    return new SuccessResponse('Successfully got the user.', user);
+    return new SuccessResponse(en.successfullyGotUser, user);
   }
 
   @UseGuards(JwtRefreshAuthGuard)
@@ -107,6 +108,6 @@ export class AuthController {
       maxAge: expires,
       path: '/',
     });
-    return new SuccessResponse('Successfully refreshed the token.');
+    return new SuccessResponse(en.successfullyRefreshToken);
   }
 }

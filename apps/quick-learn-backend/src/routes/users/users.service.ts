@@ -15,7 +15,6 @@ import { SkillEntity } from '@src/entities/skill.entity';
 import { CreateUserDto, ListFilterDto, PaginationDto } from './dto';
 import { PaginatedResult } from '@src/common/interfaces';
 import { EmailService } from '@src/common/modules/email/email.service';
-import { emailSubjects } from '@src/common/constants/email-subject';
 import {
   CourseEntity,
   UserEntity,
@@ -44,12 +43,12 @@ export class UsersService extends PaginationService<UserEntity> {
     @InjectRepository(UserTypeEntity)
     private userTypeRepository: Repository<UserTypeEntity>,
     @InjectRepository(SkillEntity)
-    private skillRepository: Repository<SkillEntity>,
-    private emailService: EmailService,
-    private sessionService: SessionService,
-    private roadmapService: RoadmapService,
-    private courseService: CourseService,
-    private lessonService: LessonService,
+    private readonly skillRepository: Repository<SkillEntity>,
+    private readonly emailService: EmailService,
+    private readonly sessionService: SessionService,
+    private readonly roadmapService: RoadmapService,
+    private readonly courseService: CourseService,
+    private readonly lessonService: LessonService,
     private readonly FileService: FileService,
   ) {
     super(userRepository);
@@ -90,13 +89,7 @@ export class UsersService extends PaginationService<UserEntity> {
     let user = this.userRepository.create(createUserDto);
     user = await this.userRepository.save(user);
 
-    // send email to the user
-    const emailData = {
-      body: '<p>Welcome to Quick Learn!</p><br/><p>You can now login to quick learn.</p>',
-      recipients: [user.email],
-      subject: emailSubjects.welcome,
-    };
-    this.emailService.email(emailData);
+    this.emailService.welcomeEmail(user.email);
 
     return user;
   }
@@ -400,87 +393,21 @@ export class UsersService extends PaginationService<UserEntity> {
     return await queryBuilder.getOne();
   }
 
-  async getUserSearchedQuery(userId: number, query: string) {
-    if (!query || query.trim() === '') {
-      return {
-        Roadmaps: [],
-        Courses: [],
-        Lessons: [],
-      };
-    }
+  async getUserSearchedQuery(
+    usertype_id: number,
+    query: string,
+    userId: number,
+  ) {
+    //get confirm usertype
+    const isMember = usertype_id === UserTypeId.MEMBER;
 
-    const user = await this.findOne({ id: userId });
+    const [roadmaps, courses, lessons] = await Promise.all([
+      this.roadmapService.findSearchedRoadmap(userId, isMember, query),
+      this.courseService.getSearchedCourses(userId, isMember, query),
+      this.lessonService.getSearchedLessons(userId, isMember, query),
+    ]);
 
-    let data = [];
-    if (user.user_type_id === UserTypeId.MEMBER) {
-      data = await this.getUserRoadmaps(user.id, true);
-    } else {
-      data = await this.roadmapService.getAllRoadmaps();
-    }
-
-    // Set to track unique IDs
-    const courseIds = new Set<number>();
-    const lessonIds = new Set<number>();
-
-    // Filtering roadmaps
-    const roadmaps = data
-      .filter((roadmap) =>
-        roadmap.name.toLowerCase().includes(query.toLowerCase()),
-      )
-      .map((roadmap) => ({
-        id: roadmap.id,
-        name: roadmap.name,
-      }));
-
-    // Filtering courses with duplicate check
-    const courses = data.flatMap((roadmap) =>
-      roadmap.courses
-        .filter((course) => {
-          if (courseIds.has(course.id)) {
-            return false;
-          }
-          courseIds.add(course.id);
-          return course.name.toLowerCase().includes(query.toLowerCase());
-        })
-        .map((course) => ({
-          id: course.id,
-          name: course.name,
-        })),
-    );
-
-    // Filtering lessons with duplicate check
-    const lessons = data.flatMap((roadmap) =>
-      roadmap.courses.flatMap((course) => {
-        const lessonsArray =
-          course.lesson_ids ||
-          course.lessons.map((lesson) => ({
-            id: lesson.id,
-            name: lesson.name,
-            course_id: course.id,
-            roadmap_id: roadmap.id,
-          }));
-
-        return lessonsArray
-          .filter((lesson) => {
-            if (lessonIds.has(lesson.id)) {
-              return false;
-            }
-            lessonIds.add(lesson.id);
-            return lesson.name.toLowerCase().includes(query.toLowerCase());
-          })
-          .map((lesson) => ({
-            ...lesson,
-            course_id: course.id,
-            roadmap_id: roadmap.id,
-          }));
-      }),
-    );
-
-    return {
-      Roadmaps: roadmaps,
-      Courses: courses,
-      Lessons: lessons,
-    };
+    return { Roadmaps: roadmaps, Courses: courses, Lessons: lessons };
   }
 
   async updateUser(

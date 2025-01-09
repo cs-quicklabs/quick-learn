@@ -32,6 +32,7 @@ export interface TRoadmap extends TCreateRoadmap {
   created_at: string;
   updated_at: string;
   updated_by?: TUser;
+  userCount?: number;
 }
 
 export interface TCourse extends TCreateCourse {
@@ -41,7 +42,7 @@ export interface TCourse extends TCreateCourse {
   course_category: TCourseCategories;
   created_by_user_id: number;
   lessons_count?: number;
-  users_count?: number;
+  userCount?: number;
   created_by?: TUser;
   created_at: string;
   updated_at: string;
@@ -125,7 +126,6 @@ export type SearchedLesson = {
   id: number;
   name: string;
   course_id: number;
-  roadmap_id: number;
 };
 export type SearchedCourseOrRoadpmap = {
   id: number;

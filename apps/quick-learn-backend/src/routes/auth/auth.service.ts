@@ -11,6 +11,7 @@ import { UserEntity } from '@src/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import ms from 'ms';
+
 import { nanoid } from 'nanoid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResetTokenEntity } from '@src/entities/reset-token.entity';
@@ -25,8 +26,25 @@ import { SessionEntity } from '@src/entities';
 import { LoginDto } from './dto';
 import { ITokenData } from '@src/common/interfaces';
 import { en } from '@src/lang/en';
+
+interface IRefreshTokenPayload {
+  sessionId: number;
+  hash: string;
+}
+
+interface IAccessTokenPayload {
+  id: number;
+  role: number;
+  sessionId: number;
+}
+
 @Injectable()
 export class AuthService {
+  private accessTokenExpiresIn: number;
+  private refreshTokenExpiresIn: number;
+  private refreshTokenRememberMeExpiresIn: number;
+  private authSecret: string;
+  private authRefreshSecret: string;
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -37,12 +55,28 @@ export class AuthService {
     private configService: ConfigService,
     private emailService: EmailService,
     private sessionService: SessionService,
-  ) {}
+  ) {
+    this.accessTokenExpiresIn =
+      this.getTokenExpiresInMilliSeconds('auth.expires');
+    this.refreshTokenExpiresIn = this.getTokenExpiresInMilliSeconds(
+      'auth.refreshExpires',
+    );
+    this.refreshTokenRememberMeExpiresIn = this.getTokenExpiresInMilliSeconds(
+      'auth.refreshRememberMeExpires',
+    );
+    this.authSecret = this.configService.getOrThrow('auth.secret', {
+      infer: true,
+    });
+    this.authRefreshSecret = this.configService.getOrThrow(
+      'auth.refreshSecret',
+      { infer: true },
+    );
+  }
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
     const user = await this.usersService.findOne({ email });
     if (!user) {
-      throw new ForbiddenException('No user is linked to the provided email.');
+      throw new ForbiddenException(en.userLinkedToEmail);
     }
 
     if (!user.active) {
@@ -57,7 +91,7 @@ export class AuthService {
       });
       return user;
     } else {
-      throw new ForbiddenException('Wrong Credentials!');
+      throw new ForbiddenException(en.wrongCredentials);
     }
   }
 
@@ -69,24 +103,10 @@ export class AuthService {
       .update(randomStringGenerator())
       .digest('hex');
 
-    const refreshTokenExpiresIn = this.configService.getOrThrow(
-      'auth.refreshExpires',
-      {
-        infer: true,
-      },
-    );
-
-    const refreshTokenRememberMeExpiresIn = this.configService.getOrThrow(
-      'auth.refreshRememberMeExpires',
-      {
-        infer: true,
-      },
-    );
-
     const refreshTokenExpires = ms(
       loginDto.rememberMe
-        ? refreshTokenRememberMeExpiresIn
-        : refreshTokenExpiresIn,
+        ? this.refreshTokenRememberMeExpiresIn
+        : this.refreshTokenExpiresIn,
     );
 
     const session = await this.sessionService.create({
@@ -100,6 +120,7 @@ export class AuthService {
       role: user.user_type_id,
       sessionId: session.id,
       hash,
+      rememberMe: loginDto.rememberMe,
     });
   }
 
@@ -136,19 +157,7 @@ export class AuthService {
         infer: true,
       });
       const resetURL = `${frontendURL}/reset-password?token=${generateResetToken}`;
-
-      const html = `<div>
-        <p>Please click on the link below to reset your password.</p><br/>
-        <a style="padding: 8px 16px;text-decoration: none;background-color: #10182a;border-radius: 4px;color: white;" target="_blank" href="${resetURL}">Reset Password</a><br/>
-      <div>`;
-
-      this.emailService.email({
-        body: html,
-        recipients: [email],
-        subject: emailSubjects.resetPassword,
-      });
-
-      return new SuccessResponse('Reset password link has been shared.');
+      return this.emailService.sendForgetPasswordEmail(resetURL, email);
     }
     return new SuccessResponse(
       'If this user exists, they will recieve an email',
@@ -219,21 +228,14 @@ export class AuthService {
   async refreshToken(
     session: SessionEntity,
   ): Promise<{ token: string; expires: number }> {
-    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
-      infer: true,
-    });
-
-    const tokenExpires = ms(tokenExpiresIn);
-    const token = await this.jwtService.signAsync(
+    const token = await this.generateToken(
       {
         id: session.user.id,
         role: session.user.user_type_id,
         sessionId: session.id,
       },
-      {
-        secret: this.configService.getOrThrow('auth.secret', { infer: true }),
-        expiresIn: Date.now() + tokenExpiresIn,
-      },
+      this.authSecret,
+      this.accessTokenExpiresIn,
     );
 
     await this.userRepository.update(
@@ -243,7 +245,7 @@ export class AuthService {
 
     return {
       token,
-      expires: tokenExpires,
+      expires: this.accessTokenExpiresIn,
     };
   }
 
@@ -254,52 +256,52 @@ export class AuthService {
     hash: SessionEntity['hash'];
     rememberMe?: boolean;
   }): Promise<ITokenData> {
-    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
-      infer: true,
-    });
-
-    const tokenExpires = ms(tokenExpiresIn);
-
-    const refreshTokenExpiresIn = this.configService.getOrThrow(
-      'auth.refreshExpires',
-      {
-        infer: true,
-      },
-    );
-
-    const refreshTokenExpires = ms(refreshTokenExpiresIn);
-
+    const expires = data.rememberMe
+      ? this.refreshTokenRememberMeExpiresIn
+      : this.refreshTokenExpiresIn;
     const [token, refreshToken] = await Promise.all([
-      await this.jwtService.signAsync(
+      await this.generateToken(
         {
           id: data.id,
           role: data.role,
           sessionId: data.sessionId,
         },
-        {
-          secret: this.configService.getOrThrow('auth.secret', { infer: true }),
-          expiresIn: Date.now() + tokenExpiresIn,
-        },
+        this.authSecret,
+        this.accessTokenExpiresIn,
       ),
-      await this.jwtService.signAsync(
+      await this.generateToken(
         {
           sessionId: data.sessionId,
           hash: data.hash,
         },
-        {
-          secret: this.configService.getOrThrow('auth.refreshSecret', {
-            infer: true,
-          }),
-          expiresIn: Date.now() + refreshTokenExpires,
-        },
+        this.authRefreshSecret,
+        expires,
       ),
     ]);
 
     return {
       token,
       refreshToken,
-      tokenExpires,
+      tokenExpires: this.accessTokenExpiresIn,
       role: data.role,
     };
+  }
+
+  private getTokenExpiresInMilliSeconds(configKey: string): number {
+    const tokenExpiresIn = this.configService.getOrThrow<string>(configKey, {
+      infer: true,
+    });
+    return ms(tokenExpiresIn);
+  }
+
+  private async generateToken(
+    payload: IRefreshTokenPayload | IAccessTokenPayload,
+    secretConfigKey: string,
+    expiresIn: number,
+  ): Promise<string> {
+    return this.jwtService.signAsync(payload, {
+      secret: secretConfigKey,
+      expiresIn: Date.now() + expiresIn,
+    });
   }
 }
