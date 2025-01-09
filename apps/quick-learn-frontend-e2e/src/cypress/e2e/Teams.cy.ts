@@ -1,5 +1,5 @@
-import LoginPage = require('../test/Login');
-import TeamsPage = require('../test/Teams');
+import { LoginPage } from '../test/Login';
+import { TeamsPage } from '../test/Teams';
 import { validCredentials } from '../fixtures/credential';
 
 describe('Login Test', () => {

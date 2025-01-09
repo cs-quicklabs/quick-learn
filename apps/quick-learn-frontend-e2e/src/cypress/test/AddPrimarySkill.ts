@@ -1,4 +1,4 @@
-class addPrimarySkill {
+export class AddPrimarySkill {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
   }
@@ -13,16 +13,16 @@ class addPrimarySkill {
   clickSkillField() {
     return cy.get('#primary_skills_input_text').click();
   }
-  addPrimarySkill() {
+  AddPrimarySkill() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     return cy.get('#primary_skills_input_text').type('ReactJs' + Numeric);
   }
 
-  addPrimarySkillWithOnlySpaces() {
+  AddPrimarySkillWithOnlySpaces() {
     return cy.get('#primary_skills_input_text').type('   ');
   }
 
-  addPrimarySkillWithMoreCharacters() {
+  AddPrimarySkillWithMoreCharacters() {
     return cy
       .get('#primary_skills_input_text')
       .type(
@@ -64,4 +64,3 @@ class addPrimarySkill {
     this.getAccountSettings();
   }
 }
-module.exports = addPrimarySkill;

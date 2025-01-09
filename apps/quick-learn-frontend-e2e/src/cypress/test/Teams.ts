@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-class Teams {
+export class TeamsPage {
   visitTeamPage() {
     return cy.get('[href="/dashboard/teams"]');
   }
@@ -91,4 +91,3 @@ class Teams {
     this.getMembersList();
   }
 }
-module.exports = Teams;

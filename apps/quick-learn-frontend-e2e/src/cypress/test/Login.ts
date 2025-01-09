@@ -1,4 +1,4 @@
-class LoginPage {
+export class LoginPage {
   visit() {
     cy.visit('/');
   }
@@ -52,5 +52,3 @@ class LoginPage {
     this.getSubmitButton().should('be.disabled');
   }
 }
-
-module.exports = LoginPage;

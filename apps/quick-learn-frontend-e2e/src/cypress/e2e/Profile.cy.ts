@@ -1,5 +1,5 @@
-import LoginPage = require('../test/Login');
-import profile = require('../test/Profile');
+import { LoginPage } from '../test/Login';
+import { Profile } from '../test/Profile';
 import { validCredentials } from '../fixtures/credential';
 
 describe('Primary Skill Update', () => {
@@ -14,23 +14,23 @@ describe('Primary Skill Update', () => {
     loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
   });
 
-  it('Verify User should able to Upload profile Pic ', () => {
-    const myProfiles = new profile();
+  it('Verify User should able to Upload Profile Pic ', () => {
+    const myProfiles = new Profile();
     myProfiles.getMyProfile();
     myProfiles.uploadPic();
   });
   it('Verify User should able to Update First name ', () => {
-    const myProfiles = new profile();
+    const myProfiles = new Profile();
     myProfiles.getMyProfile();
     myProfiles.UpdateFirstName();
   });
   it('Verify User should not able to Update First name with empty spaces  ', () => {
-    const myProfiles = new profile();
+    const myProfiles = new Profile();
     myProfiles.getMyProfile();
     myProfiles.UpdateFirstNameWithEmptySpaces();
   });
   it('Verify User should able to Update Last name', () => {
-    const myProfiles = new profile();
+    const myProfiles = new Profile();
     myProfiles.getMyProfile();
     myProfiles.UpdateLastName();
   });

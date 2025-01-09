@@ -1,4 +1,4 @@
-class AddTeam {
+export class AddTeam {
   visitTeamPage() {
     return cy.get('[href="/dashboard/teams"]');
   }
@@ -88,8 +88,6 @@ class AddTeam {
     this.getUserTypeAdmin();
     this.getPassword().type('   ');
     this.getConfirmPassword().type('   ');
-    this.getSkillID('   ');
+    this.getSkillID();
   }
 }
-
-module.exports = AddTeam;

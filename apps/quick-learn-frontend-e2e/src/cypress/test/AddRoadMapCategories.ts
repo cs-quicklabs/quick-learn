@@ -1,4 +1,4 @@
-class addRoadMap {
+export class AddRoadMap {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
   }
@@ -14,7 +14,7 @@ class addRoadMap {
   clickRoadmapField() {
     return cy.get('#roadmap_categories_input_text').click();
   }
-  addRoadMapCategories() {
+  AddRoadMapCategories() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     return cy.get('#roadmap_categories_input_text').type('ReactJs' + Numeric);
   }
@@ -50,10 +50,10 @@ class addRoadMap {
     this.getAccountSettings();
   }
 
-  addRoadmapCategoriesWithOnlySpaces() {
+  AddRoadMapCategoriesWithOnlySpaces() {
     return cy.get('#roadmap_categories_input_text').type('    ');
   }
-  addRoadmapCategoriesWithMoreLimit() {
+  AddRoadMapCategoriesWithMoreLimit() {
     return cy
       .get('#roadmap_categories_input_text')
       .type(
@@ -65,4 +65,3 @@ class addRoadMap {
     return cy.get('.flex-wrap > .false').click();
   }
 }
-module.exports = addRoadMap;

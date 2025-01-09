@@ -1,4 +1,4 @@
-import LoginPage = require('../test/Login');
+import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
 
 describe('Login Test', () => {

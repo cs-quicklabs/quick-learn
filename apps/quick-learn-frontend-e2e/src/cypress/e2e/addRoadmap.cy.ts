@@ -1,5 +1,5 @@
-import addRoadmap = require('../test/addRoadMapCategories');
-import LoginPage = require('../test/Login');
+import { AddRoadMap } from '../test/AddRoadMapCategories';
+import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
 
 describe('Primary Skill Update', () => {
@@ -14,57 +14,58 @@ describe('Primary Skill Update', () => {
     loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
   });
   it('Verify User should able to add Roadmap categories', () => {
-    const addRoadmaps = new addRoadmap();
-    addRoadmaps.OpenAccountSettings();
-    addRoadmaps.openRoadMap();
-    addRoadmaps.clickRoadmapField();
-    addRoadmaps.addRoadMapCategories();
-    addRoadmaps.saveButton();
+    const AddRoadMaps = new AddRoadMap();
+    AddRoadMaps.OpenAccountSettings();
+    AddRoadMaps.openRoadMap();
+    AddRoadMaps.clickRoadmapField();
+    AddRoadMaps.AddRoadMapCategories();
+    AddRoadMaps.saveButton();
   });
 
   it('Verify User should not able to add empty roadmap', () => {
-    const addRoadmaps = new addRoadmap();
-    addRoadmaps.OpenAccountSettings();
-    addRoadmaps.openRoadMap();
-    addRoadmaps.clickRoadmapField();
-    addRoadmaps.addRoadmapCategoriesWithOnlySpaces();
-    addRoadmaps.getErrorMessage().should('contain', 'This field is mandatory');
+    const AddRoadMaps = new AddRoadMap();
+    AddRoadMaps.OpenAccountSettings();
+    AddRoadMaps.openRoadMap();
+    AddRoadMaps.clickRoadmapField();
+    AddRoadMaps.AddRoadMapCategoriesWithOnlySpaces();
+    AddRoadMaps.getErrorMessage().should('contain', 'This field is mandatory');
   });
   it('Verify Roadmap field should not expect more than 30 characters', () => {
-    const addRoadmaps = new addRoadmap();
-    addRoadmaps.OpenAccountSettings();
-    addRoadmaps.openRoadMap();
-    addRoadmaps.clickRoadmapField();
-    addRoadmaps.addRoadmapCategoriesWithMoreLimit();
-    addRoadmaps
-      .getErrorMessage()
-      .should('contain', 'The value should not exceed 30 character');
+    const AddRoadMaps = new AddRoadMap();
+    AddRoadMaps.OpenAccountSettings();
+    AddRoadMaps.openRoadMap();
+    AddRoadMaps.clickRoadmapField();
+    AddRoadMaps.AddRoadMapCategoriesWithMoreLimit();
+    AddRoadMaps.getErrorMessage().should(
+      'contain',
+      'The value should not exceed 30 character',
+    );
   });
   it('Verify Super admin able to edit Roadmap Categories', () => {
-    const addRoadmaps = new addRoadmap();
-    addRoadmaps.OpenAccountSettings();
-    addRoadmaps.openRoadMap();
-    addRoadmaps.editRoadmapCategories();
+    const AddRoadMaps = new AddRoadMap();
+    AddRoadMaps.OpenAccountSettings();
+    AddRoadMaps.openRoadMap();
+    AddRoadMaps.editRoadmapCategories();
   });
 
   it('Verify Super admin should not able to edit Roadmap categories with empty spaces', () => {
-    const addRoadmaps = new addRoadmap();
-    addRoadmaps.OpenAccountSettings();
-    addRoadmaps.openRoadMap();
-    addRoadmaps.editRoadmapCategoriesWithEmptySpaces();
+    const AddRoadMaps = new AddRoadMap();
+    AddRoadMaps.OpenAccountSettings();
+    AddRoadMaps.openRoadMap();
+    AddRoadMaps.editRoadmapCategoriesWithEmptySpaces();
   });
 
   it('Verify Super admin should able to Delete Roadmap', () => {
-    const addRoadmaps = new addRoadmap();
-    addRoadmaps.OpenAccountSettings();
-    addRoadmaps.openRoadMap();
-    addRoadmaps.deleteRoadMap();
+    const AddRoadMaps = new AddRoadMap();
+    AddRoadMaps.OpenAccountSettings();
+    AddRoadMaps.openRoadMap();
+    AddRoadMaps.deleteRoadMap();
   });
 
   it('Verify Super admin should not able to Delete Roadmap category associated with other Roadmaps', () => {
-    const addRoadmaps = new addRoadmap();
-    addRoadmaps.OpenAccountSettings();
-    addRoadmaps.openRoadMap();
-    addRoadmaps.deleteRoadMapCategories();
+    const AddRoadMaps = new AddRoadMap();
+    AddRoadMaps.OpenAccountSettings();
+    AddRoadMaps.openRoadMap();
+    AddRoadMaps.deleteRoadMapCategories();
   });
 });

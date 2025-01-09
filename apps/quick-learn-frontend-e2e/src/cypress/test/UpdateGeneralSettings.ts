@@ -1,4 +1,4 @@
-class updateGeneralSettings {
+export class UpdateGeneralSettings {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
   }
@@ -34,7 +34,7 @@ class updateGeneralSettings {
   }
 
   OpenAccountSettings() {
-    this.getAccountSettings().click();
+    this.getAccountSettings();
   }
 
   editSettings() {
@@ -55,5 +55,3 @@ class updateGeneralSettings {
     this.getError().contains('This field is mandatory');
   }
 }
-
-module.exports = updateGeneralSettings;
