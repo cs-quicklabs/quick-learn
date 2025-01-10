@@ -21,7 +21,7 @@ export class LessonProgressService {
       where: { id: lessonId, course_id: courseId },
     });
 
-    if (!lessonExists) {
+    if (!lesson) {
       throw new NotFoundException('Lesson not found in this course');
     }
     return lesson;

@@ -1,13 +1,13 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { defineConfig } from 'cypress';
-import dotenv = require('dotenv');
+import * as dotenv from 'dotenv';
 
 // Load environment variables from .env file
 dotenv.config();
 
-module.exports = defineConfig({
+export default defineConfig({
   e2e: {
-    baseUrl: 'http://dev.learn.build-release.com/', // Accessing the environment variable
+    baseUrl: process.env.QLDEV_BASE_URL, // Accessing the environment variable
   },
   viewportWidth: 1920,
   viewportHeight: 1080,

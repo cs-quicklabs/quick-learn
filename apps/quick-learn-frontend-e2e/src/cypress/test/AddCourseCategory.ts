@@ -1,4 +1,4 @@
-export class AddCourses {
+export class AddCourseCategory {
   visitProfilePage() {
     return cy.get('button[class="flex items-center"]').click();
   }
@@ -6,20 +6,20 @@ export class AddCourses {
     cy.get('button[class="flex items-center"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();
   }
-  openCourses() {
+  openCourseCategory() {
     return cy.contains('Courses Categories').click();
   }
-  clickCourses() {
+  clickCourseCategory() {
     return cy.get('#courses_categories_input_text');
   }
-  AddCourses() {
+  AddCourseCategory() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     return cy.get('#courses_categories_input_text').type('ReactJs' + Numeric);
   }
-  AddCoursesWithOnlySpaces() {
+  AddCourseCategoryWithOnlySpaces() {
     return cy.get('#courses_categories_input_text').type('    ');
   }
-  AddCoursesWithMoreLimit() {
+  AddCourseCategoryWithMoreLimit() {
     return cy
       .get('#courses_categories_input_text')
       .type(
@@ -49,11 +49,11 @@ export class AddCourses {
     cy.get('td > .px-2').should('contain', 'This field is mandatory');
   }
 
-  deleteCourseCategories() {
+  deleteCourseCategory() {
     cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
   }
 
-  deleteCourseCategoriesAssociatedWithCourses() {
+  deleteCourseCategoryAssociatedWithCourses() {
     cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
     cy.get('[class="flex-1 overflow-auto p-0"]');
     cy.get('button.bg-white.uppercase').click();
