@@ -1,13 +1,11 @@
-class addPrimarySkill {
-  visitTeamPage() {
-    return cy.get('[href="/dashboard/teams"]');
+export class AddPrimarySkill {
+  visitProfilePage() {
+    return cy.get('button[class="flex items-center"]').click();
   }
 
-  userMenu() {
-    return cy.contains('Open user menu');
-  }
   getAccountSettings() {
-    return cy.contains('Account Settings');
+    cy.get('button[class="flex items-center"]').click();
+    cy.get('[href="/dashboard/account-settings"]').click();
   }
   openPrimarySkill() {
     return cy.contains('Primary Skills').click();
@@ -15,16 +13,16 @@ class addPrimarySkill {
   clickSkillField() {
     return cy.get('#primary_skills_input_text').click();
   }
-  addPrimarySkill() {
+  AddPrimarySkill() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     return cy.get('#primary_skills_input_text').type('ReactJs' + Numeric);
   }
 
-  addPrimarySkillWithOnlySpaces() {
+  AddPrimarySkillWithOnlySpaces() {
     return cy.get('#primary_skills_input_text').type('   ');
   }
 
-  addPrimarySkillWithMoreCharacters() {
+  AddPrimarySkillWithMoreCharacters() {
     return cy
       .get('#primary_skills_input_text')
       .type(
@@ -49,6 +47,11 @@ class addPrimarySkill {
   deletePrimarySkill() {
     cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
   }
+  deleteSkillCategories() {
+    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get('[class="flex-1 overflow-auto p-0"]');
+    cy.get('button.bg-white.uppercase').click();
+  }
   getErrorMessage() {
     return cy.get('.mt-1');
   }
@@ -58,8 +61,6 @@ class addPrimarySkill {
   }
 
   OpenAccountSettings() {
-    this.userMenu().click();
-    this.getAccountSettings().click();
+    this.getAccountSettings();
   }
 }
-module.exports = addPrimarySkill;

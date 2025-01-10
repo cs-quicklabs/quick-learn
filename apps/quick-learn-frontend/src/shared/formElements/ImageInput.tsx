@@ -1,19 +1,16 @@
 'use client';
 import { CameraIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
-import {
-  showApiErrorInToast,
-  showApiMessageInToast,
-} from '@src/utils/toastUtils';
+import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { FilePathType } from 'lib/shared/src';
 import Image from 'next/image';
-import React, { FC, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { getInitials } from '@src/utils/helpers';
 import ConformationModal from '../modals/conformationModal'; // Assuming this is your confirmation modal component
-import { updateUserProfileService } from '@src/apiServices/profileService';
-import { UserContext } from '@src/context/userContext';
+import { AxiosSuccessResponse } from '@src/apiServices/axios';
+import { FileUploadResponse } from '@src/shared/types/utilTypes';
 
 interface Props {
   watch: UseFormWatch<z.TypeOf<z.ZodTypeAny>>;
@@ -24,6 +21,9 @@ interface Props {
   imageType: FilePathType;
   firstName?: string;
   lastName?: string;
+  readonly onChangeImage?: (
+    res: AxiosSuccessResponse<FileUploadResponse> | undefined,
+  ) => void;
 }
 
 const ImageInput: FC<Props> = ({
@@ -35,13 +35,13 @@ const ImageInput: FC<Props> = ({
   imageType,
   firstName,
   lastName,
+  onChangeImage,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imagePreview, setImagePreview] = useState<string | null>(src);
   const [error, setError] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false); // State to manage modal visibility
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user, setUser } = useContext(UserContext);
 
   const watchProfileImage = watch(name);
 
@@ -61,7 +61,9 @@ const ImageInput: FC<Props> = ({
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
 
     if (file) {
@@ -84,24 +86,10 @@ const ImageInput: FC<Props> = ({
           return res;
         })
         .then((res) => {
-          const serviceInput = {
-            first_name: user?.first_name,
-            last_name: user?.last_name,
-            profile_image: res.data.file,
-          };
-          if (user) {
-            setUser({
-              ...user,
-              profile_image: res.data.file,
-            });
+          if (onChangeImage) {
+            //runs API call to update the Image
+            onChangeImage(res);
           }
-          updateUserProfileService(serviceInput)
-            .then((response) => {
-              showApiMessageInToast(response); // Show success message
-            })
-            .catch((err) => {
-              showApiErrorInToast(err); // Show error message if API fails
-            });
         })
         .catch((err) => showApiErrorInToast(err))
         .finally(() => setIsLoading(false));
@@ -129,54 +117,24 @@ const ImageInput: FC<Props> = ({
   };
 
   // Handle Deletion Confirmation - Remove the image and close the modal
-  const handleConfirmDeletion = () => {
+  const handleConfirmDeletion = async () => {
     setIsLoading(true);
-
-    // Prepare service input to update profile without image
-    const serviceInput = {
-      first_name: user?.first_name,
-      last_name: user?.last_name,
-      profile_image: '', // Use empty string
-    };
-    if (user) {
-      setUser({
-        ...user,
-        profile_image: '',
+    try {
+      if (onChangeImage) {
+        await onChangeImage(undefined);
+      }
+      // Update form value
+      setValue(name, '', {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
       });
+      // Clear image preview
+      setImagePreview(null);
+    } finally {
+      setIsDeleteModalOpen(false);
+      setIsLoading(false);
     }
-    updateUserProfileService(serviceInput)
-      .then((response) => {
-        // Reset form value
-        setValue(name, '', {
-          shouldValidate: true,
-          shouldDirty: true,
-          shouldTouch: true,
-        });
-
-        // Clear image preview
-        setImagePreview(null);
-
-        // Show success message
-        showApiMessageInToast(response);
-
-        // Update user context to remove profile image
-        if (user) {
-          const updatedUser = {
-            ...user,
-            profile_image: '',
-          };
-          setUser(updatedUser);
-        }
-      })
-      .catch((err) => {
-        // Show error message if deletion fails
-        showApiErrorInToast(err);
-      })
-      .finally(() => {
-        // Close modal and stop loading
-        setIsDeleteModalOpen(false);
-        setIsLoading(false);
-      });
   };
 
   return (

@@ -18,6 +18,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import AccountSettingsSkeleton from './AccountSettingsSkeleton';
+import { FileUploadResponse } from '@src/shared/types/utilTypes';
+import { AxiosSuccessResponse } from '@src/apiServices/axios';
 
 const AccountSettingSechema = z.object({
   name: z
@@ -33,7 +35,6 @@ const AccountSettingSechema = z.object({
 });
 
 type AccountSettingsData = z.infer<typeof AccountSettingSechema>;
-
 const AccountSettings = () => {
   const { user, setUser } = useContext(UserContext);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
@@ -41,6 +42,10 @@ const AccountSettings = () => {
   const methods = useForm<AccountSettingsData>({
     resolver: zodResolver(AccountSettingSechema),
     mode: 'onChange',
+    defaultValues: {
+      name: '',
+      logo: '',
+    },
   });
   const { setValue } = methods;
 
@@ -59,17 +64,39 @@ const AccountSettings = () => {
       placeholder: 'Team name',
     },
   ];
+  const { reset } = methods;
 
   useEffect(() => {
     setIsPageLoading(true);
     getTeamDetails()
       .then((res) => {
-        setValue('name', res.data.name);
-        setValue('logo', res.data.logo ?? '');
+        reset({ name: res?.data?.name, logo: res?.data?.logo });
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsPageLoading(false));
-  }, [setValue]);
+  }, [setValue, reset]);
+
+  function onChangeImage(
+    response: AxiosSuccessResponse<FileUploadResponse> | undefined,
+  ) {
+    const teamService = {
+      name: user?.team.name || '',
+      logo: response ? response.data.file : '',
+    };
+
+    updateTeamDetails(teamService as TTeam)
+      .then((res) => {
+        showApiMessageInToast(res);
+        if (user) {
+          reset({
+            name: user.team.name,
+            logo: response ? response.data.file : '',
+          });
+        }
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsLoading(false));
+  }
 
   function onSubmit(data: AccountSettingsData) {
     updateTeamDetails(data as TTeam)
@@ -81,6 +108,7 @@ const AccountSettings = () => {
             team: { ...user.team, name: data.name },
           });
         }
+        reset({ name: data.name, logo: data.logo });
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
@@ -89,25 +117,24 @@ const AccountSettings = () => {
     return <AccountSettingsSkeleton />;
   }
   return (
-    <>
-      <div>
-        <h1 className="text-lg font-semibold">{en.common.teamSettings}</h1>
-        <p className="text-gray-500 text-sm mb-6">
-          {en.common.changeSettingsOfYourTeam}
-        </p>
-        <FormProvider {...methods}>
-          <FormFieldsMapper
-            fields={accountSettingsFields}
-            schema={AccountSettingSechema}
-            onSubmit={onSubmit}
-            methods={methods}
-            isLoading={isLoading}
-            buttonText="Save"
-            id="accountSettingsForm"
-          />
-        </FormProvider>
-      </div>
-    </>
+    <div>
+      <h1 className="text-lg font-semibold">{en.common.teamSettings}</h1>
+      <p className="text-gray-500 text-sm mb-6">
+        {en.common.changeSettingsOfYourTeam}
+      </p>
+      <FormProvider {...methods}>
+        <FormFieldsMapper
+          fields={accountSettingsFields}
+          schema={AccountSettingSechema}
+          onSubmit={onSubmit}
+          methods={methods}
+          isLoading={isLoading}
+          buttonText="Save"
+          onChangeImage={onChangeImage}
+          id="accountSettingsForm"
+        />
+      </FormProvider>
+    </div>
   );
 };
 

@@ -34,7 +34,7 @@ export class EmailNotification {
     const toAddresses = message.recipients;
     const ccAddresses = message.cc || [];
     const bccAddresses = message.bcc || [];
-    const subject = message.subject;
+    const subject = 'Quick Learn: ' + message.subject;
     const body = message.body;
 
     const mailOptions = {

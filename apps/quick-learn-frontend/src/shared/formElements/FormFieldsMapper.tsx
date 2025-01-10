@@ -7,6 +7,8 @@ import { FieldConfig } from '../types/formTypes';
 import ImageInput from './ImageInput';
 import { Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
+import { FileUploadResponse } from '@src/shared/types/utilTypes';
+import { AxiosSuccessResponse } from '@src/apiServices/axios';
 
 interface Props<T extends z.ZodTypeAny> {
   readonly fields: FieldConfig[];
@@ -22,6 +24,9 @@ interface Props<T extends z.ZodTypeAny> {
   readonly isLoading?: boolean;
   readonly resetFormOnSubmit?: boolean;
   readonly mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
+  readonly onChangeImage?: (
+    res: AxiosSuccessResponse<FileUploadResponse> | undefined,
+  ) => void;
   readonly id?: string;
   readonly cancelButton?: () => void;
 }
@@ -37,6 +42,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   methods,
   resetFormOnSubmit = false,
   mode = 'onBlur',
+  onChangeImage,
   id,
   cancelButton,
 }: Props<T>) {
@@ -84,6 +90,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
                 label={field.label}
                 firstName={field.firstName}
                 lastName={field.lastName}
+                onChangeImage={onChangeImage}
               />
             );
         })}
