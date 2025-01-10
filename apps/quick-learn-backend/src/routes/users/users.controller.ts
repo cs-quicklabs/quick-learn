@@ -173,11 +173,11 @@ export class UsersController {
     return new SuccessResponse(en.successUserCreate, user);
   }
 
-  @Post('list')
+  @Get('list')
   @ApiOperation({ summary: 'Filter users' })
   async findAll(
     @CurrentUser() user: UserEntity,
-    @Body() paginationDto: PaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() filter: ListFilterDto,
   ): Promise<SuccessResponse> {
     const users = await this.usersService.findAll(user, paginationDto, {
@@ -187,11 +187,11 @@ export class UsersController {
     return new SuccessResponse(en.successGotUsers, users);
   }
 
-  @Post('archived')
+  @Get('archived')
   @ApiOperation({ summary: 'Get Archived Users' })
   async findAllInactiveUsers(
     @CurrentUser() user: UserEntity,
-    @Body() paginationDto: PaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() filter: ListFilterDto,
   ): Promise<SuccessResponse> {
     const users = await this.usersService.findAll(

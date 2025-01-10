@@ -50,10 +50,7 @@ export class RoadmapController {
 
   @Get('archived')
   @ApiOperation({ summary: 'Get Archived Roadmaps' })
-  async findAllArchivedRoadmaps(
-    @CurrentUser() user: UserEntity,
-    @Body() paginationDto: PaginationDto,
-  ) {
+  async findAllArchivedRoadmaps(@Query() paginationDto: PaginationDto) {
     const roadmaps = await this.service.findAllArchived(paginationDto);
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }

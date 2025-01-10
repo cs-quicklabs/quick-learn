@@ -41,14 +41,14 @@ export const getArchivedUsers = async (
   page: number,
   q = '',
 ): Promise<AxiosSuccessResponse<PaginateWrapper<TUser[]>>> => {
-  const body = {
+  const params = {
     mode: 'paginate',
     page,
     q,
   };
-  const response = await axiosInstance.post<
+  const response = await axiosInstance.get<
     AxiosSuccessResponse<PaginateWrapper<TUser[]>>
-  >(ArchivedApiEnum.ARCHIVED_USERS, body);
+  >(ArchivedApiEnum.ARCHIVED_USERS, { params });
   return response.data;
 };
 
@@ -84,17 +84,15 @@ export const deleteRoadmap = async (
 export const getArchivedRoadmaps = async (
   page: number,
   q = '',
-  paginate = true,
 ): Promise<AxiosSuccessResponse<PaginateWrapper<TRoadmap[]>>> => {
+  const params = {
+    mode: 'paginate',
+    page,
+    q,
+  };
   const response = await axiosInstance.get<
     AxiosSuccessResponse<PaginateWrapper<TRoadmap[]>>
-  >(ArchivedApiEnum.ARCHIVED_ROADMAPS, {
-    params: {
-      page,
-      q,
-      paginate,
-    },
-  });
+  >(ArchivedApiEnum.ARCHIVED_ROADMAPS, { params });
   return response.data;
 };
 
@@ -131,14 +129,14 @@ export const getArchivedCourses = async (
   page: number,
   q = '',
 ): Promise<AxiosSuccessResponse<PaginateWrapper<TCourse[]>>> => {
-  const body = {
+  const params = {
     mode: 'paginate',
     page,
     q,
   };
-  const response = await axiosInstance.post<
+  const response = await axiosInstance.get<
     AxiosSuccessResponse<PaginateWrapper<TCourse[]>>
-  >(ArchivedApiEnum.ARCHIVED_COURSES, body);
+  >(ArchivedApiEnum.ARCHIVED_COURSES, { params });
   return response.data;
 };
 
@@ -175,13 +173,13 @@ export const getArchivedLessons = async (
   page: number,
   q = '',
 ): Promise<AxiosSuccessResponse<PaginateWrapper<TLesson[]>>> => {
-  const body = {
+  const params = {
     mode: 'paginate',
     page,
     q,
   };
-  const response = await axiosInstance.post<
+  const response = await axiosInstance.get<
     AxiosSuccessResponse<PaginateWrapper<TLesson[]>>
-  >(ArchivedApiEnum.ARCHIVED_LESSONS, body);
+  >(ArchivedApiEnum.ARCHIVED_LESSONS, { params });
   return response.data;
 };

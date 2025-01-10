@@ -15,6 +15,9 @@ import { JwtAuthGuard } from '../auth/guards';
 import { CourseCategoryService } from './course-category.service';
 import { UpdateCourseCategoryDto } from './dto/update-course-category.dto';
 import { en } from '@src/lang/en';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '@src/common/decorators/roles.decorator';
+import { UserTypeId } from '@src/common/enum/user_role.enum';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/course-categories
 @ApiTags('Course Categories')
@@ -26,6 +29,8 @@ import { en } from '@src/lang/en';
 export class CourseCategoryController {
   constructor(private readonly courseCategoryService: CourseCategoryService) {}
 
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeId.SUPER_ADMIN)
   @Post()
   @ApiOperation({ summary: 'Create course category.' })
   async create(
@@ -59,6 +64,8 @@ export class CourseCategoryController {
     return this.courseCategoryService.get({ id: +id });
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeId.SUPER_ADMIN)
   @Patch(':id')
   @ApiOperation({ summary: 'Update the course category.' })
   @ApiParam({ name: 'id', type: 'string' })
@@ -73,6 +80,8 @@ export class CourseCategoryController {
     return new SuccessResponse(en.successUpdateCourse);
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeId.SUPER_ADMIN)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete the course category.' })
   async remove(@Param('id') id: string) {
