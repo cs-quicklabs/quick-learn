@@ -151,7 +151,7 @@ const DailyLessonDetail = () => {
           </div>
         )}
         {token && (
-          <div className=" absolute flex bottom-5 left-5 ">
+          <div className=" fixed flex bottom-5 left-5 ">
             <Button color="blue" pill onClick={navigateUserToLearningPath}>
               <span className="flex items-center gap-1 justify-center">
                 <HomeIcon height={'1rem'} width={'1rem'} />
