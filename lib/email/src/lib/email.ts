@@ -11,6 +11,7 @@ export type Message = {
 export class EmailNotification {
   private accountEmail: string;
   private emailTransporter: nodemailer.Transporter;
+  private isProduction: boolean;
   /**
    * @param data Send Grid API Key
    * @param emai verified sender email
@@ -24,6 +25,7 @@ export class EmailNotification {
       secure: false,
     });
     this.accountEmail = emai;
+    this.isProduction = false;
   }
 
   private async sendEmail(message: Message): Promise<void> {
@@ -46,12 +48,22 @@ export class EmailNotification {
       html: body,
     };
 
-    try {
-      const info = await this.emailTransporter.sendMail(mailOptions);
-      console.log('Email sent successfully to', info.accepted.join(', '));
-    } catch (error) {
-      console.error('Error sending email:', error);
-      throw error;
+    if (this.isProduction) {
+      try {
+        const info = await this.emailTransporter.sendMail(mailOptions);
+        console.log('Email sent successfully to', info.accepted.join(', '));
+      } catch (error) {
+        console.error('Error sending email:', error);
+        throw error;
+      }
+    } else {
+      // Simulate email by logging the data URL
+      const emailPreview = `data:text/html;charset=utf-8,${encodeURIComponent(
+        body,
+      )}`;
+      console.log(`Simulated email to: ${toAddresses.join(', ')}`);
+      console.log(`Email preview link: ${emailPreview}`);
+      return;
     }
   }
 

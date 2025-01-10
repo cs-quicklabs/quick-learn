@@ -25,7 +25,9 @@ export class EmailService {
   private emailService: EmailNotification;
   private readonly logger = new Logger('Email Service');
   private readonly frontendURL: string;
+  private readonly isDevelopment: boolean;
   constructor(private configService: ConfigService) {
+    // add a condition checking if the enviroment is dev or not.
     const email = this.configService.getOrThrow('app.smtpEmail', {
       infer: true,
     });
@@ -42,6 +44,8 @@ export class EmailService {
     this.frontendURL = this.configService.get('app.frontendDomain', {
       infer: true,
     });
+    this.isDevelopment =
+      this.configService.get('app.env', { infer: true }) === 'dev';
   }
 
   /**
@@ -52,6 +56,7 @@ export class EmailService {
   async email(data: Message): Promise<void> {
     const emailText = data.body;
     const emailBody = await this.compileMjmlTemplate(emailText);
+
     try {
       await this.emailService.send({
         ...data,
