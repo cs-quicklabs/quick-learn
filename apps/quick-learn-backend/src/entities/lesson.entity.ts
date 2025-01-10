@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { CourseEntity } from './course.entity';
 import { UserEntity } from './user.entity';
 import { BaseEntity } from './BaseEntity';
+import { UserLessonProgressEntity } from './user-lesson-progress.entity';
 
 @Entity('lesson')
 export class LessonEntity extends BaseEntity {
@@ -55,4 +56,7 @@ export class LessonEntity extends BaseEntity {
   })
   @JoinColumn({ name: 'archive_by' })
   archive_by_user: UserEntity;
+
+  @OneToMany(() => UserLessonProgressEntity, (progress) => progress.lesson)
+  users_lesson_progress: UserLessonProgressEntity[];
 }

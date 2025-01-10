@@ -33,17 +33,25 @@ export class BasicCrudService<T> {
   /**
    * Retrieves multiple entities based on the provided options.
    * @param {FindOptionsWhere<T> | FindOptionsWhere<T>[]} [options] - The options for finding the entities.
+   * @param {FindOptionsOrder<T>} [orderOptions] - The options for ordering the retrieved entities.
+   * @param {string[]} [relations] - The relations to include in the retrieved entities.
+   * @param {number} [take] - The maximum number of entities to retrieve.
+   * @param {number} [skip] - The number of entities to skip.
    * @returns {Promise<T[]>} A promise that resolves with an array of retrieved entities.
    */
   async getMany(
     options?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     orderOptions?: FindOptionsOrder<T>,
     relations: string[] = [],
+    take?: number,
+    skip?: number,
   ): Promise<T[]> {
     return await this.repository.find({
       where: options,
       order: orderOptions,
       relations: [...relations],
+      take,
+      skip,
     });
   }
 
