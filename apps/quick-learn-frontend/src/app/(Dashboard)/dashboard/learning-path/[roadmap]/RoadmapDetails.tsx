@@ -227,6 +227,7 @@ const RoadmapDetails = () => {
                     <ProgressCard
                       id={course.id}
                       name={course.name}
+                      className="w-full"
                       title={course.description}
                       link={`${
                         member ? baseLink : RouteEnum.MY_LEARNING_PATH
