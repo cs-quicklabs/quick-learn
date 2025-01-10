@@ -141,7 +141,7 @@ export class LessonEmailService {
 
       const mailBody = {
         greetings: greeting,
-        fullName: `${user.full_name}`,
+        fullName: `${user.display_name}`,
         lessonName: randomLesson.name,
         lessonURL: lessonURL,
         userEmail: user.email,
