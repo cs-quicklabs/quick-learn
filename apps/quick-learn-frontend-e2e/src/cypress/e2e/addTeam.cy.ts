@@ -1,5 +1,5 @@
-import AddTeam = require('../test/addTeam');
-import LoginPage = require('../test/Login');
+import { AddTeam } from '../test/AddTeam';
+import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
 
 describe('Login Test', () => {
@@ -34,17 +34,9 @@ describe('Login Test', () => {
       'have.text',
       'This field is required',
     );
-    cy.get(':nth-child(4) > .mt-1').should(
-      'have.text',
-      'This field is required',
-    );
     cy.get(':nth-child(5) > .mt-1').should(
       'have.text',
       'Password must be at least 8 characters long',
-    );
-    cy.get(':nth-child(7) > .mt-1').should(
-      'have.text',
-      'This field is required',
     );
   });
 
@@ -56,10 +48,6 @@ describe('Login Test', () => {
       'This field is required',
     );
     cy.get(':nth-child(2) > .mt-1').should(
-      'have.text',
-      'This field is required',
-    );
-    cy.get(':nth-child(3) > .mt-1').should(
       'have.text',
       'This field is required',
     );

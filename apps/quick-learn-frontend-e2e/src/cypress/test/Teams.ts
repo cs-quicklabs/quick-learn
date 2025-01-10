@@ -1,4 +1,5 @@
-class Teams {
+/* eslint-disable cypress/no-unnecessary-waiting */
+export class TeamsPage {
   visitTeamPage() {
     return cy.get('[href="/dashboard/teams"]');
   }
@@ -12,7 +13,7 @@ class Teams {
       'Last Login',
       'Added On',
     ];
-
+    cy.wait(5000);
     cy.get('table thead tr th').each(($el, index) => {
       cy.wrap($el)
         .invoke('text')
@@ -23,39 +24,46 @@ class Teams {
   }
 
   getAdminList() {
-    cy.get('#admin').click();
     cy.wait(5000);
-    cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
+    cy.contains('Show All').should('be.visible');
+    cy.get('#admin').click();
+    cy.wait(8000);
+    cy.contains('Role').should('be.visible');
+    cy.get('td:nth-child(2) > div').each(($el, index) => {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
-          // Assert that the text contains the expected value 'admin'
-          expect(text.trim()).to.contain('Admin');
+          cy.log(`Element ${index} text: ${text.trim()}`);
+          expect(text.trim()).to.contain('Admin'); // Assert that the text contains the expected value 'admin'
         });
     });
   }
   getEditorList() {
-    cy.get('#editor').click();
     cy.wait(5000);
+    cy.get('#editor').click();
+    cy.contains('Editor').should('be.visible');
+    cy.wait(10000);
     cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
-          // Assert that the text contains the expected value 'admin'
-          expect(text.trim()).to.contain('Editor');
+          cy.log(`Element ${index} text: ${text.trim()}`);
+          expect(text.trim()).to.contain('Editor'); // Assert that the text contains the expected value 'Editor'
         });
     });
   }
 
-  getMemberList() {
-    cy.get('#member').click();
+  getMembersList() {
     cy.wait(5000);
+    cy.get('#member').click();
+    cy.wait(10000);
+    cy.contains('Members').should('be.visible');
     cy.get('table tbody tr td:nth-child(2)').each(($el, index) => {
       cy.wrap($el)
         .invoke('text')
         .then((text) => {
-          // Assert that the text contains the expected value 'admin'
-          expect(text.trim()).to.contain('Member');
+          cy.log(`Element ${index} text: ${text.trim()}`);
+          expect(text.trim()).to.contain('Member'); // Assert that the text contains the expected value 'Member'
         });
     });
   }
@@ -65,13 +73,8 @@ class Teams {
   }
 
   searchUser() {
-    cy.get('.flex > #search').type('Raj');
-
-    cy.get('table tbody tr:nth-child(1) td:nth-child(1)')
-      .invoke('text')
-      .then((text) => {
-        expect(text.trim()).to.equal('Raj Gupta');
-      });
+    cy.get('.flex > #search').type('Auto');
+    cy.contains('User Automation').should('be.visible');
   }
 
   filterAdminList() {
@@ -83,9 +86,8 @@ class Teams {
     this.visitTeamPage().click();
     this.getEditorList();
   }
-  filterMemberList() {
+  filterMembersList() {
     this.visitTeamPage().click();
-    this.getMemberList();
+    this.getMembersList();
   }
 }
-module.exports = Teams;

@@ -1,14 +1,12 @@
-class addRoadMap {
-  visitTeamPage() {
-    return cy.get('[href="/dashboard/teams"]');
-  }
-
-  userMenu() {
-    return cy.contains('Open user menu');
+export class AddRoadMap {
+  visitProfilePage() {
+    return cy.get('button[class="flex items-center"]').click();
   }
   getAccountSettings() {
-    return cy.contains('Account Settings');
+    cy.get('button[class="flex items-center"]').click();
+    cy.get('[href="/dashboard/account-settings"]').click();
   }
+
   openRoadMap() {
     return cy.contains('Roadmap Categories').click();
   }
@@ -16,7 +14,7 @@ class addRoadMap {
   clickRoadmapField() {
     return cy.get('#roadmap_categories_input_text').click();
   }
-  addRoadMapCategories() {
+  AddRoadMapCategories() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     return cy.get('#roadmap_categories_input_text').type('ReactJs' + Numeric);
   }
@@ -41,17 +39,21 @@ class addRoadMap {
   getErrorMessage() {
     return cy.get('.mt-1');
   }
+
+  deleteRoadMapCategories() {
+    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get('[class="flex-1 overflow-auto p-0"]');
+    cy.get('button.bg-white.uppercase').click();
+  }
+
   OpenAccountSettings() {
-    this.userMenu().click();
-    this.getAccountSettings().click();
+    this.getAccountSettings();
   }
-  getErrorMessage() {
-    return cy.get('.mt-1');
-  }
-  addRoadmapCategoriesWithOnlySpaces() {
+
+  AddRoadMapCategoriesWithOnlySpaces() {
     return cy.get('#roadmap_categories_input_text').type('    ');
   }
-  addRoadmapCategoriesWithMoreLimit() {
+  AddRoadMapCategoriesWithMoreLimit() {
     return cy
       .get('#roadmap_categories_input_text')
       .type(
@@ -63,4 +65,3 @@ class addRoadMap {
     return cy.get('.flex-wrap > .false').click();
   }
 }
-module.exports = addRoadMap;
