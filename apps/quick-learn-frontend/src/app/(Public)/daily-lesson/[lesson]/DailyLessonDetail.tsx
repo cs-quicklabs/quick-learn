@@ -14,11 +14,11 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
-import { MdInfo } from 'react-icons/md';
 import ViewLesson from '@src/shared/components/ViewLesson';
 import { Button } from 'flowbite-react';
 import { TUser } from '@src/shared/types/userTypes';
-import { IoHomeSharp } from 'react-icons/io5';
+import { HomeIcon } from '@heroicons/react/20/solid';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 const DailyLessonDetail = () => {
   const router = useRouter();
@@ -120,8 +120,8 @@ const DailyLessonDetail = () => {
         {isRead ? (
           <div className="w-full flex align-middle justify-center">
             <p className="bg-green-100 p-5 rounded-md text-[#166534]  flex justify-center items-center gap-2 my-5 mx-2 w-full md:w-1/2  text-start">
-              <span className="bg-[#166534] flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center  ">
-                <MdInfo />
+              <span className="text-[#166534] flex bg-white rounded-full w-5 h-5 aspect-square font-bold items-center justify-center  ">
+                <InformationCircleIcon fontWeight={''} />
               </span>
               <p>
                 <span className="font-bold">
@@ -154,7 +154,7 @@ const DailyLessonDetail = () => {
           <div className=" absolute flex bottom-5 left-5 ">
             <Button color="blue" pill onClick={navigateUserToLearningPath}>
               <span className="flex items-center gap-1 justify-center">
-                <IoHomeSharp size={'16px'} />
+                <HomeIcon height={'1rem'} width={'1rem'} />
                 <span className="hidden md:flex">
                   {en.lesson.NavigateToLearningPath}
                 </span>
