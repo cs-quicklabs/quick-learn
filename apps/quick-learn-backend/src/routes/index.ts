@@ -9,3 +9,6 @@ export * from './roadmap-category/roadmap-category.module';
 export * from './roadmap/roadmap.module';
 export * from './course/course.module';
 export * from './lesson/lesson.module';
+export * from './cronjob/cronjob.module';
+export * from './metadata/metadata.module';
+export * from './lesson-progress/lesson-progress.module';

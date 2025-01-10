@@ -15,7 +15,12 @@ import { SkillEntity } from '@src/entities/skill.entity';
 import { CreateUserDto, ListFilterDto, PaginationDto } from './dto';
 import { PaginatedResult } from '@src/common/interfaces';
 import { EmailService } from '@src/common/modules/email/email.service';
-import { CourseEntity, UserEntity, UserTypeEntity } from '@src/entities';
+import {
+  CourseEntity,
+  UserEntity,
+  UserLessonProgressEntity,
+  UserTypeEntity,
+} from '@src/entities';
 import { SessionService } from '../auth/session.service';
 import { en } from '@src/lang/en';
 import { RoadmapService } from '../roadmap/roadmap.service';
@@ -38,12 +43,12 @@ export class UsersService extends PaginationService<UserEntity> {
     @InjectRepository(UserTypeEntity)
     private userTypeRepository: Repository<UserTypeEntity>,
     @InjectRepository(SkillEntity)
-    private skillRepository: Repository<SkillEntity>,
-    private emailService: EmailService,
-    private sessionService: SessionService,
-    private roadmapService: RoadmapService,
-    private courseService: CourseService,
-    private lessonService: LessonService,
+    private readonly skillRepository: Repository<SkillEntity>,
+    private readonly emailService: EmailService,
+    private readonly sessionService: SessionService,
+    private readonly roadmapService: RoadmapService,
+    private readonly courseService: CourseService,
+    private readonly lessonService: LessonService,
     private readonly FileService: FileService,
   ) {
     super(userRepository);
@@ -212,6 +217,7 @@ export class UsersService extends PaginationService<UserEntity> {
 
     return roadmap;
   }
+
   async getCourseDetails(userId: number, id: number, roadmap?: number) {
     const course = await this.courseService.getUserCourseDetails(
       userId,
@@ -291,18 +297,25 @@ export class UsersService extends PaginationService<UserEntity> {
       queryBuilder.leftJoinAndSelect(
         'user.assigned_roadmaps',
         'assigned_roadmaps',
+        'assigned_roadmaps.archived = :isArchived',
+        { isArchived: false },
       );
     }
 
     if (assignRoadmapCoursesRelation) {
-      queryBuilder.leftJoinAndSelect('assigned_roadmaps.courses', 'courses');
+      queryBuilder.leftJoinAndSelect(
+        'assigned_roadmaps.courses',
+        'courses',
+        'courses.archived = :isArchived',
+        { isArchived: false },
+      );
     }
 
     if (assignRoadmapCoursesLessonRelation) {
       queryBuilder.leftJoinAndSelect(
         'courses.lessons',
         'lessons',
-        'lessons.id IS NOT NULL AND lessons.archived = :isArchived',
+        'lessons.archived = :isArchived',
         { isArchived: false },
       );
     }
@@ -327,16 +340,57 @@ export class UsersService extends PaginationService<UserEntity> {
 
     const user = await queryBuilder.getOne();
 
-    user.assigned_roadmaps = (user.assigned_roadmaps || []).filter(
-      (roadmap) => roadmap.archived === false,
-    );
-    user.assigned_roadmaps.forEach((roadmap) => {
-      roadmap.courses = (roadmap.courses || []).filter(
-        (course) => course.archived === false,
-      );
-    });
-
     return user;
+  }
+
+  async getUnreadUserLessons(userId: number) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.assigned_roadmaps', 'roadmap')
+      .leftJoin('roadmap.courses', 'course')
+      .leftJoin('course.lessons', 'lesson')
+      .addSelect(['roadmap.id', 'course.id', 'lesson.id', 'lesson.name'])
+      .where('user.id = :userId', { userId })
+      .andWhere('roadmap.archived = :archived', { archived: false })
+      .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('1')
+          .from(UserLessonProgressEntity, 'ulp')
+          .where('ulp.lesson_id = lesson.id')
+          .andWhere('ulp.user_id = :userId', { userId })
+          .getQuery();
+        return `NOT EXISTS (${subQuery})`;
+      })
+      .getOne();
+    return (
+      user?.assigned_roadmaps.flatMap((roadmap) =>
+        roadmap.courses.flatMap((course) =>
+          course.lessons.map((lesson) => ({
+            lesson_id: lesson.id,
+            course_id: course.id,
+            roadmap_id: roadmap.id,
+            name: lesson.name,
+          })),
+        ),
+      ) || []
+    );
+  }
+
+  async getUserAssignedRoadmaps(userId: number, isCountOnly = false) {
+    let queryBuilder = this.repository
+      .createQueryBuilder('user')
+      .innerJoin('user.assigned_roadmaps', 'roadmap')
+      .where('user.id = :userId', { userId });
+
+    if (isCountOnly) {
+      queryBuilder = queryBuilder.select('COUNT(roadmap.id)', 'count');
+      return (await queryBuilder.getRawOne()).count;
+    }
+
+    return await queryBuilder.getOne();
   }
 
   async getUserSearchedQuery(

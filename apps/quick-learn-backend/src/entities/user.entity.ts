@@ -20,6 +20,7 @@ import { SkillEntity } from './skill.entity';
 import { RoadmapEntity } from './roadmap.entity';
 import { LessonEntity } from './lesson.entity';
 import { CourseEntity } from './course.entity';
+import { UserLessonProgressEntity } from './user-lesson-progress.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -129,4 +130,7 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => CourseEntity, (course) => course.updated_by)
   updated_courses: CourseEntity[];
+
+  @OneToMany(() => UserLessonProgressEntity, (progress) => progress.user)
+  users_lesson_progress: UserLessonProgressEntity[];
 }
