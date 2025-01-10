@@ -146,7 +146,7 @@ input:-webkit-autofill:active {
 .lesson-viewer blockquote {
   border-left: 4px solid #ccc;
   margin-bottom: 5px;
-  margin-top: 5px;
+  margin-top: 0px;
   padding-left: 16px;
   background-color: #eee;
   /* max-width: 85%; */
