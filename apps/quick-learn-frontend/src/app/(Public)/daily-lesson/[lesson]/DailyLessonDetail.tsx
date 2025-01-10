@@ -138,14 +138,14 @@ const DailyLessonDetail = () => {
             </p>
           </div>
         ) : (
-          <div className="flex justify-center items-center gap-4 mb-48 mt-12">
+          <div className="flex justify-center items-center gap-2 mb-20 mt-12">
             <input
               type="checkbox"
               checked={isChecked}
               onChange={handleCheckboxChange}
-              className="rounded-md h-8 w-8 border-gray-400 bg-[#F4F4F6]"
+              className="rounded-md h-5 w-5 border-gray-400 bg-[#F4F4F6]"
             />
-            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-300">
+            <p className="text-l font-semibold text-gray-900 dark:text-gray-300">
               {en.myLearningPath.markRead}
             </p>
           </div>
