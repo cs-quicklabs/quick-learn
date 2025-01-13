@@ -45,41 +45,36 @@ const ContentRepository = () => {
 
   const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
 
-  // const fetchRoadmapData = async () => {
-  //   try {
-  //     const res = await getRoadmaps();
-  //     // Update Redux store with the fetched roadmaps
-  //     dispatch({
-  //       type: 'roadmaps/fetchRoadmaps/fulfilled',
-  //       payload: res.data,
-  //     });
-  //   } catch (error) {
-  //     dispatch({
-  //       type: 'roadmaps/fetchRoadmaps/rejected',
-  //       payload: 'something went wrong',
-  //     });
-  //   }
-  // };
+  const fetchRoadmapData = async () => {
+    try {
+      const res = await getRoadmaps();
+      dispatch({
+        type: 'roadmaps/fetchRoadmaps/fulfilled', //update redux store roadmaps and courses
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: 'roadmaps/fetchRoadmaps/rejected',
+        payload: 'something went wrong',
+      });
+    }
+  };
 
-  // const fetchContentRepositoryMetadata = async () => {
-  //   try {
-  //     const res = await getContentRepositoryMetadata();
-  //     // Update Redux store with the fetched metadata
-  //     dispatch(updateContentRepository(res.data));
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+  const fetchContentRepositoryMetadata = async () => {
+    try {
+      const res = await getContentRepositoryMetadata();
+      dispatch(updateContentRepository(res.data)); //update redux store metadata
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch the roadmaps and metadata concurrently
         await Promise.all([
-          // fetchRoadmapData(),
-          // fetchContentRepositoryMetadata(),
-          fetchMetadata,
-          fetchRoadmaps,
+          fetchRoadmapData(),
+          fetchContentRepositoryMetadata(),
         ]);
       } catch (err) {
         // Log the error to the console for debugging
