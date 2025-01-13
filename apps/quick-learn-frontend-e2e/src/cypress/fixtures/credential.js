@@ -5,5 +5,5 @@ export const validCredentials = {
 
 export const AdminValidCredentials = {
   mail: 'user11945@yopmail.com',
-  password: 'Password@123',
+  password: 'Password@123p',
 };
