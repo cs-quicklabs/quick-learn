@@ -73,7 +73,6 @@ const teamSlice = createSlice({
         state.users = action.payload?.items || [];
         state.filterdTotal = action.payload?.total || 0;
 
-        // Ensure totalUsers is updated only during the initial load or new additions
         if (state.filterdTotal > state.totalUsers || state.isInitialLoad) {
           state.totalUsers = state.filterdTotal;
           state.searchQuery = '';
