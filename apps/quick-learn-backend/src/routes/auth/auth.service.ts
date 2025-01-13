@@ -11,6 +11,7 @@ import { UserEntity } from '@src/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import ms from 'ms';
+
 import { nanoid } from 'nanoid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResetTokenEntity } from '@src/entities/reset-token.entity';
@@ -156,19 +157,7 @@ export class AuthService {
         infer: true,
       });
       const resetURL = `${frontendURL}/reset-password?token=${generateResetToken}`;
-
-      const html = `<div>
-        <p>Please click on the link below to reset your password.</p><br/>
-        <a style="padding: 8px 16px;text-decoration: none;background-color: #10182a;border-radius: 4px;color: white;" target="_blank" href="${resetURL}">Reset Password</a><br/>
-      <div>`;
-
-      this.emailService.email({
-        body: html,
-        recipients: [email],
-        subject: emailSubjects.resetPassword,
-      });
-
-      return new SuccessResponse('Reset password link has been shared.');
+      return this.emailService.sendForgetPasswordEmail(resetURL, email);
     }
     return new SuccessResponse(
       'If this user exists, they will recieve an email',

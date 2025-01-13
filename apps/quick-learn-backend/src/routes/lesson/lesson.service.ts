@@ -15,11 +15,12 @@ import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
   constructor(
-    @InjectRepository(LessonEntity) repo: Repository<LessonEntity>,
-    private courseService: CourseService,
-    private readonly FileService: FileService,
+    @InjectRepository(LessonEntity)
+    repo: Repository<LessonEntity>,
     @InjectRepository(LessonTokenEntity)
-    private LessonTokenRepository: Repository<LessonTokenEntity>,
+    private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
+    private readonly courseService: CourseService,
+    private readonly FileService: FileService,
   ) {
     super(repo);
   }

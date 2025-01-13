@@ -78,11 +78,9 @@ export class UsersController {
     @CurrentUser() user: UserEntity,
     @Param('id') id: string,
     @Param('userId') userId?: number,
-    // @Param('userid') userid?: number | undefined,
   ): Promise<SuccessResponse> {
-    // if (!userid) userid = user?.id;
     const roadmaps = await this.usersService.getRoadmapDetails(
-      userId ? userId : user?.id,
+      !isNaN(userId) ? userId : user.id,
       +id,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
@@ -109,7 +107,7 @@ export class UsersController {
     @Param('userId') userId?: number,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getCourseDetails(
-      userId ? userId : user?.id,
+      !isNaN(userId) ? userId : user.id,
       +id,
       roadmapId ? +roadmapId : undefined,
     );
@@ -137,7 +135,7 @@ export class UsersController {
     @Param('userId') userId?: number,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getLessonDetails(
-      userId ? userId : user?.id,
+      !isNaN(userId) ? userId : user.id,
       +id,
       +query.courseId,
       query.roadmapId ? +query.roadmapId : undefined,

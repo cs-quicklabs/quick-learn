@@ -114,6 +114,7 @@ input:-webkit-autofill:active {
   font-size: 1.25rem;
   line-height: 2rem;
   margin-bottom: 0.5rem;
+  margin-top: 0px;
 }
 .quill .ql-container .ql-editor a,
 .lesson-viewer a {
@@ -149,7 +150,6 @@ input:-webkit-autofill:active {
   margin-top: 5px;
   padding-left: 16px;
   background-color: #eee;
-  /* max-width: 85%; */
   margin: 1rem auto;
 }
 .quill .ql-container .ql-syntax,

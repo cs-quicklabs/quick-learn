@@ -248,6 +248,7 @@ const CourseDetails = () => {
                       id={+lesson.id}
                       name={lesson.name}
                       title={lesson.content}
+                      className="w-full"
                       link={`${
                         member ? baseLink : RouteEnum.MY_LEARNING_PATH
                       }/${roadmap}/${course}/${lesson.id}`}

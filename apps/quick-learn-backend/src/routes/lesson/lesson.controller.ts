@@ -20,11 +20,7 @@ import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
 import { PaginationDto } from '../users/dto';
 import { CourseArchiveDto } from '../course/dto/course-archive.dto';
-import { LessonEmailService } from './lesson-email-cron.service';
 import { Public } from '@src/common/decorators/public.decorator';
-import { Roles } from '@src/common/decorators/roles.decorator';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { UserTypeId } from '@src/common/enum/user_role.enum';
 
 @ApiTags('Lessons')
 @Controller({
@@ -33,10 +29,7 @@ import { UserTypeId } from '@src/common/enum/user_role.enum';
 })
 @UseGuards(JwtAuthGuard)
 export class LessonController {
-  constructor(
-    private readonly service: LessonService,
-    private readonly LessonEmailService: LessonEmailService,
-  ) {}
+  constructor(private readonly service: LessonService) {}
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()
@@ -238,26 +231,5 @@ export class LessonController {
       lessonDetail: lessonDetail,
       userDetail: userTokenDetal.user,
     });
-  }
-
-  /**
-   *@ApiQueryParam greeting
-   *@returns success response
-   */
-  @ApiParam({
-    name: 'greeting',
-    required: true,
-    type: String,
-    description: 'Get what is the greeting for the mail',
-  })
-  @Get('/cron/daily-lessons')
-  @UseGuards(RolesGuard)
-  @Roles(UserTypeId.SUPER_ADMIN)
-  @ApiOperation({ summary: 'Get daily lessons' })
-  async triggerCronJobmaunually(
-    @Query('greeting') greeting: string,
-  ): Promise<SuccessResponse> {
-    await this.LessonEmailService.sendLessonEmails(greeting);
-    return new SuccessResponse(en.triggeredDailyLessonMails);
   }
 }
