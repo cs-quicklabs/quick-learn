@@ -131,7 +131,7 @@ const LessonDetails = () => {
       {/* <input type="text" onClick={handlereadme} /> */}
       {isRead ? (
         <div className="w-full flex align-middle justify-center">
-          <p className="bg-green-100 p-5 rounded-md text-[#166534]  flex justify-center items-center gap-2 my-5 mx-2 md:w-1/2 w-full text-start">
+          <p className="bg-green-100 p-5 rounded-md text-[#166534]  flex justify-center items-center gap-2 my-5 mx-2 lg:w-1/2 w-full text-start">
             <span className="bg-[#166534] flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center  ">
               <MdInfo />
             </span>

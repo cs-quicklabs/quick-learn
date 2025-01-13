@@ -79,7 +79,6 @@ export class UsersController {
     @Param('id') id: string,
     @Param('userId') userId?: number,
   ): Promise<SuccessResponse> {
-    console.log('userId', userId);
     const roadmaps = await this.usersService.getRoadmapDetails(
       !isNaN(userId) ? userId : user.id,
       +id,
