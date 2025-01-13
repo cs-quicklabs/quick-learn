@@ -14,7 +14,7 @@ import {
 import { TeamEntity } from './team.entity';
 import { UserTypeEntity } from './user-type.entity';
 import { BaseEntity } from './BaseEntity';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
 import { SkillEntity } from './skill.entity';
 import { RoadmapEntity } from './roadmap.entity';
@@ -39,6 +39,11 @@ export class UserEntity extends BaseEntity {
     query: (alias) => `CONCAT(${alias}.first_name, ' ', ${alias}.last_name)`,
   })
   full_name: string;
+
+  @Expose()
+  get display_name() {
+    return this.first_name + ' ' + this.last_name;
+  }
 
   @Column({ type: 'varchar', unique: true, length: 255 })
   email: string;

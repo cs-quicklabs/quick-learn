@@ -1,28 +1,25 @@
-class addCourses {
-  visitTeamPage() {
-    return cy.get('[href="/dashboard/teams"]');
-  }
-
-  userMenu() {
-    return cy.contains('Open user menu');
+export class AddCourseCategory {
+  visitProfilePage() {
+    return cy.get('button[class="flex items-center"]').click();
   }
   getAccountSettings() {
-    return cy.contains('Account Settings');
+    cy.get('button[class="flex items-center"]').click();
+    cy.get('[href="/dashboard/account-settings"]').click();
   }
-  openCourses() {
+  openCourseCategory() {
     return cy.contains('Courses Categories').click();
   }
-  clickCourses() {
+  clickCourseCategory() {
     return cy.get('#courses_categories_input_text');
   }
-  addCourses() {
+  AddCourseCategory() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     return cy.get('#courses_categories_input_text').type('ReactJs' + Numeric);
   }
-  addCoursesWithOnlySpaces() {
+  AddCourseCategoryWithOnlySpaces() {
     return cy.get('#courses_categories_input_text').type('    ');
   }
-  addCoursesWithMoreLimit() {
+  AddCourseCategoryWithMoreLimit() {
     return cy
       .get('#courses_categories_input_text')
       .type(
@@ -52,16 +49,17 @@ class addCourses {
     cy.get('td > .px-2').should('contain', 'This field is mandatory');
   }
 
-  deleteCourseCategories() {
+  deleteCourseCategory() {
     cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
   }
-  getErrorMessage() {
-    return cy.get('.mt-1');
+
+  deleteCourseCategoryAssociatedWithCourses() {
+    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get('[class="flex-1 overflow-auto p-0"]');
+    cy.get('button.bg-white.uppercase').click();
   }
 
   OpenAccountSettings() {
-    this.userMenu().click();
-    this.getAccountSettings().click();
+    this.getAccountSettings();
   }
 }
-module.exports = addCourses;
