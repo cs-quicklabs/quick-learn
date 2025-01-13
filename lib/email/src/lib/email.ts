@@ -1,4 +1,6 @@
 import * as nodemailer from 'nodemailer';
+import { BrowserUtils } from './browserUtils';
+import { generatePreviewHTML } from './emailTemplate';
 
 export type Message = {
   body: string;
@@ -11,44 +13,38 @@ export type Message = {
 export class EmailNotification {
   private accountEmail: string;
   private emailTransporter: nodemailer.Transporter;
-  private isProduction: boolean;
+
   /**
    * @param data Send Grid API Key
    * @param emai verified sender email
    */
+
   constructor(
     data: { host: string; port: number; auth: { user: string; pass: string } },
-    emai: string,
+    email: string,
   ) {
     this.emailTransporter = nodemailer.createTransport({
       ...data,
       secure: false,
     });
-    this.accountEmail = emai;
-    this.isProduction = false;
+    this.accountEmail = email;
   }
 
-  private async sendEmail(message: Message): Promise<void> {
-    if (message.subject === undefined) {
+  private async sendEmail(message: Message, isdev: boolean) {
+    if (!message.subject) {
       throw new Error('Subject is required');
     }
 
-    const toAddresses = message.recipients;
-    const ccAddresses = message.cc || [];
-    const bccAddresses = message.bcc || [];
-    const subject = 'Quick Learn: ' + message.subject;
-    const body = message.body;
-
     const mailOptions = {
       from: this.accountEmail,
-      to: toAddresses.join(', '),
-      cc: ccAddresses.join(', '),
-      bcc: bccAddresses.join(', '),
-      subject: subject,
-      html: body,
+      to: message.recipients.join(', '),
+      cc: message.cc?.join(', ') || '',
+      bcc: message.bcc?.join(', ') || '',
+      subject: 'Quick Learn: ' + message.subject,
+      html: message.body,
     };
 
-    if (this.isProduction) {
+    if (!isdev) {
       try {
         const info = await this.emailTransporter.sendMail(mailOptions);
         console.log('Email sent successfully to', info.accepted.join(', '));
@@ -57,22 +53,25 @@ export class EmailNotification {
         throw error;
       }
     } else {
-      // Simulate email by logging the data URL
-      const emailPreview = `data:text/html;charset=utf-8,${encodeURIComponent(
-        body,
-      )}`;
-      console.log(`Simulated email to: ${toAddresses.join(', ')}`);
-      console.log(`Email preview link: ${emailPreview}`);
-      return;
+      // to view in local
+      const previewHTML = generatePreviewHTML({
+        subject: mailOptions.subject,
+        to: mailOptions.to,
+        cc: mailOptions.cc,
+        bcc: mailOptions.bcc,
+        html: mailOptions.html,
+      });
+
+      await BrowserUtils.previewHTML(previewHTML);
     }
   }
 
-  async send(message: Message | Message[]): Promise<void> {
+  async send(message: Message | Message[], isdev: boolean): Promise<void> {
     try {
       if (Array.isArray(message)) {
-        await Promise.all(message.map((msg) => this.sendEmail(msg)));
+        await Promise.all(message.map((msg) => this.sendEmail(msg, isdev)));
       } else {
-        await this.sendEmail(message);
+        await this.sendEmail(message, isdev);
       }
     } catch (error) {
       console.error('Failed to send email(s):', error);

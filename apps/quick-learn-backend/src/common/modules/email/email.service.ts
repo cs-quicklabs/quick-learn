@@ -45,7 +45,7 @@ export class EmailService {
       infer: true,
     });
     this.isDevelopment =
-      this.configService.get('app.env', { infer: true }) === 'dev';
+      this.configService.get('ENV', { infer: true }) === 'dev';
   }
 
   /**
@@ -58,11 +58,14 @@ export class EmailService {
     const emailBody = await this.compileMjmlTemplate(emailText);
 
     try {
-      await this.emailService.send({
-        ...data,
-        body: emailBody,
-        subject: data.subject,
-      });
+      await this.emailService.send(
+        {
+          ...data,
+          body: emailBody,
+          subject: data.subject,
+        },
+        this.isDevelopment,
+      );
     } catch (err) {
       this.logger.error('Something went wrong./n', JSON.stringify(err));
     }
@@ -87,11 +90,15 @@ export class EmailService {
 
   // This function is used to send the email to the user when the user forgets the password
   private async forgetPasswordEmail(emailBodies: string, email: string) {
-    await this.emailService.send({
-      body: emailBodies,
-      recipients: [email],
-      subject: emailSubjects.resetPassword,
-    });
+    console.log(this.isDevelopment);
+    await this.emailService.send(
+      {
+        body: emailBodies,
+        recipients: [email],
+        subject: emailSubjects.resetPassword,
+      },
+      this.isDevelopment,
+    );
 
     return new SuccessResponse('Reset password link has been shared.');
   }
@@ -113,11 +120,14 @@ export class EmailService {
   // The below function is used to sen dthe lesson for the day to the user
   async dailyEmail(emailBodies: { userEmail: string; body: string }) {
     try {
-      await this.emailService.send({
-        recipients: [emailBodies.userEmail],
-        body: emailBodies.body,
-        subject: emailSubjects.LESSON_FOR_THE_DAY,
-      });
+      await this.emailService.send(
+        {
+          recipients: [emailBodies.userEmail],
+          body: emailBodies.body,
+          subject: emailSubjects.LESSON_FOR_THE_DAY,
+        },
+        this.isDevelopment,
+      );
       console.log('Email sent successfully to:', emailBodies.userEmail);
     } catch (err) {
       this.logger.error('Something went wrong:', JSON.stringify(err));
@@ -152,11 +162,14 @@ export class EmailService {
     mjmlCompliedContent: string,
   ): Promise<void> {
     try {
-      await this.emailService.send({
-        recipients: [email],
-        body: mjmlCompliedContent,
-        subject: emailSubjects.RESET_READING_HISTORY,
-      });
+      await this.emailService.send(
+        {
+          recipients: [email],
+          body: mjmlCompliedContent,
+          subject: emailSubjects.RESET_READING_HISTORY,
+        },
+        this.isDevelopment,
+      );
     } catch (err) {
       this.logger.error('Something went wrong./n', JSON.stringify(err));
     }
@@ -179,11 +192,14 @@ export class EmailService {
     mjmlCompliedContent: string,
   ) {
     try {
-      await this.emailService.send({
-        recipients: [email],
-        body: mjmlCompliedContent,
-        subject: emailSubjects.welcome,
-      });
+      await this.emailService.send(
+        {
+          recipients: [email],
+          body: mjmlCompliedContent,
+          subject: emailSubjects.welcome,
+        },
+        this.isDevelopment,
+      );
     } catch (err) {
       this.logger.error('Something went wrong:', JSON.stringify(err));
       throw new Error('Failed to send email.');
