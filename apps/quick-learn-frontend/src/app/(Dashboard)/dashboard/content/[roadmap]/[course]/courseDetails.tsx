@@ -103,21 +103,6 @@ const CourseDetails = () => {
   }, [courseId, courseFromStore]);
 
   useEffect(() => {
-    const fetchCoursesInBackground = async () => {
-      if (!courseId) return;
-
-      try {
-        const res = await getCourse(courseId);
-        setCourseData(res.data);
-      } catch (err) {
-        showApiErrorInToast(err as AxiosErrorObject);
-      }
-    };
-
-    fetchCoursesInBackground();
-  }, [courseId]);
-
-  useEffect(() => {
     const data = allRoadmapCategories.map((item) => ({
       name: item.name,
       list: item.roadmaps.map((course) => ({

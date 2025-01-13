@@ -20,13 +20,9 @@ import {
 import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-import {
-  fetchMetadata,
-  updateContentRepository,
-} from '@src/store/features/metadataSlice';
+import { updateContentRepository } from '@src/store/features/metadataSlice';
 import {
   addRoadmap,
-  fetchRoadmaps,
   selectAllCourses,
   selectAllRoadmaps,
   selectIsRoadmapsInitialized,
@@ -55,7 +51,7 @@ const ContentRepository = () => {
     } catch (err) {
       dispatch({
         type: 'roadmaps/fetchRoadmaps/rejected',
-        payload: 'something went wrong',
+        payload: 'Failed to fetch roadmaps',
       });
     }
   };
