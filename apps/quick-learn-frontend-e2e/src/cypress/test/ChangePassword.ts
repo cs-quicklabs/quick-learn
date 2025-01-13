@@ -89,9 +89,9 @@ export class ChangePassword {
 
   UpdatePasswordWithValidData() {
     cy.contains('Change Password').should('be.visible');
-    this.getOldPassword().type('Password@123');
-    this.getNewPassword().type('Password@123p');
-    this.getConfirmPassword().type('Password@123p');
+    this.getOldPassword().type('Password@123p');
+    this.getNewPassword().type('Password@123');
+    this.getConfirmPassword().type('Password@123');
     this.getSaveButton().click();
     this.getSuccessMessage().contains('Password updated successfully');
   }
