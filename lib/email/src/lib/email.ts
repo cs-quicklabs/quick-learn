@@ -13,6 +13,7 @@ export type Message = {
 export class EmailNotification {
   private accountEmail: string;
   private emailTransporter: nodemailer.Transporter;
+  private isDevelopment: boolean;
 
   /**
    * @param data Send Grid API Key
@@ -22,15 +23,17 @@ export class EmailNotification {
   constructor(
     data: { host: string; port: number; auth: { user: string; pass: string } },
     email: string,
+    isDevelopment: boolean,
   ) {
     this.emailTransporter = nodemailer.createTransport({
       ...data,
       secure: false,
     });
     this.accountEmail = email;
+    this.isDevelopment = isDevelopment;
   }
 
-  private async sendEmail(message: Message, isdev: boolean) {
+  private async sendEmail(message: Message) {
     if (!message.subject) {
       throw new Error('Subject is required');
     }
@@ -44,7 +47,7 @@ export class EmailNotification {
       html: message.body,
     };
 
-    if (!isdev) {
+    if (!this.isDevelopment) {
       try {
         const info = await this.emailTransporter.sendMail(mailOptions);
         console.log('Email sent successfully to', info.accepted.join(', '));
@@ -66,12 +69,12 @@ export class EmailNotification {
     }
   }
 
-  async send(message: Message | Message[], isdev: boolean): Promise<void> {
+  async send(message: Message | Message[]): Promise<void> {
     try {
       if (Array.isArray(message)) {
-        await Promise.all(message.map((msg) => this.sendEmail(msg, isdev)));
+        await Promise.all(message.map((msg) => this.sendEmail(msg)));
       } else {
-        await this.sendEmail(message, isdev);
+        await this.sendEmail(message);
       }
     } catch (error) {
       console.error('Failed to send email(s):', error);
