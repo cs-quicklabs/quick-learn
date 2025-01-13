@@ -1,5 +1,5 @@
-import LoginPage = require('../test/Login');
-import TeamsPage = require('../test/Teams');
+import { LoginPage } from '../test/Login';
+import { TeamsPage } from '../test/Teams';
 import { validCredentials } from '../fixtures/credential';
 
 describe('Login Test', () => {
@@ -26,9 +26,9 @@ describe('Login Test', () => {
     const Teams = new TeamsPage();
     Teams.filterEditorList();
   });
-  it('Verify User able to filter Member list', () => {
+  it('Verify User able to filter Members list', () => {
     const Teams = new TeamsPage();
-    Teams.filterMemberList();
+    Teams.filterMembersList();
   });
   it('Verify Super admin able to Search Users', () => {
     const Teams = new TeamsPage();

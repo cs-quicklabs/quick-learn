@@ -1,10 +1,10 @@
-import LoginPage = require('../test/Login');
+import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
 
 describe('Login Test', () => {
   const loginPage = new LoginPage();
 
-  beforeEach(() => {
+  beforeEach(function () {
     loginPage.visit();
   });
 
@@ -14,10 +14,9 @@ describe('Login Test', () => {
 
   it('should display an error for invalid credentials', () => {
     loginPage.loginWithInvalidCredential(
-      'super.admin@yopmail.com',
-      'Password@123',
+      validCredentials.mail,
+      'InvalidPassword',
     );
-
     loginPage.getErrorMessage().should('contain', 'Wrong Credentials!');
   });
 
@@ -25,9 +24,9 @@ describe('Login Test', () => {
     loginPage.login(validCredentials.mail, validCredentials.password);
 
     cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.'); // Adjust selector and text as needed
+    loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
   });
-  it('Verify user not able to login with empty value in email and password', () => {
+  it('should not allow login with empty email and password fields', () => {
     loginPage.loginWithEmptyValue();
   });
 });
