@@ -101,6 +101,7 @@ const Navbar = () => {
 
   async function doLogout() {
     try {
+      localStorage.removeItem('searchHistory');
       await logoutApiCall();
       router.push('/');
     } catch (error) {
