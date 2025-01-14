@@ -83,9 +83,9 @@ const ApprovalCheckbox = memo(
 ApprovalCheckbox.displayName = 'ApprovalCheckbox';
 
 const PendingAlert = memo(() => (
-  <div className="flex items-center p-16 mb-16 w-full max-w-5xl justify-center mx-auto">
+  <div className="flex items-center my-5 w-full lg:w-1/2 justify-center mx-auto">
     <div
-      className="flex items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50"
+      className="flex items-center p-4 mb-4 w-full text-sm text-yellow-800 rounded-lg bg-yellow-50"
       role="alert"
     >
       <InformationCircleIcon className="flex-shrink-0 inline w-4 h-4 me-3" />
