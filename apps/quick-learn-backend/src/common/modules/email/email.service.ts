@@ -26,7 +26,6 @@ export class EmailService {
   private emailService: EmailNotification;
   private readonly logger = new Logger('Email Service');
   private readonly frontendURL: string;
-  private readonly isDevelopment: boolean;
   constructor(private configService: ConfigService) {
     // add a condition checking if the enviroment is dev or not.
     const email = this.configService.getOrThrow('app.smtpEmail', {
@@ -40,14 +39,10 @@ export class EmailService {
         pass: this.configService.getOrThrow('app.smtpPass', { infer: true }),
       },
     };
-    this.isDevelopment =
+    const isDevelopment =
       this.configService.get('ENV', { infer: true }) ===
       EnvironmentEnum.Developemnt;
-    this.emailService = new EmailNotification(
-      options,
-      email,
-      this.isDevelopment,
-    );
+    this.emailService = new EmailNotification(options, email, isDevelopment);
     this.frontendURL = this.configService.get('app.frontendDomain', {
       infer: true,
     });

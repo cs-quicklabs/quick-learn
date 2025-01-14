@@ -41,8 +41,8 @@ export class EmailNotification {
     const mailOptions = {
       from: this.accountEmail,
       to: message.recipients.join(', '),
-      cc: message.cc?.join(', ') || '',
-      bcc: message.bcc?.join(', ') || '',
+      cc: message.cc ? message.cc?.join(', ') : '',
+      bcc: message.bcc ? message.bcc?.join(', ') : '',
       subject: 'Quick Learn: ' + message.subject,
       html: message.body,
     };
