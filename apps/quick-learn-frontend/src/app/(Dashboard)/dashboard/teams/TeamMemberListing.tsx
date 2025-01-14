@@ -51,12 +51,13 @@ const TeamMemberListing = () => {
         fetchTeamMembers({
           page: 1,
           userTypeCode: currentUserType,
-          query: '',
+          query: searchInputValue,
         }),
       );
     };
     backgroundDataReload();
-  }, [dispatch, currentUserType]);
+  }, [dispatch, currentUserType, searchInputValue]);
+
   const debouncedSearch = useMemo(
     () =>
       debounce((value: string) => {
