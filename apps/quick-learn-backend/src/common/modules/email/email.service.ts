@@ -8,6 +8,7 @@ import { SuccessResponse } from '@src/common/dto';
 import * as fs from 'fs/promises';
 import handlebars from 'handlebars';
 import { emailSubjects } from '@src/common/constants/email-subject';
+import { EnvironmentEnum } from '@src/common/constants/constants';
 
 // handlebar helper functions
 Handlebars.registerHelper('currentYear', function () {
@@ -26,6 +27,7 @@ export class EmailService {
   private readonly logger = new Logger('Email Service');
   private readonly frontendURL: string;
   constructor(private configService: ConfigService) {
+    // add a condition checking if the enviroment is dev or not.
     const email = this.configService.getOrThrow('app.smtpEmail', {
       infer: true,
     });
@@ -37,8 +39,10 @@ export class EmailService {
         pass: this.configService.getOrThrow('app.smtpPass', { infer: true }),
       },
     };
-
-    this.emailService = new EmailNotification(options, email);
+    const isDevelopment =
+      this.configService.get('ENV', { infer: true }) ===
+      EnvironmentEnum.Developemnt;
+    this.emailService = new EmailNotification(options, email, isDevelopment);
     this.frontendURL = this.configService.get('app.frontendDomain', {
       infer: true,
     });
@@ -52,6 +56,7 @@ export class EmailService {
   async email(data: Message): Promise<void> {
     const emailText = data.body;
     const emailBody = await this.compileMjmlTemplate(emailText);
+
     try {
       await this.emailService.send({
         ...data,
