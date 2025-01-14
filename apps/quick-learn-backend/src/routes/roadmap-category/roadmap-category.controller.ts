@@ -17,7 +17,7 @@ import { RoadmapCategoryService } from './roadmap-category.service';
 import { UpdateRoadmapCategoryDto } from './dto/update-roadmap-category.dto';
 import { en } from '@src/lang/en';
 import { ListRoadmapQueryDto } from './dto/list-roadmap-query.dto';
-import { FindOptionsWhere } from 'typeorm';
+import { FindOptionsWhere, IsNull } from 'typeorm';
 import { RoadmapCategoryEntity } from '@src/entities';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/roadmap-categories
@@ -68,6 +68,12 @@ export class RoadmapCategoryController {
             },
           },
         },
+        // {
+        //   roadmaps: {
+        //     archived: false,
+        //     courses: IsNull(),
+        //   },
+        // },
       ];
       relations.push('roadmaps.courses');
     }

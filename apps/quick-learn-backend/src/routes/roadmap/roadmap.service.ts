@@ -90,11 +90,11 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
           },
         )
         .innerJoin('roadmap.users', 'users')
-        .andWhere('users.id = :userId', { userId })
-        .addSelect('COUNT(DISTINCT courses.id)', 'courseCount')
-        .addSelect('COUNT(DISTINCT lessons.id)', 'lessonCount')
-        .andHaving('COUNT(DISTINCT courses.id) > 0')
-        .andHaving('COUNT(DISTINCT lessons.id) > 0');
+        .andWhere('users.id = :userId', { userId });
+      // .addSelect('COUNT(DISTINCT courses.id)', 'courseCount')
+      // .addSelect('COUNT(DISTINCT lessons.id)', 'lessonCount')
+      // .andHaving('COUNT(DISTINCT courses.id) > 0')
+      // .andHaving('COUNT(DISTINCT lessons.id) > 0');
     }
 
     return queryBuilder
@@ -414,19 +414,29 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   }
 
   async getUserRoadmapDetails(userId: number, roadmapId: number) {
-    return await this.roadmapRepository
+    const queryBuilder = this.roadmapRepository
       .createQueryBuilder('roadmap')
-      .leftJoinAndSelect('roadmap.courses', 'course')
-      .leftJoinAndSelect('course.lessons', 'lesson')
+      .leftJoinAndSelect(
+        'roadmap.courses',
+        'course',
+        'course.archived = :courseArchived',
+        { courseArchived: false },
+      )
+      .leftJoinAndSelect(
+        'course.lessons',
+        'lesson',
+        'lesson.archived = :lessonArchived',
+        { lessonArchived: false },
+      )
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
       .leftJoin('roadmap.users', 'user')
       .where('roadmap.id = :roadmapId', { roadmapId })
       .andWhere('user.id = :userId', { userId })
       .andWhere('roadmap.archived = :archived', { archived: false })
-      .andWhere('course.archived = :courseArchived', { courseArchived: false })
-      .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
       .orderBy('course.id', 'ASC')
-      .addOrderBy('lesson.id', 'ASC')
-      .getOne();
+
+      .addOrderBy('lesson.id', 'ASC');
+
+    return await queryBuilder.getOne();
   }
 }
