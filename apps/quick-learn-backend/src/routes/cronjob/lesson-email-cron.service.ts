@@ -18,7 +18,8 @@ import { LessonProgressService } from '../lesson-progress/lesson-progress.servic
 export class LessonEmailService {
   private frontendURL: string;
   private readonly logger = new Logger(LessonEmailService.name);
-  private readonly BATCH_SIZE = 50;
+  // TODO: change this with the queuing techniques
+  private readonly BATCH_SIZE = 10;
   private readonly TOKEN_EXPIRY = 3;
 
   constructor(
