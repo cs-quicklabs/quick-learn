@@ -19,7 +19,7 @@ export const getUserProfileService = async (): Promise<
 export const updateUserProfileService = async (
   data: Partial<TUserProfileType>,
 ): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.post<AxiosSuccessResponse>(
+  const response = await axiosInstance.patch<AxiosSuccessResponse>(
     userApiEnum.GET_USER_PROFILE,
     data,
   );
@@ -29,7 +29,7 @@ export const updateUserProfileService = async (
 export const changePasswordService = async (
   data: TChangePasswordType,
 ): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.post<AxiosSuccessResponse>(
+  const response = await axiosInstance.patch<AxiosSuccessResponse>(
     userApiEnum.CHANGE_PASSWORD,
     data,
   );

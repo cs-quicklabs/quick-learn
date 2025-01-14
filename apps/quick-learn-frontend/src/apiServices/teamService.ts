@@ -16,7 +16,7 @@ export const teamListApiCall = async (
   filterByUserType = '',
   q = '',
 ): Promise<TTeamListingReponse> => {
-  const body = {
+  const params = {
     mode: 'paginate',
     page,
     q,
@@ -24,7 +24,9 @@ export const teamListApiCall = async (
   const route = `${userApiEnum.GET_USER_LIST}${
     filterByUserType ? '?user_type_code=' + filterByUserType : ''
   }`;
-  const response = await axiosInstance.post<TTeamListingReponse>(route, body);
+  const response = await axiosInstance.get<TTeamListingReponse>(route, {
+    params,
+  });
   return response.data;
 };
 
