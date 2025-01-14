@@ -47,6 +47,7 @@ import { useEffect, useState } from 'react';
 import CourseDetailsSkeleton from './CourseDetailsSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import { HTMLSanitizer } from '@src/utils/helpers';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
@@ -369,9 +370,9 @@ const CourseDetails = () => {
                     key={id}
                     id={id.toString()}
                     title={name}
-                    description={
-                      (approved && content) || new_content || content
-                    }
+                    description={HTMLSanitizer(
+                      (approved && content) || new_content || content,
+                    )}
                     link={`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${
                       approved ? id : `view/${id}`
                     }`}

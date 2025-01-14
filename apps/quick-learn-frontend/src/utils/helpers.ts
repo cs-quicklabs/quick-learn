@@ -88,7 +88,7 @@ export function HTMLSanitizer(value: string, isDefaultTagsAllowed = false) {
           allowedIframeHostnames: ['www.youtube.com'],
         }
       : {
-          allowedTags: [],
+          allowedTags: ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'br'],
           allowedAttributes: {},
           allowedIframeHostnames: [],
         },
