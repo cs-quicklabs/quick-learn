@@ -229,7 +229,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     const queryBuilder = this.repository
       .createQueryBuilder('course')
       .leftJoin('course.roadmaps', 'roadmap')
-      .leftJoin('roadmap.users', 'user')
+      .leftJoin('roadmap.users', 'user', 'user.active= :ActiveUser', {
+        ActiveUser: true,
+      })
       .where('course.id = :courseId', { courseId: id })
       .select('COUNT(DISTINCT user.id)', 'userCount');
 
