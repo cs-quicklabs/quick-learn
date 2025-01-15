@@ -56,7 +56,8 @@ const TeamMemberListing = () => {
       );
     };
     backgroundDataReload();
-  }, [dispatch, currentUserType, searchInputValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, currentUserType]);
 
   const debouncedSearch = useMemo(
     () =>
