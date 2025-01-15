@@ -200,6 +200,9 @@ export class UsersController {
         active: false,
       },
       ['updated_by'],
+      {
+        updated_at: 'DESC',
+      },
     );
     return new SuccessResponse(en.successGotUsers, users);
   }
