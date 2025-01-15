@@ -177,15 +177,24 @@ export class UsersService extends PaginationService<UserEntity> {
       .andWhere('roadmap.archived = :archived', { archived: false });
 
     if (includeCourses) {
-      queryBuilder
-        .leftJoinAndSelect('roadmap.courses', 'course')
-        .leftJoinAndSelect('course.lessons', 'lesson')
-        .andWhere('course.archived = :courseArchived', {
+      queryBuilder.leftJoinAndSelect(
+        'roadmap.courses',
+        'course',
+        'course.archived = :courseArchived',
+        {
           courseArchived: false,
-        })
-        .andWhere('lesson.archived = :lessonArchived', {
-          lessonArchived: false,
-        })
+        },
+      );
+
+      queryBuilder
+        .leftJoinAndSelect(
+          'course.lessons',
+          'lesson',
+          'lesson.archived = :lessonArchived',
+          {
+            lessonArchived: false,
+          },
+        )
         .orderBy('course.id', 'ASC')
         .addOrderBy('lesson.id', 'ASC');
     }

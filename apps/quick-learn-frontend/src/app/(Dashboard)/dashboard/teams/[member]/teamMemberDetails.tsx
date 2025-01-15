@@ -286,12 +286,7 @@ const TeamMemberDetails = () => {
                 onAdd={() => setOpenAssignModal(true)}
               />
               {member?.assigned_roadmaps?.map((item) => {
-                if (
-                  item.courses &&
-                  item.courses.some(
-                    (course) => course.lessons && course.lessons.length > 0,
-                  )
-                ) {
+                if (item.courses) {
                   return (
                     <ProgressCard
                       key={item.id}
@@ -342,7 +337,7 @@ const TeamMemberDetails = () => {
           {hasCourses ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               {allCourses.map((item) => {
-                if (item.lessons && item.lessons.length > 0) {
+                if (item.lessons) {
                   return (
                     <ProgressCard
                       key={item.id}
