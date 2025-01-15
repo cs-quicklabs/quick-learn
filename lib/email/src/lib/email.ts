@@ -1,4 +1,6 @@
 import * as nodemailer from 'nodemailer';
+import { BrowserUtils } from './browserUtils';
+import { generatePreviewHTML } from './emailTemplate';
 
 export type Message = {
   body: string;
@@ -11,47 +13,59 @@ export type Message = {
 export class EmailNotification {
   private accountEmail: string;
   private emailTransporter: nodemailer.Transporter;
+  private isDevelopment: boolean;
+
   /**
    * @param data Send Grid API Key
    * @param emai verified sender email
    */
+
   constructor(
     data: { host: string; port: number; auth: { user: string; pass: string } },
-    emai: string,
+    email: string,
+    isDevelopment: boolean,
   ) {
     this.emailTransporter = nodemailer.createTransport({
       ...data,
       secure: false,
     });
-    this.accountEmail = emai;
+    this.accountEmail = email;
+    this.isDevelopment = isDevelopment;
   }
 
-  private async sendEmail(message: Message): Promise<void> {
-    if (message.subject === undefined) {
+  private async sendEmail(message: Message) {
+    if (!message.subject) {
       throw new Error('Subject is required');
     }
 
-    const toAddresses = message.recipients;
-    const ccAddresses = message.cc || [];
-    const bccAddresses = message.bcc || [];
-    const subject = 'Quick Learn: ' + message.subject;
-    const body = message.body;
-
     const mailOptions = {
       from: this.accountEmail,
-      to: toAddresses.join(', '),
-      cc: ccAddresses.join(', '),
-      bcc: bccAddresses.join(', '),
-      subject: subject,
-      html: body,
+      to: message.recipients.join(', '),
+      cc: message.cc ? message.cc?.join(', ') : '',
+      bcc: message.bcc ? message.bcc?.join(', ') : '',
+      subject: 'Quick Learn: ' + message.subject,
+      html: message.body,
     };
 
-    try {
-      const info = await this.emailTransporter.sendMail(mailOptions);
-      console.log('Email sent successfully to', info.accepted.join(', '));
-    } catch (error) {
-      console.error('Error sending email:', error);
-      throw error;
+    if (!this.isDevelopment) {
+      try {
+        const info = await this.emailTransporter.sendMail(mailOptions);
+        console.log('Email sent successfully to', info.accepted.join(', '));
+      } catch (error) {
+        console.error('Error sending email:', error);
+        throw error;
+      }
+    } else {
+      // to view in local
+      const previewHTML = generatePreviewHTML({
+        subject: mailOptions.subject,
+        to: mailOptions.to,
+        cc: mailOptions.cc,
+        bcc: mailOptions.bcc,
+        html: mailOptions.html,
+      });
+
+      await BrowserUtils.previewHTML(previewHTML);
     }
   }
 

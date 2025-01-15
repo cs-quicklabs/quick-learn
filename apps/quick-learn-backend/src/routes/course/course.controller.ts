@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CourseService } from './course.service';
@@ -21,6 +21,9 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 import { PaginationDto } from '../users/dto';
 import { CourseArchiveDto } from './dto/course-archive.dto';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { UserTypeId } from '@src/common/enum/user_role.enum';
+import { Roles } from '@src/common/decorators/roles.decorator';
 
 @ApiTags('Course')
 @Controller({
@@ -31,30 +34,8 @@ import { CourseArchiveDto } from './dto/course-archive.dto';
 export class CourseController {
   constructor(private service: CourseService) {}
 
-  @Post('/content')
-  @ApiOperation({ summary: 'Get all content page courses' })
-  async getCourses(
-    @Body() paginationDto: PaginationDto,
-  ): Promise<SuccessResponse> {
-    const data = await this.service.getContentRepoCourses(
-      paginationDto,
-      { is_community_available: true, archived: false },
-      [],
-    );
-    return new SuccessResponse(en.GetAllCourses, data);
-  }
-
-  @Get('/my-courses')
-  @ApiOperation({ summary: 'Get all assigned roadmap courses' })
-  async getMyCourses(@CurrentUser() user: UserEntity) {
-    // CHECK IF USER IS LOGGED IN
-    if (!user.id) {
-      throw new BadRequestException(en.userNotFound);
-    }
-    const data = await this.service.getUserAssignedRoadmapCourses(user.id);
-    return new SuccessResponse(en.GetAllCourses, data);
-  }
-
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeId.SUPER_ADMIN)
   @Get('/community-course')
   @ApiOperation({ summary: 'Get all community courses' })
   async getCommunityCourses() {
@@ -63,6 +44,17 @@ export class CourseController {
       ['created_by'],
     );
     return new SuccessResponse(en.getCommunityCourse, data);
+  }
+  @Get('archived')
+  @ApiOperation({ summary: 'Get Archived Courses' })
+  async findAllArchivedCourses(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<SuccessResponse> {
+    const courses = await this.service.getArchivedCourses(paginationDto, [
+      'updated_by',
+      'course_category',
+    ]);
+    return new SuccessResponse(en.successGotArchivedCourses, courses);
   }
 
   @Post()
@@ -120,18 +112,6 @@ export class CourseController {
   ) {
     await this.service.assignRoadmapCourse(+id, assignRoadmapsToCourseDto);
     return new SuccessResponse(en.UpdateCourse);
-  }
-
-  @Post('archived')
-  @ApiOperation({ summary: 'Get Archived Courses' })
-  async findAllArchivedCourses(
-    @Body() paginationDto: PaginationDto,
-  ): Promise<SuccessResponse> {
-    const courses = await this.service.getArchivedCourses(paginationDto, [
-      'updated_by',
-      'course_category',
-    ]);
-    return new SuccessResponse(en.successGotArchivedCourses, courses);
   }
 
   @Post('activate')

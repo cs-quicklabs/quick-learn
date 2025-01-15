@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -49,7 +50,7 @@ export class AuthController {
     return new SuccessResponse(en.successfullyLoggedIn);
   }
 
-  @Post('logout')
+  @Delete('logout')
   @ApiOperation({ summary: 'User Logout' })
   async logout(
     @Req() req: Request,

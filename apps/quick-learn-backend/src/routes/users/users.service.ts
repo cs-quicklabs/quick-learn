@@ -129,6 +129,7 @@ export class UsersService extends PaginationService<UserEntity> {
           ...conditions,
           user_type: {
             name: ILike(`%${paginationDto.q}%`),
+            code: filter.user_type_code,
           },
         },
       ];
@@ -136,6 +137,7 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     const relations = [...userRelations, ...extraRelations];
+    console.log(conditions);
 
     if (paginationDto.mode == 'paginate') {
       const results = await this.paginate(paginationDto, conditions, relations);

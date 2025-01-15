@@ -36,8 +36,8 @@ export const fetchTeamMembers = createAsyncThunk(
     query,
   }: {
     page: number;
-    userTypeCode: string;
-    query: string;
+    userTypeCode?: string;
+    query?: string;
   }) => {
     const response = await teamListApiCall(page, userTypeCode, query);
     return response.data;
@@ -70,10 +70,11 @@ const teamSlice = createSlice({
       })
       .addCase(fetchTeamMembers.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.users = action.payload.items;
-        state.filterdTotal = action.payload.total;
+        state.users = action.payload?.items || [];
+        state.filterdTotal = action.payload?.total || 0;
+
         if (state.filterdTotal > state.totalUsers || state.isInitialLoad) {
-          state.totalUsers = state.filterdTotal; // Only set the totalUsers once on initial load OR when added a Memeber
+          state.totalUsers = state.filterdTotal;
           state.searchQuery = '';
           state.currentUserType = '';
         }

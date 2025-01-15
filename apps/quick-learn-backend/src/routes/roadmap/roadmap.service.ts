@@ -277,7 +277,12 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       .where('roadmap.id = :id', { id: roadmapId })
       .andWhere('roadmap.archived = :archived', { archived: false })
       .leftJoin('roadmap.users', 'users')
-      .loadRelationCountAndMap('roadmap.userCount', 'roadmap.users') // Count users assigned to each roadmap
+      .loadRelationCountAndMap(
+        'roadmap.userCount',
+        'roadmap.users',
+        'user',
+        (qb) => qb.andWhere('user.active= :ActiveUser', { ActiveUser: true }),
+      ) // Count users assigned to each roadmap
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
       .leftJoinAndSelect(
         'roadmap.courses',
