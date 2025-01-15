@@ -91,10 +91,6 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         )
         .innerJoin('roadmap.users', 'users')
         .andWhere('users.id = :userId', { userId });
-      // .addSelect('COUNT(DISTINCT courses.id)', 'courseCount')
-      // .addSelect('COUNT(DISTINCT lessons.id)', 'lessonCount')
-      // .andHaving('COUNT(DISTINCT courses.id) > 0')
-      // .andHaving('COUNT(DISTINCT lessons.id) > 0');
     }
 
     return queryBuilder
