@@ -434,7 +434,6 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       .andWhere('user.id = :userId', { userId })
       .andWhere('roadmap.archived = :archived', { archived: false })
       .orderBy('course.id', 'ASC')
-
       .addOrderBy('lesson.id', 'ASC');
 
     return await queryBuilder.getOne();

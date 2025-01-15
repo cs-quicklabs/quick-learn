@@ -17,8 +17,6 @@ import { RoadmapCategoryService } from './roadmap-category.service';
 import { UpdateRoadmapCategoryDto } from './dto/update-roadmap-category.dto';
 import { en } from '@src/lang/en';
 import { ListRoadmapQueryDto } from './dto/list-roadmap-query.dto';
-import { FindOptionsWhere, IsNull } from 'typeorm';
-import { RoadmapCategoryEntity } from '@src/entities';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/roadmap-categories
 @ApiTags('Roadmap Category')
@@ -50,38 +48,11 @@ export class RoadmapCategoryController {
   @Get()
   @ApiOperation({ summary: 'Get all roadmap categories' })
   async findAll(@Query() listRoadmapQueryDto: ListRoadmapQueryDto) {
-    const relations = [];
-    let conditions:
-      | FindOptionsWhere<RoadmapCategoryEntity>
-      | FindOptionsWhere<RoadmapCategoryEntity>[] = {};
-    if (listRoadmapQueryDto.is_roadmap) {
-      conditions = [{ roadmaps: { archived: false } }];
-      relations.push('roadmaps');
-    }
-    if (listRoadmapQueryDto.is_courses) {
-      conditions = [
-        {
-          roadmaps: {
-            archived: false,
-            courses: {
-              archived: false,
-            },
-          },
-        },
-        // {
-        //   roadmaps: {
-        //     archived: false,
-        //     courses: IsNull(),
-        //   },
-        // },
-      ];
-      relations.push('roadmaps.courses');
-    }
-    const roadmapCategories = await this.roadmapCategoryService.getMany(
-      conditions,
-      { name: 'ASC' },
-      relations,
-    );
+    const roadmapCategories =
+      await this.roadmapCategoryService.getRoadmapCategoryWithRoadmapAndCourses(
+        listRoadmapQueryDto.is_roadmap,
+        listRoadmapQueryDto.is_courses,
+      );
     return new SuccessResponse('Successfully retreived roadmap categories.', {
       categories: roadmapCategories,
     });
