@@ -1,13 +1,15 @@
 {
   "name": "quick-learn-frontend",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/quick-learn-frontend",
+  "sourceRoot": "apps/quick-learn-frontend/src",
   "projectType": "application",
   "tags": [],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "apps/quick-learn-frontend/src/**/*.{ts,tsx,js,jsx}"
