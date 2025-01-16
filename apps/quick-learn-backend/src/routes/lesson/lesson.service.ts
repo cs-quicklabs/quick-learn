@@ -386,6 +386,7 @@ export class LessonService extends PaginationService<LessonEntity> {
   async getSearchedLessons(userId: number, isMember = false, query = '') {
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
+      .andWhere('lesson.approved= :approved', { approved: true })
       .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
       .leftJoin(
         'lesson.course',

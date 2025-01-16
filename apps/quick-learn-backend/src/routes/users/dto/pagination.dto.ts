@@ -5,6 +5,6 @@ import { IsIn, IsOptional } from 'class-validator';
 export class PaginationDto extends BasePaginationDto {
   @ApiProperty({ example: 'paginate' })
   @IsOptional()
-  @IsIn(['paginate'])
+  @IsIn(['paginate', 'all'])
   mode?: 'paginate';
 }
