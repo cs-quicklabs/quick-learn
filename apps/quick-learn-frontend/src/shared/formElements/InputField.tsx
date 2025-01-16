@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FieldType } from '../types/formTypes';
 import { OpenEyeIcon, ClosedEyeIcon } from '../components/UIElements';
@@ -19,6 +19,7 @@ interface Props {
   options?: { value: string | number; label: string }[];
   height?: string;
   width?: string;
+  resetState?: boolean;
 }
 const InputField: FC<Props> = ({
   label,
@@ -34,9 +35,16 @@ const InputField: FC<Props> = ({
   options,
   height,
   width,
+  resetState = false,
 }) => {
   const isFieldPassword = type === 'password';
   const [showPassword, setShowPassword] = useState<boolean>(!isFieldPassword);
+
+  useEffect(() => {
+    if (isFieldPassword && resetState) {
+      setShowPassword(false); // Reset to the "closed eye" state
+    }
+  }, [isFieldPassword, resetState]);
   if (type === 'checkbox') {
     return (
       <div className="flex justify-between items-center">
@@ -155,7 +163,7 @@ const InputField: FC<Props> = ({
             onClick={() => setShowPassword(!showPassword)}
             tabIndex={-1}
           >
-            {showPassword ? <OpenEyeIcon /> : <ClosedEyeIcon />}
+            {showPassword ? <ClosedEyeIcon /> : <OpenEyeIcon />}
           </button>
         )}
       </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import InputField from './InputField';
 import { Path, useForm, UseFormReset, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -51,6 +51,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     resolver: zodResolver(schema),
     mode,
   });
+  const [resetState, setResetState] = useState(false);
 
   // Use methods if provided, otherwise fall back to defaultMethods
   const {
@@ -67,6 +68,8 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     onSubmit(data, reset);
     if (resetFormOnSubmit) {
       reset();
+      setResetState(true); // Trigger reset for InputField components
+      setTimeout(() => setResetState(false), 0); // Reset the state back to false
     }
   };
 
@@ -118,6 +121,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
                 disabled={isLoading || field.disabled}
                 errorMsg={errors[field.name]?.message as string}
                 id={id}
+                resetState={resetState}
               />
             );
         })}

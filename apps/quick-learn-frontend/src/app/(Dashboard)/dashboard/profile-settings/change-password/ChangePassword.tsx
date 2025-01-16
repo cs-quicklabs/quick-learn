@@ -16,6 +16,7 @@ const changePasswordFormSchema = z
     newPassword: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters long' })
+      .max(32, { message: 'Password cannot exceed 32 characters' })
       .regex(/[A-Z]/, {
         message: 'Password must contain at least one uppercase letter',
       })
