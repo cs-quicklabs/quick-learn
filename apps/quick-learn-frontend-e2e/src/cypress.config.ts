@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { defineConfig } from 'cypress';
 import * as dotenv from 'dotenv';
 
@@ -11,5 +10,5 @@ export default defineConfig({
   },
   viewportWidth: 1920,
   viewportHeight: 1080,
-  retries: 3,
+  defaultCommandTimeout: 10000,
 });

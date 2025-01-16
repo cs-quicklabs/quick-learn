@@ -29,7 +29,7 @@ describe('Primary Skill Update', () => {
     addCourse.AddCourseCategoryWithOnlySpaces();
     addCourse.getErrorMessage().should('contain', 'This field is mandatory');
   });
-  it('Verify Course field should not expect more than 30 characters', () => {
+  it('Verify Course field should not accept more than 30 characters', () => {
     const addCourse = new AddCourseCategory();
     addCourse.OpenAccountSettings();
     addCourse.openCourseCategory();
