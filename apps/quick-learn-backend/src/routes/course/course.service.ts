@@ -96,47 +96,44 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     };
   }
 
-  async getAllCourses(
-    options: FindOptionsWhere<CourseEntity>, // filter conditions
-    relations: string[] = [], // additional relations to include
-  ): Promise<CourseEntity[]> {
-    const queryBuilder = this.repository.createQueryBuilder('courses');
-
-    // Apply filters from options
-    if (options) {
-      Object.keys(options).forEach((key) => {
-        queryBuilder.andWhere(`courses.${key} = :${key}`, {
-          [key]: options[key],
-        });
-      });
-    }
-
-    // Dynamically include relations
-    relations.forEach((relation) => {
-      queryBuilder.leftJoinAndSelect(`courses.${relation}`, relation);
-    });
-
-    // Join course_category and count lessons
-    queryBuilder
+  async getAllCommunityCourses(): Promise<CourseEntity[]> {
+    return await this.repository
+      .createQueryBuilder('courses')
+      .where(
+        'courses.is_community_available = :isCommunity AND courses.archived= :archived',
+        {
+          isCommunity: true,
+          archived: false,
+        },
+      )
+      .leftJoinAndSelect('courses.created_by', 'created_by')
       .leftJoinAndSelect('courses.course_category', 'course_category')
-      .leftJoin('courses.lessons', 'lessons')
+      .leftJoinAndSelect(
+        'courses.lessons',
+        'lessons',
+        'lessons.archived = :archivedLessons AND lessons.approved = :approved',
+        {
+          archivedLessons: false,
+          approved: true,
+        },
+      )
       .loadRelationCountAndMap(
+        // checks the count of lessons
         'courses.lessons_count',
         'courses.lessons',
         'lessons',
         (qb) =>
-          qb
-            .andWhere('lessons.archived = :archivedLessons', {
+          qb.where(
+            'lessons.archived = :archivedLessons AND lessons.approved = :approved',
+            {
               archivedLessons: false,
-            })
-            .andWhere('lessons.approved = :approvedLessons', {
-              approvedLessons: true,
-            }),
+              approved: true,
+            },
+          ),
       )
       .orderBy('courses.created_at', 'DESC')
-      .addOrderBy('course_category.created_at', 'DESC');
-
-    return await queryBuilder.getMany();
+      .addOrderBy('course_category.created_at', 'DESC')
+      .getMany();
   }
 
   /**
@@ -188,6 +185,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
   async getCourseDetails(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
+    countParticipant?: boolean,
   ): Promise<CourseEntity> {
     let sort: FindOptionsOrder<CourseEntity>;
     if (relations.includes('lessons')) {
@@ -206,9 +204,10 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     if (!course) {
       throw new BadRequestException(en.invalidCourse);
     }
-
-    const courseCount = await this.getCourseParticipantCount(course.id);
-    course['userCount'] = courseCount;
+    if (countParticipant) {
+      const courseCount = await this.getCourseParticipantCount(course.id);
+      course['userCount'] = courseCount;
+    }
 
     if (!course.lessons) {
       course.lessons = [];
@@ -237,6 +236,39 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
     const result = await queryBuilder.getRawOne();
     return result?.userCount || 0;
+  }
+
+  async getCommunityCourseDetails(id: number): Promise<CourseEntity> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('courses')
+      .where('courses.id = :course_id', { course_id: id })
+      .andWhere(
+        'courses.is_community_available = :isCommunity AND courses.archived =:archived',
+        { isCommunity: true, archived: false },
+      )
+      .leftJoinAndSelect('courses.roadmaps', 'roadmaps') //necessary relations
+      .leftJoinAndSelect('courses.course_category', 'course_category') //necessary relations
+      .leftJoinAndSelect('courses.created_by', 'created_by') //necessary relations
+      .leftJoinAndSelect(
+        'courses.lessons',
+        'lessons',
+        'lessons.archived = :archived AND lessons.approved = :approved',
+        { archived: false, approved: true },
+      )
+      .leftJoinAndSelect('lessons.created_by_user', 'created_by_user');
+
+    const course = await queryBuilder.getOne();
+
+    if (!course) {
+      throw new BadRequestException(en.invalidCourse);
+    }
+    // Sanitize lesson content
+    course.lessons = course.lessons.map((lesson) => ({
+      ...lesson,
+      content: Helpers.limitSanitizedContent(lesson.content),
+    })) as LessonEntity[];
+
+    return course;
   }
 
   /**
