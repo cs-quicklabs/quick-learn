@@ -8,7 +8,6 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { TLesson } from '../types/contentRepository';
 import { TBreadcrumb } from '../types/breadcrumbType';
-
 // Separate components for better performance
 const LessonHeader = memo(
   ({
