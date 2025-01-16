@@ -276,6 +276,16 @@ const Navbar = () => {
                           </Link>
                         </MenuItem>
                       )}
+                      {user?.user_type_id === UserTypeIdEnum.ADMIN && (
+                        <MenuItem>
+                          <Link
+                            href={RouteEnum.ACCOUNT_SETTINGS}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            {en.component.accountSetting}
+                          </Link>
+                        </MenuItem>
+                      )}
                     </div>
 
                     {/* Extended Menu Items */}

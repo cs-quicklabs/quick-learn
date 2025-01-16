@@ -433,6 +433,7 @@ export const en = {
     openMenu: 'Open main menu',
     viewNotification: 'View notifications',
     profile: 'My Profile',
+    accountSetting:'Account Setting',
     signOut: 'Sign out',
 
     //Search Box
