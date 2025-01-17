@@ -39,9 +39,12 @@ const AssignDataModal: FC<Props> = ({
   const [isFormDirty, setIsFormDirty] = useState<boolean>(false);
   const [openAccordions, setOpenAccordions] = useState<string[]>([]);
   const [isAllExpanded, setIsAllExpanded] = useState<boolean>(false);
+  const prevSelectedValue = initialValues?.selected;
   const {
     register,
     handleSubmit,
+    getValues,
+    watch,
     formState: { errors, isValid },
     setValue,
     reset,
@@ -50,7 +53,6 @@ const AssignDataModal: FC<Props> = ({
     defaultValues: initialValues,
     mode: 'onChange',
   });
-  // const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
   const sortedData = useMemo(
     () => [...data].sort((a, b) => a.name.localeCompare(b.name)),
     [data],
@@ -73,6 +75,11 @@ const AssignDataModal: FC<Props> = ({
       setValue('selected', initialValues.selected);
     }
   }, [initialValues, show, isLoading, reset, setValue, sortedData]);
+
+  useEffect(() => {
+    const subscription = watch(() => handleCheckFormDirty());
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   function onFormSubmit(formData: schemaType) {
     onSubmit(formData?.selected ?? []);
@@ -104,6 +111,17 @@ const AssignDataModal: FC<Props> = ({
       newOpenAccordions.length === allAccordionIds.length;
 
     setIsAllExpanded(newIsAllExpanded);
+  };
+  const handleCheckFormDirty = () => {
+    const currentSelected = getValues('selected') || [];
+    const initialSelected = initialValues?.selected || [];
+    console.log('current ', currentSelected, ' initial ', initialSelected);
+
+    const isDirty =
+      currentSelected.length !== initialSelected.length ||
+      !currentSelected.every((value) => initialSelected.includes(value));
+
+    setIsFormDirty(isDirty);
   };
 
   return (
@@ -211,7 +229,7 @@ const AssignDataModal: FC<Props> = ({
                                       value={item.value}
                                       className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
                                       {...register('selected')}
-                                      onChange={() => setIsFormDirty(true)}
+                                      onChange={() => handleCheckFormDirty()}
                                     />
                                     <label
                                       htmlFor={item.name}
@@ -261,7 +279,13 @@ const AssignDataModal: FC<Props> = ({
               className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-500"
               disabled={!isFormDirty || !isValid || isLoading}
             >
-              {isLoading ? <Loader /> : en.common.save}
+              {isLoading ? (
+                <div className="pl-3">
+                  <Loader />
+                </div>
+              ) : (
+                en.common.save
+              )}
             </button>
             <button
               onClick={() => setShow(false)}
