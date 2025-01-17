@@ -80,8 +80,12 @@ export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEnti
   async getRoadmapCatergoriesWithRoadmap() {
     return await this.repository
       .createQueryBuilder('category')
-      .leftJoinAndSelect('category.roadmaps', 'roadmaps')
-      .where('roadmaps.archived = :archived', { archived: false })
+      .leftJoinAndSelect(
+        'category.roadmaps',
+        'roadmaps',
+        'roadmaps.archived = :archived',
+        { archived: false },
+      )
       .orderBy('category.name', 'ASC')
       .addOrderBy('category.created_at', 'DESC')
       .getMany();
