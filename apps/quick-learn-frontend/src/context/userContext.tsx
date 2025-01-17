@@ -6,6 +6,7 @@ import { updateContentRepository } from '@src/store/features/metadataSlice';
 import { useAppDispatch } from '@src/store/hooks';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
+import { usePathname } from 'next/navigation';
 import { createContext, useState, useEffect, useMemo } from 'react';
 
 export const UserContext = createContext<{
@@ -20,6 +21,7 @@ export const UserContext = createContext<{
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<TUser | null>(null);
+  const path = usePathname();
   const dispatch = useAppDispatch();
 
   const fetchContentRepositoryMetadata = async () => {
@@ -35,7 +37,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     getUser()
       .then((res) => {
         setUser(res.data);
-        if (res.data.user_type_id != UserTypeIdEnum.MEMBER) {
+        console.log(path);
+
+        if (
+          path !== '/dashboard/content' &&
+          res.data.user_type_id != UserTypeIdEnum.MEMBER
+        ) {
           fetchContentRepositoryMetadata();
         }
       })
