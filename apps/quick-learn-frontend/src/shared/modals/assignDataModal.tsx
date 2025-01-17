@@ -39,7 +39,9 @@ const AssignDataModal: FC<Props> = ({
   const [isFormDirty, setIsFormDirty] = useState<boolean>(false);
   const [openAccordions, setOpenAccordions] = useState<string[]>([]);
   const [isAllExpanded, setIsAllExpanded] = useState<boolean>(false);
-  const prevSelectedValue = initialValues?.selected;
+  const [initialSelectedRoadmaps, setinitialSelectedRoadmaps] = useState<
+    string[]
+  >([]);
   const {
     register,
     handleSubmit,
@@ -57,6 +59,10 @@ const AssignDataModal: FC<Props> = ({
     () => [...data].sort((a, b) => a.name.localeCompare(b.name)),
     [data],
   );
+  useEffect(() => {
+    const selectedRoadmaps = initialValues?.selected || [];
+    setinitialSelectedRoadmaps(selectedRoadmaps);
+  }, [initialValues]);
 
   useEffect(() => {
     if (show) {
@@ -64,6 +70,10 @@ const AssignDataModal: FC<Props> = ({
       const allAccordionIds = sortedData.map((ele) => ele.name);
       setOpenAccordions(allAccordionIds);
       setIsAllExpanded(true);
+      if (initialValues?.selected && !isLoading) {
+        setValue('selected', initialValues.selected);
+        setinitialSelectedRoadmaps(initialValues.selected);
+      }
     } else {
       // Reset the state when the modal is closed
       reset();
@@ -77,9 +87,11 @@ const AssignDataModal: FC<Props> = ({
   }, [initialValues, show, isLoading, reset, setValue, sortedData]);
 
   useEffect(() => {
-    const subscription = watch(() => handleCheckFormDirty());
-    return () => subscription.unsubscribe();
-  }, [watch]);
+    if (show) {
+      const subscription = watch(() => handleCheckFormDirty());
+      return () => subscription.unsubscribe();
+    }
+  }, [show, watch]);
 
   function onFormSubmit(formData: schemaType) {
     onSubmit(formData?.selected ?? []);
@@ -114,13 +126,11 @@ const AssignDataModal: FC<Props> = ({
   };
   const handleCheckFormDirty = () => {
     const currentSelected = getValues('selected') || [];
-    const initialSelected = initialValues?.selected || [];
-    // const defaultvalues =
-    console.log('current ', currentSelected, ' initial ', initialSelected);
-
     const isDirty =
-      currentSelected.length !== initialSelected.length ||
-      !currentSelected.every((value) => initialSelected.includes(value));
+      currentSelected.length !== initialSelectedRoadmaps.length ||
+      !currentSelected.every((value) =>
+        initialSelectedRoadmaps.includes(value),
+      );
 
     setIsFormDirty(isDirty);
   };
@@ -230,7 +240,7 @@ const AssignDataModal: FC<Props> = ({
                                       value={item.value}
                                       className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
                                       {...register('selected')}
-                                      onChange={() => handleCheckFormDirty()}
+                                      // onChange={() => handleCheckFormDirty()}
                                     />
                                     <label
                                       htmlFor={item.name}

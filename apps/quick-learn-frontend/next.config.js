@@ -25,10 +25,13 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.BACKEND_BASE_API_URL || 'http://localhost:3001/api'}/:path*`,
+        destination: `${
+          process.env.BACKEND_BASE_API_URL || 'http://localhost:3001/api'
+        }/:path*`,
       },
     ];
-  }
+  },
+  reactStrictMode: false,
 };
 
 const plugins = [
