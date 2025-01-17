@@ -13,9 +13,10 @@ import { en } from '@src/constants/lang/en';
 const EmailPreference = () => {
   const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsPageLoading(true);
     getUserPreferencesService()
       .then((res) => {
         if (res?.data?.preference !== undefined) {
@@ -23,7 +24,7 @@ const EmailPreference = () => {
         }
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsPageLoading(false));
   }, []); // Dependency array is empty to ensure this runs only once
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPreference = e.target.checked;
@@ -45,7 +46,7 @@ const EmailPreference = () => {
       .finally(() => setIsLoading(false));
   };
 
-  if (isLoading) return <EmailPreferenceSkeleton />;
+  if (isPageLoading) return <EmailPreferenceSkeleton />;
   return (
     <>
       <div>
@@ -58,14 +59,39 @@ const EmailPreference = () => {
 
         <div className="flex mt-6">
           <div className="flex items-center h-5">
-            <input
-              id="helper-checkbox"
-              aria-describedby="helper-checkbox-text"
-              type="checkbox"
-              checked={isEmailChecked}
-              onChange={handleChange}
-              className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-none transition duration-100"
-            />
+            {isLoading ? (
+              <div className="flex items-center">
+                <svg
+                  className="animate-spin h-5 w-5 text-blue-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+              </div>
+            ) : (
+              <input
+                id="helper-checkbox"
+                aria-describedby="helper-checkbox-text"
+                type="checkbox"
+                checked={isEmailChecked}
+                onChange={handleChange}
+                className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-none transition duration-100"
+              />
+            )}
           </div>
           <div className="ms-2 text-sm">
             <label
