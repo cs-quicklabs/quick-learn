@@ -91,6 +91,7 @@ const AssignDataModal: FC<Props> = ({
       const subscription = watch(() => handleCheckFormDirty());
       return () => subscription.unsubscribe();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show, watch]);
 
   function onFormSubmit(formData: schemaType) {
