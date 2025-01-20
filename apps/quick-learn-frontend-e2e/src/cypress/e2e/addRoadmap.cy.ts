@@ -38,7 +38,7 @@ describe('Primary Skill Update', () => {
     AddRoadMaps.AddRoadMapCategoriesWithMoreLimit();
     AddRoadMaps.getErrorMessage().should(
       'contain',
-      'The value should not exceed 30 character',
+      'The value should not exceed 30 character.',
     );
   });
   it('Verify Super admin able to edit Roadmap Categories', () => {

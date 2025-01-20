@@ -9,7 +9,7 @@ const baseSchema = {
     })
     .trim()
     .min(1, { message: en.common.fieldRequired })
-    .max(30, { message: 'The value should not exceed 30 character' })
+    .max(30, { message: 'The value should not exceed 30 character.' })
     .refine(onlyAlphabeticValidation, {
       message: 'First name should only contain alphabetic characters',
     }),
@@ -19,7 +19,7 @@ const baseSchema = {
     })
     .trim()
     .min(1, { message: en.common.fieldRequired })
-    .max(30, { message: 'The value should not exceed 30 character' })
+    .max(30, { message: 'The value should not exceed 30 character.' })
     .refine(onlyAlphabeticValidation, {
       message: 'Last name should only contain alphabetic characters',
     }),
