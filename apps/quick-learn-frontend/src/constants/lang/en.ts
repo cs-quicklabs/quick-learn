@@ -450,7 +450,7 @@ export const en = {
   },
 
   Search: {
-    default_text: 'Enter atleast 3 character to search',
+    default_text: 'Enter atleast 3 characters to search',
     no_search_result_found: 'No Lessons, Courses, or Roadmaps found',
     Loading: 'Loading....',
   },
