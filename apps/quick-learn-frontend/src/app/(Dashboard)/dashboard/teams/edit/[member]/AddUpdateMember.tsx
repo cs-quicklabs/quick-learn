@@ -29,6 +29,8 @@ import {
 } from '@src/apiServices/teamService';
 import { showErrorMessage } from '@src/utils/helpers';
 import { FullPageLoader } from '@src/shared/components/UIElements';
+import { useAppDispatch } from '@src/store/hooks';
+import { increamentTotalUsers } from '@src/store/features/teamSlice';
 
 type TOption = { name: string; value: string | number; id?: string | number };
 
@@ -59,6 +61,7 @@ const AddUpdateMemberPage = () => {
   const [editInitialValues, setEditInitialValues] = useState(
     editMemberFormInitialValues,
   );
+  const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -127,6 +130,7 @@ const AddUpdateMemberPage = () => {
         team_id: metadata?.skills[0]?.team_id,
       });
       if (!res.success) throw new Error();
+      dispatch(increamentTotalUsers());
       toast.success(res.message);
       setIsLoading(false);
       router.push(RouteEnum.TEAM);
