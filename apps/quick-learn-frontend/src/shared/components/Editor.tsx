@@ -27,6 +27,10 @@ class CustomClipboard extends Clipboard {
     if (imageItem) {
       const file = imageItem.getAsFile();
       if (file) {
+        if (file.size > 1024 * 1024) {
+          toast.error('File should be less than 1MB.');
+          return;
+        }
         try {
           const formData = new FormData();
           formData.append('file', file);
@@ -97,6 +101,10 @@ const Editor: FC<Props> = ({
   const quillRef = useRef<ReactQuill | null>(null);
 
   const handleImageUpload = async (file: File) => {
+    if (file.size > 1024 * 1024) {
+      toast.error('File should be less than 1MB.');
+      return;
+    }
     if (!quillRef.current) return;
     const quill = quillRef.current.getEditor();
 
