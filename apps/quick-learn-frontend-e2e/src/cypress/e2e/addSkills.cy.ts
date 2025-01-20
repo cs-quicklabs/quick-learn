@@ -39,7 +39,7 @@ describe('Primary Skill Update', () => {
     addSkill.AddPrimarySkillWithMoreCharacters();
     addSkill
       .getErrorMessage()
-      .should('contain', 'The value should not exceed 30 character.');
+      .should('contain', 'The value should not exceed 30 characters.');
   });
 
   it('Verify Super admin able to edit Skill', () => {
