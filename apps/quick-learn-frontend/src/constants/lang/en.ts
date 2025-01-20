@@ -212,7 +212,7 @@ export const en = {
   courseCategories: {
     heading: 'Courses Categories',
     subHeading:
-      'Courses can belong to a category. A category could be a way to group learning courses. For example, a you can create a learning course from a book, a blog, a video, for a software application or for any onboarding needs.',
+      'Courses can belong to a category. A category could be a way to group learning courses. For example, you can create a learning course from a book, a blog, a video, for a software application or for any onboarding needs.',
     inputlabel: 'Add new course category',
     inputPlaceHolder: 'Engineering',
     tableName: 'Category name',
