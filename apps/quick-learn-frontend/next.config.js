@@ -31,7 +31,6 @@ const nextConfig = {
       },
     ];
   },
-  reactStrictMode: false,
 };
 
 const plugins = [

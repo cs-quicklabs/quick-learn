@@ -39,7 +39,7 @@ const AssignDataModal: FC<Props> = ({
   const [isFormDirty, setIsFormDirty] = useState<boolean>(false);
   const [openAccordions, setOpenAccordions] = useState<string[]>([]);
   const [isAllExpanded, setIsAllExpanded] = useState<boolean>(false);
-  const [initialSelectedRoadmaps, setinitialSelectedRoadmaps] = useState<
+  const [initialSelectedRoadmaps, setInitialSelectedRoadmaps] = useState<
     string[]
   >([]);
   const {
@@ -61,7 +61,7 @@ const AssignDataModal: FC<Props> = ({
   );
   useEffect(() => {
     const selectedRoadmaps = initialValues?.selected || [];
-    setinitialSelectedRoadmaps(selectedRoadmaps);
+    setInitialSelectedRoadmaps(selectedRoadmaps);
   }, [initialValues]);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const AssignDataModal: FC<Props> = ({
       setIsAllExpanded(true);
       if (initialValues?.selected && !isLoading) {
         setValue('selected', initialValues.selected);
-        setinitialSelectedRoadmaps(initialValues.selected);
+        setInitialSelectedRoadmaps(initialValues.selected);
       }
     } else {
       // Reset the state when the modal is closed
@@ -241,7 +241,6 @@ const AssignDataModal: FC<Props> = ({
                                       value={item.value}
                                       className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
                                       {...register('selected')}
-                                      // onChange={() => handleCheckFormDirty()}
                                     />
                                     <label
                                       htmlFor={item.name}
