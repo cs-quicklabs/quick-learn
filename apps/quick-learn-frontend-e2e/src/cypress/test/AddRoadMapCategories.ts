@@ -1,9 +1,9 @@
 export class AddRoadMap {
-  visitProfilePage() {
-    return cy.get('button[class="flex items-center"]').click();
+  visitAccountsPage() {
+    return cy.get('[id="headerProfileImage"]').click();
   }
   getAccountSettings() {
-    cy.get('button[class="flex items-center"]').click();
+    cy.get('[id="headerProfileImage"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();
   }
 

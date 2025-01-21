@@ -7,3 +7,8 @@ export const AdminValidCredentials = {
   mail: 'user11945@yopmail.com',
   password: 'Password@123p',
 };
+
+export const EditorValidCredentials = {
+  mail: 'editor@yopmail.com',
+  password: 'Editor@123',
+};
