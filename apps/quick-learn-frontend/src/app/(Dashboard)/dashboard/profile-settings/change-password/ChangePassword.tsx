@@ -76,9 +76,9 @@ const ChangePassword = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };
+  if (isPageLoading) return <FullPageLoader />;
   return (
     <>
-      {isPageLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold dark:text-white">
           {en.ProfileSetting.changePassword}

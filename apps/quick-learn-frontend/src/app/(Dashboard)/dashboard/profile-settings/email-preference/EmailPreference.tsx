@@ -48,50 +48,27 @@ const EmailPreference = () => {
 
   if (isPageLoading) return <EmailPreferenceSkeleton />;
   return (
-    <>
-      <div>
-        <h1 className="text-lg font-semibold dark:text-white">
-          {en.ProfileSetting.preferenceHead}
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-          {en.ProfileSetting.preferenceSubHead}
-        </p>
+    <div>
+      <h1 className="text-lg font-semibold dark:text-white">
+        {en.ProfileSetting.preferenceHead}
+      </h1>
+      <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+        {en.ProfileSetting.preferenceSubHead}
+      </p>
 
+      {isLoading ? (
+        <EmailPreferenceSkeleton isPartial />
+      ) : (
         <div className="flex mt-6">
           <div className="flex items-center h-5">
-            {isLoading ? (
-              <div className="flex items-center">
-                <svg
-                  className="animate-spin h-5 w-5 text-blue-500"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                  ></path>
-                </svg>
-              </div>
-            ) : (
-              <input
-                id="helper-checkbox"
-                aria-describedby="helper-checkbox-text"
-                type="checkbox"
-                checked={isEmailChecked}
-                onChange={handleChange}
-                className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-none transition duration-100"
-              />
-            )}
+            <input
+              id="helper-checkbox"
+              aria-describedby="helper-checkbox-text"
+              type="checkbox"
+              checked={isEmailChecked}
+              onChange={handleChange}
+              className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-none transition duration-100"
+            />
           </div>
           <div className="ms-2 text-sm">
             <label
@@ -108,8 +85,8 @@ const EmailPreference = () => {
             </p>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 
