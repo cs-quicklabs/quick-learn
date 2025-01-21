@@ -26,7 +26,6 @@ import {
   selectAllCourses,
   selectAllRoadmaps,
   selectIsRoadmapsInitialized,
-  selectRoadmapsStatus,
 } from '@src/store/features/roadmapsSlice';
 
 const ContentRepository = () => {
@@ -34,12 +33,10 @@ const ContentRepository = () => {
   const dispatch = useAppDispatch();
   const roadmaps = useAppSelector(selectAllRoadmaps);
   const courses = useAppSelector(selectAllCourses);
-  const roadmapsStatus = useAppSelector(selectRoadmapsStatus);
   const isRoadmapsInitialized = useAppSelector(selectIsRoadmapsInitialized);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
-
-  const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
+  const [isLoading, setIsLoading] = useState(!isRoadmapsInitialized);
 
   const fetchRoadmapData = async () => {
     try {
@@ -76,6 +73,7 @@ const ContentRepository = () => {
         // Log the error to the console for debugging
         console.error('Error fetching roadmaps and metadata:', err);
       }
+      setIsLoading(false);
     };
 
     fetchData();

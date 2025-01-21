@@ -47,6 +47,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
       })
       .catch((err) => showApiErrorInToast(err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value = useMemo(
