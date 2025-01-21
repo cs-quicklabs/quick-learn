@@ -2,7 +2,6 @@
 import { useRouter, useParams } from 'next/navigation';
 import MemberForm from './MemberForm';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import {
   TSkill,
   TUser,
@@ -30,7 +29,11 @@ import {
 import { showErrorMessage } from '@src/utils/helpers';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import { useAppDispatch } from '@src/store/hooks';
-import { increamentTotalUsers } from '@src/store/features/teamSlice';
+import {
+  increamentTotalUsers,
+  decrementTotalUsers,
+} from '@src/store/features/teamSlice';
+import { showApiMessageInToast } from '@src/utils/toastUtils';
 
 type TOption = { name: string; value: string | number; id?: string | number };
 
@@ -66,11 +69,13 @@ const AddUpdateMemberPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    (async function () {
-      setIsPageLoading(true);
-      try {
-        const res = await getUserMetadataCall();
-        if (!res.success) throw new Error();
+    setIsPageLoading(true);
+
+    getUserMetadataCall()
+      .then((res) => {
+        if (!res.success) {
+          throw new Error();
+        }
         setMetadata(res.data);
         setFormOptions<TUserType>(
           addMemberFields,
@@ -84,28 +89,32 @@ const AddUpdateMemberPage = () => {
           res.data.user_types,
         );
         setFormOptions<TSkill>(editMemberFields, 'skill_id', res.data.skills);
-        setIsPageLoading(false);
-      } catch (error) {
+      })
+      .catch((error) => {
         showErrorMessage(error);
+      })
+      .finally(() => {
         setIsPageLoading(false);
-      }
-    })();
+      });
   }, []);
 
   useEffect(() => {
     if (!isAddMember) {
-      (async function () {
-        try {
-          setIsPageLoading(true);
-          const res = await getUserDetails(params.member);
-          if (!res.success) throw new Error();
+      setIsPageLoading(true);
+
+      getUserDetails(params.member)
+        .then((res) => {
+          if (!res.success) {
+            throw new Error();
+          }
           setEditUserData(res.data);
-          setIsPageLoading(false);
-        } catch (error) {
+        })
+        .catch((error) => {
           showErrorMessage(error);
+        })
+        .finally(() => {
           setIsPageLoading(false);
-        }
-      })();
+        });
     }
   }, [isAddMember, params.member]);
 
@@ -123,35 +132,47 @@ const AddUpdateMemberPage = () => {
   }, [editUserData]);
 
   async function handleAddSubmit(data: AddMemberFormData) {
-    try {
-      setIsLoading(true);
-      const res = await createUser({
-        ...data,
-        team_id: metadata?.skills[0]?.team_id,
+    setIsLoading(true);
+    createUser({
+      ...data,
+      team_id: metadata?.skills[0]?.team_id,
+    })
+      .then((res) => {
+        if (!res.success) {
+          throw new Error();
+        }
+        dispatch(increamentTotalUsers());
+        showApiMessageInToast(res);
+        router.push(RouteEnum.TEAM);
+      })
+      .catch((error) => {
+        showErrorMessage(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-      if (!res.success) throw new Error();
-      dispatch(increamentTotalUsers());
-      toast.success(res.message);
-      setIsLoading(false);
-      router.push(RouteEnum.TEAM);
-    } catch (error) {
-      showErrorMessage(error);
-      setIsLoading(false);
-    }
   }
 
   async function handleEditSubmit(data: EditMemberFormData) {
-    try {
-      setIsLoading(true);
-      const res = await updateUser(params.member, data);
-      if (!res.success) throw new Error();
-      toast.success(res.message);
-      router.push(RouteEnum.TEAM);
-      setIsLoading(false);
-    } catch (error) {
-      showErrorMessage(error);
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+
+    updateUser(params.member, data)
+      .then((res) => {
+        if (!res.success) {
+          throw new Error();
+        }
+        if (data.active === 'false') {
+          dispatch(decrementTotalUsers());
+        }
+        showApiMessageInToast(res);
+        router.push(RouteEnum.TEAM);
+      })
+      .catch((error) => {
+        showErrorMessage(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   function render() {

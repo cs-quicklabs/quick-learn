@@ -78,7 +78,7 @@ const teamSlice = createSlice({
         state.users = action.payload?.items || [];
         state.filterdTotal = action.payload?.total || 0;
 
-        if (state.isInitialLoad) {
+        if (state.isInitialLoad || state.totalUsers < state.filterdTotal) {
           state.totalUsers = state.filterdTotal;
           state.searchQuery = '';
           state.currentUserType = '';
