@@ -37,10 +37,10 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     options: FindOptionsWhere<CourseEntity>, // filter conditions
     relations: string[] = [], // additional relations to include
   ): Promise<{
-    courses: CourseEntity[];
-    total: number;
-    page: number;
-    totalPages: number;
+    courses;
+    total;
+    page;
+    totalPages;
   }> {
     const queryBuilder = this.repository.createQueryBuilder('courses');
     const { page = 1, limit = 10 } = paginationDto;
@@ -185,7 +185,8 @@ export class CourseService extends BasicCrudService<CourseEntity> {
   async getCourseDetails(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
-    countParticipant?: boolean,
+    countParticipant = false,
+    isCommunity = false,
   ): Promise<CourseEntity> {
     let sort: FindOptionsOrder<CourseEntity>;
     if (relations.includes('lessons')) {
@@ -213,12 +214,14 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       course.lessons = [];
     } else {
       // Filter lessons if they exist
-      course.lessons = course.lessons
-        .filter((lesson) => !lesson.archived)
-        .map((lesson) => ({
-          ...lesson,
-          content: Helpers.limitSanitizedContent(lesson.content),
-        })) as LessonEntity[];
+      course.lessons = isCommunity
+        ? course.lessons.filter((lesson) => !lesson.archived && lesson.approved) //if community dont show archived and unapproved lesson
+        : (course.lessons
+            .filter((lesson) => !lesson.archived) //for content only dont show archived lesson
+            .map((lesson) => ({
+              ...lesson,
+              content: Helpers.limitSanitizedContent(lesson.content),
+            })) as LessonEntity[]);
     }
 
     return course;
@@ -237,40 +240,6 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     const result = await queryBuilder.getRawOne();
     return result?.userCount || 0;
   }
-
-  async getCommunityCourseDetails(id: number): Promise<CourseEntity> {
-    const queryBuilder = this.repository
-      .createQueryBuilder('courses')
-      .where('courses.id = :course_id', { course_id: id })
-      .andWhere(
-        'courses.is_community_available = :isCommunity AND courses.archived =:archived',
-        { isCommunity: true, archived: false },
-      )
-      .leftJoinAndSelect('courses.roadmaps', 'roadmaps') //necessary relations
-      .leftJoinAndSelect('courses.course_category', 'course_category') //necessary relations
-      .leftJoinAndSelect('courses.created_by', 'created_by') //necessary relations
-      .leftJoinAndSelect(
-        'courses.lessons',
-        'lessons',
-        'lessons.archived = :archived AND lessons.approved = :approved',
-        { archived: false, approved: true },
-      )
-      .leftJoinAndSelect('lessons.created_by_user', 'created_by_user');
-
-    const course = await queryBuilder.getOne();
-
-    if (!course) {
-      throw new BadRequestException(en.invalidCourse);
-    }
-    // Sanitize lesson content
-    course.lessons = course.lessons.map((lesson) => ({
-      ...lesson,
-      content: Helpers.limitSanitizedContent(lesson.content),
-    })) as LessonEntity[];
-
-    return course;
-  }
-
   /**
    * Gets course details from assigned roadmaps
    */
