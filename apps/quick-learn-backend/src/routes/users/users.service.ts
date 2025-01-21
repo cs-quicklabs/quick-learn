@@ -8,6 +8,7 @@ import {
   Or,
   In,
   DeleteResult,
+  FindOptionsOrder,
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
@@ -99,6 +100,7 @@ export class UsersService extends PaginationService<UserEntity> {
     paginationDto: PaginationDto,
     filter: ListFilterDto & { active: boolean },
     extraRelations: string[] = [],
+    sort?: FindOptionsOrder<UserEntity>,
   ): Promise<UserEntity[] | PaginatedResult<UserEntity>> {
     const userTypeId = user.user_type_id;
     let conditions:
@@ -129,6 +131,7 @@ export class UsersService extends PaginationService<UserEntity> {
           ...conditions,
           user_type: {
             name: ILike(`%${paginationDto.q}%`),
+            code: filter.user_type_code,
           },
         },
       ];
@@ -137,17 +140,32 @@ export class UsersService extends PaginationService<UserEntity> {
 
     const relations = [...userRelations, ...extraRelations];
 
-    if (paginationDto.mode == 'paginate') {
-      const results = await this.paginate(paginationDto, conditions, relations);
-      this.sortByLastLogin(results.items);
-      return results;
+    let results: UserEntity[];
+    let paginatedResults: PaginatedResult<UserEntity>;
+
+    if (paginationDto.mode === 'paginate') {
+      paginatedResults = await this.paginate(
+        paginationDto,
+        conditions,
+        relations,
+        sort,
+      );
+      results = paginatedResults.items;
+    } else {
+      results = await this.userRepository.find({
+        where: conditions,
+        relations,
+        order: sort,
+      });
     }
-    const users = await this.userRepository.find({
-      where: conditions,
-      relations: relations,
-    });
-    this.sortByLastLogin(users);
-    return users;
+
+    if (!sort) {
+      this.sortByLastLogin(results);
+    }
+
+    return paginationDto.mode === 'paginate'
+      ? { ...paginatedResults, items: results }
+      : results;
   }
 
   async getUserRoadmaps(userId: number, includeCourses = false) {
@@ -159,15 +177,24 @@ export class UsersService extends PaginationService<UserEntity> {
       .andWhere('roadmap.archived = :archived', { archived: false });
 
     if (includeCourses) {
-      queryBuilder
-        .leftJoinAndSelect('roadmap.courses', 'course')
-        .leftJoinAndSelect('course.lessons', 'lesson')
-        .andWhere('course.archived = :courseArchived', {
+      queryBuilder.leftJoinAndSelect(
+        'roadmap.courses',
+        'course',
+        'course.archived = :courseArchived',
+        {
           courseArchived: false,
-        })
-        .andWhere('lesson.archived = :lessonArchived', {
-          lessonArchived: false,
-        })
+        },
+      );
+
+      queryBuilder
+        .leftJoinAndSelect(
+          'course.lessons',
+          'lesson',
+          'lesson.archived = :lessonArchived',
+          {
+            lessonArchived: false,
+          },
+        )
         .orderBy('course.id', 'ASC')
         .addOrderBy('lesson.id', 'ASC');
     }

@@ -53,7 +53,7 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
               {name}
             </h3>
             <p
-              className="font-normal text-sm text-gray-500 line-clamp-3 mt-2"
+              className="font-normal capitalize text-sm text-gray-500 line-clamp-3 mt-2"
               dangerouslySetInnerHTML={{
                 __html: title,
               }}

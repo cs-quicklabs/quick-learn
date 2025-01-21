@@ -1,7 +1,11 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { createRoadmap } from '@src/apiServices/contentRepositoryService';
+import {
+  createRoadmap,
+  getContentRepositoryMetadata,
+  getRoadmaps,
+} from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import Card from '@src/shared/components/Card';
@@ -16,10 +20,9 @@ import {
 import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-import { fetchMetadata } from '@src/store/features/metadataSlice';
+import { updateContentRepository } from '@src/store/features/metadataSlice';
 import {
   addRoadmap,
-  fetchRoadmaps,
   selectAllCourses,
   selectAllRoadmaps,
   selectIsRoadmapsInitialized,
@@ -33,19 +36,41 @@ const ContentRepository = () => {
   const courses = useAppSelector(selectAllCourses);
   const roadmapsStatus = useAppSelector(selectRoadmapsStatus);
   const isRoadmapsInitialized = useAppSelector(selectIsRoadmapsInitialized);
-
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
 
   const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
 
+  const fetchRoadmapData = async () => {
+    try {
+      const res = await getRoadmaps();
+      dispatch({
+        type: 'roadmaps/fetchRoadmaps/fulfilled', //update redux store roadmaps and courses
+        payload: res.data,
+      });
+    } catch (err) {
+      dispatch({
+        type: 'roadmaps/fetchRoadmaps/rejected',
+        payload: 'Failed to fetch roadmaps',
+      });
+    }
+  };
+
+  const fetchContentRepositoryMetadata = async () => {
+    try {
+      const res = await getContentRepositoryMetadata();
+      dispatch(updateContentRepository(res.data)); //update redux store metadata
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch the roadmaps and metadata concurrently
         await Promise.all([
-          dispatch(fetchRoadmaps()),
-          dispatch(fetchMetadata()),
+          fetchRoadmapData(),
+          fetchContentRepositoryMetadata(),
         ]);
       } catch (err) {
         // Log the error to the console for debugging

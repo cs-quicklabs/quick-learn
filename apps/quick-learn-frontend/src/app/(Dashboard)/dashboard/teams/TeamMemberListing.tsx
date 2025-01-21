@@ -51,12 +51,14 @@ const TeamMemberListing = () => {
         fetchTeamMembers({
           page: 1,
           userTypeCode: currentUserType,
-          query: '',
+          query: searchInputValue,
         }),
       );
     };
     backgroundDataReload();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, currentUserType]);
+
   const debouncedSearch = useMemo(
     () =>
       debounce((value: string) => {
