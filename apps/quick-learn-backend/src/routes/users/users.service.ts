@@ -90,7 +90,7 @@ export class UsersService extends PaginationService<UserEntity> {
     let user = this.userRepository.create(createUserDto);
     user = await this.userRepository.save(user);
 
-    this.emailService.welcomeEmail(user.email);
+    this.emailService.welcomeEmailTemplate(user.email);
 
     return user;
   }

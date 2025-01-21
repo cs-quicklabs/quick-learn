@@ -157,7 +157,7 @@ export class AuthService {
         infer: true,
       });
       const resetURL = `${frontendURL}/reset-password?token=${generateResetToken}`;
-      return this.emailService.sendForgetPasswordEmail(resetURL, email);
+      return this.emailService.forgetPasswordEmail(resetURL, email);
     }
     return new SuccessResponse(
       'If this user exists, they will recieve an email',
