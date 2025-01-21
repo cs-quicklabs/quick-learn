@@ -11,17 +11,26 @@ const PUBLIC_ROUTES = [
   RouteEnum.DAILY_LESSONS,
 ];
 const LOGIN_ROUTE = RouteEnum.LOGIN;
-const ADMIN_ROUTES = [
+const SUPERADMIN_ONLY_ROUTES = [
+  RouteEnum.ACCOUNT_SETTINGS,  
+  RouteEnum.COMMUNITY
+  // Account settings restricted to superadmin only
+];
+
+// Define routes that both admin and superadmin can access
+const ADMIN_AND_SUPERADMIN_ROUTES = [
   RouteEnum.TEAM,
-  RouteEnum.ACCOUNT_SETTINGS,
   RouteEnum.ARCHIVED_USERS,
+  RouteEnum.CONTENT,
 ];
 const EDITOR_ROUTES = [RouteEnum.CONTENT];
 
 // Helper functions
 const isPublicRoute = (path: string) => PUBLIC_ROUTES.includes(path);
-const isAdminRoute = (path: string) =>
-  ADMIN_ROUTES.some((route) => path.startsWith(route));
+const isSuperAdminOnlyRoute = (path: string) => 
+  SUPERADMIN_ONLY_ROUTES.some(route => path.startsWith(route));
+const isAdminAndSuperAdminRoute = (path: string) => 
+  ADMIN_AND_SUPERADMIN_ROUTES.some(route => path.startsWith(route));
 const isEditorRoute = (path: string) =>
   EDITOR_ROUTES.some((route) => path.startsWith(route));
 
@@ -29,6 +38,7 @@ export async function middleware(request: NextRequest) {
   const { pathname, search, origin } = request.nextUrl;
   const authToken = request.cookies.get('refresh_token')?.value;
   const userRole = request.cookies.get('user_role')?.value;
+  const userRoleNum = userRole ? parseInt(userRole) : null;
   // Public routes
   if (isPublicRoute(pathname)) {
     return authToken
@@ -36,7 +46,7 @@ export async function middleware(request: NextRequest) {
       : NextResponse.next();
   }
 
-  // Protected routes
+//   // Protected routes
   if (!authToken) {
     // Preserve the original URL (path + search params) in the redirect query parameter
     const redirectUrl = encodeURIComponent(`${pathname}${search}`);
@@ -45,13 +55,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Check if the route is admin-only and user has the correct role
-  if (isAdminRoute(pathname)) {
+// Check superadmin-only routes first
+  if (isSuperAdminOnlyRoute(pathname)) {
+    if (userRoleNum !== UserTypeIdEnum.SUPERADMIN) {
+      return NextResponse.redirect(
+        new URL(RouteEnum.MY_LEARNING_PATH, request.url),
+      );
+    }
+    return NextResponse.next();
+  }
+
+  // Check admin and superadmin routes
+  if (isAdminAndSuperAdminRoute(pathname)) {
     if (
-      (userRole &&
-        parseInt(userRole) !== UserTypeIdEnum.ADMIN &&
-        parseInt(userRole) !== UserTypeIdEnum.SUPERADMIN) ||
-      !userRole
+      userRoleNum !== UserTypeIdEnum.ADMIN &&
+      userRoleNum !== UserTypeIdEnum.SUPERADMIN
     ) {
       return NextResponse.redirect(
         new URL(RouteEnum.MY_LEARNING_PATH, request.url),
