@@ -35,7 +35,7 @@ export class LessonEmailService {
     });
   }
 
-  private getCurrentTime(): string {
+  private getGreeting(): string {
     const currentDate = new Date();
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: CRON_TIMEZONE,
@@ -59,7 +59,7 @@ export class LessonEmailService {
     this.logger.log('Starting lesson notification cron job');
 
     try {
-      const greeting = this.getCurrentTime();
+      const greeting = this.getGreeting();
 
       await this.sendLessonEmails(greeting);
 
