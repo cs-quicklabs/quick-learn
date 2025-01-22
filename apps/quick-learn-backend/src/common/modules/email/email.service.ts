@@ -6,7 +6,6 @@ import * as Handlebars from 'handlebars';
 import { ConfigService } from '@nestjs/config';
 import { SuccessResponse } from '@src/common/dto';
 import * as fs from 'fs/promises';
-import handlebars from 'handlebars';
 import { emailSubjects } from '@src/common/constants/email-subject';
 import { EnvironmentEnum } from '@src/common/constants/constants';
 
@@ -55,10 +54,7 @@ export class EmailService {
    */
   async email(data: Message): Promise<void> {
     const emailText = data.body;
-    const emailBody = await this.compileMjmlTemplate(
-      emailText,
-      'notification.mjml',
-    );
+    const emailBody = await this.compileMjmlTemplate(emailText, 'notification');
 
     try {
       await this.emailService.send({
@@ -77,19 +73,19 @@ export class EmailService {
   ): Promise<string> {
     const templatePath = path.join(
       __dirname,
-      `./email-templates/${templateName}`,
+      `./email-templates/${templateName}.mjml`,
     );
     const mjmlContent = await fs.readFile(templatePath, 'utf8');
     const { html } = mjml2html(mjmlContent);
     const compiledTemplate = Handlebars.compile(html);
-    return compiledTemplate({ body });
+    return compiledTemplate(body);
   }
 
   // This function is used to send the email to the user when the user forgets the password
   async forgetPasswordEmail(resetURL: string, email: string) {
     const emailBody = await this.compileMjmlTemplate(
-      resetURL,
-      'forget-password.mjml',
+      { resetURL },
+      'forget-password',
     );
     await this.emailService.send({
       body: emailBody,
@@ -101,11 +97,12 @@ export class EmailService {
   }
 
   // The below function is used to send the lesson for the day to the user
-  async dailyEmail(emailBodies: { userEmail: string; body: string }) {
+  async dailyEmail(mailBody: mailBody) {
+    const emailBody = await this.compileMjmlTemplate(mailBody, 'daily-lesson');
     try {
       await this.emailService.send({
-        recipients: [emailBodies.userEmail],
-        body: emailBodies.body,
+        recipients: [mailBody.userEmail],
+        body: emailBody,
         subject: emailSubjects.LESSON_FOR_THE_DAY,
       });
     } catch (err) {
@@ -114,32 +111,11 @@ export class EmailService {
     }
   }
 
-  async dailyLessonTemplate(mailBody: mailBody) {
-    try {
-      const templatePath = path.join(
-        __dirname,
-        'email-templates/daily-lesson.mjml',
-      );
-
-      const mjmlTemplate = await fs.readFile(templatePath, 'utf8');
-      const compiledTemplate = handlebars.compile(mjmlTemplate);
-      const mjmlContent = compiledTemplate(mailBody);
-      const { html } = mjml2html(mjmlContent);
-      return await this.dailyEmail({
-        userEmail: mailBody.userEmail,
-        body: html,
-      });
-    } catch (err) {
-      this.logger.error('Error in dailyLessonTemplate:', err);
-      throw new Error('Failed to compile and send daily lesson email.');
-    }
-  }
-
   // The below function is used to send the email to the user when the user has read all the lessons
   async readAllLessonSucessEmail(email: string): Promise<void> {
     const emailBody = await this.compileMjmlTemplate(
-      '',
-      'readAllLesson-success.mjml',
+      {},
+      'readAllLesson-success',
     );
     try {
       await this.emailService.send({
@@ -157,8 +133,8 @@ export class EmailService {
   async welcomeEmailTemplate(email: string) {
     const loginUrl = `${this.frontendURL}/`;
     const emailBody = await this.compileMjmlTemplate(
-      loginUrl,
-      'welcome-Email.mjml',
+      { loginUrl },
+      'welcome-Email',
     );
     try {
       await this.emailService.send({

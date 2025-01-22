@@ -4,7 +4,7 @@
       <mj-column width="100%">
         <mj-text padding="0">
           Welcome to Quick Learn!<br/><br/>
-          You can now <a target="_blank" href="{{body}}">login</a> to quick learn.<br/>
+          You can now <a target="_blank" href="{{loginUrl}}">login</a> to quick learn.<br/>
         </mj-text>
       </mj-column>
     </mj-section>
