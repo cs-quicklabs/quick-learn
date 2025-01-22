@@ -21,9 +21,6 @@ import { UserEntity } from '@src/entities';
 import { PaginationDto } from '../users/dto';
 import { CourseArchiveDto } from '../course/dto/course-archive.dto';
 import { Public } from '@src/common/decorators/public.decorator';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '@src/common/decorators/roles.decorator';
-import { UserTypeId } from '@src/common/enum/user_role.enum';
 
 @ApiTags('Lessons')
 @Controller({
@@ -126,8 +123,6 @@ export class LessonController {
     return new SuccessResponse(en.updateLesson);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(UserTypeId.SUPER_ADMIN)
   @ApiOperation({ summary: 'Approved an lessons.' })
   @Patch('/:id/approve')
   /**

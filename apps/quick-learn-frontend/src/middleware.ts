@@ -17,7 +17,11 @@ const SUPERADMIN_ONLY_ROUTES = [
 ];
 
 // Define routes that both admin and superadmin can access
-const ADMIN_AND_SUPERADMIN_ROUTES = [RouteEnum.TEAM, RouteEnum.ARCHIVED_USERS];
+const ADMIN_AND_SUPERADMIN_ROUTES = [
+  RouteEnum.TEAM,
+  RouteEnum.ARCHIVED_USERS,
+  RouteEnum.TEAM,
+];
 const EDITOR_ROUTES = [RouteEnum.CONTENT];
 
 // Helper functions
