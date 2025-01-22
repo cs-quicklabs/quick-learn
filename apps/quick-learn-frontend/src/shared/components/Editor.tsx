@@ -91,7 +91,6 @@ interface Props {
   placeholder?: string;
   isUpdating?: boolean;
   isAdd?: boolean;
-  onArchive?: () => Promise<void>;
 }
 
 const Editor: FC<Props> = ({
