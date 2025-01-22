@@ -70,7 +70,6 @@ const AddUpdateMemberPage = () => {
 
   useEffect(() => {
     setIsPageLoading(true);
-
     getUserMetadataCall()
       .then((res) => {
         setMetadata(res.data);
@@ -88,7 +87,7 @@ const AddUpdateMemberPage = () => {
         setFormOptions<TSkill>(editMemberFields, 'skill_id', res.data.skills);
       })
       .catch((error) => showErrorMessage(error))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsPageLoading(false));
   }, []);
 
   useEffect(() => {
@@ -134,7 +133,6 @@ const AddUpdateMemberPage = () => {
 
   async function handleEditSubmit(data: EditMemberFormData) {
     setIsLoading(true);
-
     updateUser(params.member, data)
       .then((res) => {
         if (data.active === 'false') {
