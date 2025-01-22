@@ -6,9 +6,18 @@ import 'react-quill/dist/quill.snow.css';
 import EditorToolbar, { formats } from './EditorToolbar';
 import { en } from '@src/constants/lang/en';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
+import { showErrorMessage } from '@src/utils/helpers';
 
 const Clipboard = Quill.import('modules/clipboard');
 const Delta = Quill.import('delta');
+
+function checkSize(file: File): boolean {
+  if (file.size > 1024 * 1024 * 5) {
+    showErrorMessage('File should be less than 5MB.');
+    return false;
+  }
+  return true;
+}
 
 class CustomClipboard extends Clipboard {
   async onPaste(e: ClipboardEvent) {
@@ -27,10 +36,7 @@ class CustomClipboard extends Clipboard {
     if (imageItem) {
       const file = imageItem.getAsFile();
       if (file) {
-        if (file.size > 1024 * 1024) {
-          toast.error('File should be less than 1MB.');
-          return;
-        }
+        if (!checkSize(file)) return;
         try {
           const formData = new FormData();
           formData.append('file', file);
@@ -101,10 +107,7 @@ const Editor: FC<Props> = ({
   const quillRef = useRef<ReactQuill | null>(null);
 
   const handleImageUpload = async (file: File) => {
-    if (file.size > 1024 * 1024) {
-      toast.error('File should be less than 1MB.');
-      return;
-    }
+    if (!checkSize(file)) return;
     if (!quillRef.current) return;
     const quill = quillRef.current.getEditor();
 
@@ -123,6 +126,7 @@ const Editor: FC<Props> = ({
         quill.setSelection(range.index + 1, 0);
       }
     } catch (err) {
+      console.log(err);
       toast.error('Something went wrong!, please try again');
     }
   };

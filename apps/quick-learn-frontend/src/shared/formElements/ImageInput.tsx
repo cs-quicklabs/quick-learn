@@ -188,6 +188,7 @@ const ImageInput: FC<Props> = ({
           onChange={handleFileChange}
           accept="image/*"
           id={'file_' + name}
+          onClick={(e) => (e.currentTarget.value = '')}
         />
       </div>
       {error && (
