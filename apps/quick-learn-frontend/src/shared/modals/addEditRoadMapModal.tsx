@@ -25,7 +25,7 @@ const AddEditRoadmapSchema = z.object({
     .string()
     .trim()
     .min(1, 'This field is mandatory')
-    .max(50, 'The value should not exceed 50 character')
+    .max(50, 'The value should not exceed 50 characters.')
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     }),
@@ -33,7 +33,7 @@ const AddEditRoadmapSchema = z.object({
     .string()
     .trim()
     .min(1, 'This field is mandatory')
-    .max(5000, 'The value should not exceed 5000 character')
+    .max(5000, 'The value should not exceed 5000 characters.')
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     }),

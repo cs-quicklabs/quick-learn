@@ -1,7 +1,7 @@
 'use client';
 import { RouteEnum } from '@src/constants/route.enum';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUserType } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
@@ -36,28 +36,7 @@ const TeamMemberListing = () => {
   function filterByUserType(code: string) {
     dispatch(setCurrentUserType(code));
     dispatch(setCurrentPage(1));
-    dispatch(
-      fetchTeamMembers({
-        page: 1,
-        userTypeCode: code,
-        query: searchInputValue,
-      }),
-    );
   }
-
-  useEffect(() => {
-    const backgroundDataReload = () => {
-      dispatch(
-        fetchTeamMembers({
-          page: 1,
-          userTypeCode: currentUserType,
-          query: searchInputValue,
-        }),
-      );
-    };
-    backgroundDataReload();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, currentUserType]);
 
   const debouncedSearch = useMemo(
     () =>
