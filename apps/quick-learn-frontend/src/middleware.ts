@@ -12,8 +12,8 @@ const PUBLIC_ROUTES = [
 ];
 const LOGIN_ROUTE = RouteEnum.LOGIN;
 const SUPERADMIN_ONLY_ROUTES = [
-  RouteEnum.ACCOUNT_SETTINGS,  
-  RouteEnum.COMMUNITY
+  RouteEnum.ACCOUNT_SETTINGS,
+  RouteEnum.COMMUNITY,
   // Account settings restricted to superadmin only
 ];
 
@@ -27,10 +27,10 @@ const EDITOR_ROUTES = [RouteEnum.CONTENT];
 
 // Helper functions
 const isPublicRoute = (path: string) => PUBLIC_ROUTES.includes(path);
-const isSuperAdminOnlyRoute = (path: string) => 
-  SUPERADMIN_ONLY_ROUTES.some(route => path.startsWith(route));
-const isAdminAndSuperAdminRoute = (path: string) => 
-  ADMIN_AND_SUPERADMIN_ROUTES.some(route => path.startsWith(route));
+const isSuperAdminOnlyRoute = (path: string) =>
+  SUPERADMIN_ONLY_ROUTES.some((route) => path.startsWith(route));
+const isAdminAndSuperAdminRoute = (path: string) =>
+  ADMIN_AND_SUPERADMIN_ROUTES.some((route) => path.startsWith(route));
 const isEditorRoute = (path: string) =>
   EDITOR_ROUTES.some((route) => path.startsWith(route));
 
@@ -46,7 +46,7 @@ export async function middleware(request: NextRequest) {
       : NextResponse.next();
   }
 
-//   // Protected routes
+  //   // Protected routes
   if (!authToken) {
     // Preserve the original URL (path + search params) in the redirect query parameter
     const redirectUrl = encodeURIComponent(`${pathname}${search}`);
@@ -55,7 +55,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-// Check superadmin-only routes first
+  // Check superadmin-only routes first
   if (isSuperAdminOnlyRoute(pathname)) {
     if (userRoleNum !== UserTypeIdEnum.SUPERADMIN) {
       return NextResponse.redirect(
