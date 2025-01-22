@@ -157,7 +157,7 @@ export class LessonEmailService {
   private async handleResetReadingHistory(user: UserEntity) {
     try {
       await this.resetUserReadingHistory(user.id);
-      this.emailService.readAllLessonSucess(user.email);
+      this.emailService.readAllLessonSucessEmail(user.email);
     } catch (error) {
       this.logger.error(
         `Error resetting reading history for user ${user.id}`,
