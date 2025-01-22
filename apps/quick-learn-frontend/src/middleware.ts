@@ -14,15 +14,10 @@ const LOGIN_ROUTE = RouteEnum.LOGIN;
 const SUPERADMIN_ONLY_ROUTES = [
   RouteEnum.ACCOUNT_SETTINGS,
   RouteEnum.COMMUNITY,
-  // Account settings restricted to superadmin only
 ];
 
 // Define routes that both admin and superadmin can access
-const ADMIN_AND_SUPERADMIN_ROUTES = [
-  RouteEnum.TEAM,
-  RouteEnum.ARCHIVED_USERS,
-  RouteEnum.CONTENT,
-];
+const ADMIN_AND_SUPERADMIN_ROUTES = [RouteEnum.TEAM, RouteEnum.ARCHIVED_USERS];
 const EDITOR_ROUTES = [RouteEnum.CONTENT];
 
 // Helper functions
@@ -46,7 +41,7 @@ export async function middleware(request: NextRequest) {
       : NextResponse.next();
   }
 
-  //   // Protected routes
+  // Protected routes
   if (!authToken) {
     // Preserve the original URL (path + search params) in the redirect query parameter
     const redirectUrl = encodeURIComponent(`${pathname}${search}`);
@@ -54,41 +49,29 @@ export async function middleware(request: NextRequest) {
     loginUrl.searchParams.set('redirect', redirectUrl);
     return NextResponse.redirect(loginUrl);
   }
+  // Role-based route checks
+  const roleBasedRedirect = (condition: boolean) =>
+    condition
+      ? NextResponse.next()
+      : NextResponse.redirect(new URL(RouteEnum.MY_LEARNING_PATH, request.url));
 
-  // Check superadmin-only routes first
-  if (isSuperAdminOnlyRoute(pathname)) {
-    if (userRoleNum !== UserTypeIdEnum.SUPERADMIN) {
-      return NextResponse.redirect(
-        new URL(RouteEnum.MY_LEARNING_PATH, request.url),
-      );
-    }
-    return NextResponse.next();
-  }
-
-  // Check admin and superadmin routes
-  if (isAdminAndSuperAdminRoute(pathname)) {
-    if (
-      userRoleNum !== UserTypeIdEnum.ADMIN &&
-      userRoleNum !== UserTypeIdEnum.SUPERADMIN
-    ) {
-      return NextResponse.redirect(
-        new URL(RouteEnum.MY_LEARNING_PATH, request.url),
-      );
-    }
-    return NextResponse.next();
-  }
-
-  // Check if the route is editor-only and user has the correct role
   if (isEditorRoute(pathname)) {
-    if (
-      (userRole && parseInt(userRole) === UserTypeIdEnum.MEMBER) ||
-      !userRole
-    ) {
-      return NextResponse.redirect(
-        new URL(RouteEnum.MY_LEARNING_PATH, request.url),
-      );
-    }
-    return NextResponse.next();
+    return roleBasedRedirect(
+      userRoleNum === UserTypeIdEnum.EDITOR ||
+        userRoleNum === UserTypeIdEnum.ADMIN ||
+        userRoleNum === UserTypeIdEnum.SUPERADMIN,
+    );
+  }
+
+  if (isSuperAdminOnlyRoute(pathname)) {
+    return roleBasedRedirect(userRoleNum === UserTypeIdEnum.SUPERADMIN);
+  }
+
+  if (isAdminAndSuperAdminRoute(pathname)) {
+    return roleBasedRedirect(
+      userRoleNum === UserTypeIdEnum.ADMIN ||
+        userRoleNum === UserTypeIdEnum.SUPERADMIN,
+    );
   }
 
   return NextResponse.next();
