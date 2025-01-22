@@ -13,7 +13,7 @@ import { EnvironmentEnum } from '@src/common/constants/constants';
 Handlebars.registerHelper('currentYear', function () {
   return new Date().getFullYear();
 });
-interface mailBody {
+interface IMailBody {
   greetings: string;
   fullName: string;
   lessonName: string;
@@ -25,7 +25,7 @@ export class EmailService {
   private emailService: EmailNotification;
   private readonly logger = new Logger('Email Service');
   private readonly frontendURL: string;
-  constructor(private configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     // add a condition checking if the enviroment is dev or not.
     const email = this.configService.getOrThrow('app.smtpEmail', {
       infer: true,
@@ -52,9 +52,11 @@ export class EmailService {
    * @param data of type Message { body: string; recipients: string[]; cc?: string[]; bcc?: string[]; subject: string; }
    * @returns true or throws error
    */
-  async email(data: Message): Promise<void> {
-    const emailText = data.body;
-    const emailBody = await this.compileMjmlTemplate(emailText, 'notification');
+  async notify(data: Message): Promise<void> {
+    const emailBody = await this.compileMjmlTemplate(
+      { body: data.body },
+      'notification',
+    );
 
     try {
       await this.emailService.send({
@@ -68,7 +70,7 @@ export class EmailService {
   }
 
   private async compileMjmlTemplate(
-    body,
+    body: Record<string, string>,
     templateName: string,
   ): Promise<string> {
     const templatePath = path.join(
@@ -92,13 +94,15 @@ export class EmailService {
       recipients: [email],
       subject: emailSubjects.resetPassword,
     });
-
     return new SuccessResponse('Reset password link has been shared.');
   }
 
   // The below function is used to send the lesson for the day to the user
-  async dailyEmail(mailBody: mailBody) {
-    const emailBody = await this.compileMjmlTemplate(mailBody, 'daily-lesson');
+  async dailyLessonTemplate(mailBody: IMailBody) {
+    const emailBody = await this.compileMjmlTemplate(
+      mailBody as unknown as Record<string, string>,
+      'daily-lesson',
+    );
     try {
       await this.emailService.send({
         recipients: [mailBody.userEmail],
@@ -130,7 +134,7 @@ export class EmailService {
 
   // The below function is used to send the welcome email to the user
 
-  async welcomeEmailTemplate(email: string) {
+  async welcomeEmail(email: string) {
     const loginUrl = `${this.frontendURL}/`;
     const emailBody = await this.compileMjmlTemplate(
       { loginUrl },

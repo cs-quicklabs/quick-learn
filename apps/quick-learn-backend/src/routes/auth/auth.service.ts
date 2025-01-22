@@ -220,7 +220,7 @@ export class AuthService {
       subject: emailSubjects.resetPasswordSuccess,
     };
 
-    this.emailService.email(emailData);
+    this.emailService.notify(emailData);
 
     return new SuccessResponse('Password updated successfully');
   }

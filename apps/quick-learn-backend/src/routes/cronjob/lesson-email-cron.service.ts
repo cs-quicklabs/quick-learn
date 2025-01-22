@@ -148,7 +148,7 @@ export class LessonEmailService {
         userEmail: user.email,
       };
 
-      this.emailService.dailyEmail(mailBody);
+      this.emailService.dailyLessonTemplate(mailBody);
     } catch (error) {
       this.logger.error(`Error sending lesson email to user ${user.id}`, error);
     }
