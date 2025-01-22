@@ -73,9 +73,6 @@ const AddUpdateMemberPage = () => {
 
     getUserMetadataCall()
       .then((res) => {
-        if (!res.success) {
-          throw new Error();
-        }
         setMetadata(res.data);
         setFormOptions<TUserType>(
           addMemberFields,
@@ -90,12 +87,8 @@ const AddUpdateMemberPage = () => {
         );
         setFormOptions<TSkill>(editMemberFields, 'skill_id', res.data.skills);
       })
-      .catch((error) => {
-        showErrorMessage(error);
-      })
-      .finally(() => {
-        setIsPageLoading(false);
-      });
+      .catch((error) => showErrorMessage(error))
+      .finally(() => setIsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -104,17 +97,10 @@ const AddUpdateMemberPage = () => {
 
       getUserDetails(params.member)
         .then((res) => {
-          if (!res.success) {
-            throw new Error();
-          }
           setEditUserData(res.data);
         })
-        .catch((error) => {
-          showErrorMessage(error);
-        })
-        .finally(() => {
-          setIsPageLoading(false);
-        });
+        .catch((error) => showErrorMessage(error))
+        .finally(() => setIsLoading(false));
     }
   }, [isAddMember, params.member]);
 
@@ -138,19 +124,12 @@ const AddUpdateMemberPage = () => {
       team_id: metadata?.skills[0]?.team_id,
     })
       .then((res) => {
-        if (!res.success) {
-          throw new Error();
-        }
         dispatch(increamentTotalUsers());
         showApiMessageInToast(res);
         router.push(RouteEnum.TEAM);
       })
-      .catch((error) => {
-        showErrorMessage(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .catch((error) => showErrorMessage(error))
+      .finally(() => setIsLoading(false));
   }
 
   async function handleEditSubmit(data: EditMemberFormData) {
@@ -158,21 +137,14 @@ const AddUpdateMemberPage = () => {
 
     updateUser(params.member, data)
       .then((res) => {
-        if (!res.success) {
-          throw new Error();
-        }
         if (data.active === 'false') {
           dispatch(decrementTotalUsers());
         }
         showApiMessageInToast(res);
         router.push(RouteEnum.TEAM);
       })
-      .catch((error) => {
-        showErrorMessage(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .catch((error) => showErrorMessage(error))
+      .finally(() => setIsLoading(false));
   }
 
   function render() {
