@@ -1,7 +1,6 @@
 'use client';
 import ReactQuill, { Quill } from 'react-quill';
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
-import { toast } from 'react-toastify';
 import 'react-quill/dist/quill.snow.css';
 import EditorToolbar, { formats } from './EditorToolbar';
 import { en } from '@src/constants/lang/en';
@@ -50,7 +49,7 @@ class CustomClipboard extends Clipboard {
           this.quill.insertEmbed(range.index, 'image', res.data.file, 'user');
           this.quill.setSelection(range.index + 1, 0);
         } catch (err) {
-          toast.error('Failed to upload image. Please try again.');
+          showErrorMessage('Failed to upload image. Please try again.');
         }
         return;
       }
@@ -127,7 +126,7 @@ const Editor: FC<Props> = ({
       }
     } catch (err) {
       console.log(err);
-      toast.error('Something went wrong!, please try again');
+      showErrorMessage('Something went wrong!, please try again');
     }
   };
 
