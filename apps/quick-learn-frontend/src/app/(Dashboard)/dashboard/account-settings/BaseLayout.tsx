@@ -94,11 +94,11 @@ const BaseLayout = ({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty, isValid },
     setValue,
   } = useForm<EditSchemaType>({
     resolver: zodResolver(editSchema),
-    mode: 'onTouched',
+    mode: 'onChange',
   });
 
   useEffect(() => {
@@ -178,8 +178,8 @@ const BaseLayout = ({
                       <td>
                         <button
                           type="submit"
-                          className="ml-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                          disabled={isEditLoading}
+                          className="ml-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-500"
+                          disabled={isEditLoading || !isDirty || !isValid}
                         >
                           {isEditLoading ? <Loader /> : 'Save'}
                         </button>
