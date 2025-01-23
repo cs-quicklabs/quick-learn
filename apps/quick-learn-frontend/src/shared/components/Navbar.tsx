@@ -11,7 +11,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { logoutApiCall } from '@src/apiServices/authService';
@@ -77,7 +77,6 @@ const Navbar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(UserContext);
   const pathname = usePathname();
-  const router = useRouter();
 
   useEffect(() => {
     if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
