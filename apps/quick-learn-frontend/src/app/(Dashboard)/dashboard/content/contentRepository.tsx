@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   createRoadmap,
-  getContentRepositoryMetadata,
   getRoadmaps,
 } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
@@ -20,13 +19,13 @@ import {
 import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-import { updateContentRepository } from '@src/store/features/metadataSlice';
 import {
   addRoadmap,
   selectAllCourses,
   selectAllRoadmaps,
   selectIsRoadmapsInitialized,
 } from '@src/store/features/roadmapsSlice';
+import { useFetchContentRepositoryMetadata } from '@src/context/contextHelperService';
 
 const ContentRepository = () => {
   const router = useRouter();
@@ -53,14 +52,7 @@ const ContentRepository = () => {
     }
   };
 
-  const fetchContentRepositoryMetadata = async () => {
-    try {
-      const res = await getContentRepositoryMetadata();
-      dispatch(updateContentRepository(res.data)); //update redux store metadata
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const fetchContentRepositoryMetadata = useFetchContentRepositoryMetadata();
 
   useEffect(() => {
     const fetchData = async () => {
