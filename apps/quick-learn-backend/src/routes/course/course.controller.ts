@@ -39,7 +39,12 @@ export class CourseController {
   @Get('/community-course')
   @ApiOperation({ summary: 'Get all community courses' })
   async getCommunityCourses() {
-    const data = await this.service.getAllCommunityCourses();
+    const data = await this.service.getContentRepoCourses(
+      { page: 1, limit: 10 },
+      { is_community_available: true },
+      ['created_by'],
+      'all',
+    );
     return new SuccessResponse(en.getCommunityCourse, data);
   }
 
@@ -72,7 +77,7 @@ export class CourseController {
     const data = await this.service.getCourseDetails(
       { id: +id },
       ['lessons', 'lessons.created_by_user'],
-      true,
+      true, //countParticipants
     );
     return new SuccessResponse(en.GetCourseDetails, data);
   }
@@ -84,8 +89,8 @@ export class CourseController {
     const data = await this.service.getCourseDetails(
       { id: +id, is_community_available: true },
       ['lessons', 'lessons.created_by_user'],
-      false,
-      true,
+      false, //countParticapants
+      true, //is_community
     );
     return new SuccessResponse(en.GetCourseDetails, data);
   }

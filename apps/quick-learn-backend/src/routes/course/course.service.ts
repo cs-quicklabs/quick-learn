@@ -36,12 +36,8 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     paginationDto: PaginationDto,
     options: FindOptionsWhere<CourseEntity>, // filter conditions
     relations: string[] = [], // additional relations to include
-  ): Promise<{
-    courses;
-    total;
-    page;
-    totalPages;
-  }> {
+    mode: 'paginate' | 'all' = 'paginate',
+  ): Promise<PaginatedResult<CourseEntity> | CourseEntity[]> {
     const queryBuilder = this.repository.createQueryBuilder('courses');
     const { page = 1, limit = 10 } = paginationDto;
     // Apply filters from options
@@ -76,64 +72,24 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       )
       .orderBy('courses.name', 'ASC');
 
-    // Calculate total count before pagination
     const total = await queryBuilder.getCount();
 
     // Apply pagination
     queryBuilder.skip((page - 1) * limit).take(limit);
-
-    // Get paginated courses
-    const courses = await queryBuilder.getMany();
-
-    // Calculate total pages
-    const totalPages = Math.ceil(total / limit);
-
-    return {
-      courses,
-      total,
-      page,
-      totalPages,
-    };
-  }
-
-  async getAllCommunityCourses(): Promise<CourseEntity[]> {
-    return await this.repository
-      .createQueryBuilder('courses')
-      .where(
-        'courses.is_community_available = :isCommunity AND courses.archived= :archived',
-        {
-          isCommunity: true,
-          archived: false,
-        },
-      )
-      .leftJoinAndSelect('courses.created_by', 'created_by')
-      .leftJoinAndSelect('courses.course_category', 'course_category')
-      .leftJoinAndSelect(
-        'courses.lessons',
-        'lessons',
-        'lessons.archived = :archivedLessons AND lessons.approved = :approved',
-        {
-          archivedLessons: false,
-          approved: true,
-        },
-      )
-      .loadRelationCountAndMap(
-        // checks the count of lessons
-        'courses.lessons_count',
-        'courses.lessons',
-        'lessons',
-        (qb) =>
-          qb.where(
-            'lessons.archived = :archivedLessons AND lessons.approved = :approved',
-            {
-              archivedLessons: false,
-              approved: true,
-            },
-          ),
-      )
-      .orderBy('courses.created_at', 'DESC')
-      .addOrderBy('course_category.created_at', 'DESC')
-      .getMany();
+    const items = await queryBuilder.getMany();
+    const total_pages = Math.ceil(total / limit);
+    if (mode === 'paginate') {
+      return {
+        items,
+        total,
+        page,
+        limit,
+        total_pages,
+      };
+    } else {
+      const items = await queryBuilder.getMany();
+      return items;
+    }
   }
 
   /**
