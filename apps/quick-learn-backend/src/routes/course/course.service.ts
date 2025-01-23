@@ -36,10 +36,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     paginationDto: PaginationDto,
     options: FindOptionsWhere<CourseEntity>, // filter conditions
     relations: string[] = [], // additional relations to include
-    mode: 'paginate' | 'all' = 'paginate',
   ): Promise<PaginatedResult<CourseEntity> | CourseEntity[]> {
     const queryBuilder = this.repository.createQueryBuilder('courses');
-    const { page = 1, limit = 10 } = paginationDto;
+    const { page = 1, limit = 10, mode = 'paginate' } = paginationDto;
     // Apply filters from options
     if (options) {
       Object.keys(options).forEach((key) => {
@@ -72,13 +71,13 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       )
       .orderBy('courses.name', 'ASC');
 
-    const total = await queryBuilder.getCount();
-
-    // Apply pagination
-    queryBuilder.skip((page - 1) * limit).take(limit);
-    const items = await queryBuilder.getMany();
-    const total_pages = Math.ceil(total / limit);
     if (mode === 'paginate') {
+      const total = await queryBuilder.getCount();
+
+      // Apply pagination
+      queryBuilder.skip((page - 1) * limit).take(limit);
+      const items = await queryBuilder.getMany();
+      const total_pages = Math.ceil(total / limit);
       return {
         items,
         total,
@@ -141,8 +140,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
   async getCourseDetails(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
-    countParticipant = false,
-    isCommunity = false,
+    conditions?: { countParticipant?: boolean; isCommunity?: boolean },
   ): Promise<CourseEntity> {
     let sort: FindOptionsOrder<CourseEntity>;
     if (relations.includes('lessons')) {
@@ -161,7 +159,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     if (!course) {
       throw new BadRequestException(en.invalidCourse);
     }
-    if (countParticipant) {
+    if (conditions.countParticipant) {
       const courseCount = await this.getCourseParticipantCount(course.id);
       course['userCount'] = courseCount;
     }
@@ -170,8 +168,13 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       course.lessons = [];
     } else {
       // Filter lessons if they exist
-      course.lessons = isCommunity
-        ? course.lessons.filter((lesson) => !lesson.archived && lesson.approved) //if community dont show archived and unapproved lesson
+      course.lessons = conditions.isCommunity
+        ? (course.lessons
+            .filter((lesson) => !lesson.archived && lesson.approved)
+            .map((lesson) => ({
+              ...lesson,
+              content: Helpers.limitSanitizedContent(lesson.content), //if community dont show archived and unapproved lesson
+            })) as LessonEntity[])
         : (course.lessons
             .filter((lesson) => !lesson.archived) //for content only dont show archived lesson
             .map((lesson) => ({
