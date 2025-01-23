@@ -67,7 +67,6 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     onSubmit(data, reset);
     if (resetFormOnSubmit) {
       reset();
-      
     }
   };
 
