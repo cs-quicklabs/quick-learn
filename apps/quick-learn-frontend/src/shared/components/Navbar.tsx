@@ -103,7 +103,7 @@ const Navbar = () => {
     try {
       localStorage.removeItem('searchHistory');
       await logoutApiCall();
-      router.push('/');
+      window.location.href = '/';
     } catch (error) {
       console.log(error);
     }
