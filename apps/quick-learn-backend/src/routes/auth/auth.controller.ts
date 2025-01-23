@@ -89,6 +89,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({summary:'Get the current user profile'})
   @Get('profile')
   getProfile(@CurrentUser() user: UserEntity): SuccessResponse {
     return new SuccessResponse(en.successfullyGotUser, user);

@@ -24,6 +24,7 @@ import { Public } from '@src/common/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
+import { LessonTokenValidationDto } from './dto/lessonTokenValidation.dto';
 
 @ApiTags('Lessons')
 @Controller({
@@ -201,29 +202,10 @@ export class LessonController {
   @Get(':lessonId/:courseId/:token')
   @Public()
   @ApiOperation({ summary: "Get current user's lesson by id and course id" })
-  @ApiParam({
-    name: 'lessonId',
-    required: true,
-    type: String,
-    description: 'Get the lesson by id',
-  })
-  @ApiParam({
-    name: 'courseId',
-    required: true,
-    type: String,
-    description: 'Get lesson by course id',
-  })
-  @ApiParam({
-    name: 'token',
-    required: true,
-    type: String,
-    description: 'validate lesson url using token',
-  })
   async getCurrentUserLessonsByIdAndCourseId(
-    @Param('lessonId') lessonId: string,
-    @Param('courseId') courseId: string,
-    @Param('token') token: string,
+    @Param() params: LessonTokenValidationDto,
   ): Promise<SuccessResponse> {
+    const { token, courseId, lessonId } = params;
     const userTokenDetal = await this.service.validateLessionToken(
       token,
       +courseId,

@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiParam } from '@nestjs/swagger';
 import { UserEntity } from '@src/entities';
 import { en } from '@src/lang/en';
 import { Public } from '@src/common/decorators/public.decorator';
@@ -34,6 +34,7 @@ export class LessonProgressController {
     type: Number, // Route parameters are strings by default
     description: 'Optional user ID',
   })
+  @ApiOperation({summary:'Mark Lesson as Completed'})
   async markLessonAsCompleted(
     @Body() dto: { courseId: number; isCompleted: boolean },
     @CurrentUser() user: UserEntity,
@@ -70,6 +71,7 @@ export class LessonProgressController {
     type: Number,
     description: 'Optional user ID',
   })
+  @ApiOperation({summary:"Mark lesson as completed (public url)"})
   async markLessonAsCompletedPublic(
     @Body() dto: { courseId: number; isCompleted: boolean },
     @Param('lessonId') lessonId: number,
@@ -92,6 +94,7 @@ export class LessonProgressController {
   }
 
   @Get(':courseId/progress')
+  @ApiOperation({summary:'Get lesson Progress'})
   async getLessonProgress(@Param('courseId') courseId: number, @Request() req) {
     const data = await this.lessonProgressService.getLessonProgressArray(
       req.user.id,
@@ -101,6 +104,7 @@ export class LessonProgressController {
   }
 
   @Get('/userprogress/:userID?')
+  @ApiOperation({summary:'Get user Progress'})
   async getAllUserProgress(
     @CurrentUser() curentUser,
     @Param('userID') userID?: number,
@@ -118,6 +122,7 @@ export class LessonProgressController {
     type: Number,
     description: 'user ID',
   })
+  @ApiOperation({summary:'Get daily lesson'})
   @Get('daily-lesson/:userID')
   async getAllDailyLesson(@Param('userID') userID?: number) {
     const data = await this.lessonProgressService.getDailyLessonProgress(
@@ -139,6 +144,7 @@ export class LessonProgressController {
     type: Number, // Route parameters are strings by default
     description: 'Optional user ID',
   })
+  @ApiOperation({summary:'Check whether the lesson is readed or not'})
   async checkIsRead(
     @Param('lessonId') lessonId: number,
     @CurrentUser() user: UserEntity,
@@ -166,6 +172,7 @@ export class LessonProgressController {
     type: Number, // Route parameters are strings by default
     description: 'Optional user ID',
   })
+  @ApiOperation({summary:'check whether the lesson is readed or not (public)'})
   async checkIsReadPublic(
     @Param('lessonId') lessonId: number,
     @Param('userId') userId: number,

@@ -69,7 +69,7 @@ export class CourseController {
 
   @Get(':id')
   @ApiParam({ name: 'id', description: 'course id', required: true })
-  @ApiOperation({ summary: 'Get course details' })
+  @ApiOperation({ summary: 'Get Roadmap details' })
   async getRoadmapDetails(@Param('id') id: string) {
     const data = await this.service.getCourseDetails({ id: +id }, [
       'lessons',
