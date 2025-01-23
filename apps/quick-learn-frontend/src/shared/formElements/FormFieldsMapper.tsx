@@ -62,12 +62,12 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     reset,
     formState: { errors, isValid, isDirty },
   } = methods || defaultMethods;
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [formReset, setFormReset] = useState(0);
   const handleFormSubmit = (data: z.infer<T>) => {
     onSubmit(data, reset);
     if (resetFormOnSubmit) {
       reset();
-      setRefreshKey((prevKey) => prevKey + 1);
+      setFormReset((prevKey) => prevKey + 1);
     }
   };
 
@@ -99,7 +99,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
       <form
         onSubmit={handleSubmit(handleFormSubmit)}
         className="space-y-4"
-        key={refreshKey}
+        key={formReset}
         noValidate
       >
         {fields.map((field) => {
