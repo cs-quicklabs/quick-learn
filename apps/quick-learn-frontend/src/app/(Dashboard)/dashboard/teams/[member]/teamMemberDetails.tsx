@@ -150,7 +150,7 @@ const TeamMemberDetails = () => {
           ...res,
           message: 'User deactivated successfully',
         });
-        router.back();
+        router.push(RouteEnum.TEAM);
       })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsPageLoading(false));

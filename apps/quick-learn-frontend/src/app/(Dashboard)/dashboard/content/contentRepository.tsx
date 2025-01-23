@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   createRoadmap,
-  getContentRepositoryMetadata,
   getRoadmaps,
 } from '@src/apiServices/contentRepositoryService';
 import { en } from '@src/constants/lang/en';
@@ -20,26 +19,23 @@ import {
 import ContentRepositorySkeleton from './ContentRepositorySkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-import { updateContentRepository } from '@src/store/features/metadataSlice';
 import {
   addRoadmap,
   selectAllCourses,
   selectAllRoadmaps,
   selectIsRoadmapsInitialized,
-  selectRoadmapsStatus,
 } from '@src/store/features/roadmapsSlice';
+import { useFetchContentRepositoryMetadata } from '@src/context/contextHelperService';
 
 const ContentRepository = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const roadmaps = useAppSelector(selectAllRoadmaps);
   const courses = useAppSelector(selectAllCourses);
-  const roadmapsStatus = useAppSelector(selectRoadmapsStatus);
   const isRoadmapsInitialized = useAppSelector(selectIsRoadmapsInitialized);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
-
-  const isLoading = !isRoadmapsInitialized && roadmapsStatus === 'loading';
+  const [isLoading, setIsLoading] = useState(!isRoadmapsInitialized);
 
   const fetchRoadmapData = async () => {
     try {
@@ -56,14 +52,7 @@ const ContentRepository = () => {
     }
   };
 
-  const fetchContentRepositoryMetadata = async () => {
-    try {
-      const res = await getContentRepositoryMetadata();
-      dispatch(updateContentRepository(res.data)); //update redux store metadata
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const fetchContentRepositoryMetadata = useFetchContentRepositoryMetadata();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,6 +65,7 @@ const ContentRepository = () => {
         // Log the error to the console for debugging
         console.error('Error fetching roadmaps and metadata:', err);
       }
+      setIsLoading(false);
     };
 
     fetchData();

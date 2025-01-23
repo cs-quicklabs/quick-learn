@@ -46,7 +46,8 @@ const TeamTable = () => {
       }
     };
     fetchData();
-  }, [dispatch, currentPage, currentUserType, searchQuery]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, currentPage, currentUserType]);
 
   // Only show skeleton loader on initial load
   if (isInitialLoad && isLoading) return <TeamMemberListingSkeleton />;

@@ -127,7 +127,7 @@ export class LessonController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles(UserTypeId.SUPER_ADMIN)
+  @Roles(UserTypeId.SUPER_ADMIN, UserTypeId.ADMIN)
   @ApiOperation({ summary: 'Approved an lessons.' })
   @Patch('/:id/approve')
   /**

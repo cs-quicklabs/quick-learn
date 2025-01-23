@@ -161,6 +161,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                             type="button"
                             className="absolute inset-y-0 right-0 pr-3 flex items-center"
                             onClick={() => updatePasswordField(index)}
+                            tabIndex={-1}
                           >
                             {showPassword ? (
                               <EyeIcon aria-hidden="true" className="h-4 w-4" />
