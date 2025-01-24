@@ -41,7 +41,7 @@ export class CourseController {
   async getCommunityCourses() {
     const data = await this.service.getContentRepoCourses(
       { page: 1, limit: 10, mode: 'all' },
-      { is_community_available: true },
+      { is_community_available: true, archived: false },
       ['created_by'],
     );
     return new SuccessResponse(en.getCommunityCourse, data);

@@ -38,7 +38,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     relations: string[] = [], // additional relations to include
   ): Promise<PaginatedResult<CourseEntity> | CourseEntity[]> {
     const queryBuilder = this.repository.createQueryBuilder('courses');
-    const { page = 1, limit = 10, mode = 'paginate' } = paginationDto;
+    const { page, limit, mode } = paginationDto;
     // Apply filters from options
     if (options) {
       Object.keys(options).forEach((key) => {
@@ -167,23 +167,34 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     if (!course.lessons) {
       course.lessons = [];
     } else {
-      // Filter lessons if they exist
-      course.lessons = conditions.isCommunity
-        ? (course.lessons
-            .filter((lesson) => !lesson.archived && lesson.approved)
-            .map((lesson) => ({
-              ...lesson,
-              content: Helpers.limitSanitizedContent(lesson.content), //if community dont show archived and unapproved lesson
-            })) as LessonEntity[])
-        : (course.lessons
-            .filter((lesson) => !lesson.archived) //for content only dont show archived lesson
-            .map((lesson) => ({
-              ...lesson,
-              content: Helpers.limitSanitizedContent(lesson.content),
-            })) as LessonEntity[]);
+      // Filter and sanitize lessons using helper function
+      const archived = false;
+      const approved = conditions?.isCommunity ? true : null; // Only consider approval for community lessons
+
+      course.lessons = await this.filterSanitisedLessons(course.lessons, {
+        archived: archived,
+        approved: approved,
+      });
     }
 
     return course;
+  }
+  async filterSanitisedLessons(
+    lessons: LessonEntity[],
+    conditions: { archived: boolean; approved?: boolean | null },
+  ): Promise<LessonEntity[]> {
+    return lessons
+      .filter(
+        (lesson) =>
+          lesson.archived === conditions.archived &&
+          (conditions.approved === null ||
+            lesson.approved === conditions.approved),
+      )
+      .map((lesson) => {
+        // Sanitize content while keeping the original instance
+        lesson.content = Helpers.limitSanitizedContent(lesson.content);
+        return lesson; // Return the original entity instance
+      });
   }
 
   async getCourseParticipantCount(id: number) {
@@ -462,15 +473,13 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
 
     const courseDetails = await course.getOne();
-    if (courseDetails && courseDetails.lessons.length > 0) {
-      courseDetails.lessons = courseDetails.lessons
-        .filter((lesson) => !lesson.archived && lesson.approved)
-        .map((lesson) => ({
-          ...lesson,
-          content: Helpers.limitSanitizedContent(lesson.content),
-        })) as LessonEntity[];
-    } else if (courseDetails) {
+    if (!courseDetails.lessons.length) {
       courseDetails.lessons = [];
+    } else {
+      courseDetails.lessons = await this.filterSanitisedLessons(
+        courseDetails.lessons,
+        { archived: false, approved: true },
+      );
     }
     return courseDetails;
   }
