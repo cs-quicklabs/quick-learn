@@ -35,6 +35,20 @@ export class LessonEmailService {
     });
   }
 
+  private getGreeting(): string {
+    const currentDate = new Date();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: CRON_TIMEZONE,
+      hour: 'numeric',
+      hour12: false,
+    });
+
+    const currentHour = parseInt(formatter.format(currentDate), 10);
+    return currentHour < 12
+      ? DailyLessonGreetings.GOOD_MORNING
+      : DailyLessonGreetings.GOOD_EVENING;
+  }
+
   @Cron('0 9,17 * * *', {
     name: 'sendEveningLessonEmails',
     timeZone: CRON_TIMEZONE,
@@ -45,10 +59,7 @@ export class LessonEmailService {
     this.logger.log('Starting lesson notification cron job');
 
     try {
-      const greeting =
-        new Date().getHours() < 12
-          ? DailyLessonGreetings.GOOD_MORNING
-          : DailyLessonGreetings.GOOD_EVENING;
+      const greeting = this.getGreeting();
 
       await this.sendLessonEmails(greeting);
 
@@ -157,7 +168,7 @@ export class LessonEmailService {
   private async handleResetReadingHistory(user: UserEntity) {
     try {
       await this.resetUserReadingHistory(user.id);
-      this.emailService.readAllLessonSucess(user.email);
+      this.emailService.readAllLessonSucessEmail(user.email);
     } catch (error) {
       this.logger.error(
         `Error resetting reading history for user ${user.id}`,
