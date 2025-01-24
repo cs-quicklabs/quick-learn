@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CourseService } from './course.service';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { JwtAuthGuard } from '../auth/guards';
@@ -24,6 +24,8 @@ import { CourseArchiveDto } from './dto/course-archive.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
 import { Roles } from '@src/common/decorators/roles.decorator';
+import { courseParamsDto } from './dto/course-params.dto';
+import { roadmapParamsDto } from '../roadmap/dto/roadmap-params.dto';
 
 @ApiTags('Course')
 @Controller({
@@ -32,7 +34,7 @@ import { Roles } from '@src/common/decorators/roles.decorator';
 })
 @UseGuards(JwtAuthGuard)
 export class CourseController {
-  constructor(private service: CourseService) {}
+  constructor(private readonly service: CourseService) {}
 
   @UseGuards(RolesGuard)
   @Roles(UserTypeId.SUPER_ADMIN)
@@ -68,10 +70,9 @@ export class CourseController {
   }
 
   @Get(':id')
-  @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Get Roadmap details' })
-  async getRoadmapDetails(@Param('id') id: string) {
-    const data = await this.service.getCourseDetails({ id: +id }, [
+  async getRoadmapDetails(@Param() params: courseParamsDto) {
+    const data = await this.service.getCourseDetails({ id: +params.id }, [
       'lessons',
       'lessons.created_by_user',
     ]);
@@ -79,12 +80,11 @@ export class CourseController {
   }
 
   @Get('/community/:id')
-  @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Get course details' })
-  async getcourseDetails(@Param('id') id: string) {
+  async getcourseDetails(@Param() params: courseParamsDto) {
     const data = await this.service.getCourseDetails(
       {
-        id: +id,
+        id: +params.id,
         is_community_available: true,
       },
       ['lessons', 'lessons.created_by_user'],
@@ -93,24 +93,25 @@ export class CourseController {
   }
 
   @Patch(':id')
-  @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Update a course' })
   async updateRoadmap(
-    @Param('id') id: string,
+    @Param() params: courseParamsDto,
     @Body() updateCourseDto: UpdateCourseDto,
   ) {
-    await this.service.updateCourse(+id, updateCourseDto);
+    await this.service.updateCourse(+params.id, updateCourseDto);
     return new SuccessResponse(en.UpdateCourse);
   }
 
   @Patch(':id/assign')
-  @ApiParam({ name: 'id', description: 'Roadmap ID', required: true })
   @ApiOperation({ summary: 'Assign a roadmaps to course' })
   async assignRoadmapCourse(
-    @Param('id') id: string,
+    @Param() params: roadmapParamsDto,
     @Body() assignRoadmapsToCourseDto: AssignRoadmapsToCourseDto,
   ) {
-    await this.service.assignRoadmapCourse(+id, assignRoadmapsToCourseDto);
+    await this.service.assignRoadmapCourse(
+      +params.id,
+      assignRoadmapsToCourseDto,
+    );
     return new SuccessResponse(en.UpdateCourse);
   }
 
@@ -131,10 +132,11 @@ export class CourseController {
   }
 
   @Delete(':id')
-  @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Delete a course permanently' })
-  async deleteCourse(@Param('id') id: string): Promise<SuccessResponse> {
-    await this.service.deleteCourse(+id);
+  async deleteCourse(
+    @Param() params: courseParamsDto,
+  ): Promise<SuccessResponse> {
+    await this.service.deleteCourse(+params.id);
     return new SuccessResponse(en.CourseDeleted);
   }
 }
