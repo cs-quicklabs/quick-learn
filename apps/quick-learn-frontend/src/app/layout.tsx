@@ -4,12 +4,20 @@ import './global.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ReduxProvider } from '@src/store/provider';
+import { getClientIp } from '@src/apiServices/ipService';
 
 export default function RootLayout({
   children,
 }: {
   readonly children: React.ReactNode;
 }) {
+  // Fetch client IP at app initialization
+  if (typeof window !== 'undefined') {
+    getClientIp().catch((error) =>
+      console.error('Error preloading client IP:', error),
+    );
+  }
+
   return (
     <html lang="en">
       <body className="bg-gray-50">
