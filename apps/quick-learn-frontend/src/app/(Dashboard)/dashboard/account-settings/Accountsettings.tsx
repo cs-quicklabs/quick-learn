@@ -26,7 +26,7 @@ const AccountSettingSechema = z.object({
     .string()
     .trim()
     .min(1, 'This field is mandatory')
-    .max(30, 'The value should not exceed 30 character')
+    .max(30, 'The value should not exceed 30 characters.')
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     })

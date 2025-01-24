@@ -68,7 +68,7 @@ const Card: FC<CardProps> = ({
           {title}
         </h1>
         <p
-          className={`font-normal text-gray-500 ${
+          className={`font-normal text-gray-500 capitalize ${
             isLongTitle ? 'line-clamp-1' : 'line-clamp-2'
           } text-sm whitespace-pre-line`}
           dangerouslySetInnerHTML={{

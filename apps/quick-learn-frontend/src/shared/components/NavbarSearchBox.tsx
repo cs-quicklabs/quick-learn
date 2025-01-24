@@ -277,7 +277,6 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
               <div className="text-center text-gray-500 p-2">
                 {/* add a loading skeleton */}
                 <SearchSkeleton />
-                {/* {en.Search.Loading} */}
               </div>
             ) : hasNoResults ? (
               <div className="text-center text-gray-500 p-2 text-sm">

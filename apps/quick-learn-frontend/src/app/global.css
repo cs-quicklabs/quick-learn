@@ -106,6 +106,7 @@ input:-webkit-autofill:active {
 .lesson-viewer {
   font: 400 16px/28px 'Open Sans', sans-serif;
   line-height: 2rem !important;
+  max-width: 100%;
 }
 .quill .ql-container .ql-editor a,
 .quill .ql-container .ql-editor p,
@@ -162,6 +163,7 @@ input:-webkit-autofill:active {
   line-height: 1.5;
   letter-spacing: normal;
   max-width: 85%;
+  /* Add horizontal scroll for long lines */
 }
 .quill .ql-container ul,
 .quill .ql-container ol,
@@ -194,4 +196,13 @@ input:-webkit-autofill:active {
 /* lesson viewer css */
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
+}
+
+@media screen and (max-width: 640px) {
+  .quill .ql-container .ql-syntax,
+  .lesson-viewer .ql-syntax {
+    padding: 0.75rem;
+    font-size: 13px;
+    max-width: 100%;
+  }
 }
