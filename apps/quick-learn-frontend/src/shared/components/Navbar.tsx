@@ -23,6 +23,8 @@ import { en } from '@src/constants/lang/en';
 import { getInitials } from '@src/utils/helpers';
 import WebsiteLogo from './WebsiteLogo';
 import NavbarSearchBox from './NavbarSearchBox';
+import { getApprovalLessonCount } from '@src/store/features/approvalSlice';
+import { useSelector } from 'react-redux';
 
 type TLink = { name: string; link: string; isExtended?: boolean };
 
@@ -78,6 +80,7 @@ const Navbar = () => {
   const { user } = useContext(UserContext);
   const pathname = usePathname();
   const router = useRouter();
+  const approvalLessonCount = useSelector(getApprovalLessonCount);
 
   useEffect(() => {
     if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
@@ -181,6 +184,16 @@ const Navbar = () => {
                     }
                   >
                     {item.name}
+                    {/* notification  */}
+                    <div
+                      className={`${
+                        item.name === 'Approvals' && approvalLessonCount > 0
+                          ? ''
+                          : 'hidden'
+                      } absolute h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center top-1 ml-20`}
+                    >
+                      {approvalLessonCount}
+                    </div>
                   </Link>
                 ))}
               </div>

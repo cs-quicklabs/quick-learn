@@ -4,6 +4,7 @@ import './global.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ReduxProvider } from '@src/store/provider';
+import { UserProvider } from '@src/context/userContext';
 
 export default function RootLayout({
   children,
@@ -20,7 +21,7 @@ export default function RootLayout({
             hideProgressBar={true}
             pauseOnFocusLoss={false}
           />
-          {children}
+          <UserProvider>{children}</UserProvider>
         </ReduxProvider>
       </body>
     </html>
