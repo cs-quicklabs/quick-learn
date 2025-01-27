@@ -33,6 +33,11 @@ const userProgressPersistConfig = {
   storage,
 };
 
+const metadataPersistConfig = {
+  key: 'metadata',
+  storage,
+};
+
 // Create persisted reducers for the slices you want to persist
 const persistedDashboardReducer = persistReducer(
   dashboardPersistConfig,
@@ -43,9 +48,14 @@ const persistedUserProgressReducer = persistReducer(
   userProgressReducer,
 );
 
+const persistedMetadataReducer = persistReducer(
+  metadataPersistConfig,
+  metadataReducer,
+);
+
 export const store = configureStore({
   reducer: {
-    metadata: metadataReducer,
+    metadata: persistedMetadataReducer, //persisted
     dashboard: persistedDashboardReducer, // persisted
     roadmaps: roadmapsReducer,
     ui: uiReducer,
