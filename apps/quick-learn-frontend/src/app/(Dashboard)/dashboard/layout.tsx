@@ -5,6 +5,7 @@ import Navbar from '@src/shared/components/Navbar';
 import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
 import { selectHideNavbar } from '@src/store/features/uiSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import { ReduxProvider } from '@src/store/provider';
 import { usePathname } from 'next/navigation';
 import { useContext, useEffect } from 'react';
 
@@ -33,8 +34,12 @@ export default function Layout({
   }, [dispatch]);
   return (
     <div className="w-full">
-      {!hideNavbar && <Navbar />}
-      <main className={mainClasses}>{children}</main>
+      {/* <ReduxProvider> */}
+      <UserProvider>
+        {!hideNavbar && <Navbar />}
+        <main className={mainClasses}>{children}</main>
+      </UserProvider>
+      {/* </ReduxProvider> */}
     </div>
   );
 }

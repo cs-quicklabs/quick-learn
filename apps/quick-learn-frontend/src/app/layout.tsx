@@ -21,7 +21,7 @@ export default function RootLayout({
             hideProgressBar={true}
             pauseOnFocusLoss={false}
           />
-          <UserProvider>{children}</UserProvider>
+          {children}
         </ReduxProvider>
       </body>
     </html>
