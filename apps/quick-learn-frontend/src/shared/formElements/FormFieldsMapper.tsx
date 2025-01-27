@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import InputField from './InputField';
 import { Path, useForm, UseFormReset, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -41,7 +41,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   isLoading = false,
   methods,
   resetFormOnSubmit = false,
-  mode = 'onBlur',
+  mode = 'onChange',
   onChangeImage,
   id,
   cancelButton,
@@ -58,6 +58,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     handleSubmit,
     setValue,
     watch,
+    trigger,
     getValues,
     reset,
     formState: { errors, isValid, isDirty },
@@ -69,6 +70,16 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
       reset();
     }
   };
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      // Trigger `confirmPassword` validation when `newPassword` changes
+      if (name === 'newPassword' && value?.newPassword) {
+        trigger('confirmPassword' as Path<TypeOf<T>>);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, trigger]);
 
   return (
     <>

@@ -39,7 +39,11 @@ const changePasswordFormSchema = z
     }
 
     // Check if passwords match
-    if (data.newPassword !== data.confirmPassword) {
+    if (
+      data.newPassword !== data.confirmPassword &&
+      data.newPassword.length > 0 &&
+      data.confirmPassword.length > 0
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Passwords don't match",
