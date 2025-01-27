@@ -1,15 +1,17 @@
 import React from 'react';
 
-const EmailPreferenceSkeleton = () => {
+const EmailPreferenceSkeleton = ({ isPartial = false }) => {
   return (
     <div className="w-full animate-pulse">
       {/* Header Section */}
-      <div className="space-y-2 mb-6">
-        <div className="h-7 w-28 bg-gray-200 dark:bg-gray-700 rounded-md" />{' '}
-        {/* Title */}
-        <div className="h-5 w-64 bg-gray-200 dark:bg-gray-700 rounded-md" />{' '}
-        {/* Subtitle */}
-      </div>
+      {!isPartial && (
+        <div className="space-y-2 mb-6">
+          <div className="h-7 w-28 bg-gray-200 dark:bg-gray-700 rounded-md" />{' '}
+          {/* Title */}
+          <div className="h-5 w-64 bg-gray-200 dark:bg-gray-700 rounded-md" />{' '}
+          {/* Subtitle */}
+        </div>
+      )}
 
       {/* Checkbox Section */}
       <div className="flex mt-6">
