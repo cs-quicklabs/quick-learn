@@ -290,7 +290,7 @@ const CourseDetails = () => {
                 ? `${courseData.created_by.first_name} ${courseData.created_by.last_name}`
                 : 'Admin'}
             </span>
-            &nbsp;{en.contentRepository.createdThisRoadmapOn}&nbsp;
+            &nbsp;{en.contentRepository.createdThisCourseOn}&nbsp;
             {courseData.created_at &&
               format(courseData.created_at, DateFormats.shortDate)}
           </p>
