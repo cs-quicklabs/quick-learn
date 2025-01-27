@@ -78,11 +78,7 @@ const ImageInput: FC<Props> = ({
       // Note: You'll need to implement fileUploadApiCall
       fileUploadApiCall(formData, imageType)
         .then((res) => {
-          setValue(name, res.data.file, {
-            shouldValidate: true,
-            shouldDirty: true,
-            shouldTouch: true,
-          });
+          setValue(name, res.data.file);
           return res;
         })
         .then((res) => {
@@ -124,11 +120,7 @@ const ImageInput: FC<Props> = ({
         await onChangeImage(undefined);
       }
       // Update form value
-      setValue(name, '', {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      });
+      setValue(name, '');
       // Clear image preview
       setImagePreview(null);
     } finally {

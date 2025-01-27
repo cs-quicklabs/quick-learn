@@ -103,6 +103,7 @@ export const en = {
     createNewRoadmap: 'Create New Roadmap',
     editRoadmap: 'Edit Roadmap',
     createdThisRoadmapOn: 'created this roadmap on',
+    createdThisCourseOn: 'created this course on',
     archiveRoadmap: 'Archive Roadmap',
     noRoadmaps: 'No roadmaps available',
     noRoadmapsDescription: 'There are no roadmaps yet',
