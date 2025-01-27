@@ -40,7 +40,7 @@ export class CourseController {
   @ApiOperation({ summary: 'Get all community courses' })
   async getCommunityCourses() {
     const data = await this.service.getContentRepoCourses(
-      { page: 1, limit: 10, mode: 'all' },
+      { mode: 'all' },
       { is_community_available: true, archived: false },
       ['created_by'],
     );
