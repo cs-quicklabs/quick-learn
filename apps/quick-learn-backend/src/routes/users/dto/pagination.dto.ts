@@ -6,5 +6,5 @@ export class PaginationDto extends BasePaginationDto {
   @ApiProperty({ example: 'paginate' })
   @IsOptional()
   @IsIn(['paginate', 'all'])
-  mode?: 'paginate';
+  mode?: 'paginate' | 'all';
 }
