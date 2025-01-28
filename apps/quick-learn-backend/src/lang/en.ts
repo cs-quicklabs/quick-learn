@@ -101,4 +101,10 @@ export const en = {
   successfullyGotUser: 'Successfully got the user.',
   userLinkedToEmail: 'No user is linked to the provided email.',
   wrongCredentials: 'Wrong Credentials!',
+
+  // Profile Service related messages
+  invalidOldPassword: 'Invalid old password.',
+  successdullyPasswordUpdated: 'Password updated successfully.',
+  successPreferencesUpdated: 'Email preference updated successfully.',
+  successPreferences: 'Successfully got user preferences.',
 };
