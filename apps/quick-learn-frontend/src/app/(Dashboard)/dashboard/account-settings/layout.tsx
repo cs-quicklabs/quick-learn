@@ -35,7 +35,7 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
       icon: <TagIcon aria-hidden="true" className="h-5 w-5 text-black-400" />,
     },
     {
-      title: 'Courses Categories',
+      title: 'Course Categories',
       linkTo: RouteEnum.COURSES_CATEGORIES,
       icon: (
         <AcademicCapIcon

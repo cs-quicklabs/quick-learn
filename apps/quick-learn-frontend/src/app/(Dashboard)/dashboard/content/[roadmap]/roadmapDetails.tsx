@@ -125,13 +125,15 @@ const RoadmapDetails = () => {
   }, [roadmapId, dispatch, router]);
 
   useEffect(() => {
-    const data = allCourseCategories.map((item) => ({
-      name: item.name,
-      list: item.courses.map((course) => ({
-        name: course.name,
-        value: Number(course.id),
-      })),
-    }));
+    const data = allCourseCategories
+      .filter((category) => category.courses.length > 0)
+      .map((item) => ({
+        name: item.name,
+        list: item.courses.map((course) => ({
+          name: course.name,
+          value: Number(course.id),
+        })),
+      }));
     setCourseCategoriesData(data);
   }, [allCourseCategories]);
 

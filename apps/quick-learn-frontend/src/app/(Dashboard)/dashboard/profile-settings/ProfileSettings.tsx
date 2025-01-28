@@ -56,6 +56,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 const ProfileSettings = () => {
   const { user, setUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     mode: 'onChange',
@@ -156,6 +157,7 @@ const ProfileSettings = () => {
   };
 
   useEffect(() => {
+    setIsPageLoading(true);
     if (user) {
       reset({
         first_name: user.first_name,
@@ -164,9 +166,10 @@ const ProfileSettings = () => {
         email: user.email,
       });
     }
+    setIsPageLoading(false);
   }, [user, reset]);
 
-  if (isLoading) {
+  if (isPageLoading) {
     return <ProfileSettingsSkeleton />;
   }
 
@@ -184,6 +187,7 @@ const ProfileSettings = () => {
           schema={profileSchema}
           onSubmit={onSubmit}
           methods={methods}
+          isLoading={isLoading}
           buttonText="Save"
           onChangeImage={onChangeImage}
           id="profileSettingsForm"

@@ -104,13 +104,15 @@ const CourseDetails = () => {
   }, [courseId, courseFromStore]);
 
   useEffect(() => {
-    const data = allRoadmapCategories.map((item) => ({
-      name: item.name,
-      list: item.roadmaps.map((course) => ({
-        name: course.name,
-        value: Number(course.id),
-      })),
-    }));
+    const data = allRoadmapCategories
+      .filter((category) => category.roadmaps.length > 0)
+      .map((item) => ({
+        name: item.name,
+        list: item.roadmaps.map((course) => ({
+          name: course.name,
+          value: Number(course.id),
+        })),
+      }));
     setRoadmapCategoriesData(data);
   }, [allRoadmapCategories]);
 
@@ -290,7 +292,7 @@ const CourseDetails = () => {
                 ? `${courseData.created_by.first_name} ${courseData.created_by.last_name}`
                 : 'Admin'}
             </span>
-            &nbsp;{en.contentRepository.createdThisRoadmapOn}&nbsp;
+            &nbsp;{en.contentRepository.createdThisCourseOn}&nbsp;
             {courseData.created_at &&
               format(courseData.created_at, DateFormats.shortDate)}
           </p>
