@@ -2,7 +2,7 @@
 import { changePasswordService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
-import { FieldConfig } from '@src/shared/types/formTypes';
+import { FieldConfig, TFieldTrigger } from '@src/shared/types/formTypes';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -23,34 +23,19 @@ const changePasswordFormSchema = z
       .regex(/[a-z]/, {
         message: 'Password must contain at least one lowercase letter',
       })
-      .regex(/[0-9]/, { message: 'Password must contain at least one number' })
+      .regex(/\d/, { message: 'Password must contain at least one number' })
       .regex(/[^A-Za-z0-9]/, {
         message: 'Password must contain at least one special character',
       }),
-    confirmPassword: z.string(),
+    confirmPassword: z.string().min(1),
   })
-  .superRefine((data, ctx) => {
-    // Check if new password is same as old password
-    if (data.newPassword === data.oldPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Current and new passwords cannot be the same.',
-        path: ['newPassword'],
-      });
-    }
-
-    // Check if passwords match
-    if (
-      data.newPassword !== data.confirmPassword &&
-      data.newPassword.length > 0 &&
-      data.confirmPassword.length > 0
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Passwords don't match",
-        path: ['confirmPassword'],
-      });
-    }
+  .refine((data) => data.newPassword !== data.oldPassword, {
+    message: 'Current and new passwords cannot be the same.',
+    path: ['newPassword'],
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
   });
 
 type ChangePasswordData = z.infer<typeof changePasswordFormSchema>;
@@ -78,6 +63,17 @@ const ChangePassword = () => {
     },
   ];
 
+  const triggers: TFieldTrigger[] = [
+    {
+      name: 'oldPassword',
+      triggers: ['newPassword'],
+    },
+    {
+      name: 'newPassword',
+      triggers: ['confirmPassword'],
+    },
+  ];
+
   const onSubmit = (data: ChangePasswordData) => {
     setIsLoading(true);
     const payload = {
@@ -89,6 +85,7 @@ const ChangePassword = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };
+
   return (
     <div>
       <h1 className="text-lg font-semibold dark:text-white">
@@ -106,6 +103,7 @@ const ChangePassword = () => {
         id="changePasswordForm"
         isLoading={isLoading}
         mode="all"
+        triggers={triggers}
       />
     </div>
   );

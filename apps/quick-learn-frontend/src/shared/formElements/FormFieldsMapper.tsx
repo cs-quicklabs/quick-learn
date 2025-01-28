@@ -3,7 +3,7 @@ import InputField from './InputField';
 import { Path, useForm, UseFormReset, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from 'zod';
-import { FieldConfig } from '../types/formTypes';
+import { FieldConfig, TFieldTrigger } from '../types/formTypes';
 import ImageInput from './ImageInput';
 import { Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
@@ -29,6 +29,7 @@ interface Props<T extends z.ZodTypeAny> {
   ) => void;
   readonly id?: string;
   readonly cancelButton?: () => void;
+  readonly triggers?: TFieldTrigger[];
 }
 
 function FormFieldsMapper<T extends z.ZodTypeAny>({
@@ -45,6 +46,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   onChangeImage,
   id,
   cancelButton,
+  triggers,
 }: Props<T>) {
   // Call useForm unconditionally
   const defaultMethods = useForm<z.infer<T>>({
@@ -75,13 +77,25 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   };
   useEffect(() => {
     const subscription = watch((value, { name }) => {
-      // Trigger `confirmPassword` validation when `newPassword` changes
-      if (name === 'newPassword' && value?.newPassword) {
-        trigger('confirmPassword' as Path<TypeOf<T>>);
+      if (triggers && triggers.length > 0) {
+        const customTrigger = triggers.find((item) => item.name === name);
+
+        const allTriggersAreValid =
+          customTrigger?.triggers?.every((ele) => value?.[ele].length > 0) ??
+          false;
+
+        if (
+          customTrigger?.triggers &&
+          name === customTrigger.name &&
+          allTriggersAreValid
+        ) {
+          trigger((customTrigger.triggers as Path<TypeOf<T>>[]) ?? []);
+        }
       }
     });
 
     return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch, trigger]);
 
   return (
