@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '../auth/guards';
 import { CourseCategoryService } from './course-category.service';
 import { UpdateCourseCategoryDto } from './dto/update-course-category.dto';
 import { en } from '@src/lang/en';
+import { courseCategoryParamsDto } from './dto/courseCategoryParams.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/course-categories
 @ApiTags('Course Categories')
@@ -55,19 +56,18 @@ export class CourseCategoryController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get the course category details.' })
-  findOne(@Param('id') id: string) {
-    return this.courseCategoryService.get({ id: +id });
+  findOne(@Param() params: courseCategoryParamsDto,) {
+    return this.courseCategoryService.get({ id: +params.id });
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update the course category.' })
-  @ApiParam({ name: 'id', type: 'string' })
   async update(
-    @Param('id') id: string,
+    @Param() params: courseCategoryParamsDto,
     @Body() updateCourseCategoryDto: UpdateCourseCategoryDto,
   ) {
     await this.courseCategoryService.createCourseCategory(
-      +id,
+      +params.id,
       updateCourseCategoryDto,
     );
     return new SuccessResponse(en.successUpdateCourse);
@@ -75,8 +75,8 @@ export class CourseCategoryController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete the course category.' })
-  async remove(@Param('id') id: string) {
-    await this.courseCategoryService.deleteCourseCategory(+id);
+  async remove(@Param() params: courseCategoryParamsDto,) {
+    await this.courseCategoryService.deleteCourseCategory(+params.id);
     return new SuccessResponse(en.successDeleteCourse);
   }
 }

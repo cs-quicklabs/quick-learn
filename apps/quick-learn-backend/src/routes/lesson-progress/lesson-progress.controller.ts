@@ -16,6 +16,7 @@ import { UserEntity } from '@src/entities';
 import { en } from '@src/lang/en';
 import { Public } from '@src/common/decorators/public.decorator';
 import { lessonProgressParamsDto } from './dto/lessonProgress-params.dto';
+import { completeBodyDto } from './dto/complete-body.dto';
 @ApiTags('Lessons Progress')
 @Controller({ path: 'lessonprogress', version: '1' })
 @UseGuards(JwtAuthGuard)
@@ -25,7 +26,7 @@ export class LessonProgressController {
   @Post('complete/:lessonId/:userId?')
   @ApiOperation({ summary: 'Mark Lesson as Completed' })
   async markLessonAsCompleted(
-    @Body() dto: { courseId: number; isCompleted: boolean },
+    @Body() dto: completeBodyDto,
     @CurrentUser() user: UserEntity,
     @Param() params: lessonProgressParamsDto,
   ) {
@@ -33,7 +34,7 @@ export class LessonProgressController {
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
       +params.lessonId,
-      dto.courseId,
+      +dto.courseId,
     );
     if (dto.isCompleted) {
       return new SuccessResponse(en.successfullyCompletedLesson, {
@@ -49,14 +50,14 @@ export class LessonProgressController {
   @Public()
   @ApiOperation({ summary: 'Mark lesson as completed (public url)' })
   async markLessonAsCompletedPublic(
-    @Body() dto: { courseId: number; isCompleted: boolean },
+    @Body() dto: completeBodyDto,
     @Param() params: lessonProgressParamsDto,
   ) {
     const currentUser = +params.userId;
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
       +params.lessonId,
-      dto.courseId,
+      +dto.courseId,
     );
     if (dto.isCompleted) {
       return new SuccessResponse(en.successfullyCompletedLesson, {

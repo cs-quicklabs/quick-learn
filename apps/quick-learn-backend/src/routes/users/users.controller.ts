@@ -25,6 +25,8 @@ import { en } from '@src/lang/en';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
 import { GetUserQueryDto } from './dto/get-user-query.dto';
 import { GetLessonByIdQueryDto } from './dto/get-lesson-by-id.dto';
+import { userParamsDto } from './dto/user-params.dto';
+import { userIdParamsDto } from './dto/userId-params.dto';
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -43,63 +45,33 @@ export class UsersController {
 
   @Get('my-roadmaps')
   @ApiOperation({ summary: "Get current user's assigned roadmaps" })
-  @ApiQuery({
-    name: 'include_courses',
-    required: false,
-    type: Boolean,
-    description: 'Include associated courses in the response',
-  })
   async getCurrentUserRoadmaps(
     @CurrentUser() user: UserEntity,
-    @Query('include_courses') includeCourses?: boolean,
+    @Query() query: userIdParamsDto,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getUserRoadmaps(
       user.id,
-      includeCourses,
+      query.includeCourses,
     );
     return new SuccessResponse(en.successGotUserRoadmaps, roadmaps);
   }
 
   @Get('my-roadmaps/:id/:userId?')
   @ApiOperation({ summary: "Get current user's roadmap by id" })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    type: String,
-    description: 'Get the roadmap by id',
-  })
-  @ApiParam({
-    name: 'userId',
-    required: false,
-    type: Number, // Aligning with the actual type in the route
-    description: 'Optional user ID',
-  })
   async getCurrentUserRoadmapsById(
     @CurrentUser() user: UserEntity,
-    @Param('id') id: string,
-    @Param('userId') userId?: number,
+    @Param() params:userParamsDto,
+    
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getRoadmapDetails(
-      !isNaN(userId) ? userId : user.id,
-      +id,
+      !isNaN(+params.userId) ? +params.userId : user.id,
+      +params.id,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
   @Get('myroadmaps/courses/:id/:userId?')
   @ApiOperation({ summary: "Get current user's course by id" })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    type: String,
-    description: 'Get the course by id',
-  })
-  @ApiParam({
-    name: 'userId',
-    required: false,
-    type: Number, // Aligning with the actual type in the route
-    description: 'Optional user ID',
-  })
   async getCurrentUserCoursesById(
     @CurrentUser() user: UserEntity,
     @Param('id') id: string,
@@ -116,27 +88,14 @@ export class UsersController {
 
   @Get('myroadmaps/lessons/:id/:userId?')
   @ApiOperation({ summary: "Get current user's lesson by id" })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    type: String,
-    description: 'Get the lesson by id',
-  })
-  @ApiParam({
-    name: 'userId',
-    required: false,
-    type: Number, // Aligning with the actual type in the route
-    description: 'Optional user ID',
-  })
   async getCurrentUserLessonsById(
     @CurrentUser() user: UserEntity,
-    @Param('id') id: string,
     @Query() query: GetLessonByIdQueryDto,
-    @Param('userId') userId?: number,
+    @Param() params:userParamsDto,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getLessonDetails(
-      !isNaN(userId) ? userId : user.id,
-      +id,
+      !isNaN(+params.userId) ? +params.userId : user.id,
+      +params.id,
       +query.courseId,
       query.roadmapId ? +query.roadmapId : undefined,
     );
@@ -220,13 +179,8 @@ export class UsersController {
   // This should come AFTER all the specific routes
   @Get(':id')
   @ApiOperation({ summary: 'Get specific user by uuid' })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    required: true,
-  })
   async findOne(
-    @Param('id') userId: number,
+    @Param() params: userIdParamsDto,
     @Query() getUserQueryDto: GetUserQueryDto,
   ): Promise<SuccessResponse> {
     const relations = [];
@@ -238,7 +192,7 @@ export class UsersController {
       relations.push('assigned_roadmaps.courses.lessons');
     }
     const user = await this.usersService.findOneWithSelectedRelationData(
-      { id: userId },
+      { id: +params.userId },
       relations,
     );
     return new SuccessResponse(en.successGotUser, user);
@@ -246,17 +200,12 @@ export class UsersController {
 
   @Patch(':userId')
   @ApiOperation({ summary: 'Update specific user by userId' })
-  @ApiParam({
-    name: 'userId',
-    type: 'number',
-    required: true,
-  })
   async update(
-    @Param('userId') userId: number,
+    @Param() params: userIdParamsDto,
     @CurrentUser() currentUser: UserEntity,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.updateUser(userId, {
+    const user = await this.usersService.updateUser(+params.userId, {
       ...updateUserDto,
       updated_by: currentUser,
     });
@@ -265,28 +214,18 @@ export class UsersController {
 
   @Patch(':userId/assign-roadmaps')
   @ApiOperation({ summary: 'Assign roadmaps to user' })
-  @ApiParam({
-    name: 'userId',
-    type: 'number',
-    required: true,
-  })
   async assignRoadmaps(
-    @Param('userId') userId: number,
+    @Param() params: userIdParamsDto,
     @Body() assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
   ): Promise<SuccessResponse> {
-    await this.usersService.assignRoadmaps(userId, assignRoadmapsToUserDto);
+    await this.usersService.assignRoadmaps(+params.userId, assignRoadmapsToUserDto);
     return new SuccessResponse(en.successUserUpdated);
   }
 
   @Delete(':userId')
   @ApiOperation({ summary: 'Permanently delete user by userId' })
-  @ApiParam({
-    name: 'userId',
-    type: 'number',
-    required: true,
-  })
-  async remove(@Param('userId') userId: number) {
-    await this.usersService.delete({ id: userId });
+  async remove(@Param() params: userIdParamsDto,) {
+    await this.usersService.delete({ id: +params.userId });
     return new SuccessResponse(en.successUserDelete);
   }
 }
