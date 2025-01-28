@@ -52,7 +52,8 @@ const ContentRepository = () => {
     }
   };
 
-  const fetchContentRepositoryMetadata = useFetchContentRepositoryMetadata();
+  const fetchContentRepositoryMetadata =
+    useFetchContentRepositoryMetadata(true);
 
   useEffect(() => {
     const fetchData = async () => {

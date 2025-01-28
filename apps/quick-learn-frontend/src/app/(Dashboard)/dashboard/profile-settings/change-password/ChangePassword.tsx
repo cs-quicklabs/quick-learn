@@ -1,6 +1,7 @@
 'use client';
 import { changePasswordService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
+import { FullPageLoader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import {
@@ -43,6 +44,7 @@ type ChangePasswordData = z.infer<typeof changePasswordFormSchema>;
 
 const ChangePassword = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isPageLoading = false;
   const changePasswordFields: FieldConfig[] = [
     {
       label: 'Old Password',
@@ -75,6 +77,7 @@ const ChangePassword = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };
+  if (isPageLoading) return <FullPageLoader />;
   return (
     <>
       <div>
