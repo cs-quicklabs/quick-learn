@@ -117,6 +117,7 @@ export const en = {
     addOnAlreadyExistingCourse: 'Add already existing courses to this roadmap',
     assignToRoadmap: 'Move or add this course to another Roadmap',
     archiveCourse: 'Archive Course',
+    allLesson: 'All Lessons',
   },
 
   /**
