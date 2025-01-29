@@ -187,6 +187,7 @@ const Lesson = () => {
         }
       } catch (err) {
         showApiErrorInToast(err as AxiosErrorObject);
+        router.replace(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
       }
     };
 

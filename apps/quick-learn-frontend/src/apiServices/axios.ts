@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getAccessToken } from './authService';
 import { authApiEnum } from '@src/constants/api.enum';
+import { getClientIp } from './ipService';
 
 const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${
   process.env.NEXT_PUBLIC_API_VERSION || 'v1'
@@ -33,7 +34,14 @@ const axiosInstance = axios.create({
 
 // Request interceptor
 axiosInstance.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    // Use a module-level variable to cache the IP
+    const clientIp = await getClientIp();
+    if (config.headers && clientIp) {
+      config.headers['X-Client-IP'] = clientIp;
+      config.headers['x-forwarded-for'] = clientIp;
+    }
+
     return config;
   },
   (error: AxiosErrorObject) => {

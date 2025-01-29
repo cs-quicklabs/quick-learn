@@ -24,3 +24,8 @@ export interface FieldConfig {
   firstName?: string;
   lastName?: string;
 }
+
+export type TFieldTrigger = {
+  name: string;
+  triggers?: string[];
+};
