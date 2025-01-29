@@ -28,10 +28,7 @@ export const useFetchContentRepositoryMetadata = (forceFetch = false) => {
   };
 
   const fetchApprovalData = (user_type: number) => {
-    if (
-      user_type !== UserTypeIdEnum.EDITOR &&
-      user_type !== UserTypeIdEnum.MEMBER
-    ) {
+    if (![UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER].includes(user_type)) {
       dispatch(fetchSystemPreferences());
     }
   };

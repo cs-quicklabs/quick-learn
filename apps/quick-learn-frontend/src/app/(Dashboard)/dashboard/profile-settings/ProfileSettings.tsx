@@ -146,12 +146,14 @@ const ProfileSettings = () => {
       const response = await updateUserProfileService(serviceInput);
 
       if (user) {
-        setUser({
-          ...user,
-          first_name,
-          last_name,
-          profile_image: serviceInput.profile_image,
-        });
+        dispatch(
+          setUser({
+            ...user,
+            first_name,
+            last_name,
+            profile_image: serviceInput.profile_image,
+          }),
+        );
       }
       showApiMessageInToast(response);
     } catch (err) {

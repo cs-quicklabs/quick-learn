@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MetadataController } from './metadata.controller';
 import { MetadataService } from './metadata.service';
 import { RoadmapCategoriesModule } from '../roadmap-category/roadmap-category.module';
@@ -6,11 +6,7 @@ import { CourseCategoriesModule } from '../course-category/course-category.modul
 import { LessonModule } from '../lesson/lesson.module';
 
 @Module({
-  imports: [
-    RoadmapCategoriesModule,
-    CourseCategoriesModule,
-    forwardRef(() => LessonModule),
-  ],
+  imports: [RoadmapCategoriesModule, CourseCategoriesModule, LessonModule],
   providers: [MetadataService],
   controllers: [MetadataController],
 })
