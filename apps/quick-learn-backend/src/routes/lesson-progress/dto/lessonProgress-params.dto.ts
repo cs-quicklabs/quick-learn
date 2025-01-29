@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class lessonProgressParamsDto {
+export class LessonProgressParamsDto {
   @ApiProperty({
     name: 'lessonId',
     required: true,

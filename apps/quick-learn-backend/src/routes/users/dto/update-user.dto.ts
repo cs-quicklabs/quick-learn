@@ -7,7 +7,7 @@ import { IsNotEmpty } from 'class-validator';
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiProperty({ example: 1 })
   @Transform(({ value }) => {
-    return value == 'false' ? false : true;
+    return value != 'false';
   })
   @IsNotEmpty()
   active: boolean;

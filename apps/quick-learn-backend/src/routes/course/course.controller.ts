@@ -24,7 +24,7 @@ import { CourseArchiveDto } from './dto/course-archive.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
 import { Roles } from '@src/common/decorators/roles.decorator';
-import { courseParamsDto } from './dto/course-params.dto';
+import { CourseParamsDto } from './dto/course-params.dto';
 import { roadmapParamsDto } from '../roadmap/dto/roadmap-params.dto';
 
 @ApiTags('Course')
@@ -34,7 +34,7 @@ import { roadmapParamsDto } from '../roadmap/dto/roadmap-params.dto';
 })
 @UseGuards(JwtAuthGuard)
 export class CourseController {
-  constructor(private readonly service: CourseService) {}
+  constructor(private readonly service: CourseService) { }
 
   @UseGuards(RolesGuard)
   @Roles(UserTypeId.SUPER_ADMIN)
@@ -47,6 +47,7 @@ export class CourseController {
     );
     return new SuccessResponse(en.getCommunityCourse, data);
   }
+
   @Get('archived')
   @ApiOperation({ summary: 'Get Archived Courses' })
   async findAllArchivedCourses(
@@ -71,7 +72,7 @@ export class CourseController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get Roadmap details' })
-  async getRoadmapDetails(@Param() params: courseParamsDto) {
+  async getRoadmapDetails(@Param() params: CourseParamsDto) {
     const data = await this.service.getCourseDetails({ id: +params.id }, [
       'lessons',
       'lessons.created_by_user',
@@ -81,7 +82,7 @@ export class CourseController {
 
   @Get('/community/:id')
   @ApiOperation({ summary: 'Get course details' })
-  async getcourseDetails(@Param() params: courseParamsDto) {
+  async getcourseDetails(@Param() params: CourseParamsDto) {
     const data = await this.service.getCourseDetails(
       {
         id: +params.id,
@@ -95,7 +96,7 @@ export class CourseController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a course' })
   async updateRoadmap(
-    @Param() params: courseParamsDto,
+    @Param() params: CourseParamsDto,
     @Body() updateCourseDto: UpdateCourseDto,
   ) {
     await this.service.updateCourse(+params.id, updateCourseDto);
@@ -134,7 +135,7 @@ export class CourseController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a course permanently' })
   async deleteCourse(
-    @Param() params: courseParamsDto,
+    @Param() params: CourseParamsDto,
   ): Promise<SuccessResponse> {
     await this.service.deleteCourse(+params.id);
     return new SuccessResponse(en.CourseDeleted);

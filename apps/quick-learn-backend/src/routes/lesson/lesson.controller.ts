@@ -33,7 +33,7 @@ import lessonTokenValidation from './dto/lessonTokenValidation.dto';
 })
 @UseGuards(JwtAuthGuard)
 export class LessonController {
-  constructor(private readonly service: LessonService) {}
+  constructor(private readonly service: LessonService) { }
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()
@@ -87,6 +87,11 @@ export class LessonController {
     return new SuccessResponse(en.createLesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @ApiOperation({ summary: 'Get a specific lesson.' })
   @Get('/:id')
   /**
@@ -109,6 +114,11 @@ export class LessonController {
     return new SuccessResponse(en.getLesson, lesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @ApiOperation({ summary: 'Update an existing lesson.' })
   @Patch('/:id')
   /**
@@ -127,6 +137,11 @@ export class LessonController {
     return new SuccessResponse(en.updateLesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @UseGuards(RolesGuard)
   @Roles(UserTypeId.SUPER_ADMIN)
   @ApiOperation({ summary: 'Approved an lessons.' })
@@ -146,6 +161,11 @@ export class LessonController {
     return new SuccessResponse(en.approveLesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @ApiOperation({ summary: 'Archive an lessons.' })
   @Patch('/:id/archive')
   /**
@@ -163,6 +183,11 @@ export class LessonController {
     return new SuccessResponse(en.archiveLesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @ApiOperation({ summary: 'Activate or deactivate a lesson.' })
   @Post('activate')
   async activateLesson(
@@ -178,6 +203,11 @@ export class LessonController {
     return new SuccessResponse(en.unarchiveLesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @Delete(':id')
   @ApiOperation({ summary: 'Permanently delete a lesson' })
   @ApiParam({

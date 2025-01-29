@@ -1,25 +1,25 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
-export class userParamsDto {
-    @ApiProperty({
-        name: 'id',
+export class UserParamsDto {
+  @ApiProperty({
+    name: 'id',
     required: true,
     type: String,
     description: 'Get the lesson by id',
-    })
-    @IsNotEmpty()
-    @IsString()
-    id:string
+  })
+  @IsNotEmpty()
+  @IsString()
+  id: string
 
 
-@ApiProperty({
-   name: 'userId',
+  @ApiProperty({
+    name: 'userId',
     required: false,
     type: String, // Aligning with the actual type in the route
     description: 'Optional user ID',
-})
-    @IsOptional()
-    @IsString()
-    userId?: string;
+  })
+  @IsOptional()
+  @IsString()
+  userId?: string;
 }
