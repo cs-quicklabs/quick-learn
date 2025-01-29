@@ -1,13 +1,13 @@
 'use client';
+import { getUser } from '@src/apiServices/authService';
 import { RouteEnum } from '@src/constants/route.enum';
-import { UserContext, UserProvider } from '@src/context/userContext';
+import { useFetchContentRepositoryMetadata } from '@src/context/contextHelperService';
 import Navbar from '@src/shared/components/Navbar';
-import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
 import { selectHideNavbar } from '@src/store/features/uiSlice';
+import { setUser } from '@src/store/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-import { ReduxProvider } from '@src/store/provider';
 import { usePathname } from 'next/navigation';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 export default function Layout({
   children,
@@ -15,9 +15,24 @@ export default function Layout({
   readonly children: React.ReactNode;
 }) {
   const hideNavbar = useAppSelector(selectHideNavbar);
-  const pathname = usePathname();
   const dispatch = useAppDispatch();
-  const { user } = useContext(UserContext);
+  const pathname = usePathname();
+  const { fetchMetadata, fetchApprovalData } =
+    useFetchContentRepositoryMetadata();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      getUser()
+        .then((res) => {
+          dispatch(setUser(res.data));
+          fetchMetadata(res?.data.user_type_id);
+          fetchApprovalData(res?.data.user_type_id);
+        })
+        .catch((err) => console.log(err));
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Add paths that should be full width
   const fullWidthPaths = [RouteEnum.MY_LEARNING_PATH];
@@ -28,18 +43,10 @@ export default function Layout({
     ? 'mt-16 w-full'
     : 'max-w-screen-2xl mx-auto mt-16 py-3 px-4 sm:py-5 lg:px-8';
 
-  useEffect(() => {
-    console.log(user);
-    dispatch(fetchUnapprovedLessons());
-  }, [dispatch]);
   return (
     <div className="w-full">
-      {/* <ReduxProvider> */}
-      <UserProvider>
-        {!hideNavbar && <Navbar />}
-        <main className={mainClasses}>{children}</main>
-      </UserProvider>
-      {/* </ReduxProvider> */}
+      {!hideNavbar && <Navbar />}
+      <main className={mainClasses}>{children}</main>
     </div>
   );
 }

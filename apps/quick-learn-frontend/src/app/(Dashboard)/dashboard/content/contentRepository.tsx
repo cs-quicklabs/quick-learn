@@ -26,6 +26,9 @@ import {
   selectIsRoadmapsInitialized,
 } from '@src/store/features/roadmapsSlice';
 import { useFetchContentRepositoryMetadata } from '@src/context/contextHelperService';
+import { useSelector } from 'react-redux';
+import { selectUser } from '@src/store/features/userSlice';
+import { UserTypeIdEnum } from 'lib/shared/src';
 
 const ContentRepository = () => {
   const router = useRouter();
@@ -36,6 +39,7 @@ const ContentRepository = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(!isRoadmapsInitialized);
+  const user = useSelector(selectUser);
 
   const fetchRoadmapData = async () => {
     try {
@@ -52,14 +56,14 @@ const ContentRepository = () => {
     }
   };
 
-  const fetchContentRepositoryMetadata = useFetchContentRepositoryMetadata();
+  const { fetchMetadata } = useFetchContentRepositoryMetadata(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         await Promise.all([
           fetchRoadmapData(),
-          fetchContentRepositoryMetadata(),
+          fetchMetadata(user?.user_type_id || UserTypeIdEnum.MEMBER),
         ]);
       } catch (err) {
         // Log the error to the console for debugging

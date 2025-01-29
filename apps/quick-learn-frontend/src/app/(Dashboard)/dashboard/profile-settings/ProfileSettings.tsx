@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosErrorObject, AxiosSuccessResponse } from '@src/apiServices/axios';
 import { updateUserProfileService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
-import { UserContext } from '@src/context/userContext';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { onlyAlphabeticValidation } from '@src/utils/helpers';
@@ -11,11 +10,14 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import ProfileSettingsSkeleton from './ProfileSettingsSkeleton';
 import { FileUploadResponse } from '@src/shared/types/utilTypes';
+import { useSelector } from 'react-redux';
+import { selectUser, setUser } from '@src/store/features/userSlice';
+import { useAppDispatch } from '@src/store/hooks';
 
 // Define the service input type
 interface ProfileUpdateServiceInput {
@@ -54,7 +56,8 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfileSettings = () => {
-  const { user, setUser } = useContext(UserContext);
+  const user = useSelector(selectUser);
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -109,10 +112,12 @@ const ProfileSettings = () => {
       profile_image: res ? res.data.file : '', //handle upload and delete
     };
     if (user) {
-      setUser({
-        ...user,
-        profile_image: res ? res.data.file : '',
-      });
+      dispatch(
+        setUser({
+          ...user,
+          profile_image: res ? res.data.file : '',
+        }),
+      );
     }
     updateUserProfileService(serviceInput)
       .then((response) => {

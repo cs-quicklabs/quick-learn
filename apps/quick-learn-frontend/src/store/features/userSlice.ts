@@ -66,5 +66,6 @@ export default userSlice.reducer;
 // Type-safe selectors
 export const selectUser = (state: { user: UserState }) => state?.user?.user;
 export const selectUserStatus = (state: { user: UserState }) =>
-  state.user.status;
-export const selectUserError = (state: { user: UserState }) => state.user.error;
+  state?.user?.status;
+export const selectUserError = (state: { user: UserState }) =>
+  state?.user?.error;

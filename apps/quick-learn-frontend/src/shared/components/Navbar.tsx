@@ -15,8 +15,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { logoutApiCall } from '@src/apiServices/authService';
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '@src/context/userContext';
+import { useEffect, useState } from 'react';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import ConformationModal from '../modals/conformationModal';
 import { en } from '@src/constants/lang/en';
@@ -25,6 +24,7 @@ import WebsiteLogo from './WebsiteLogo';
 import NavbarSearchBox from './NavbarSearchBox';
 import { getApprovalLessonCount } from '@src/store/features/approvalSlice';
 import { useSelector } from 'react-redux';
+import { selectUser } from '@src/store/features/userSlice';
 
 type TLink = { name: string; link: string; isExtended?: boolean };
 
@@ -77,7 +77,7 @@ const Navbar = () => {
   const [links, setLinks] = useState<TLink[]>([]);
   const [showConformationModal, setShowConformationModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useContext(UserContext);
+  const user = useSelector(selectUser);
   const pathname = usePathname();
   const router = useRouter();
   const approvalLessonCount = useSelector(getApprovalLessonCount);

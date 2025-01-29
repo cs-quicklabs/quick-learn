@@ -38,6 +38,7 @@ export type TUser = {
   updated_at: string;
   updated_by: TUser;
   updated_by_id: number;
+  metadata?: { getApprovalLessonCount: number };
 };
 
 export type TUserMetadata = {

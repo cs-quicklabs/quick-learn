@@ -20,6 +20,7 @@ import teamReducer from './features/teamSlice';
 import approvalReducer from './features/approvalSlice';
 import archivedReducer from './features/archivedSlice';
 import userProgressReducer from './features/userProgressSlice';
+import userReducer from './features/userSlice';
 
 // Configure persist for each reducer you want to persist
 const dashboardPersistConfig = {
@@ -55,6 +56,7 @@ const persistedMetadataReducer = persistReducer(
 
 export const store = configureStore({
   reducer: {
+    user: userReducer,
     metadata: persistedMetadataReducer, //persisted
     dashboard: persistedDashboardReducer, // persisted
     roadmaps: roadmapsReducer,
