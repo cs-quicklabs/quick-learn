@@ -111,6 +111,20 @@ const Navbar = () => {
     }
   }
 
+  const showApprovalCount = (item: TLink, type: string) => {
+    return (
+      <div
+        className={`${
+          item.name === 'Approvals' && approvalLessonCount > 0 ? '' : 'hidden'
+        }  h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center ${
+          type == 'desktop' && 'absolute top-1 ml-20'
+        }`}
+      >
+        {approvalLessonCount}
+      </div>
+    );
+  };
+
   const renderMenuItem = (item: TLink) => {
     if (item.isExtended) {
       return (
@@ -183,16 +197,7 @@ const Navbar = () => {
                     }
                   >
                     {item.name}
-                    {/* notification  */}
-                    <div
-                      className={`${
-                        item.name === 'Approvals' && approvalLessonCount > 0
-                          ? ''
-                          : 'hidden'
-                      } absolute h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center top-1 ml-20`}
-                    >
-                      {approvalLessonCount}
-                    </div>
+                    {showApprovalCount(item, 'desktop')}
                   </Link>
                 ))}
               </div>
@@ -348,15 +353,8 @@ const Navbar = () => {
               >
                 <span className="flex justify-between items-center">
                   {item.name}
-                  <div
-                    className={`${
-                      item.name === 'Approvals' && approvalLessonCount > 0
-                        ? ''
-                        : 'hidden'
-                    }  h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center`}
-                  >
-                    {approvalLessonCount}
-                  </div>
+
+                  {showApprovalCount(item, 'mobile')}
                 </span>
               </DisclosureButton>
             ))}
