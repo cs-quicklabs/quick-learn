@@ -346,7 +346,18 @@ const Navbar = () => {
                     : 'text-gray-300 hover:bg-gray-700 hover:text-white')
                 }
               >
-                {item.name}
+                <span className="flex justify-between items-center">
+                  {item.name}
+                  <div
+                    className={`${
+                      item.name === 'Approvals' && approvalLessonCount > 0
+                        ? ''
+                        : 'hidden'
+                    }  h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center`}
+                  >
+                    {approvalLessonCount}
+                  </div>
+                </span>
               </DisclosureButton>
             ))}
           </div>
