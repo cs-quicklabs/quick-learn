@@ -34,7 +34,7 @@ import { roadmapParamsDto } from '../roadmap/dto/roadmap-params.dto';
 })
 @UseGuards(JwtAuthGuard)
 export class CourseController {
-  constructor(private readonly service: CourseService) { }
+  constructor(private readonly service: CourseService) {}
 
   @UseGuards(RolesGuard)
   @Roles(UserTypeId.SUPER_ADMIN)

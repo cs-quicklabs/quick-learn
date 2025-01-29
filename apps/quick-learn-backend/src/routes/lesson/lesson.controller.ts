@@ -33,7 +33,7 @@ import lessonTokenValidation from './dto/lessonTokenValidation.dto';
 })
 @UseGuards(JwtAuthGuard)
 export class LessonController {
-  constructor(private readonly service: LessonService) { }
+  constructor(private readonly service: LessonService) {}
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()

@@ -21,7 +21,7 @@ import { completeBodyDto } from './dto/complete-body.dto';
 @Controller({ path: 'lessonprogress', version: '1' })
 @UseGuards(JwtAuthGuard)
 export class LessonProgressController {
-  constructor(private readonly lessonProgressService: LessonProgressService) { }
+  constructor(private readonly lessonProgressService: LessonProgressService) {}
 
   @Post('complete/:lessonId/:userId?')
   @ApiOperation({ summary: 'Mark Lesson as Completed' })

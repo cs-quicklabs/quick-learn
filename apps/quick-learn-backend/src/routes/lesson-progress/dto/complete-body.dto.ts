@@ -1,11 +1,11 @@
-import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
-export class completeBodyDto{
-    @IsNotEmpty()
-    @IsString()
-    courseId: string; 
+export class completeBodyDto {
+  @IsNotEmpty()
+  @IsString()
+  courseId: string;
 
-    @IsNotEmpty()
-    @IsBoolean()
-    isCompleted: boolean
+  @IsNotEmpty()
+  @IsBoolean()
+  isCompleted: boolean;
 }

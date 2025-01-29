@@ -25,7 +25,7 @@ import { CourseCategoryParamsDto } from './dto/courseCategoryParams.dto';
   path: 'course-categories',
 })
 export class CourseCategoryController {
-  constructor(private readonly courseCategoryService: CourseCategoryService) { }
+  constructor(private readonly courseCategoryService: CourseCategoryService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create course category.' })
@@ -56,7 +56,7 @@ export class CourseCategoryController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get the course category details.' })
-  findOne(@Param() params: CourseCategoryParamsDto,) {
+  findOne(@Param() params: CourseCategoryParamsDto) {
     return this.courseCategoryService.get({ id: +params.id });
   }
 

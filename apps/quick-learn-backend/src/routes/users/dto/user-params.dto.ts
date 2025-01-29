@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserParamsDto {
   @ApiProperty({
@@ -10,8 +10,7 @@ export class UserParamsDto {
   })
   @IsNotEmpty()
   @IsString()
-  id: string
-
+  id: string;
 
   @ApiProperty({
     name: 'userId',

@@ -28,7 +28,7 @@ import { ListRoadmapQueryDto } from './dto/list-roadmap-query.dto';
 export class RoadmapCategoryController {
   constructor(
     private readonly roadmapCategoryService: RoadmapCategoryService,
-  ) { }
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Adding roadmap category' })

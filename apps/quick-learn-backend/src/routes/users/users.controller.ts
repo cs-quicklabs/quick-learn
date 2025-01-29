@@ -36,7 +36,7 @@ import { en } from '@src/lang/en';
   path: 'users',
 })
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('metadata')
   @ApiOperation({ summary: 'Metadata for the add/update user(s).' })
@@ -170,9 +170,7 @@ export class UsersController {
 
   @Post('activate')
   @ApiOperation({ summary: 'Activate or deactivate user' })
-  async activateUser(
-    @Body() body: UserActivateDto,
-  ): Promise<SuccessResponse> {
+  async activateUser(@Body() body: UserActivateDto): Promise<SuccessResponse> {
     const { active, userId } = body;
     const updatedUser = await this.usersService.updateUser(userId, { active });
     return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
@@ -220,13 +218,16 @@ export class UsersController {
     @Param() params: UserIdParamsDto,
     @Body() assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
   ): Promise<SuccessResponse> {
-    await this.usersService.assignRoadmaps(+params.userId, assignRoadmapsToUserDto);
+    await this.usersService.assignRoadmaps(
+      +params.userId,
+      assignRoadmapsToUserDto,
+    );
     return new SuccessResponse(en.successUserUpdated);
   }
 
   @Delete(':userId')
   @ApiOperation({ summary: 'Permanently delete user by userId' })
-  async remove(@Param() params: UserIdParamsDto,) {
+  async remove(@Param() params: UserIdParamsDto) {
     await this.usersService.delete({ id: +params.userId });
     return new SuccessResponse(en.successUserDelete);
   }

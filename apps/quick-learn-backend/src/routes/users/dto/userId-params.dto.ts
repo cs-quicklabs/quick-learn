@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserIdParamsDto {
   @ApiProperty({
@@ -9,8 +9,7 @@ export class UserIdParamsDto {
   })
   @IsNotEmpty()
   @IsString()
-  userId: string
-
+  userId: string;
 
   @ApiPropertyOptional({
     name: 'include_courses',

@@ -28,7 +28,7 @@ import { UserTypeId } from '@src/common/enum/user_role.enum';
   path: 'skills',
 })
 export class SkillsController {
-  constructor(private readonly skillsService: SkillsService) { }
+  constructor(private readonly skillsService: SkillsService) {}
 
   @Post()
   @ApiOperation({ summary: 'adding skill name' })

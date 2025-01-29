@@ -19,7 +19,7 @@ import { UserTypeId } from '@src/common/enum/user_role.enum';
   path: 'team',
 })
 export class TeamController {
-  constructor(private readonly teamService: TeamService) { }
+  constructor(private readonly teamService: TeamService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get team details' })

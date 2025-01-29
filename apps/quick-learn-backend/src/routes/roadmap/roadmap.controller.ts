@@ -30,7 +30,7 @@ import { roadmapParamsDto } from './dto/roadmap-params.dto';
 })
 @UseGuards(JwtAuthGuard)
 export class RoadmapController {
-  constructor(private readonly service: RoadmapService) { }
+  constructor(private readonly service: RoadmapService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all roadmaps' })
