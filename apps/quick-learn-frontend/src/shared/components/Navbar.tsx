@@ -33,6 +33,7 @@ const myLearningPath: TLink = {
 };
 const content: TLink = { name: 'Content', link: RouteEnum.CONTENT };
 const approvals: TLink = { name: 'Approvals', link: RouteEnum.APPROVALS };
+const flagged: TLink = { name: 'Flagged', link: RouteEnum.FLAGGED };
 const community: TLink = { name: 'Community', link: RouteEnum.COMMUNITY };
 
 const superAdminUserLinks: TLink[] = [
@@ -40,10 +41,17 @@ const superAdminUserLinks: TLink[] = [
   myLearningPath,
   content,
   approvals,
+  flagged,
   community,
 ];
-const adminUserLinks: TLink[] = [team, myLearningPath, content, approvals];
-const editorUserLinks: TLink[] = [myLearningPath, content];
+const adminUserLinks: TLink[] = [
+  team,
+  myLearningPath,
+  content,
+  approvals,
+  flagged,
+];
+const editorUserLinks: TLink[] = [myLearningPath, content, flagged];
 const memberUserLinks: TLink[] = [myLearningPath];
 
 const menuItems: TLink[] = [

@@ -76,6 +76,10 @@ export const en = {
     updatedOn: 'Updated on',
     createdOn: 'Created on',
     createdBy: 'Created by',
+    flaggedBy: 'Flagged by',
+    flaggedOn: 'Flagged on',
+    flaggedLessons: 'Flagged Lessons',
+    flaggedDesc: 'Following lessons have been flagged for review by admins.',
 
     // Confirmation dialogs
     logoutConformation: 'Are you sure you want to Log out?',

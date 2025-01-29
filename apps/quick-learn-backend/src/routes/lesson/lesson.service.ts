@@ -1,7 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services';
-import { LessonEntity, LessonTokenEntity, UserEntity } from '@src/entities';
+import {
+  FlaggedLessonEntity,
+  LessonEntity,
+  LessonTokenEntity,
+  UserEntity,
+} from '@src/entities';
 import { CreateLessonDto, UpdateLessonDto } from './dto';
 import { CourseService } from '../course/course.service';
 import { en } from '@src/lang/en';
@@ -19,6 +24,8 @@ export class LessonService extends PaginationService<LessonEntity> {
     repo: Repository<LessonEntity>,
     @InjectRepository(LessonTokenEntity)
     private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
+    @InjectRepository(FlaggedLessonEntity)
+    private flaggedLessonEnity: Repository<FlaggedLessonEntity>,
     private readonly courseService: CourseService,
     private readonly FileService: FileService,
   ) {
@@ -414,5 +421,35 @@ export class LessonService extends PaginationService<LessonEntity> {
       .addGroupBy('course.id')
       .limit(3)
       .getRawMany(); // Changed from getMany() to getRawMany()
+  }
+  async flagLesson(lesson_id: number, course_id: number, user_id: number) {
+    const flaggedLesson = this.flaggedLessonEnity.create({
+      lesson_id,
+      course_id,
+      user_id,
+      flagged_On: new Date(),
+    });
+    return await this.flaggedLessonEnity.save(flaggedLesson);
+  }
+
+  async findAllWithRelations() {
+    try {
+      return await this.flaggedLessonEnity
+        .createQueryBuilder('flaggedLesson')
+        .leftJoinAndSelect('flaggedLesson.user', 'user')
+        .leftJoinAndSelect('flaggedLesson.lesson', 'lesson')
+        .leftJoinAndSelect('flaggedLesson.course', 'course')
+        .select([
+          'flaggedLesson',
+          'user.first_name',
+          'user.last_name',
+          'lesson.name',
+        ])
+        .orderBy('flaggedLesson.flagged_On', 'DESC')
+        .getMany();
+    } catch (error) {
+      console.error('Error querying flagged lessons:', error);
+      throw error; // Propagate the error for proper handling
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
+  FlaggedLessonEntity,
   LessonEntity,
   LessonTokenEntity,
   UserEntity,
@@ -20,6 +21,7 @@ import { EmailService } from '@src/common/modules/email/email.service';
       UserEntity,
       UserLessonProgressEntity,
       LessonTokenEntity,
+      FlaggedLessonEntity,
     ]),
     CourseModule,
     forwardRef(() => UsersModule),

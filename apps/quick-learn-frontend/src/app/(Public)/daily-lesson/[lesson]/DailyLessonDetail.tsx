@@ -1,5 +1,6 @@
 'use client';
 import {
+  flagLesson,
   getDailyLessionDetail,
   getLessonStatusPublic,
   markAsDonePublic,
@@ -19,6 +20,7 @@ import { Button } from 'flowbite-react';
 import { TUser } from '@src/shared/types/userTypes';
 import { HomeIcon } from '@heroicons/react/20/solid';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { UserTypeIdEnum } from 'lib/shared/src';
 
 const DailyLessonDetail = () => {
   const router = useRouter();
@@ -30,6 +32,8 @@ const DailyLessonDetail = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isRead, setIsRead] = useState<boolean>(false);
   const [completedOn, setCompletedOn] = useState<string>('');
+  const [isAdmins, setIsAdmins] = useState<boolean>(false);
+  const [isFlagging, setIsFlagging] = useState<boolean>(false);
 
   const { lesson } = useParams<{
     lesson: string;
@@ -65,6 +69,33 @@ const DailyLessonDetail = () => {
       console.error('Error marking lesson as completed:', error);
     }
   };
+  const handleFlagLesson = async () => {
+    if (!userDetail?.id || !courseId || !lesson) {
+      showApiErrorInToast('Missing required information');
+      return;
+    }
+
+    setIsFlagging(true);
+    const lessonId = parseInt(lesson, 10);
+    const parsedCourseId = parseInt(courseId, 10);
+
+    if (isNaN(lessonId) || isNaN(parsedCourseId)) {
+      showApiErrorInToast('Invalid lesson or course ID');
+      setIsFlagging(false);
+      return;
+    }
+
+    try {
+      const response = await flagLesson(
+        lessonId.toString(),
+        parsedCourseId.toString(),
+        userDetail.id.toString(),
+      );
+      showApiMessageInToast(response);
+    } catch (error) {
+      showApiErrorInToast(error);
+    }
+  };
 
   const markLessionAsUnread = async () => {
     try {
@@ -88,6 +119,11 @@ const DailyLessonDetail = () => {
         .then((response) => {
           setLessonDetails(response.data.lessonDetail);
           setUserDetail(response.data.userDetail);
+          const userType = response.data.userDetail.user_type_id;
+          setIsAdmins(
+            userType === UserTypeIdEnum.ADMIN ||
+              userType === UserTypeIdEnum.SUPERADMIN,
+          );
           return response.data.userDetail;
         })
         .then((response) => {
@@ -148,6 +184,16 @@ const DailyLessonDetail = () => {
             <p className="text-l font-semibold text-gray-900 dark:text-gray-300">
               {en.myLearningPath.markRead}
             </p>
+          </div>
+        )}
+        {isAdmins && (
+          <div className="flex justify-center items-center mb-10 mt-6 ml-4">
+            <button
+              className="text-blue-600 text-[17px] font-semibold hover:text-white hover:bg-slate-600 hover:rounded-md py-2 px-3"
+              onClick={handleFlagLesson}
+            >
+              {isFlagging ? 'Lesson marked as flag' : 'Flag lesson for editing'}
+            </button>
           </div>
         )}
         {token && (

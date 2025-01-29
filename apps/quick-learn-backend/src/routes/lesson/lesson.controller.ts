@@ -24,6 +24,7 @@ import { Public } from '@src/common/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
+import { FlagLessonDto } from './dto/Flagged-lesson.dto';
 
 @ApiTags('Lessons')
 @Controller({
@@ -67,6 +68,13 @@ export class LessonController {
       'archive_by_user',
       'approved_by_user',
     ]);
+    return new SuccessResponse(en.getLessons, lessons);
+  }
+
+  @ApiOperation({ summary: 'Get all flagged lessons.' })
+  @Get('flagged')
+  async findAllFlaggedLessons(): Promise<SuccessResponse> {
+    const lessons = await this.service.findAllWithRelations();
     return new SuccessResponse(en.getLessons, lessons);
   }
 
@@ -235,5 +243,29 @@ export class LessonController {
       lessonDetail: lessonDetail,
       userDetail: userTokenDetal.user,
     });
+  }
+
+  @ApiOperation({ summary: 'Flag a lesson for review' })
+  @Post('flag/:lessonId/:userId')
+  @UseGuards(JwtAuthGuard)
+  async flagLesson(
+    @Param('lessonId') lessonId: string,
+    @Param('userId') userId: string,
+    @Body() flagLessonDto: FlagLessonDto,
+  ): Promise<SuccessResponse> {
+    try {
+      await this.service.flagLesson(
+        parseInt(lessonId),
+        flagLessonDto.courseId,
+        +userId,
+      );
+      return new SuccessResponse('Lesson flagged successfully');
+    } catch (error) {
+      if (error.code === '23505') {
+        // Unique constraint violation
+        throw new BadRequestException('This lesson has already been flagged');
+      }
+      throw new BadRequestException('Error flagging lesson');
+    }
   }
 }

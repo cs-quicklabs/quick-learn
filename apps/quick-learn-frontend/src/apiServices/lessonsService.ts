@@ -81,6 +81,27 @@ export const markAsDone = async (
   return response.data;
 };
 
+export const flagLesson = async (
+  lessonId: string,
+  courseId: string,
+  userId: string,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    `${ContentRepositoryApiEnum.LESSON_FLAGGED}/${lessonId}/${userId}`,
+    {
+      courseId: parseInt(courseId),
+    },
+  );
+  return response.data;
+};
+
+export const getFlaggedLessons = async (): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.GET_FLAGGED_LESSON,
+  );
+  return response.data;
+};
+
 export const markAsDonePublic = async (
   lessonId: string,
   courseId: string,
