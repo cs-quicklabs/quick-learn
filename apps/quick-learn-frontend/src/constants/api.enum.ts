@@ -31,6 +31,7 @@ export enum FileApiEnum {
 
 export enum ContentRepositoryApiEnum {
   METADATA = '/metadata/content-repository',
+  SYSTEM_PREFERNCES = '/metadata/lesson-metadata',
   ROADMAP = '/roadmap',
   COURSE = '/course',
   LESSON = '/lesson',

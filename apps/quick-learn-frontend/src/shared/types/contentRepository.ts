@@ -141,3 +141,7 @@ export type SearchedQuery = {
   Courses: SearchedCourseOrRoadpmap[];
   Lessons: SearchedCourseOrRoadpmap[];
 };
+
+export type SystemPreferences = {
+  unapprovedLessons: number;
+};

@@ -22,9 +22,9 @@ import { en } from '@src/constants/lang/en';
 import { getInitials } from '@src/utils/helpers';
 import WebsiteLogo from './WebsiteLogo';
 import NavbarSearchBox from './NavbarSearchBox';
-import { getApprovalLessonCount } from '@src/store/features/approvalSlice';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@src/store/features/userSlice';
+import { getUnapprovedLessonCount } from '@src/store/features/systemPreferenceSlice';
 
 type TLink = { name: string; link: string; isExtended?: boolean };
 
@@ -80,7 +80,7 @@ const Navbar = () => {
   const user = useSelector(selectUser);
   const pathname = usePathname();
   const router = useRouter();
-  const approvalLessonCount = useSelector(getApprovalLessonCount);
+  const approvalLessonCount = useSelector(getUnapprovedLessonCount);
 
   useEffect(() => {
     if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {

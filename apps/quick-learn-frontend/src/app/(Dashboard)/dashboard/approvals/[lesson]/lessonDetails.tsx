@@ -18,6 +18,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@src/store/hooks';
 import { setHideNavbar } from '@src/store/features/uiSlice';
+import { decrementUnapprovedLessons } from '@src/store/features/systemPreferenceSlice';
 
 const defaultLinks = [{ name: 'Approvals', link: RouteEnum.APPROVALS }];
 
@@ -63,7 +64,10 @@ const LessonDetails = () => {
     setIsApproved(value);
     setLoading(true);
     approveLesson(id)
-      .then((res) => showApiMessageInToast(res))
+      .then((res) => {
+        showApiMessageInToast(res);
+        dispatch(decrementUnapprovedLessons());
+      })
       .catch((err) => showApiErrorInToast(err))
       .finally(() => {
         setLoading(false);

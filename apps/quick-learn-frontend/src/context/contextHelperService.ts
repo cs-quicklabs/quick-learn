@@ -6,7 +6,7 @@ import { UserTypeIdEnum } from 'lib/shared/src';
 import { usePathname } from 'next/navigation';
 import { useAppDispatch } from '@src/store/hooks';
 import { RouteEnum } from '@src/constants/route.enum';
-import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
+import { fetchSystemPreferences } from '@src/store/features/systemPreferenceSlice';
 
 // Custom hook to fetch content repository metadata
 export const useFetchContentRepositoryMetadata = (forceFetch = false) => {
@@ -29,11 +29,10 @@ export const useFetchContentRepositoryMetadata = (forceFetch = false) => {
 
   const fetchApprovalData = (user_type: number) => {
     if (
-      path !== RouteEnum.APPROVALS &&
       user_type !== UserTypeIdEnum.EDITOR &&
       user_type !== UserTypeIdEnum.MEMBER
     ) {
-      dispatch(fetchUnapprovedLessons());
+      dispatch(fetchSystemPreferences());
     }
   };
 

@@ -20,4 +20,9 @@ export class MetadataController {
     const metadata = await this.service.getContentRepositoryMetadata();
     return new SuccessResponse(en.GetContentRepositoryMetadata, metadata);
   }
+  @Get('lesson-metadata')
+  async getLessonMetaData() {
+    const metadata = await this.service.getLessonMetaData();
+    return new SuccessResponse(en.GetContentMetadata, metadata);
+  }
 }
