@@ -39,12 +39,14 @@ export class CourseController {
   @Get('/community-course')
   @ApiOperation({ summary: 'Get all community courses' })
   async getCommunityCourses() {
-    const data = await this.service.getAllCourses(
+    const data = await this.service.getContentRepoCourses(
+      { mode: 'all' },
       { is_community_available: true, archived: false },
       ['created_by'],
     );
     return new SuccessResponse(en.getCommunityCourse, data);
   }
+
   @Get('archived')
   @ApiOperation({ summary: 'Get Archived Courses' })
   async findAllArchivedCourses(
@@ -71,10 +73,11 @@ export class CourseController {
   @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Get course details' })
   async getRoadmapDetails(@Param('id') id: string) {
-    const data = await this.service.getCourseDetails({ id: +id }, [
-      'lessons',
-      'lessons.created_by_user',
-    ]);
+    const data = await this.service.getCourseDetails(
+      { id: +id },
+      ['lessons', 'lessons.created_by_user'],
+      { countParticipant: true },
+    );
     return new SuccessResponse(en.GetCourseDetails, data);
   }
 
@@ -83,11 +86,9 @@ export class CourseController {
   @ApiOperation({ summary: 'Get course details' })
   async getcourseDetails(@Param('id') id: string) {
     const data = await this.service.getCourseDetails(
-      {
-        id: +id,
-        is_community_available: true,
-      },
+      { id: +id, is_community_available: true },
       ['lessons', 'lessons.created_by_user'],
+      { isCommunity: true },
     );
     return new SuccessResponse(en.GetCourseDetails, data);
   }
