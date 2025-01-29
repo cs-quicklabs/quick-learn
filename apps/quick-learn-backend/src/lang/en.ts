@@ -85,6 +85,7 @@ export const en = {
 
   // Content Repository related messages
   GetContentRepositoryMetadata: 'Successfully got content repository metadata.',
+  GetContentMetadata: 'Successfully got content metadata.',
   successUserUpdated: 'Successfully updated user details.',
   userNotFound: 'User details not found.',
   lessonNotFoundInCourse: 'Lesson not found in this course',

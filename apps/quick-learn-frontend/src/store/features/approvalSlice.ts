@@ -7,6 +7,7 @@ import {
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 import { BaseLoadingState } from '../types/base.types';
+import { RootState } from '../store';
 
 interface ApprovalState extends BaseLoadingState {
   lessons: TLesson[];
@@ -72,5 +73,8 @@ const approvalSlice = createSlice({
       });
   },
 });
+
+export const getApprovalLessonCount = (state: RootState) =>
+  state.approval.lessons.length;
 
 export default approvalSlice.reducer;
