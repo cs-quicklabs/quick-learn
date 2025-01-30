@@ -115,6 +115,10 @@ export class LessonController {
     }
     return new SuccessResponse(en.getLesson, lesson);
   }
+  @Get(':id/is-flagged')
+  async isLessonFlagged(@Param('id') id: number) {
+    return await this.service.isLessonFlagged(id);
+  }
 
   @ApiOperation({ summary: 'Update an existing lesson.' })
   @Patch('/:id')
@@ -266,6 +270,18 @@ export class LessonController {
         throw new BadRequestException('This lesson has already been flagged');
       }
       throw new BadRequestException('Error flagging lesson');
+    }
+  }
+  @Delete('flaggedLesson/:lesson_id')
+  @ApiOperation({ summary: 'Unflag a lesson' })
+  async unflagLesson(
+    @Param('lesson_id') lesson_id: string,
+  ): Promise<SuccessResponse> {
+    try {
+      await this.service.unflagLesson(parseInt(lesson_id));
+      return new SuccessResponse('Lesson unflagged successfully');
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
   }
 }

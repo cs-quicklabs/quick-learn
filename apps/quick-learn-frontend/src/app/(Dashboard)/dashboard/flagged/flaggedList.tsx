@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import FlaggedListSkeleton from './flaggedSkeleton';
 import { getFlaggedLessons } from '@src/apiServices/lessonsService';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
+import { AxiosErrorObject } from '@src/apiServices/axios';
 
 interface FlaggedLesson {
   id: number;
@@ -15,6 +16,7 @@ interface FlaggedLesson {
   updated_at: string;
   created_at: string;
   course_id: string;
+  lesson_id: string;
   lesson: {
     name: string;
     created_at: string;
@@ -48,11 +50,10 @@ const FlaggedList = () => {
         if (response && response?.data) {
           setFlaggedLessons(response.data);
         } else {
-          console.error('Unexpected response format:', response);
           setFlaggedLessons([]);
         }
       } catch (error) {
-        showApiErrorInToast(error);
+        showApiErrorInToast(error as AxiosErrorObject);
         setFlaggedLessons([]);
       } finally {
         setIsLoading(false);
@@ -117,7 +118,7 @@ const FlaggedList = () => {
                     <div className="flex items-center">
                       <Link
                         className="ml-2 hover:underline"
-                        href={`${RouteEnum.CONTENT}/course/${flaggedLesson.course_id}/${flaggedLesson.id}`}
+                        href={`${RouteEnum.CONTENT}/course/${flaggedLesson.course_id}/${flaggedLesson.lesson_id}`}
                       >
                         {flaggedLesson.lesson?.name || '-'}
                       </Link>

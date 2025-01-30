@@ -188,3 +188,21 @@ export const getDailyLessionDetail = async (
   );
   return response.data;
 };
+
+export const deleteFlaggedLesson = async (
+  lessonId: string,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.delete<AxiosSuccessResponse>(
+    `${ContentRepositoryApiEnum.LESSON}/flaggedLesson/${lessonId}`,
+  );
+  return response.data;
+};
+
+export const checkLessonFlagStatus = async (
+  lessonId: string,
+): Promise<AxiosSuccessResponse<boolean>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<boolean>>(
+    `${ContentRepositoryApiEnum.LESSON}/${lessonId}/is-flagged`,
+  );
+  return response.data;
+};

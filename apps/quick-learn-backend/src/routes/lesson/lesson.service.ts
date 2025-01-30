@@ -452,4 +452,23 @@ export class LessonService extends PaginationService<LessonEntity> {
       throw error; // Propagate the error for proper handling
     }
   }
+
+  async unflagLesson(lesson_id: number) {
+    const flaggedLesson = await this.flaggedLessonEnity.findOne({
+      where: { lesson_id },
+    });
+
+    if (!flaggedLesson) {
+      throw new BadRequestException(en.lessonNotFound);
+    }
+
+    await this.flaggedLessonEnity.delete({ lesson_id });
+  }
+
+  async isLessonFlagged(lesson_id: number): Promise<boolean> {
+    const flaggedLesson = await this.flaggedLessonEnity.findOne({
+      where: { lesson_id },
+    });
+    return !!flaggedLesson;
+  }
 }
