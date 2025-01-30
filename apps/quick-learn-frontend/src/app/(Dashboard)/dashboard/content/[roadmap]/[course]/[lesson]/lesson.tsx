@@ -28,7 +28,7 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -108,6 +108,7 @@ const useLessonForm = (courseId: string, lessonId: string) => {
 const Lesson = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const path = usePathname();
   const params = useParams<{
     roadmap: string;
     course: string;
@@ -135,6 +136,12 @@ const Lesson = () => {
   const [isArchiving, setIsArchiving] = useState(false);
 
   const form = useLessonForm(courseId, lessonId);
+
+  const isEdit = useMemo(() => {
+    return (
+      path.includes('edit') && user?.user_type_id === UserTypeIdEnum.EDITOR
+    );
+  }, [path]);
 
   // Memoize links calculation
   const links = useMemo(() => {
@@ -177,7 +184,7 @@ const Lesson = () => {
         }
 
         if (lessonId !== 'add') {
-          const lessonData = await getLessonDetails(lessonId);
+          const lessonData = await getLessonDetails(lessonId, !isEdit);
           setLesson(lessonData.data);
           form.setValue('name', lessonData.data.name);
           form.setValue(
