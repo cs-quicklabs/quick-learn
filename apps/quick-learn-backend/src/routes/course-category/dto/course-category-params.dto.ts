@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class courseCategoryParamsDto {
     @ApiProperty({
         name: 'id',
-         type: 'string'
+        type: 'string'
     })
     @IsNotEmpty()
     @IsString()

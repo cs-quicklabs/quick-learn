@@ -24,7 +24,7 @@ import { Public } from '@src/common/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
-import lessonTokenValidation from './dto/lessonTokenValidation.dto';
+import lessonTokenValidation from './dto/lessontoken-validation.dto';
 
 @ApiTags('Lessons')
 @Controller({
@@ -46,7 +46,7 @@ export class LessonController {
     return new SuccessResponse(en.getLessons, lessons);
   }
 
-  @ApiOperation({ summary: 'Get all unapproved the lessons.' })
+  @ApiOperation({ summary: 'Get all unapproved lessons.' })
   @Get('unapproved')
   /**
    * Retrieves all unapproved lessons.
@@ -83,7 +83,7 @@ export class LessonController {
     @CurrentUser() user: UserEntity,
     @Body() createLessonDto: CreateLessonDto,
   ): Promise<SuccessResponse> {
-    await this.service.createLesson(user, createLessonDto);
+    await this.service.createLesson(user , createLessonDto);
     return new SuccessResponse(en.createLesson);
   }
 

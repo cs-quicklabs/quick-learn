@@ -16,5 +16,5 @@ export class CreateLessonDto {
   @ApiProperty({ example: '1' })
   @IsNotEmpty()
   @IsString()
-  course_id: number;
+  course_id: string;
 }

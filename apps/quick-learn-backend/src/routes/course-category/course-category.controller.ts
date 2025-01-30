@@ -9,13 +9,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateCourseCategoryDto } from './dto/create-course-category.dto';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { CourseCategoryService } from './course-category.service';
 import { UpdateCourseCategoryDto } from './dto/update-course-category.dto';
 import { en } from '@src/lang/en';
-import { courseCategoryParamsDto } from './dto/courseCategoryParams.dto';
+import { courseCategoryParamsDto } from './dto/course-category-params.dto';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/course-categories
 @ApiTags('Course Categories')
