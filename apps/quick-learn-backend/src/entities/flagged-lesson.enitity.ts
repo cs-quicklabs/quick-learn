@@ -36,5 +36,5 @@ export class FlaggedLessonEntity extends BaseEntity {
   course: CourseEntity;
 
   @CreateDateColumn()
-  flagged_On: Date;
+  flagged_on: Date;
 }

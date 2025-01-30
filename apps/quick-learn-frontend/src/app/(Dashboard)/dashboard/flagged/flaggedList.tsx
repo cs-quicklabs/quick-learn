@@ -12,7 +12,7 @@ import { AxiosErrorObject } from '@src/apiServices/axios';
 
 interface FlaggedLesson {
   id: number;
-  flagged_On: string;
+  flagged_on: string;
   updated_at: string;
   created_at: string;
   course_id: string;
@@ -131,7 +131,7 @@ const FlaggedList = () => {
                     {formatDate(flaggedLesson.created_at)}
                   </td>
                   <td className="px-4 py-2">
-                    {formatDate(flaggedLesson.flagged_On)}
+                    {formatDate(flaggedLesson.flagged_on)}
                   </td>
                   <td className="px-4 py-2">
                     {flaggedLesson.user

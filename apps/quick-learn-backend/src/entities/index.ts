@@ -11,7 +11,7 @@ import { CourseEntity } from './course.entity';
 import { LessonEntity } from './lesson.entity';
 import { UserLessonProgressEntity } from './user-lesson-progress.entity';
 import { LessonTokenEntity } from './lesson-token.entity';
-import { FlaggedLessonEntity } from './flaggedLesson.enitity';
+import { FlaggedLessonEntity } from './flagged-lesson.enitity';
 
 export const Entities = [
   UserEntity,

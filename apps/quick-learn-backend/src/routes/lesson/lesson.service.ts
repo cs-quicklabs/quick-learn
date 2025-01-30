@@ -428,7 +428,7 @@ export class LessonService extends PaginationService<LessonEntity> {
       lesson_id,
       course_id,
       user_id,
-      flagged_On: new Date(),
+      flagged_on: new Date(),
     });
     return await this.flaggedLessonEnity.save(flaggedLesson);
   }
@@ -446,7 +446,7 @@ export class LessonService extends PaginationService<LessonEntity> {
           'user.last_name',
           'lesson.name',
         ])
-        .orderBy('flaggedLesson.flagged_On', 'DESC')
+        .orderBy('flaggedLesson.flagged_on', 'DESC')
         .getMany();
     } catch (error) {
       console.error('Error querying flagged lessons:', error);
