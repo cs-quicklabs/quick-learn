@@ -14,7 +14,6 @@ import {
 } from '@src/apiServices/lessonsService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import { UserContext } from '@src/context/userContext';
 import AutoResizingTextarea from '@src/shared/components/AutoResizingTextArea';
 import Breadcrumb from '@src/shared/components/Breadcrumb';
 import Editor from '@src/shared/components/Editor';
@@ -22,7 +21,7 @@ import { FullPageLoader } from '@src/shared/components/UIElements';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setHideNavbar } from '@src/store/features/uiSlice';
 import {
   showApiErrorInToast,
@@ -30,15 +29,7 @@ import {
 } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import { useParams, useRouter } from 'next/navigation';
-import {
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-} from 'react';
+import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -46,6 +37,7 @@ import {
   updateRoadmap,
 } from '@src/store/features/roadmapsSlice';
 import { store } from '@src/store/store';
+import { selectUser } from '@src/store/features/userSlice';
 
 // Move constants outside component to prevent recreating on each render
 const defaultlinks: TBreadcrumb[] = [
@@ -124,7 +116,7 @@ const Lesson = () => {
   const { roadmap: roadmapId, course: courseId, lesson: lessonId } = params;
 
   // Context and state remain the same
-  const { user } = useContext(UserContext);
+  const user = useSelector(selectUser);
   const isAdmin = useMemo(
     () =>
       [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(

@@ -5,7 +5,6 @@ import {
   updateTeamDetails,
 } from '@src/apiServices/accountService';
 import { en } from '@src/constants/lang/en';
-import { UserContext } from '@src/context/userContext';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { TTeam } from '@src/shared/types/accountTypes';
 import { FieldConfig } from '@src/shared/types/formTypes';
@@ -14,12 +13,15 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import AccountSettingsSkeleton from './AccountSettingsSkeleton';
 import { FileUploadResponse } from '@src/shared/types/utilTypes';
 import { AxiosSuccessResponse } from '@src/apiServices/axios';
+import { useSelector } from 'react-redux';
+import { selectUser, setUser } from '@src/store/features/userSlice';
+import { useAppDispatch } from '@src/store/hooks';
 
 const AccountSettingSechema = z.object({
   name: z
@@ -36,7 +38,9 @@ const AccountSettingSechema = z.object({
 
 type AccountSettingsData = z.infer<typeof AccountSettingSechema>;
 const AccountSettings = () => {
-  const { user, setUser } = useContext(UserContext);
+  const dispatch = useAppDispatch();
+  const user = useSelector(selectUser);
+
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const methods = useForm<AccountSettingsData>({
@@ -103,10 +107,12 @@ const AccountSettings = () => {
       .then((res) => {
         showApiMessageInToast(res);
         if (user) {
-          setUser({
-            ...user,
-            team: { ...user.team, name: data.name },
-          });
+          dispatch(
+            setUser({
+              ...user,
+              team: { ...user.team, name: data.name },
+            }),
+          );
         }
         reset({ name: data.name, logo: data.logo });
       })
