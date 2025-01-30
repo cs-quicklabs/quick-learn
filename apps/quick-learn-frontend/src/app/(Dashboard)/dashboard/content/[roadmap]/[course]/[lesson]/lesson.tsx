@@ -137,7 +137,7 @@ const Lesson = () => {
 
   const form = useLessonForm(courseId, lessonId);
 
-  const canEdit = useMemo(() => {
+  const isEdit = useMemo(() => {
     return (
       path.includes('edit') && user?.user_type_id === UserTypeIdEnum.EDITOR
     );
@@ -184,7 +184,7 @@ const Lesson = () => {
         }
 
         if (lessonId !== 'add') {
-          const lessonData = await getLessonDetails(lessonId, !canEdit);
+          const lessonData = await getLessonDetails(lessonId, !isEdit);
           setLesson(lessonData.data);
           form.setValue('name', lessonData.data.name);
           form.setValue(

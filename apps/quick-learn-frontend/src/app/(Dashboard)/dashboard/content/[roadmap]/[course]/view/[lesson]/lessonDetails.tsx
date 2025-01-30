@@ -34,7 +34,7 @@ const LessonDetails = () => {
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const user = useSelector(selectUser);
-  const isEdit = useMemo(() => {
+  const canEdit = useMemo(() => {
     return user?.user_type_id === UserTypeIdEnum.EDITOR;
   }, [user]);
 
@@ -86,7 +86,7 @@ const LessonDetails = () => {
   return (
     <>
       <ViewLesson lesson={lesson} links={links} isPending={true} />
-      {isEdit && (
+      {canEdit && (
         <Link
           href={`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/edit/${lessonId}`}
         >
