@@ -471,7 +471,7 @@ export class LessonService extends PaginationService<LessonEntity> {
       where: { lesson_id },
     });
     return !!flaggedLesson;
-
+  }
 
   async getUnApprovedLessonCount() {
     return await this.repository.count({
