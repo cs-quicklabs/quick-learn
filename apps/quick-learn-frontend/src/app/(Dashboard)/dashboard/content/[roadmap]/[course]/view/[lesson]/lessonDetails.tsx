@@ -12,7 +12,7 @@ import { selectUser } from '@src/store/features/userSlice';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import Link from 'next/link';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
