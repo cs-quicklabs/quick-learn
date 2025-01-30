@@ -422,6 +422,7 @@ export class LessonService extends PaginationService<LessonEntity> {
       .limit(3)
       .getRawMany(); // Changed from getMany() to getRawMany()
   }
+
   async flagLesson(lesson_id: number, course_id: number, user_id: number) {
     const flaggedLesson = this.flaggedLessonEnity.create({
       lesson_id,
@@ -470,5 +471,18 @@ export class LessonService extends PaginationService<LessonEntity> {
       where: { lesson_id },
     });
     return !!flaggedLesson;
+
+
+  async getUnApprovedLessonCount() {
+    return await this.repository.count({
+      where: {
+        archived: false,
+        approved: false,
+        course: {
+          archived: false,
+        },
+      },
+      relations: ['course'],
+    });
   }
 }

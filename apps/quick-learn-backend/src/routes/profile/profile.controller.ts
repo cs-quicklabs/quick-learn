@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../auth/guards';
   path: 'profile',
 })
 export class ProfileController {
-  constructor(private profileService: ProfileService) {}
+  constructor(private readonly profileService: ProfileService) {}
 
   @Get()
   @ApiOperation({ summary: 'checking the profile protected route.' })
