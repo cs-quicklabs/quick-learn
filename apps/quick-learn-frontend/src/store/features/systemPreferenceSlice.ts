@@ -1,6 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getSystemPreferences } from './../../apiServices/contentRepositoryService';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { getSystemPreferences } from '@src/apiServices/contentRepositoryService';
+import { REHYDRATE } from 'redux-persist';
+import type { PersistedState } from 'redux-persist';
 
 export type SystemPreferences = {
   unapprovedLessons: number;
@@ -12,7 +14,16 @@ interface SystemPreferencesState {
   error: string | null;
 }
 
-const INITIAL_STATE: SystemPreferencesState = {
+// Define the type for the rehydrate action payload
+interface RehydrateAction {
+  type: typeof REHYDRATE;
+  key: string;
+  payload?: {
+    systemPreference?: SystemPreferencesState;
+  } & PersistedState;
+}
+
+const initialState: SystemPreferencesState = {
   metadata: {
     unapprovedLessons: 0,
   },
@@ -37,17 +48,27 @@ export const fetchSystemPreferences = createAsyncThunk(
 
 const systemPreferenceSlice = createSlice({
   name: 'systemPreferences',
-  initialState: INITIAL_STATE,
+  initialState,
   reducers: {
-    resetSystemPreferences: () => INITIAL_STATE,
-    decrementUnapprovedLessons: (state) => {
-      if (state.metadata.unapprovedLessons > 0) {
-        state.metadata.unapprovedLessons -= 1;
-      }
+    updateSystemPreferencesData: (
+      state,
+      action: PayloadAction<SystemPreferences>,
+    ) => {
+      state.metadata.unapprovedLessons = action.payload.unapprovedLessons;
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(REHYDRATE, (state, action: RehydrateAction) => {
+        // Check if the rehydrate action is for this reducer
+        if (action.payload?.systemPreference) {
+          return {
+            ...action.payload.systemPreference,
+            status: 'idle',
+          };
+        }
+        return state;
+      })
       .addCase(fetchSystemPreferences.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -63,9 +84,10 @@ const systemPreferenceSlice = createSlice({
   },
 });
 
-export const { resetSystemPreferences, decrementUnapprovedLessons } =
-  systemPreferenceSlice.actions;
+export const { updateSystemPreferencesData } = systemPreferenceSlice.actions;
 export default systemPreferenceSlice.reducer;
 
 export const getUnapprovedLessonCount = (state: RootState) =>
   state?.systemPreference?.metadata?.unapprovedLessons;
+export const getSystemPreferencesState = (state: RootState) =>
+  state?.systemPreference?.status;
