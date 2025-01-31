@@ -1,4 +1,5 @@
 'use client';
+import { RootState } from '@src/store/store';
 
 import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
 import { updateContentRepository } from '@src/store/features/metadataSlice';
@@ -28,7 +29,10 @@ export const useFetchContentRepositoryMetadata = (forceFetch = false) => {
   };
 
   const fetchApprovalData = (user_type: number) => {
-    if (![UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER].includes(user_type)) {
+    if (
+      path !== RouteEnum.APPROVALS &&
+      ![UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER].includes(user_type)
+    ) {
       dispatch(fetchSystemPreferences());
     }
   };

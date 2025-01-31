@@ -9,6 +9,7 @@ import ApprovalListSkeleton from './ApprovalListSkeleton';
 import { RootState } from '@src/store/store';
 import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
 
 const columns = [
   en.common.lesson,
@@ -26,6 +27,14 @@ const ApprovalList = () => {
   useEffect(() => {
     dispatch(fetchUnapprovedLessons());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      dispatch(
+        updateSystemPreferencesData({ unapprovedLessons: lessons.length }),
+      );
+    }
+  }, [isLoading]);
 
   if (isInitialLoad && isLoading) return <ApprovalListSkeleton />;
 

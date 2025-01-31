@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
 import {
@@ -15,10 +15,8 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@src/store/hooks';
 import { setHideNavbar } from '@src/store/features/uiSlice';
-import { decrementUnapprovedLessons } from '@src/store/features/systemPreferenceSlice';
 
 const defaultLinks = [{ name: 'Approvals', link: RouteEnum.APPROVALS }];
 
@@ -55,8 +53,13 @@ const LessonDetails = () => {
       .then((res) => {
         setLesson(res.data);
       })
-      .catch((err) => showApiErrorInToast(err))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        showApiErrorInToast(err);
+        router.push(RouteEnum.APPROVALS);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [id]);
 
   function changeApproved(value: boolean) {
@@ -66,9 +69,10 @@ const LessonDetails = () => {
     approveLesson(id)
       .then((res) => {
         showApiMessageInToast(res);
-        dispatch(decrementUnapprovedLessons());
       })
-      .catch((err) => showApiErrorInToast(err))
+      .catch((err) => {
+        showApiErrorInToast(err);
+      })
       .finally(() => {
         setLoading(false);
         router.push(RouteEnum.APPROVALS);
