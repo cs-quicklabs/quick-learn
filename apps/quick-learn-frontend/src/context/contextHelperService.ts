@@ -1,6 +1,4 @@
 'use client';
-import { RootState } from '@src/store/store';
-
 import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
 import { updateContentRepository } from '@src/store/features/metadataSlice';
 import { UserTypeIdEnum } from 'lib/shared/src';

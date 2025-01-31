@@ -23,7 +23,7 @@ export default function Layout({
   useEffect(() => {
     const fetchData = async () => {
       getUser()
-        .then(async (res) => {
+        .then((res) => {
           dispatch(setUser(res.data));
           fetchMetadata(res?.data.user_type_id);
           fetchApprovalData(res?.data.user_type_id);

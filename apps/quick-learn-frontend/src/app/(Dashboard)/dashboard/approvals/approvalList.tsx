@@ -31,9 +31,12 @@ const ApprovalList = () => {
   useEffect(() => {
     if (!isLoading) {
       dispatch(
-        updateSystemPreferencesData({ unapprovedLessons: lessons.length }),
+        updateSystemPreferencesData({
+          unapprovedLessons: lessons?.length ?? 0,
+        }),
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   if (isInitialLoad && isLoading) return <ApprovalListSkeleton />;

@@ -50,16 +50,12 @@ const LessonDetails = () => {
     if (isNaN(+id)) return;
     setLoading(true);
     getLessonDetails(id, false)
-      .then((res) => {
-        setLesson(res.data);
-      })
+      .then((res) => setLesson(res.data))
       .catch((err) => {
         showApiErrorInToast(err);
         router.push(RouteEnum.APPROVALS);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, [id]);
 
   function changeApproved(value: boolean) {
@@ -67,12 +63,8 @@ const LessonDetails = () => {
     setIsApproved(value);
     setLoading(true);
     approveLesson(id)
-      .then((res) => {
-        showApiMessageInToast(res);
-      })
-      .catch((err) => {
-        showApiErrorInToast(err);
-      })
+      .then((res) => showApiMessageInToast(res))
+      .catch((err) => showApiErrorInToast(err))
       .finally(() => {
         setLoading(false);
         router.push(RouteEnum.APPROVALS);
