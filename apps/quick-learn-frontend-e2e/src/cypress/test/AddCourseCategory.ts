@@ -7,21 +7,21 @@ export class AddCourseCategory {
     cy.get('[href="/dashboard/account-settings"]').click();
   }
   openCourseCategory() {
-    return cy.contains('Courses Categories').click();
+    return cy.contains('Course Categories').click();
   }
   clickCourseCategory() {
-    return cy.get('#courses_categories_input_text');
+    return cy.get('#course_categories_input_text');
   }
   AddCourseCategory() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
-    return cy.get('#courses_categories_input_text').type('ReactJs' + Numeric);
+    return cy.get('#course_categories_input_text').type('ReactJs' + Numeric);
   }
   AddCourseCategoryWithOnlySpaces() {
-    return cy.get('#courses_categories_input_text').type('    ');
+    return cy.get('#course_categories_input_text').type('    ');
   }
   AddCourseCategoryWithMoreLimit() {
     return cy
-      .get('#courses_categories_input_text')
+      .get('#course_categories_input_text')
       .type(
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.',
       );
@@ -37,15 +37,15 @@ export class AddCourseCategory {
   editCourseCategories() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
-    cy.get('#courses_categories_name_edit').clear();
-    cy.get('#courses_categories_name_edit').type('React' + Numeric);
+    cy.get('#course_categories_name_edit').clear();
+    cy.get('#course_categories_name_edit').type('React' + Numeric);
     cy.get('.ml-5').click();
   }
   editCourseCategoriesWithEmptySpaces() {
     cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
-    cy.get('#courses_categories_name_edit').clear();
-    cy.get('#courses_categories_name_edit').type('    ');
-    cy.get('.ml-5').click();
+    cy.get('#course_categories_name_edit').clear();
+    cy.get('#course_categories_name_edit').type('    ');
+    cy.get('.ml-5').should('be.disabled');
     cy.get('td > .px-2').should('contain', 'This field is mandatory');
   }
 

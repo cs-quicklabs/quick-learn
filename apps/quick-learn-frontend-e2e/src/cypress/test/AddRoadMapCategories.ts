@@ -29,7 +29,7 @@ export class AddRoadMap {
     cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
     cy.get('#roadmap_categories_name_edit').clear();
     cy.get('#roadmap_categories_name_edit').type('    ');
-    cy.get('.ml-5').click();
+    cy.get('.ml-5').should('be.visible');
     cy.get('td > .px-2').should('contain', 'This field is mandatory');
   }
 

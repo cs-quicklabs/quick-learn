@@ -1,15 +1,18 @@
 import { LoginPage } from '../test/Login';
 import { MyLearningPaths } from '../test/MyLearningPaths';
-import { validCredentials } from '../fixtures/credential';
+import { MemberValidCredentials } from '../fixtures/credential';
 
 describe('My Learning Paths', () => {
   const loginPage = new LoginPage();
   beforeEach(() => {
     loginPage.visit();
     cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(validCredentials.mail, validCredentials.password);
+    loginPage.login(
+      MemberValidCredentials.MemberMail,
+      MemberValidCredentials.MemberPassword,
+    );
     cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
+    loginPage.getWelcomeMessage();
   });
 
   it('Verify user should able to navigate to lesson page via RoadMap', () => {

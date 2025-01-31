@@ -1,6 +1,8 @@
 export class MyLearningPaths {
   visitMyLearningPathsPage() {
-    return cy.get('#navDesktop1');
+    return cy
+      .get('[href="/dashboard/learning-path"]')
+      .contains('My Learning Paths');
   }
 
   getMyRoadmapsList() {
@@ -27,7 +29,7 @@ export class MyLearningPaths {
     cy.get('.py-4').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('.py-4').eq(1).click();
+    cy.get('.py-4').eq(0).click();
     cy.get('li.text-gray-700')
       .contains('My Learning Path')
       .should('be.visible');
@@ -38,7 +40,7 @@ export class MyLearningPaths {
     cy.get('[tabindex="0"]').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('[tabindex="0"]').eq(12).click();
+    cy.get('[tabindex="0"]').eq(-1).click();
     cy.get('.text-3xl').contains('Lessons').should('be.visible');
   }
 
@@ -46,7 +48,7 @@ export class MyLearningPaths {
     cy.get('.py-4').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('.py-4').eq(1).click();
+    cy.get('.py-4').eq(0).click();
     cy.get('li.text-gray-700')
       .contains('My Learning Path')
       .should('be.visible');

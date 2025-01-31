@@ -20,7 +20,7 @@ export class Approvals {
     cy.get('main div div div a').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('main div div div a').eq(1).click();
+    cy.get('main div div div a').eq(0).click();
     cy.get('.mt-2').contains('Create New Lesson').should('be.visible');
   }
 
@@ -28,7 +28,7 @@ export class Approvals {
     cy.get('main div div div a').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('main div div div a').eq(2).click();
+    cy.get('main div div div a').eq(0).click();
     cy.get('li.text-gray-700')
       .contains('Content Repository')
       .should('be.visible');
@@ -51,7 +51,7 @@ export class Approvals {
   }
 
   EditLessonContent() {
-    cy.get('#addRoadmapForm_textarea_description').type(
+    cy.get('div.ql-editor').type(
       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.',
     );
   }
@@ -72,12 +72,6 @@ export class Approvals {
     cy.get('input[id="default-checkbox"]').check();
   }
 
-  getSignOutButton() {
-    cy.get('[id="headerProfileImage"]').click();
-    cy.get('.py-1').eq(2).contains('Sign out').click();
-    cy.get('button[type="button"]').contains('Yes').click();
-  }
-
   SendForApprovalViaEditor() {
     this.visitContentPageViaEditor().click();
     this.getRoadmapList();
@@ -88,7 +82,6 @@ export class Approvals {
     this.EditLessonContent();
     this.getSendForApproval();
     cy.contains('Create New Lesson').should('be.visible');
-    this.getSignOutButton();
   }
 
   DoNotApprovePendingApprovalLessons() {
@@ -97,7 +90,6 @@ export class Approvals {
     this.getCourseList();
     this.getPendingApprovalList();
     this.visitContentPageViaEditor().click();
-    this.getSignOutButton();
   }
 
   ApproveLessonViaSuperAdmin() {
@@ -111,6 +103,5 @@ export class Approvals {
     this.EnsureApproveLessonUnchecked();
     this.clickApproveLessonCheckbox();
     cy.contains('Lessons Approvals').should('be.visible');
-    this.getSignOutButton();
   }
 }
