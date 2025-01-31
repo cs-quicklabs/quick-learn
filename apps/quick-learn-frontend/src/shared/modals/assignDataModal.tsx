@@ -39,9 +39,14 @@ const AssignDataModal: FC<Props> = ({
   const [isFormDirty, setIsFormDirty] = useState<boolean>(false);
   const [openAccordions, setOpenAccordions] = useState<string[]>([]);
   const [isAllExpanded, setIsAllExpanded] = useState<boolean>(false);
+  const [initialSelectedRoadmaps, setInitialSelectedRoadmaps] = useState<
+    string[]
+  >([]);
   const {
     register,
     handleSubmit,
+    getValues,
+    watch,
     formState: { errors, isValid },
     setValue,
     reset,
@@ -50,11 +55,14 @@ const AssignDataModal: FC<Props> = ({
     defaultValues: initialValues,
     mode: 'onChange',
   });
-  // const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
   const sortedData = useMemo(
     () => [...data].sort((a, b) => a.name.localeCompare(b.name)),
     [data],
   );
+  useEffect(() => {
+    const selectedRoadmaps = initialValues?.selected || [];
+    setInitialSelectedRoadmaps(selectedRoadmaps);
+  }, [initialValues]);
 
   useEffect(() => {
     if (show) {
@@ -62,6 +70,10 @@ const AssignDataModal: FC<Props> = ({
       const allAccordionIds = sortedData.map((ele) => ele.name);
       setOpenAccordions(allAccordionIds);
       setIsAllExpanded(true);
+      if (initialValues?.selected && !isLoading) {
+        setValue('selected', initialValues.selected);
+        setInitialSelectedRoadmaps(initialValues.selected);
+      }
     } else {
       // Reset the state when the modal is closed
       reset();
@@ -73,6 +85,14 @@ const AssignDataModal: FC<Props> = ({
       setValue('selected', initialValues.selected);
     }
   }, [initialValues, show, isLoading, reset, setValue, sortedData]);
+
+  useEffect(() => {
+    if (show) {
+      const subscription = watch(() => handleCheckFormDirty());
+      return () => subscription.unsubscribe();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show, watch]);
 
   function onFormSubmit(formData: schemaType) {
     onSubmit(formData?.selected ?? []);
@@ -104,6 +124,16 @@ const AssignDataModal: FC<Props> = ({
       newOpenAccordions.length === allAccordionIds.length;
 
     setIsAllExpanded(newIsAllExpanded);
+  };
+  const handleCheckFormDirty = () => {
+    const currentSelected = getValues('selected') || [];
+    const isDirty =
+      currentSelected.length !== initialSelectedRoadmaps.length ||
+      !currentSelected.every((value) =>
+        initialSelectedRoadmaps.includes(value),
+      );
+
+    setIsFormDirty(isDirty);
   };
 
   return (
@@ -211,7 +241,6 @@ const AssignDataModal: FC<Props> = ({
                                       value={item.value}
                                       className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
                                       {...register('selected')}
-                                      onChange={() => setIsFormDirty(true)}
                                     />
                                     <label
                                       htmlFor={item.name}
@@ -261,10 +290,17 @@ const AssignDataModal: FC<Props> = ({
               className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-500"
               disabled={!isFormDirty || !isValid || isLoading}
             >
-              {isLoading ? <Loader /> : en.common.save}
+              {isLoading ? (
+                <div className="pl-3">
+                  <Loader />
+                </div>
+              ) : (
+                en.common.save
+              )}
             </button>
             <button
               onClick={() => setShow(false)}
+              type="button"
               disabled={isLoading}
               className="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
             >

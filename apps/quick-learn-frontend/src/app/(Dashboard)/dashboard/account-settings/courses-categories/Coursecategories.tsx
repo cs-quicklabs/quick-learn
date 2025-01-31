@@ -12,18 +12,19 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BaseLayout from '../BaseLayout';
-import { UserContext } from '@src/context/userContext';
 import AccountSettingConformationModal from '@src/shared/modals/AccountSettiongConformationModal';
 import BaseSettingSkeleton from '../BaseSettingsSkeleton';
+import { useSelector } from 'react-redux';
+import { selectUser } from '@src/store/features/userSlice';
 
 type formOutput = {
   name: string;
 };
 
 const Coursecategories = () => {
-  const { user } = useContext(UserContext);
+  const user = useSelector(selectUser);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditLoading, setIsEditLoading] = useState<boolean>(false);

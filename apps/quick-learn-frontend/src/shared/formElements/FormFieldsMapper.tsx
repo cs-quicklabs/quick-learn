@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import InputField from './InputField';
 import { Path, useForm, UseFormReset, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from 'zod';
-import { FieldConfig } from '../types/formTypes';
+import { FieldConfig, TFieldTrigger } from '../types/formTypes';
 import ImageInput from './ImageInput';
 import { Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
@@ -29,6 +29,7 @@ interface Props<T extends z.ZodTypeAny> {
   ) => void;
   readonly id?: string;
   readonly cancelButton?: () => void;
+  readonly triggers?: TFieldTrigger[];
 }
 
 function FormFieldsMapper<T extends z.ZodTypeAny>({
@@ -41,16 +42,18 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
   isLoading = false,
   methods,
   resetFormOnSubmit = false,
-  mode = 'onBlur',
+  mode = 'onChange',
   onChangeImage,
   id,
   cancelButton,
+  triggers,
 }: Props<T>) {
   // Call useForm unconditionally
   const defaultMethods = useForm<z.infer<T>>({
     resolver: zodResolver(schema),
     mode,
   });
+  const [resetState, setResetState] = useState(false);
 
   // Use methods if provided, otherwise fall back to defaultMethods
   const {
@@ -58,6 +61,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     handleSubmit,
     setValue,
     watch,
+    trigger,
     getValues,
     reset,
     formState: { errors, isValid, isDirty },
@@ -67,8 +71,32 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
     onSubmit(data, reset);
     if (resetFormOnSubmit) {
       reset();
+      setResetState(true); // Trigger reset for InputField components
+      setTimeout(() => setResetState(false), 0); // Reset the state back to false
     }
   };
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (triggers && triggers.length > 0) {
+        const customTrigger = triggers.find((item) => item.name === name);
+
+        const allTriggersAreValid =
+          customTrigger?.triggers?.every((ele) => value?.[ele].length > 0) ??
+          false;
+
+        if (
+          customTrigger?.triggers &&
+          name === customTrigger.name &&
+          allTriggersAreValid
+        ) {
+          trigger((customTrigger.triggers as Path<TypeOf<T>>[]) ?? []);
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watch, trigger]);
 
   return (
     <>
@@ -118,6 +146,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
                 disabled={isLoading || field.disabled}
                 errorMsg={errors[field.name]?.message as string}
                 id={id}
+                resetState={resetState}
               />
             );
         })}

@@ -1,4 +1,5 @@
 import {
+  SystemPreferences,
   TContentRepositoryMetadata,
   TCourse,
   TCreateCourse,
@@ -167,5 +168,14 @@ export const getUserRoadmapsService = async (): Promise<
   const response = await axiosInstance.get<
     AxiosSuccessResponse<TUserRoadmap[]>
   >(`${ContentRepositoryApiEnum.GET_USER_ROADMAPS}?include_courses=true`);
+  return response.data;
+};
+
+export const getSystemPreferences = async (): Promise<
+  AxiosSuccessResponse<SystemPreferences>
+> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<SystemPreferences>
+  >(`${ContentRepositoryApiEnum.SYSTEM_PREFERNCES}`);
   return response.data;
 };

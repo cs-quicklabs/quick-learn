@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosErrorObject, AxiosSuccessResponse } from '@src/apiServices/axios';
 import { updateUserProfileService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
-import { UserContext } from '@src/context/userContext';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { onlyAlphabeticValidation } from '@src/utils/helpers';
@@ -11,11 +10,14 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import ProfileSettingsSkeleton from './ProfileSettingsSkeleton';
 import { FileUploadResponse } from '@src/shared/types/utilTypes';
+import { useSelector } from 'react-redux';
+import { selectUser, setUser } from '@src/store/features/userSlice';
+import { useAppDispatch } from '@src/store/hooks';
 
 // Define the service input type
 interface ProfileUpdateServiceInput {
@@ -54,8 +56,10 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 const ProfileSettings = () => {
-  const { user, setUser } = useContext(UserContext);
+  const user = useSelector(selectUser);
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     mode: 'onChange',
@@ -109,10 +113,12 @@ const ProfileSettings = () => {
       profile_image: res ? res.data.file : '', //handle upload and delete
     };
     if (user) {
-      setUser({
-        ...user,
-        profile_image: res ? res.data.file : '',
-      });
+      dispatch(
+        setUser({
+          ...user,
+          profile_image: res ? res.data.file : '',
+        }),
+      );
     }
     updateUserProfileService(serviceInput)
       .then((response) => {
@@ -140,12 +146,14 @@ const ProfileSettings = () => {
       const response = await updateUserProfileService(serviceInput);
 
       if (user) {
-        setUser({
-          ...user,
-          first_name,
-          last_name,
-          profile_image: serviceInput.profile_image,
-        });
+        dispatch(
+          setUser({
+            ...user,
+            first_name,
+            last_name,
+            profile_image: serviceInput.profile_image,
+          }),
+        );
       }
       showApiMessageInToast(response);
     } catch (err) {
@@ -156,6 +164,7 @@ const ProfileSettings = () => {
   };
 
   useEffect(() => {
+    setIsPageLoading(true);
     if (user) {
       reset({
         first_name: user.first_name,
@@ -164,9 +173,10 @@ const ProfileSettings = () => {
         email: user.email,
       });
     }
+    setIsPageLoading(false);
   }, [user, reset]);
 
-  if (isLoading) {
+  if (isPageLoading) {
     return <ProfileSettingsSkeleton />;
   }
 
@@ -184,6 +194,7 @@ const ProfileSettings = () => {
           schema={profileSchema}
           onSubmit={onSubmit}
           methods={methods}
+          isLoading={isLoading}
           buttonText="Save"
           onChangeImage={onChangeImage}
           id="profileSettingsForm"

@@ -36,14 +36,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     paginationDto: PaginationDto,
     options: FindOptionsWhere<CourseEntity>, // filter conditions
     relations: string[] = [], // additional relations to include
-  ): Promise<{
-    courses: CourseEntity[];
-    total: number;
-    page: number;
-    totalPages: number;
-  }> {
+  ): Promise<PaginatedResult<CourseEntity> | CourseEntity[]> {
     const queryBuilder = this.repository.createQueryBuilder('courses');
-    const { page = 1, limit = 10 } = paginationDto;
+    const { page, limit, mode } = paginationDto;
     // Apply filters from options
     if (options) {
       Object.keys(options).forEach((key) => {
@@ -76,67 +71,24 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       )
       .orderBy('courses.name', 'ASC');
 
-    // Calculate total count before pagination
-    const total = await queryBuilder.getCount();
+    if (mode === 'paginate') {
+      const total = await queryBuilder.getCount();
 
-    // Apply pagination
-    queryBuilder.skip((page - 1) * limit).take(limit);
-
-    // Get paginated courses
-    const courses = await queryBuilder.getMany();
-
-    // Calculate total pages
-    const totalPages = Math.ceil(total / limit);
-
-    return {
-      courses,
-      total,
-      page,
-      totalPages,
-    };
-  }
-
-  async getAllCourses(
-    options: FindOptionsWhere<CourseEntity>, // filter conditions
-    relations: string[] = [], // additional relations to include
-  ): Promise<CourseEntity[]> {
-    const queryBuilder = this.repository.createQueryBuilder('courses');
-
-    // Apply filters from options
-    if (options) {
-      Object.keys(options).forEach((key) => {
-        queryBuilder.andWhere(`courses.${key} = :${key}`, {
-          [key]: options[key],
-        });
-      });
+      // Apply pagination
+      queryBuilder.skip((page - 1) * limit).take(limit);
+      const items = await queryBuilder.getMany();
+      const total_pages = Math.ceil(total / limit);
+      return {
+        items,
+        total,
+        page,
+        limit,
+        total_pages,
+      };
+    } else {
+      const items = await queryBuilder.getMany();
+      return items;
     }
-
-    // Dynamically include relations
-    relations.forEach((relation) => {
-      queryBuilder.leftJoinAndSelect(`courses.${relation}`, relation);
-    });
-
-    // Join course_category and count lessons
-    queryBuilder
-      .leftJoinAndSelect('courses.course_category', 'course_category')
-      .leftJoin('courses.lessons', 'lessons')
-      .loadRelationCountAndMap(
-        'courses.lessons_count',
-        'courses.lessons',
-        'lessons',
-        (qb) =>
-          qb
-            .andWhere('lessons.archived = :archivedLessons', {
-              archivedLessons: false,
-            })
-            .andWhere('lessons.approved = :approvedLessons', {
-              approvedLessons: true,
-            }),
-      )
-      .orderBy('courses.created_at', 'DESC')
-      .addOrderBy('course_category.created_at', 'DESC');
-
-    return await queryBuilder.getMany();
   }
 
   /**
@@ -188,6 +140,7 @@ export class CourseService extends BasicCrudService<CourseEntity> {
   async getCourseDetails(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
+    conditions?: { countParticipant?: boolean; isCommunity?: boolean },
   ): Promise<CourseEntity> {
     let sort: FindOptionsOrder<CourseEntity>;
     if (relations.includes('lessons')) {
@@ -206,23 +159,42 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     if (!course) {
       throw new BadRequestException(en.invalidCourse);
     }
-
-    const courseCount = await this.getCourseParticipantCount(course.id);
-    course['userCount'] = courseCount;
+    if (conditions?.countParticipant) {
+      const courseCount = await this.getCourseParticipantCount(course.id);
+      course['userCount'] = courseCount;
+    }
 
     if (!course.lessons) {
       course.lessons = [];
     } else {
-      // Filter lessons if they exist
-      course.lessons = course.lessons
-        .filter((lesson) => !lesson.archived)
-        .map((lesson) => ({
-          ...lesson,
-          content: Helpers.limitSanitizedContent(lesson.content),
-        })) as LessonEntity[];
+      // Filter and sanitize lessons using helper function
+      const archived = false;
+      const approved = conditions?.isCommunity ? true : null; // Only consider approval for community lessons
+
+      course.lessons = await this.filterSanitisedLessons(course.lessons, {
+        archived: archived,
+        approved: approved,
+      });
     }
 
     return course;
+  }
+  async filterSanitisedLessons(
+    lessons: LessonEntity[],
+    conditions: { archived: boolean; approved?: boolean | null },
+  ): Promise<LessonEntity[]> {
+    return lessons
+      .filter(
+        (lesson) =>
+          lesson.archived === conditions.archived &&
+          (conditions.approved === null ||
+            lesson.approved === conditions.approved),
+      )
+      .map((lesson) => {
+        // Sanitize content while keeping the original instance
+        lesson.content = Helpers.limitSanitizedContent(lesson.content);
+        return lesson; // Return the original entity instance
+      });
   }
 
   async getCourseParticipantCount(id: number) {
@@ -238,7 +210,6 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     const result = await queryBuilder.getRawOne();
     return result?.userCount || 0;
   }
-
   /**
    * Gets course details from assigned roadmaps
    */
@@ -502,15 +473,13 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
 
     const courseDetails = await course.getOne();
-    if (courseDetails && courseDetails.lessons.length > 0) {
-      courseDetails.lessons = courseDetails.lessons
-        .filter((lesson) => !lesson.archived && lesson.approved)
-        .map((lesson) => ({
-          ...lesson,
-          content: Helpers.limitSanitizedContent(lesson.content),
-        })) as LessonEntity[];
-    } else if (courseDetails) {
+    if (!courseDetails.lessons.length) {
       courseDetails.lessons = [];
+    } else {
+      courseDetails.lessons = await this.filterSanitisedLessons(
+        courseDetails.lessons,
+        { archived: false, approved: true },
+      );
     }
     return courseDetails;
   }

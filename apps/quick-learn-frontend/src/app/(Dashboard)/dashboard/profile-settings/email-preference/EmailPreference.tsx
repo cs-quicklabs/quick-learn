@@ -13,9 +13,10 @@ import { en } from '@src/constants/lang/en';
 const EmailPreference = () => {
   const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsPageLoading(true);
     getUserPreferencesService()
       .then((res) => {
         if (res?.data?.preference !== undefined) {
@@ -23,7 +24,7 @@ const EmailPreference = () => {
         }
       })
       .catch((err) => showApiErrorInToast(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsPageLoading(false));
   }, []); // Dependency array is empty to ensure this runs only once
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPreference = e.target.checked;
@@ -45,17 +46,19 @@ const EmailPreference = () => {
       .finally(() => setIsLoading(false));
   };
 
-  if (isLoading) return <EmailPreferenceSkeleton />;
+  if (isPageLoading) return <EmailPreferenceSkeleton />;
   return (
-    <>
-      <div>
-        <h1 className="text-lg font-semibold dark:text-white">
-          {en.ProfileSetting.preferenceHead}
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-          {en.ProfileSetting.preferenceSubHead}
-        </p>
+    <div>
+      <h1 className="text-lg font-semibold dark:text-white">
+        {en.ProfileSetting.preferenceHead}
+      </h1>
+      <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+        {en.ProfileSetting.preferenceSubHead}
+      </p>
 
+      {isLoading ? (
+        <EmailPreferenceSkeleton isPartial />
+      ) : (
         <div className="flex mt-6">
           <div className="flex items-center h-5">
             <input
@@ -82,8 +85,8 @@ const EmailPreference = () => {
             </p>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 

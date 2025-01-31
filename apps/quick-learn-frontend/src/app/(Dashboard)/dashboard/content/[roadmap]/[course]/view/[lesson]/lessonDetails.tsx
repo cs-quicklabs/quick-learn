@@ -1,4 +1,5 @@
 'use client';
+import { PencilIcon } from '@heroicons/react/20/solid';
 import { getRoadmap } from '@src/apiServices/contentRepositoryService';
 import { getLessonDetails } from '@src/apiServices/lessonsService';
 import { en } from '@src/constants/lang/en';
@@ -7,9 +8,13 @@ import { FullPageLoader } from '@src/shared/components/UIElements';
 import ViewLesson from '@src/shared/components/ViewLesson';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
+import { selectUser } from '@src/store/features/userSlice';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
+import { UserTypeIdEnum } from 'lib/shared/src';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
@@ -28,6 +33,10 @@ const LessonDetails = () => {
   const router = useRouter();
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
+  const user = useSelector(selectUser);
+  const canEdit = useMemo(() => {
+    return user?.user_type_id === UserTypeIdEnum.EDITOR;
+  }, [user]);
 
   // To set the links for the breadcrumb
   const links = useMemo<TBreadcrumb[]>(() => {
@@ -71,9 +80,23 @@ const LessonDetails = () => {
     }
   }, [roadmapId, courseId, lessonId, router]);
 
+  if (!user) return <FullPageLoader />;
   if (!lesson) return <FullPageLoader />;
 
-  return <ViewLesson lesson={lesson} links={links} isPending={true} />;
+  return (
+    <>
+      <ViewLesson lesson={lesson} links={links} isPending={true} />
+      {canEdit && (
+        <Link
+          href={`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/edit/${lessonId}`}
+        >
+          <span className="fixed flex items-center bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500">
+            <PencilIcon className="flex-shrink-0 inline w-4 h-4 me-1" />| Edit
+          </span>
+        </Link>
+      )}
+    </>
+  );
 };
 
 export default LessonDetails;

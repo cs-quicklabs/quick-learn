@@ -11,18 +11,20 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { logoutApiCall } from '@src/apiServices/authService';
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '@src/context/userContext';
+import { useEffect, useState } from 'react';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import ConformationModal from '../modals/conformationModal';
 import { en } from '@src/constants/lang/en';
 import { getInitials } from '@src/utils/helpers';
 import WebsiteLogo from './WebsiteLogo';
 import NavbarSearchBox from './NavbarSearchBox';
+import { useSelector } from 'react-redux';
+import { selectUser } from '@src/store/features/userSlice';
+import { getUnapprovedLessonCount } from '@src/store/features/systemPreferenceSlice';
 
 type TLink = { name: string; link: string; isExtended?: boolean };
 
@@ -75,9 +77,9 @@ const Navbar = () => {
   const [links, setLinks] = useState<TLink[]>([]);
   const [showConformationModal, setShowConformationModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useContext(UserContext);
+  const user = useSelector(selectUser);
   const pathname = usePathname();
-  const router = useRouter();
+  const approvalLessonCount = useSelector(getUnapprovedLessonCount);
 
   useEffect(() => {
     if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
@@ -103,11 +105,25 @@ const Navbar = () => {
     try {
       localStorage.removeItem('searchHistory');
       await logoutApiCall();
-      router.push('/');
+      window.location.href = '/';
     } catch (error) {
       console.log(error);
     }
   }
+
+  const showApprovalCount = (item: TLink, type: string) => {
+    return (
+      <div
+        className={`${
+          item.name === 'Approvals' && approvalLessonCount > 0 ? '' : 'hidden'
+        }  h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center ${
+          type == 'desktop' && 'absolute top-1 ml-20'
+        }`}
+      >
+        {approvalLessonCount}
+      </div>
+    );
+  };
 
   const renderMenuItem = (item: TLink) => {
     if (item.isExtended) {
@@ -181,6 +197,7 @@ const Navbar = () => {
                     }
                   >
                     {item.name}
+                    {showApprovalCount(item, 'desktop')}
                   </Link>
                 ))}
               </div>
@@ -334,7 +351,11 @@ const Navbar = () => {
                     : 'text-gray-300 hover:bg-gray-700 hover:text-white')
                 }
               >
-                {item.name}
+                <span className="flex justify-between items-center">
+                  {item.name}
+
+                  {showApprovalCount(item, 'mobile')}
+                </span>
               </DisclosureButton>
             ))}
           </div>

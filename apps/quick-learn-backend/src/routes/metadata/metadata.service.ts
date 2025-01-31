@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { RoadmapCategoryService } from '../roadmap-category/roadmap-category.service';
 import { CourseCategoryService } from '../course-category/course-category.service';
+import { LessonService } from '../lesson/lesson.service';
 
 @Injectable()
 export class MetadataService {
   constructor(
     private readonly roadmapCategoryService: RoadmapCategoryService,
     private readonly courseCategoryService: CourseCategoryService,
+    private readonly lessonService: LessonService,
   ) {}
 
   async getContentRepositoryMetadata() {
@@ -20,5 +22,12 @@ export class MetadataService {
     metadata['course_categories'] = courseCategories;
 
     return metadata;
+  }
+  async getLessonMetaData() {
+    const unapprovedLesson =
+      await this.lessonService.getUnApprovedLessonCount();
+    return {
+      unapprovedLessons: unapprovedLesson,
+    };
   }
 }
