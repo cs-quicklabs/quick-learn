@@ -48,7 +48,7 @@ export const OpenEyeIcon = () => {
 };
 
 export const Loader = ({
-  className = 'inline w-4 h-4 me-3',
+  className = 'inline w-4 h-4 mx-[7px]',
 }: {
   className?: string;
 }) => {

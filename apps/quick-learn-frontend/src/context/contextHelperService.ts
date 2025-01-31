@@ -1,33 +1,39 @@
 'use client';
-
 import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
 import { updateContentRepository } from '@src/store/features/metadataSlice';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import { usePathname } from 'next/navigation';
 import { useAppDispatch } from '@src/store/hooks';
 import { RouteEnum } from '@src/constants/route.enum';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
+import { fetchSystemPreferences } from '@src/store/features/systemPreferenceSlice';
 
 // Custom hook to fetch content repository metadata
-// This will fetch data for the user other than member or when it is forced
-// to fetch the metadata
 export const useFetchContentRepositoryMetadata = (forceFetch = false) => {
   const dispatch = useAppDispatch();
   const path = usePathname();
 
-  const fetchMetadata = async (user_type = UserTypeIdEnum.MEMBER) => {
+  const fetchMetadata = async (user_type: number) => {
     if (
-      !forceFetch &&
-      (path === RouteEnum.CONTENT || user_type === UserTypeIdEnum.MEMBER)
+      forceFetch ||
+      (path !== RouteEnum.CONTENT && user_type !== UserTypeIdEnum.MEMBER)
     ) {
-      return;
-    }
-
-    getContentRepositoryMetadata()
-      .then((res) => {
+      try {
+        const res = await getContentRepositoryMetadata();
         dispatch(updateContentRepository(res.data));
-      })
-      .catch((err) => showApiErrorInToast(err));
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
-  return fetchMetadata;
+
+  const fetchApprovalData = (user_type: number) => {
+    if (
+      path !== RouteEnum.APPROVALS &&
+      ![UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER].includes(user_type)
+    ) {
+      dispatch(fetchSystemPreferences());
+    }
+  };
+
+  return { fetchMetadata, fetchApprovalData };
 };

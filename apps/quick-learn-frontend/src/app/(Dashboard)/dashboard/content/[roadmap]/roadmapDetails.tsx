@@ -125,13 +125,15 @@ const RoadmapDetails = () => {
   }, [roadmapId, dispatch, router]);
 
   useEffect(() => {
-    const data = allCourseCategories.map((item) => ({
-      name: item.name,
-      list: item.courses.map((course) => ({
-        name: course.name,
-        value: Number(course.id),
-      })),
-    }));
+    const data = allCourseCategories
+      .filter((category) => category.courses.length > 0)
+      .map((item) => ({
+        name: item.name,
+        list: item.courses.map((course) => ({
+          name: course.name,
+          value: Number(course.id),
+        })),
+      }));
     setCourseCategoriesData(data);
   }, [allCourseCategories]);
 
@@ -339,6 +341,15 @@ const RoadmapDetails = () => {
 
         {/* Courses Section */}
         <div className="px-4">
+          <div className="flex items-baseline mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold">
+              {en.contentRepository.allCourses}
+            </h2>
+            <p className="ml-2 text-sm text-gray-500">
+              ({roadmapData.courses?.length ?? 0} {en.contentRepository.courses}
+              )
+            </p>
+          </div>
           {hasCourses ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               <CreateNewCard

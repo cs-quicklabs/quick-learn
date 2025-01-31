@@ -20,4 +20,12 @@ export class MetadataController {
     const metadata = await this.service.getContentRepositoryMetadata();
     return new SuccessResponse(en.GetContentRepositoryMetadata, metadata);
   }
+  @Get('system-preferences')
+  @ApiOperation({
+    summary: 'Get system prefrences like Unapproved Lesson count',
+  })
+  async getLessonMetaData() {
+    const metadata = await this.service.getLessonMetaData();
+    return new SuccessResponse(en.GetContentMetadata, metadata);
+  }
 }
