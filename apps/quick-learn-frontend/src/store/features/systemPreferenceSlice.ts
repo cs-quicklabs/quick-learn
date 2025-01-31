@@ -12,7 +12,6 @@ interface SystemPreferencesState {
   metadata: SystemPreferences;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
-  lastFetched: number | null;
 }
 
 // Define the type for the rehydrate action payload
@@ -30,7 +29,6 @@ const initialState: SystemPreferencesState = {
   },
   status: 'idle',
   error: null,
-  lastFetched: null,
 };
 
 export const fetchSystemPreferences = createAsyncThunk(
