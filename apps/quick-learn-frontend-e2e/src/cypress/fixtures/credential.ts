@@ -10,5 +10,10 @@ export const AdminValidCredentials = {
 
 export const EditorValidCredentials = {
   mail: 'editor@yopmail.com',
-  password: 'Editor@123',
+  password: 'Password@123p',
+};
+
+export const MemberValidCredentials = {
+  mail: 'member@yopmail.com',
+  password: 'Password@123p',
 };

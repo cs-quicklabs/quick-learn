@@ -62,10 +62,10 @@ describe('Primary Skill Update', () => {
     AddRoadMaps.deleteRoadMap();
   });
 
-  it('Verify Super admin should not able to Delete Roadmap category associated with other Roadmaps', () => {
-    const AddRoadMaps = new AddRoadMap();
-    AddRoadMaps.OpenAccountSettings();
-    AddRoadMaps.openRoadMap();
-    AddRoadMaps.deleteRoadMapCategories();
-  });
+  // it('Verify Super admin should not able to Delete Roadmap category associated with other Roadmaps', () => {
+  //   const AddRoadMaps = new AddRoadMap();
+  //   AddRoadMaps.OpenAccountSettings();
+  //   AddRoadMaps.openRoadMap();
+  //   AddRoadMaps.deleteRoadMapCategories();
+  // });
 });

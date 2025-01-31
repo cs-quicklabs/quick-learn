@@ -19,7 +19,11 @@ describe('New Course Creation', () => {
 
   it('Verify user able to create New Course', () => {
     const NewCourse = new CreateNewCourse();
-    NewCourse.NewCourseCreation();
+    NewCourse.visitContentPage();
+    NewCourse.getRoadMapsList();
+    NewCourse.getCreateNewCourseButton();
+    NewCourse.EnterCourseName();
+    NewCourse.SelectCourseCategory();
     const lesson = generateRandomLesson();
     cy.get('#addCourseForm_textarea_description').type(lesson.title);
     cy.get('[type="submit"]').click();
@@ -29,13 +33,13 @@ describe('New Course Creation', () => {
   });
 
   it('Verify user not able to create an empty course', () => {
-    const NewRoadmap = new CreateNewCourse();
-    NewRoadmap.CourseCreationWithWhiteSpaces();
+    const NewCourse = new CreateNewCourse();
+    NewCourse.CourseCreationWithWhiteSpaces();
   });
 
   it('Verify user not able to create course with exceeded limit', () => {
-    const NewRoadmap = new CreateNewCourse();
-    NewRoadmap.CreateCourseWithLimitExceed();
+    const NewCourse = new CreateNewCourse();
+    NewCourse.CreateCourseWithLimitExceed();
     const longText = faker.lorem.paragraphs(200);
     cy.get('#addCourseForm_textarea_description').invoke('val', longText);
     cy.get('#addCourseForm_textarea_description').type(
@@ -47,9 +51,9 @@ describe('New Course Creation', () => {
     cy.get('button[type="button"]').contains('Cancel').click();
   });
 
-  it('Verify user able to Edit roadmap', () => {
-    const NewRoadmap = new CreateNewCourse();
-    NewRoadmap.EditCourse();
+  it('Verify user able to Edit course', () => {
+    const NewCourse = new CreateNewCourse();
+    NewCourse.EditCourse();
     const lesson = generateRandomLesson();
     cy.get('#addCourseForm_textarea_description').type(lesson.title);
     cy.get('[type="submit"]').click();
@@ -58,18 +62,18 @@ describe('New Course Creation', () => {
       .should('be.visible');
   });
 
-  it('Verify User able to Assign Existing Courses to Roadmap', () => {
-    const NewRoadmap = new CreateNewCourse();
-    NewRoadmap.AssignExistingRoadmapsToCourses();
+  it('Verify User able to Assign Existing Courses to course', () => {
+    const NewCourse = new CreateNewCourse();
+    NewCourse.AssignExistingRoadmapsToCourses();
   });
 
-  it('Verify user able to unassign existing courses from roadmap', () => {
-    const NewRoadmap = new CreateNewCourse();
-    NewRoadmap.UnassignExistingRoadmapsToCourses();
+  it('Verify user able to unassign existing courses from course', () => {
+    const NewCourse = new CreateNewCourse();
+    NewCourse.UnassignExistingRoadmapsToCourses();
   });
 
-  it('Verify user able to Delete the Roadmap', () => {
-    const NewRoadmap = new CreateNewCourse();
-    NewRoadmap.DeleteCourse();
+  it('Verify user able to Delete the Course', () => {
+    const NewCourse = new CreateNewCourse();
+    NewCourse.DeleteCourse();
   });
 });

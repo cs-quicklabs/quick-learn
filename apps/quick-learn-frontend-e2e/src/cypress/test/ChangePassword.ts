@@ -73,6 +73,9 @@ export class ChangePassword {
     this.getErrorMessage().contains(
       'Password must contain at least one special character',
     );
+    this.getNewPassword().clear();
+    this.getNewPassword().type('Password@101112131415161718192021');
+    this.getErrorMessage().contains('Password cannot exceed 32 characters');
   }
   UpdatePasswordWithEmptySpaces() {
     cy.contains('Change Password').should('be.visible');

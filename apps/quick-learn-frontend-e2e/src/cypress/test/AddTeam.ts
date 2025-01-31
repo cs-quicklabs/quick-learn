@@ -20,7 +20,7 @@ export class AddTeam {
     return cy.get('#user_type_id').select('Admin');
   }
   getUserTypeEditor() {
-    return cy.get('#user_type_id').select('Admin');
+    return cy.get('#user_type_id').select('Editor');
   }
 
   generateRandomEmail() {
@@ -29,7 +29,7 @@ export class AddTeam {
   }
 
   getUserTypeMember() {
-    return cy.get('#user_type_id').select('Admin');
+    return cy.get('#user_type_id').select('Member');
   }
 
   getPassword() {
@@ -45,20 +45,6 @@ export class AddTeam {
 
   submitAddTeamButton() {
     return cy.get('#submit').click();
-  }
-
-  addTeam() {
-    const mail = this.generateRandomEmail();
-    this.visitTeamPage().click();
-    this.getAddTeamButton().click();
-    this.getFirstName().type('User');
-    this.getLastName().type('Automation');
-    this.getEmail().type(mail);
-    this.getUserTypeAdmin();
-    this.getPassword().type('Password@123');
-    this.getConfirmPassword().type('Password@123');
-    this.getSkillID();
-    this.submitAddTeamButton();
   }
 
   fieldNameRequired() {

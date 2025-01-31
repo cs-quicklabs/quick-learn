@@ -1,6 +1,7 @@
 import { AddTeam } from '../test/AddTeam';
 import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
+import { faker } from '@faker-js/faker';
 
 describe('Login Test', () => {
   const loginPage = new LoginPage();
@@ -16,7 +17,19 @@ describe('Login Test', () => {
 
   it('Admin able to Add Team', () => {
     const addTeams = new AddTeam();
-    addTeams.addTeam();
+    const randomFirstName = faker.person.firstName();
+    const randomLastName = faker.person.lastName();
+    const fakeEmail = faker.internet.email();
+    addTeams.visitTeamPage().click();
+    addTeams.getAddTeamButton().click();
+    cy.get('#first_name').type(randomFirstName);
+    cy.get('#last_name').type(randomLastName);
+    cy.get('#email').type(fakeEmail);
+    addTeams.getUserTypeAdmin();
+    addTeams.getPassword().type('Password@123');
+    addTeams.getConfirmPassword().type('Password@123');
+    addTeams.getSkillID();
+    addTeams.submitAddTeamButton();
   });
 
   it('verify required field ', () => {

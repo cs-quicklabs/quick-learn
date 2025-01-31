@@ -24,6 +24,11 @@ describe('My Learning Paths', () => {
 
   it('Verify User should able to Mark a lesson as Read/Unread', () => {
     const LearningPaths = new MyLearningPaths();
-    LearningPaths.NavigateViaCourses();
+    LearningPaths.MarkAsReadUnread();
   });
+
+  it('Verify user goes back to learning path if no lesson is found', ()=>{
+    const LearningPaths = new MyLearningPaths();
+    LearningPaths.NoLessonFound();
+  })
 });

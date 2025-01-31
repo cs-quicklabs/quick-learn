@@ -74,8 +74,8 @@ describe('New RoadMap Creation', () => {
   });
 
   it('Verify user able to create a new course', () => {
-    const NewRoadmap = new CreateNewRoadMap();
-    NewRoadmap.NewCourseCreation();
+    const NewCourse = new CreateNewRoadMap();
+    NewCourse.NewCourseCreation();
     const lesson = generateRandomLesson();
     cy.get('#addCourseForm_textarea_description').type(lesson.title);
     cy.get('[type="submit"]').click();

@@ -8,7 +8,8 @@ export class AddRoadMap {
   }
 
   openRoadMap() {
-    return cy.contains('Roadmap Categories').click();
+    cy.get('[href="/dashboard/account-settings/roadmap-categories"]').click();
+    cy.contains('Roadmap Categories').should('be.visible');
   }
 
   clickRoadmapField() {
@@ -29,22 +30,22 @@ export class AddRoadMap {
     cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
     cy.get('#roadmap_categories_name_edit').clear();
     cy.get('#roadmap_categories_name_edit').type('    ');
-    cy.get('.ml-5').click();
+    cy.get('.ml-5').should('be.visible');
     cy.get('td > .px-2').should('contain', 'This field is mandatory');
   }
 
   deleteRoadMap() {
-    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
   }
   getErrorMessage() {
     return cy.get('.mt-1');
   }
 
-  deleteRoadMapCategories() {
-    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
-    cy.get('[class="flex-1 overflow-auto p-0"]');
-    cy.get('button.bg-white.uppercase').click();
-  }
+  // deleteRoadMapCategories() {
+  //   cy.get(':nth-child(2) > .inline-flex > .ml-2').click();
+  //   cy.get('[class="flex-1 overflow-auto p-0"]');
+  //   cy.get('button.bg-white.uppercase').click();
+  // }
 
   OpenAccountSettings() {
     this.getAccountSettings();

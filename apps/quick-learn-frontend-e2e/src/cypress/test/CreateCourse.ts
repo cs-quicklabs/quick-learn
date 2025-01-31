@@ -9,17 +9,25 @@ export class CreateNewCourse {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
     cy.get('section div a').eq(0).click();
+    cy.get('p.text-sm')
+      .contains('created this roadmap on')
+      .should('be.visible');
   }
 
-  getCreateCoursesList() {
-    cy.get('main div div div a').each(($el, index) => {
-      cy.log(`Index: ${index}, Text: ${$el.text()}`);
+  getCreateNewCourseButton() {
+    cy.get('body').then(($body) => {
+      if ($body.find('.text-lg:contains("No courses available")').length > 0) {
+        cy.get('button.inline-flex')
+          .contains('Create New Course')
+          .should('be.visible')
+          .click();
+      } else {
+        cy.get('button.inline-block')
+          .contains('Create New Course')
+          .should('be.visible')
+          .click();
+      }
     });
-    cy.get('main div div div a').eq(0).click();
-  }
-
-  getCreateAnotherCourseButton() {
-    cy.get('.mt-2').contains('Create New Course').click();
   }
 
   EnterCourseName() {
@@ -56,15 +64,14 @@ export class CreateNewCourse {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
     cy.get('main div div div a').eq(0).click();
-    cy.get('.text-lg').contains('No Lessons found');
   }
 
   UpdateCourseCategory() {
     cy.contains('Course Category').should('be.visible');
-    cy.get('#addCourseForm_select_course_category_id').select(6);
+    cy.get('#addCourseForm_select_course_category_id').select(1);
   }
   getEditCoursebutton() {
-    cy.get('p.text-sm').contains('created this roadmap on');
+    cy.get('p.text-sm').contains('created this course on');
     cy.get('button.text-black').eq(0).click();
     cy.get('.text-lg').contains('Edit Course');
   }
@@ -92,7 +99,7 @@ export class CreateNewCourse {
   }
 
   getAddOrMoveCourseButton() {
-    cy.get('p.text-sm').contains('created this roadmap on');
+    cy.get('p.text-sm').contains('created this course on');
     cy.get('button.text-black').eq(1).click();
     cy.get('.text-xl').contains('Add or Move this course to another Roadmap');
   }
@@ -107,7 +114,7 @@ export class CreateNewCourse {
 
   EnsureExistingCoursesUnchecked() {
     cy.get('[type="checkbox"]')
-      .eq(6)
+      .eq(0)
       .then(($checkbox) => {
         if ($checkbox.is(':checked')) {
           cy.wrap($checkbox).uncheck();
@@ -115,11 +122,11 @@ export class CreateNewCourse {
       });
   }
   clickExistingCourseCheckbox() {
-    cy.get('[type="checkbox"]').eq(6).check();
+    cy.get('[type="checkbox"]').eq(0).check();
   }
 
   getArchiveCourseButton() {
-    cy.get('p.text-sm').contains('created this roadmap on');
+    cy.get('p.text-sm').contains('created this course on');
     cy.get('button.text-black').eq(2).click();
     cy.contains("Yes, I'm sure").click();
   }
@@ -130,20 +137,10 @@ export class CreateNewCourse {
       .should('be.visible');
   }
 
-  NewCourseCreation() {
-    this.visitContentPage();
-    cy.get('.text-2xl').contains('All Roadmaps');
-    this.getRoadMapsList();
-    this.getCreateAnotherCourseButton();
-    this.EnterCourseName();
-    this.SelectCourseCategory();
-  }
-
   CourseCreationWithWhiteSpaces() {
     this.visitContentPage();
-    cy.get('.text-2xl').contains('All Roadmaps');
     this.getRoadMapsList();
-    this.getCreateAnotherCourseButton();
+    this.getCreateNewCourseButton();
     this.BlankCourseName();
     this.SelectCourseCategory();
     this.BlankCourseDescription();
@@ -151,16 +148,15 @@ export class CreateNewCourse {
   }
   CreateCourseWithLimitExceed() {
     this.visitContentPage();
-    cy.get('.text-2xl').contains('All Roadmaps');
     this.getRoadMapsList();
-    this.getCreateAnotherCourseButton();
+    this.getCreateNewCourseButton();
     this.CourseNameWithExcessCharacters();
     this.SelectCourseCategory();
   }
 
   EditCourse() {
     this.visitContentPage();
-    cy.get('.text-2xl').contains('All Roadmaps');
+
     this.getRoadMapsList();
     this.getCourseListToEdit();
     this.getEditCoursebutton();
@@ -168,7 +164,7 @@ export class CreateNewCourse {
     cy.wait(2000);
     cy.get('#addCourseForm_input_text').clear();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000);
+    cy.wait(2000);
     this.EnterCourseName();
     this.UpdateCourseCategory();
     cy.get('#addCourseForm_textarea_description').clear();
@@ -176,7 +172,7 @@ export class CreateNewCourse {
 
   AssignExistingRoadmapsToCourses() {
     this.visitContentPage();
-    cy.get('.text-2xl').contains('All Roadmaps');
+
     this.getRoadMapsList();
     this.getCourseListToEdit();
     this.getAddOrMoveCourseButton();
@@ -189,7 +185,7 @@ export class CreateNewCourse {
 
   UnassignExistingRoadmapsToCourses() {
     this.visitContentPage();
-    cy.get('.text-2xl').contains('All Roadmaps');
+
     this.getRoadMapsList();
     this.getCourseListToEdit();
     this.getAddOrMoveCourseButton();
@@ -200,7 +196,6 @@ export class CreateNewCourse {
 
   DeleteCourse() {
     this.visitContentPage();
-    cy.get('.text-2xl').contains('All Roadmaps');
     this.getRoadMapsList();
     this.getCourseListToEdit();
     this.getArchiveCourseButton();

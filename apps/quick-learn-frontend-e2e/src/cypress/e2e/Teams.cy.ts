@@ -18,6 +18,11 @@ describe('Login Test', () => {
     const Teams = new TeamsPage();
     Teams.getTeamsColumnData();
   });
+
+  it('Verify Complete Team members List', () => {
+    const Teams = new TeamsPage();
+    Teams.filterCompleteList();
+  });
   it('Verify User able to filter admin list', () => {
     const Teams = new TeamsPage();
     Teams.filterAdminList();

@@ -3,26 +3,60 @@ export class UpdateGeneralSettings {
     return cy.get('[id="headerProfileImage"]').click();
   }
   getAccountSettings() {
-    cy.get('[id="headerProfileImage"]').click();
-    cy.get('[href="/dashboard/account-settings"]').click();
+
+    cy.get('body').then(($body) => {
+      if ($body.length > 0) {
+        cy.get('[id="headlessui-menu-button-:r5:"]')
+          .click();
+          cy.contains("Account Settings").should('be.visible');
+          cy.get('[href="/dashboard/account-settings"]').click();
+          
+      } else {
+        cy.get('[id="headerProfileImage"]')
+          .click();
+          cy.contains("Account Settings").should('be.visible');
+          cy.get('[href="/dashboard/account-settings"]').click();
+      }
+    });
   }
+  
+
   uploadLogo() {
     this.getAccountSettings();
     cy.contains('Upload Team Logo').should('be.visible');
-    cy.get('.mt-2 > .relative > .absolute').click();
-    cy.contains("Yes, I'm sure").should('be.visible');
-    cy.get('button.text-white.bg-red-600').click();
-    cy.contains('Successfully updated team details.').should('be.visible');
-    cy.get('.mt-2 > .relative > .absolute').click();
-    cy.get('input[type="file"]').selectFile('cypress/fixtures/Team.jpg', {
-      force: true,
+
+    
+    cy.get('body').then(($body) => {
+      if ($body.length > 0) {
+            // If no logo is found, upload a new one
+            cy.log('No logo found, uploading...');
+            cy.get('.mt-2 > .relative > .absolute').should('not.exist');
+            cy.get('.mt-2 > .relative > .absolute').click();
+            cy.get('input[type="file"]').selectFile('cypress/fixtures/Team.jpg', { force: true });
+
+            
+            cy.get('body > div.Toastify > div').should('contain', 'Successfully updated team details.');
+        } else if ($body.length === 0) {
+            // If logo exists, delete it first then upload
+            cy.log('Logo found, deleting first...');
+
+            cy.get('.mt-2 > .relative > .absolute').click();
+            // cy.contains("Yes, I'm sure").should('be.visible');
+            cy.get('button.text-white.bg-red-600').contains("Yes, I'm sure").click();
+            cy.contains('Successfully updated team details.').should('be.visible');
+
+            // Upload new logo after deletion
+            cy.log('Uploading new logo...');
+            cy.get('.mt-2 > .relative > .absolute').click();
+            cy.get('input[type="file"]').selectFile('cypress/fixtures/drdoom.jpg', { force: true });
+
+            
+            cy.get('body > div.Toastify > div').should('contain', 'Successfully updated team details.');
+        }
     });
-    cy.get('[type="submit"]').click();
-    cy.get('body > div.Toastify > div').should(
-      'contain',
-      'Successfully updated team details.',
-    );
-  }
+}
+
+
   editTeamName() {
     return cy.get('#accountSettingsForm_input_text');
   }

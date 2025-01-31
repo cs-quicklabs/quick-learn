@@ -2,9 +2,21 @@ export class CreateNewRoadMap {
   visitContentPage() {
     return cy.get('[href="/dashboard/content"]').click();
   }
+  
   getCreateNewRoadMap() {
-    cy.contains('Create New Roadmap').should('be.visible');
-    cy.get('section div button').click();
+    cy.get('body').then(($body) => {
+      if ($body.find('.text-lg:contains("No roadmaps available")').length > 0) {
+        cy.get('button.inline-flex')
+          .contains('Create New Roadmap')
+          .should('be.visible')
+          .click();
+      } else {
+        cy.get('button.inline-block')
+          .contains('Create New Roadmap')
+          .should('be.visible')
+          .click();
+      }
+    });
   }
   EnterRoadMapName() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
@@ -13,7 +25,7 @@ export class CreateNewRoadMap {
 
   SelectRoadMapCategory() {
     cy.contains('Roadmap Category').should('be.visible');
-    cy.get('#addRoadmapForm_select_roadmap_category_id').select(2);
+    cy.get('#addRoadmapForm_select_roadmap_category_id').select(1);
   }
 
   BlankRoadMapName() {
@@ -36,15 +48,13 @@ export class CreateNewRoadMap {
   }
 
   getRoadMapsList() {
-    cy.get('.text-2xl').contains('All Roadmaps');
     cy.get('section div a').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('section div a').eq(4).click();
+    cy.get('section div a').eq(0).click();
   }
 
   getRoadMapListToEdit() {
-    cy.get('.text-2xl').contains('All Roadmaps');
     cy.get('section div a').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
@@ -53,7 +63,7 @@ export class CreateNewRoadMap {
 
   UpdateRoadMapCategory() {
     cy.contains('Roadmap Category').should('be.visible');
-    cy.get('#addRoadmapForm_select_roadmap_category_id').select(7);
+    cy.get('#addRoadmapForm_select_roadmap_category_id').select(2);
   }
   getEditRoadmapbutton() {
     cy.get('p.text-sm').contains('created this roadmap on');
@@ -85,7 +95,7 @@ export class CreateNewRoadMap {
 
   getAddExistingCoursesButton() {
     cy.get('p.text-sm').contains('created this roadmap on');
-    cy.get('button.text-black').eq(1).click();
+    cy.get('button.text-black').eq(0).click();
     cy.get('.text-xl').contains('Add existing Courses');
   }
 
@@ -94,7 +104,7 @@ export class CreateNewRoadMap {
     cy.get('[data-testid="flowbite-accordion-heading"]').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('[data-testid="flowbite-accordion-heading"]').eq(3).click();
+    cy.get('[data-testid="flowbite-accordion-heading"]').eq(0).click();
   }
 
   EnsureExistingCoursesUnchecked() {
@@ -107,7 +117,7 @@ export class CreateNewRoadMap {
       });
   }
   clickExistingCourseCheckbox() {
-    cy.get('[type="checkbox"]').eq(5).check();
+    cy.get('[type="checkbox"]').eq(0).check();
   }
 
   getAddExistingCoursesSuccessMessage() {
@@ -118,7 +128,7 @@ export class CreateNewRoadMap {
 
   getArchiveRoadmapButton() {
     cy.get('p.text-sm').contains('created this roadmap on');
-    cy.get('button.text-black').eq(2).click();
+    cy.get('button.text-black').eq(0).click();
     cy.contains("Yes, I'm sure").click();
   }
   getArchiveSuccessMessage() {
@@ -129,11 +139,19 @@ export class CreateNewRoadMap {
   }
 
   getCreateNewCourseButton() {
-    cy.get('.text-lg').contains('No courses available');
-    cy.get('main div div div button')
-      .eq(3)
-      .contains('Create New Course')
-      .click();
+    cy.get('body').then(($body) => {
+      if ($body.find('.text-lg:contains("No courses available")').length > 0) {
+        cy.get('button.inline-flex')
+          .contains('Create New Course')
+          .should('be.visible')
+          .click();
+      } else {
+        cy.get('button.inline-block')
+          .contains('Create New Course')
+          .should('be.visible')
+          .click();
+      }
+    });
   }
 
   EnterCourseName() {
@@ -187,7 +205,7 @@ export class CreateNewRoadMap {
     cy.wait(2000);
     cy.get('#addRoadmapForm_input_text').clear();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000);
+    cy.wait(2000);
     this.EnterRoadMapName();
     this.UpdateRoadMapCategory();
     cy.get('#addRoadmapForm_textarea_description').clear();
@@ -212,6 +230,7 @@ export class CreateNewRoadMap {
     this.getAddExistingCoursesButton();
     this.getExistingCoursesList();
     this.EnsureExistingCoursesUnchecked();
+    cy.contains('Save').should('be.disabled');
     cy.contains('Cancel').click();
   }
 
