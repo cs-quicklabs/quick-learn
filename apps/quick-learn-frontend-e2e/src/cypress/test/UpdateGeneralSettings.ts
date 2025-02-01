@@ -1,9 +1,9 @@
 export class UpdateGeneralSettings {
-  visitProfilePage() {
-    return cy.get('button[class="flex items-center"]').click();
+  visitAccountsPage() {
+    return cy.get('[id="headerProfileImage"]').click();
   }
   getAccountSettings() {
-    cy.get('button[class="flex items-center"]').click();
+    cy.get('[id="headerProfileImage"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();
   }
   uploadLogo() {
@@ -17,7 +17,6 @@ export class UpdateGeneralSettings {
     cy.get('input[type="file"]').selectFile('cypress/fixtures/Team.jpg', {
       force: true,
     });
-    cy.get('[type="submit"]').click();
     cy.get('body > div.Toastify > div').should(
       'contain',
       'Successfully updated team details.',
@@ -46,7 +45,7 @@ export class UpdateGeneralSettings {
     cy.contains('Team Name').should('be.visible');
     this.editTeamName().clear();
     this.editTeamName().type('Team CS ' + randomName);
-    this.saveButton().click();
+    this.saveButton();
   }
   editTeamNameWithOnlySpaces() {
     this.getAccountSettings();
