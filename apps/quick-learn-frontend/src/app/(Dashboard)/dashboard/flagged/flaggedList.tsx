@@ -9,24 +9,8 @@ import FlaggedListSkeleton from './flaggedSkeleton';
 import { getFlaggedLessons } from '@src/apiServices/lessonsService';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
-
-interface FlaggedLesson {
-  id: number;
-  flagged_on: string;
-  updated_at: string;
-  created_at: string;
-  course_id: string;
-  lesson_id: string;
-  lesson: {
-    name: string;
-    created_at: string;
-    updated_at: string;
-  };
-  user: {
-    first_name: string;
-    last_name: string;
-  };
-}
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { FlaggedLesson } from '@src/shared/types/utilTypes';
 
 const columns = [
   en.common.lesson,
@@ -36,25 +20,34 @@ const columns = [
   en.common.flaggedBy,
 ];
 
+const ITEMS_PER_PAGE = 10;
+
 const FlaggedList = () => {
   const [flaggedLessons, setFlaggedLessons] = useState<FlaggedLesson[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalLessons, setTotalLessons] = useState(0); // Total flagged lessons count
+  const [totalPages, setTotalPages] = useState(1); // Total pages
 
   useEffect(() => {
     const fetchFlaggedLessons = async () => {
       try {
         setIsLoading(true);
-        const response = await getFlaggedLessons();
+        const response = await getFlaggedLessons(currentPage, ITEMS_PER_PAGE);
 
-        if (response && response?.data) {
-          setFlaggedLessons(response.data);
+        if (response?.data) {
+          setFlaggedLessons(response.data.lessons);
+          setTotalLessons(response.data.totalCount); // Store total lessons count
+          setTotalPages(response.data.totalPages);
         } else {
           setFlaggedLessons([]);
+          setTotalLessons(0);
         }
       } catch (error) {
         showApiErrorInToast(error as AxiosErrorObject);
         setFlaggedLessons([]);
+        setTotalLessons(0);
       } finally {
         setIsLoading(false);
         setIsInitialLoad(false);
@@ -62,8 +55,7 @@ const FlaggedList = () => {
     };
 
     fetchFlaggedLessons();
-  }, []);
-  if (isInitialLoad && isLoading) return <FlaggedListSkeleton />;
+  }, [currentPage]);
 
   const formatDate = (date: string | Date) => {
     if (!date) return '-';
@@ -73,6 +65,8 @@ const FlaggedList = () => {
       return '-';
     }
   };
+
+  if (isInitialLoad && isLoading) return <FlaggedListSkeleton />;
 
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
@@ -154,11 +148,51 @@ const FlaggedList = () => {
           </table>
         </div>
       </div>
+
       {isLoading && !isInitialLoad && (
         <div className="fixed top-4 right-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
         </div>
       )}
+
+      {/* Pagination */}
+      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between my-5">
+        <div>
+          <p className="text-sm text-gray-700">
+            {en.teams.showing}{' '}
+            <span className="font-medium">
+              {totalLessons === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1}
+            </span>{' '}
+            {en.teams.to}{' '}
+            <span className="font-medium">
+              {Math.min(currentPage * ITEMS_PER_PAGE, totalLessons)}
+            </span>{' '}
+            {en.teams.of} <span className="font-medium">{totalLessons}</span>{' '}
+            {en.teams.results}
+          </p>
+        </div>
+        <div>
+          <div className="flex">
+            {currentPage > 1 && (
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
+              >
+                <ArrowLeftIcon height={20} width={32} /> {en.teams.previous}
+              </button>
+            )}
+            {currentPage < totalPages && (
+              <button
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
+              >
+                {en.teams.next}
+                <ArrowRightIcon height={20} width={32} />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -433,9 +433,9 @@ export class LessonService extends PaginationService<LessonEntity> {
     return await this.flaggedLessonEnity.save(flaggedLesson);
   }
 
-  async findAllWithRelations() {
+  async findAllWithRelations(page = 1, limit = 10) {
     try {
-      return await this.flaggedLessonEnity
+      const [lessons, total] = await this.flaggedLessonEnity
         .createQueryBuilder('flaggedLesson')
         .leftJoinAndSelect('flaggedLesson.user', 'user')
         .leftJoinAndSelect('flaggedLesson.lesson', 'lesson')
@@ -447,7 +447,17 @@ export class LessonService extends PaginationService<LessonEntity> {
           'lesson.name',
         ])
         .orderBy('flaggedLesson.flagged_on', 'DESC')
-        .getMany();
+        .skip((page - 1) * limit)
+        .take(limit)
+        .getManyAndCount(); // Returns both records and total count
+
+      return {
+        lessons,
+        totalCount: total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
     } catch (error) {
       console.error('Error querying flagged lessons:', error);
       throw error; // Propagate the error for proper handling
