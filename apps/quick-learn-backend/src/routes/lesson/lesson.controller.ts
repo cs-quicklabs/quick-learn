@@ -271,7 +271,6 @@ export class LessonController {
         lessonDetail: lessonDetail,
         userDetail: userTokenDetail.user,
         flaggedLesson: flaggedLesson,
-        flagged: flag ? true : false,
       });
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -280,18 +279,6 @@ export class LessonController {
       throw new BadRequestException(
         error?.message || 'Error processing lesson request',
       );
-    }
-  }
-  @Delete('flaggedLesson/:lesson_id')
-  @ApiOperation({ summary: 'Unflag a lesson' })
-  async unflagLesson(
-    @Param('lesson_id') lesson_id: string,
-  ): Promise<SuccessResponse> {
-    try {
-      await this.service.unflagLesson(parseInt(lesson_id));
-      return new SuccessResponse('Lesson unflagged successfully');
-    } catch (error) {
-      throw new BadRequestException(error.message);
     }
   }
 }

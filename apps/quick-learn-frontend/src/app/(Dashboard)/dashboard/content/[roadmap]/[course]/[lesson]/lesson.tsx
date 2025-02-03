@@ -9,7 +9,6 @@ import {
   getRoadmap,
 } from '@src/apiServices/contentRepositoryService';
 import {
-  deleteFlaggedLesson,
   getLessonDetails,
   updateLesson,
 } from '@src/apiServices/lessonsService';
@@ -244,12 +243,6 @@ const Lesson = () => {
           });
           if (!res.success) throw res;
           showApiMessageInToast(res);
-          try {
-            await deleteFlaggedLesson(lessonId);
-            showApiMessageInToast('success');
-          } catch (deleteError) {
-            showApiErrorInToast(deleteError as AxiosErrorObject);
-          }
           router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
         }
       } catch (err) {

@@ -13,7 +13,7 @@ import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
@@ -28,6 +28,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     private flaggedLessonEnity: Repository<FlaggedLessonEntity>,
     private readonly courseService: CourseService,
     private readonly FileService: FileService,
+    private readonly dataSource: DataSource,
   ) {
     super(repo);
   }
@@ -95,57 +96,119 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns nothing
    */
+  // async updateLesson(
+  //   user: UserEntity,
+  //   id: LessonEntity['id'],
+  //   updateLessonDto: UpdateLessonDto,
+  // ) {
+  //   return this.dataSour.transaction(async (manager) => {
+  //   const lesson = await this.getLesson(id);
+
+  //   const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
+  //     lesson.content,
+  //     undefined,
+  //     true,
+  //   );
+
+  //   const incomingContentImageUrl = Helpers.extractImageUrlsFromHtml(
+  //     updateLessonDto.content,
+  //     undefined,
+  //     true,
+  //   );
+
+  //   const UrlsToBeDeletedFromBucket = existingContentImageUrl.filter(
+  //     (urls) => !incomingContentImageUrl.includes(urls),
+  //   );
+
+  //   if (UrlsToBeDeletedFromBucket && UrlsToBeDeletedFromBucket.length) {
+  //     await this.FileService.deleteFiles(UrlsToBeDeletedFromBucket);
+  //   }
+
+  //   let payload: Partial<LessonEntity> = {
+  //     name: updateLessonDto.name || lesson.name,
+  //     new_content: updateLessonDto.content,
+  //     approved: false,
+  //   };
+
+  //   // checking if the user is admin or not
+  //   // if user is admin then approve the lesson
+  //   const checkUserAdminOrNot = [
+  //     UserTypeIdEnum.SUPERADMIN,
+  //     UserTypeIdEnum.ADMIN,
+  //   ].includes(user.user_type_id);
+  //   if (checkUserAdminOrNot) {
+  //     payload = {
+  //       ...payload,
+  //       approved: true,
+  //       approved_by: user.id,
+  //       content: updateLessonDto.content,
+  //       new_content: '',
+  //     };
+
+  //   }
+
+  //   //  update the lesson and mark lesson as unapproved.
+  //   await this.update({ id }, payload);
+
+  // }
+
   async updateLesson(
     user: UserEntity,
     id: LessonEntity['id'],
     updateLessonDto: UpdateLessonDto,
   ) {
-    const lesson = await this.getLesson(id);
+    return this.dataSource.transaction(async (manager) => {
+      const lesson = await manager.findOne(LessonEntity, { where: { id } });
+      if (!lesson) throw new BadRequestException(en.lessonNotFound);
 
-    const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
-      lesson.content,
-      undefined,
-      true,
-    );
+      const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
+        lesson.content,
+        undefined,
+        true,
+      );
+      const incomingContentImageUrl = Helpers.extractImageUrlsFromHtml(
+        updateLessonDto.content,
+        undefined,
+        true,
+      );
 
-    const incomingContentImageUrl = Helpers.extractImageUrlsFromHtml(
-      updateLessonDto.content,
-      undefined,
-      true,
-    );
+      const UrlsToBeDeletedFromBucket = existingContentImageUrl.filter(
+        (urls) => !incomingContentImageUrl.includes(urls),
+      );
 
-    const UrlsToBeDeletedFromBucket = existingContentImageUrl.filter(
-      (urls) => !incomingContentImageUrl.includes(urls),
-    );
+      if (UrlsToBeDeletedFromBucket.length) {
+        await this.FileService.deleteFiles(UrlsToBeDeletedFromBucket);
+      }
 
-    if (UrlsToBeDeletedFromBucket && UrlsToBeDeletedFromBucket.length) {
-      await this.FileService.deleteFiles(UrlsToBeDeletedFromBucket);
-    }
-
-    let payload: Partial<LessonEntity> = {
-      name: updateLessonDto.name || lesson.name,
-      new_content: updateLessonDto.content,
-      approved: false,
-    };
-
-    // checking if the user is admin or not
-    // if user is admin then approve the lesson
-    const checkUserAdminOrNot = [
-      UserTypeIdEnum.SUPERADMIN,
-      UserTypeIdEnum.ADMIN,
-    ].includes(user.user_type_id);
-    if (checkUserAdminOrNot) {
-      payload = {
-        ...payload,
-        approved: true,
-        approved_by: user.id,
-        content: updateLessonDto.content,
-        new_content: '',
+      let payload: Partial<LessonEntity> = {
+        name: updateLessonDto.name || lesson.name,
+        new_content: updateLessonDto.content,
+        approved: false,
       };
-    }
 
-    //  update the lesson and mark lesson as unapproved.
-    await this.update({ id }, payload);
+      // If user is admin, auto-approve the lesson
+      const isAdmin = [
+        UserTypeIdEnum.SUPERADMIN,
+        UserTypeIdEnum.ADMIN,
+      ].includes(user.user_type_id);
+      if (isAdmin) {
+        payload = {
+          ...payload,
+          approved: true,
+          approved_by: user.id,
+          content: updateLessonDto.content,
+          new_content: '',
+        };
+      }
+
+      // **Update the lesson**
+      await manager.update(LessonEntity, id, payload);
+
+      // **Remove flagged lesson if it exists**
+      await manager.delete(FlaggedLessonEntity, { lesson_id: id });
+
+      return { message: 'Lesson updated, flagged lessons removed' };
+    });
   }
 
   /**
@@ -462,18 +525,6 @@ export class LessonService extends PaginationService<LessonEntity> {
       console.error('Error querying flagged lessons:', error);
       throw error; // Propagate the error for proper handling
     }
-  }
-
-  async unflagLesson(lesson_id: number) {
-    const flaggedLesson = await this.flaggedLessonEnity.findOne({
-      where: { lesson_id },
-    });
-
-    if (!flaggedLesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
-
-    await this.flaggedLessonEnity.delete({ lesson_id });
   }
 
   async isLessonFlagged(lesson_id: number): Promise<boolean> {
