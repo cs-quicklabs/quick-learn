@@ -103,7 +103,7 @@ const Navbar = () => {
 
   async function doLogout() {
     try {
-      localStorage.removeItem('searchHistory');
+      localStorage.clear();
       await logoutApiCall();
       window.location.href = '/';
     } catch (error) {
