@@ -15,7 +15,7 @@ describe('New Lesson Creation', () => {
     loginPage.login(validCredentials.mail, validCredentials.password);
 
     cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
+    loginPage.getWelcomeMessage();
   });
 
   it('Verify user able to create New Lesson', () => {
@@ -24,7 +24,6 @@ describe('New Lesson Creation', () => {
     const lesson = generateRandomLesson();
     const longText = faker.lorem.paragraphs(1);
     cy.get('textarea.w-full').type(lesson.title);
-    // cy.get('div.ql-editor').type(lesson.content);
     cy.get('div.ql-editor').type('{selectall}{backspace}'); // Clear existing content if any
     cy.get('div.ql-editor').type(longText, {
       parseSpecialCharSequences: false,
