@@ -190,7 +190,7 @@ const DailyLessonDetail = () => {
       // Fetch flagged details when component mounts
       fetchFlaggedDetails();
     }
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, token, lesson, router]);
 
   const navigateUserToLearningPath = () => {
