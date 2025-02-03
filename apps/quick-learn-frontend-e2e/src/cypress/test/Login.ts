@@ -29,7 +29,9 @@ export class LoginPage {
   }
 
   getWelcomeMessage() {
-    return cy.get('.Toastify');
+    cy.get('.Toastify__toast-body')
+      .contains('Successfully logged in.')
+      .should('be.visible');
   }
 
   login(mail, password) {
@@ -53,10 +55,30 @@ export class LoginPage {
   }
 
   loginAsEditor(EditorMail, EditorPassword) {
+    cy.get('.text-xl').contains('Sign in to your account');
     this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
     this.getUsernameInput().type(EditorMail);
     this.getPasswordInput().type(EditorPassword);
     this.clickRememberMeCheckbox(); // Check after filling credentials
     this.getSubmitButton().click();
+    this.getWelcomeMessage();
+  }
+
+  loginAsAdmin(AdminMail, AdminPassword) {
+    this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
+    this.getUsernameInput().type(AdminMail);
+    this.getPasswordInput().type(AdminPassword);
+    this.clickRememberMeCheckbox(); // Check after filling credentials
+    this.getSubmitButton().click();
+    this.getWelcomeMessage();
+  }
+
+  loginAsMember(MemberMail, MemberPassword) {
+    this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
+    this.getUsernameInput().type(MemberMail);
+    this.getPasswordInput().type(MemberPassword);
+    this.clickRememberMeCheckbox(); // Check after filling credentials
+    this.getSubmitButton().click();
+    this.getWelcomeMessage();
   }
 }

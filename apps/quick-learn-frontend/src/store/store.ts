@@ -20,6 +20,8 @@ import teamReducer from './features/teamSlice';
 import approvalReducer from './features/approvalSlice';
 import archivedReducer from './features/archivedSlice';
 import userProgressReducer from './features/userProgressSlice';
+import userReducer from './features/userSlice';
+import systemPreferencesReducer from './features/systemPreferenceSlice';
 
 // Configure persist for each reducer you want to persist
 const dashboardPersistConfig = {
@@ -33,6 +35,16 @@ const userProgressPersistConfig = {
   storage,
 };
 
+const metadataPersistConfig = {
+  key: 'metadata',
+  storage,
+};
+
+const systemPreferencesPersistConfig = {
+  key: 'systemPreferences',
+  storage,
+};
+
 // Create persisted reducers for the slices you want to persist
 const persistedDashboardReducer = persistReducer(
   dashboardPersistConfig,
@@ -43,9 +55,20 @@ const persistedUserProgressReducer = persistReducer(
   userProgressReducer,
 );
 
+const persistedMetadataReducer = persistReducer(
+  metadataPersistConfig,
+  metadataReducer,
+);
+const persistedSystemPreferencesReducer = persistReducer(
+  systemPreferencesPersistConfig,
+  systemPreferencesReducer,
+);
+
 export const store = configureStore({
   reducer: {
-    metadata: metadataReducer,
+    user: userReducer,
+    systemPreference: persistedSystemPreferencesReducer,
+    metadata: persistedMetadataReducer, //persisted
     dashboard: persistedDashboardReducer, // persisted
     roadmaps: roadmapsReducer,
     ui: uiReducer,

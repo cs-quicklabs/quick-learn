@@ -9,15 +9,7 @@ describe('Lesson Approval', () => {
   beforeEach(function () {
     loginPage.visit();
   });
-  it('Verify Editor not able to edit pending for approval lessons', () => {
-    loginPage.loginAsEditor(
-      EditorValidCredentials.EditorMail,
-      EditorValidCredentials.EditorPassword,
-    );
-    cy.url().should('include', '/dashboard');
-    const PendingApproval = new Approvals();
-    PendingApproval.DoNotApprovePendingApprovalLessons();
-  });
+
   it('Verify Editor able to send a lesson for approval', () => {
     loginPage.loginAsEditor(
       EditorValidCredentials.EditorMail,

@@ -103,6 +103,7 @@ export const en = {
     createNewRoadmap: 'Create New Roadmap',
     editRoadmap: 'Edit Roadmap',
     createdThisRoadmapOn: 'created this roadmap on',
+    createdThisCourseOn: 'created this course on',
     archiveRoadmap: 'Archive Roadmap',
     noRoadmaps: 'No roadmaps available',
     noRoadmapsDescription: 'There are no roadmaps yet',
@@ -116,6 +117,7 @@ export const en = {
     addOnAlreadyExistingCourse: 'Add already existing courses to this roadmap',
     assignToRoadmap: 'Move or add this course to another Roadmap',
     archiveCourse: 'Archive Course',
+    allLesson: 'All Lessons',
   },
 
   /**
@@ -210,7 +212,7 @@ export const en = {
    * Categories and Skills management
    */
   courseCategories: {
-    heading: 'Courses Categories',
+    heading: 'Course Categories',
     subHeading:
       'Courses can belong to a category. A category could be a way to group learning courses. For example, you can create a learning course from a book, a blog, a video, for a software application or for any onboarding needs.',
     inputlabel: 'Add new course category',
@@ -433,6 +435,7 @@ export const en = {
     openMenu: 'Open main menu',
     viewNotification: 'View notifications',
     profile: 'My Profile',
+    accountSetting: 'Account Setting',
     signOut: 'Sign out',
 
     //Search Box

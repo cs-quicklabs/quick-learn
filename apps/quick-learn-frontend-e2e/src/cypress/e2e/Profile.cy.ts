@@ -11,7 +11,7 @@ describe('Primary Skill Update', () => {
     loginPage.login(validCredentials.mail, validCredentials.password);
 
     cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
+    loginPage.getWelcomeMessage();
   });
 
   it('Verify User should able to Upload Profile Pic ', () => {

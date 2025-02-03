@@ -415,4 +415,17 @@ export class LessonService extends PaginationService<LessonEntity> {
       .limit(3)
       .getRawMany(); // Changed from getMany() to getRawMany()
   }
+
+  async getUnApprovedLessonCount() {
+    return await this.repository.count({
+      where: {
+        archived: false,
+        approved: false,
+        course: {
+          archived: false,
+        },
+      },
+      relations: ['course'],
+    });
+  }
 }

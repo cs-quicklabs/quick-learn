@@ -61,6 +61,11 @@ const teamSlice = createSlice({
       state.totalUsers -= 1;
       state.filterdTotal -= 1;
     },
+    increamentTotalUsers: (state) => {
+      state.totalUsers += 1;
+      state.filterdTotal += 1;
+      state.searchQuery = '';
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -73,7 +78,7 @@ const teamSlice = createSlice({
         state.users = action.payload?.items || [];
         state.filterdTotal = action.payload?.total || 0;
 
-        if (state.filterdTotal > state.totalUsers || state.isInitialLoad) {
+        if (state.isInitialLoad || state.totalUsers < state.filterdTotal) {
           state.totalUsers = state.filterdTotal;
           state.searchQuery = '';
           state.currentUserType = '';
@@ -94,5 +99,6 @@ export const {
   setCurrentUserType,
   setSearchQuery,
   decrementTotalUsers,
+  increamentTotalUsers,
 } = teamSlice.actions;
 export default teamSlice.reducer;

@@ -2,7 +2,7 @@
 import { changePasswordService } from '@src/apiServices/profileService';
 import { en } from '@src/constants/lang/en';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
-import { FieldConfig } from '@src/shared/types/formTypes';
+import { FieldConfig, TFieldTrigger } from '@src/shared/types/formTypes';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -16,18 +16,18 @@ const changePasswordFormSchema = z
     newPassword: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters long' })
+      .max(32, { message: 'Password cannot exceed 32 characters' })
       .regex(/[A-Z]/, {
         message: 'Password must contain at least one uppercase letter',
       })
       .regex(/[a-z]/, {
         message: 'Password must contain at least one lowercase letter',
       })
-      .regex(/[0-9]/, { message: 'Password must contain at least one number' })
+      .regex(/\d/, { message: 'Password must contain at least one number' })
       .regex(/[^A-Za-z0-9]/, {
         message: 'Password must contain at least one special character',
       }),
-
-    confirmPassword: z.string(),
+    confirmPassword: z.string().min(1),
   })
   .refine((data) => data.newPassword !== data.oldPassword, {
     message: 'Current and new passwords cannot be the same.',
@@ -63,6 +63,17 @@ const ChangePassword = () => {
     },
   ];
 
+  const triggers: TFieldTrigger[] = [
+    {
+      name: 'oldPassword',
+      triggers: ['newPassword'],
+    },
+    {
+      name: 'newPassword',
+      triggers: ['confirmPassword'],
+    },
+  ];
+
   const onSubmit = (data: ChangePasswordData) => {
     setIsLoading(true);
     const payload = {
@@ -74,27 +85,27 @@ const ChangePassword = () => {
       .catch((err) => showApiErrorInToast(err))
       .finally(() => setIsLoading(false));
   };
+
   return (
-    <>
-      <div>
-        <h1 className="text-lg font-semibold dark:text-white">
-          {en.ProfileSetting.changePassword}
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-          {en.ProfileSetting.changePasswordRequest}
-        </p>
-        <FormFieldsMapper
-          fields={changePasswordFields}
-          schema={changePasswordFormSchema}
-          onSubmit={onSubmit}
-          resetFormOnSubmit
-          buttonText="Save"
-          id="changePasswordForm"
-          isLoading={isLoading}
-          mode="onChange"
-        />
-      </div>
-    </>
+    <div>
+      <h1 className="text-lg font-semibold dark:text-white">
+        {en.ProfileSetting.changePassword}
+      </h1>
+      <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+        {en.ProfileSetting.changePasswordRequest}
+      </p>
+      <FormFieldsMapper
+        fields={changePasswordFields}
+        schema={changePasswordFormSchema}
+        onSubmit={onSubmit}
+        resetFormOnSubmit
+        buttonText="Save"
+        id="changePasswordForm"
+        isLoading={isLoading}
+        mode="all"
+        triggers={triggers}
+      />
+    </div>
   );
 };
 
