@@ -7,7 +7,8 @@ export class AddCourseCategory {
     cy.get('[href="/dashboard/account-settings"]').click();
   }
   openCourseCategory() {
-    return cy.contains('Course Categories').click();
+    cy.get('[href="/dashboard/account-settings/courses-categories"]').click();
+    cy.contains('Add new course category').should('be.visible');
   }
   clickCourseCategory() {
     return cy.get('#course_categories_input_text');
@@ -50,7 +51,7 @@ export class AddCourseCategory {
   }
 
   deleteCourseCategory() {
-    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
   }
 
   deleteCourseCategoryAssociatedWithCourses() {

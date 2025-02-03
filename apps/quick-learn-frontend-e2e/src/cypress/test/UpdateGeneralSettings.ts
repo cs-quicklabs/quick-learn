@@ -6,6 +6,7 @@ export class UpdateGeneralSettings {
     cy.get('[id="headerProfileImage"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();
   }
+
   uploadLogo() {
     this.getAccountSettings();
     cy.contains('Upload Team Logo').should('be.visible');

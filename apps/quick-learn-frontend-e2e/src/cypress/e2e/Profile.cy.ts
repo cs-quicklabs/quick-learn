@@ -24,14 +24,19 @@ describe('Primary Skill Update', () => {
     myProfiles.getMyProfile();
     myProfiles.UpdateFirstName();
   });
+  it('Verify User should able to Update Last name', () => {
+    const myProfiles = new Profile();
+    myProfiles.getMyProfile();
+    myProfiles.UpdateLastName();
+  });
   it('Verify User should not able to Update First name with empty spaces  ', () => {
     const myProfiles = new Profile();
     myProfiles.getMyProfile();
     myProfiles.UpdateFirstNameWithEmptySpaces();
   });
-  it('Verify User should able to Update Last name', () => {
+  it('Verify User should not able to Update Last name with empty spaces  ', () => {
     const myProfiles = new Profile();
     myProfiles.getMyProfile();
-    myProfiles.UpdateLastName();
+    myProfiles.UpdateLastNameWithEmptySpaces();
   });
 });

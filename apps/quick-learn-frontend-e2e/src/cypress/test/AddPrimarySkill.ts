@@ -8,7 +8,8 @@ export class AddPrimarySkill {
     cy.get('[href="/dashboard/account-settings"]').click();
   }
   openPrimarySkill() {
-    return cy.contains('Primary Skills').click();
+    cy.get('[href="/dashboard/account-settings/primary-skills"]').click();
+    cy.contains('Primary Skills').should('be.visible');
   }
   clickSkillField() {
     return cy.get('#primary_skills_input_text').click();
@@ -45,7 +46,7 @@ export class AddPrimarySkill {
   }
 
   deletePrimarySkill() {
-    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
   }
   deleteSkillCategories() {
     cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
