@@ -27,8 +27,8 @@ describe('My Learning Paths', () => {
     LearningPaths.MarkAsReadUnread();
   });
 
-  it('Verify user goes back to learning path if no lesson is found', ()=>{
+  it('Verify user goes back to learning path if no lesson is found', () => {
     const LearningPaths = new MyLearningPaths();
     LearningPaths.NoLessonFound();
-  })
+  });
 });

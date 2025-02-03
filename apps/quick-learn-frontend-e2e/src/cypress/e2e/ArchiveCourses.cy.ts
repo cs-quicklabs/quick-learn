@@ -1,6 +1,6 @@
 import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
-import { ArchiveUsers } from '../test/ArchiveUsers';
+import { ArchiveCourses } from '../test/ArchiveCourses';
 
 describe('Activate and Delete Users', () => {
   const loginPage = new LoginPage();
@@ -13,17 +13,17 @@ describe('Activate and Delete Users', () => {
     cy.url().should('include', '/dashboard');
     loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
   });
-  it('Verify Super admin should able to search users', () => {
-    const ArchiveUser = new ArchiveUsers();
-    ArchiveUser.SearchUser();
+  it('Verify Super admin should able to search course', () => {
+    const ArchiveCourse = new ArchiveCourses();
+    ArchiveCourse.SearchCourse();
   });
 
-  it('Verify Super admin should able to Activate users', () => {
-    const ArchiveUser = new ArchiveUsers();
-    ArchiveUser.ActivateUser();
+  it('Verify Super admin should able to Activate course', () => {
+    const ArchiveCourse = new ArchiveCourses();
+    ArchiveCourse.ActivateCourse();
   });
-  it('Verify Super Admin should able to Delete user', () => {
-    const ArchiveUser = new ArchiveUsers();
-    ArchiveUser.DeleteUser();
+  it('Verify Super Admin should able to Delete course', () => {
+    const ArchiveCourse = new ArchiveCourses();
+    ArchiveCourse.DeleteCourse();
   });
 });

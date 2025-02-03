@@ -2,7 +2,7 @@ export class CreateNewRoadMap {
   visitContentPage() {
     return cy.get('[href="/dashboard/content"]').click();
   }
-  
+
   getCreateNewRoadMap() {
     cy.get('body').then(($body) => {
       if ($body.find('.text-lg:contains("No roadmaps available")').length > 0) {

@@ -41,11 +41,11 @@ export class AddRoadMap {
     return cy.get('.mt-1');
   }
 
-  // deleteRoadMapCategories() {
-  //   cy.get(':nth-child(2) > .inline-flex > .ml-2').click();
-  //   cy.get('[class="flex-1 overflow-auto p-0"]');
-  //   cy.get('button.bg-white.uppercase').click();
-  // }
+  deleteRoadMapCategories() {
+    cy.get(':nth-child(2) > .inline-flex > .ml-2').click();
+    cy.get('[class="flex-1 overflow-auto p-0"]');
+    cy.get('button.bg-white.uppercase').click();
+  }
 
   OpenAccountSettings() {
     this.getAccountSettings();

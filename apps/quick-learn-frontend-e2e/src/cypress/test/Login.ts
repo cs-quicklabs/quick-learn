@@ -51,4 +51,12 @@ export class LoginPage {
     this.getPasswordInput().clear();
     this.getSubmitButton().should('be.disabled');
   }
+
+  loginAsEditor(EditorMail, EditorPassword) {
+    this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
+    this.getUsernameInput().type(EditorMail);
+    this.getPasswordInput().type(EditorPassword);
+    this.clickRememberMeCheckbox(); // Check after filling credentials
+    this.getSubmitButton().click();
+  }
 }

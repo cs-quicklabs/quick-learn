@@ -64,8 +64,10 @@ export class MyLearningPaths {
     cy.get('body').then(($body) => {
       if ($body.find('.text-lg:contains("No lessons")').length > 0) {
         // No lessons found, navigate to My Learning Path
-        cy.get('[href="/dashboard/learning-path"]').contains("My Learning Path").click();
-        cy.get('h1.text-3xl').contains("My Roadmaps").should('be.visible');
+        cy.get('[href="/dashboard/learning-path"]')
+          .contains('My Learning Path')
+          .click();
+        cy.get('h1.text-3xl').contains('My Roadmaps').should('be.visible');
       } else {
         // Lessons found, log them and click the first available lesson
         cy.get('.py-4').each(($el, index) => {
@@ -78,7 +80,6 @@ export class MyLearningPaths {
       }
     });
   }
-  
 
   ensureMarkAsReadUnchecked() {
     cy.get('input[type="checkbox"]').then(($checkbox) => {
@@ -121,7 +122,7 @@ export class MyLearningPaths {
     this.ensureMarkAsReadUnchecked();
   }
 
-  NoLessonFound(){
+  NoLessonFound() {
     this.visitMyLearningPathsPage().click();
     this.getNoLessonList();
     this.getOrHandleLessons();

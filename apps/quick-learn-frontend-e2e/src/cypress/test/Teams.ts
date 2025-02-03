@@ -88,7 +88,6 @@ export class TeamsPage {
     });
   }
 
-
   getTeamsColumnData() {
     this.visitTeamPage().click();
     this.getColumnsData();

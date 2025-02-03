@@ -46,7 +46,7 @@ export class AddPrimarySkill {
   }
 
   deletePrimarySkill() {
-    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
   }
   deleteSkillCategories() {
     cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
