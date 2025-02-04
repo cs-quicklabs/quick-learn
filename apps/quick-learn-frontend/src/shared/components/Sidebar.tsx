@@ -1,5 +1,4 @@
 'use client';
-import Link from 'next/link';
 import React, { FC } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
 import { usePathname } from 'next/navigation';

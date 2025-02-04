@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useState } from 'react';
-import Link from 'next/link';
 import { FieldType } from '../types/formTypes';
 import { OpenEyeIcon, ClosedEyeIcon } from '../components/UIElements';
 import { FieldValues, UseFormRegister } from 'react-hook-form';

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { FC, useRef, useEffect, useState } from 'react';
 import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { en } from '@src/constants/lang/en';

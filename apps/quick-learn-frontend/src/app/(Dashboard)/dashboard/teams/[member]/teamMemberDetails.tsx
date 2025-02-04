@@ -1,6 +1,5 @@
 'use client';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import {
   CursorArrowRippleIcon,
@@ -31,7 +30,6 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { Tooltip } from 'flowbite-react';
-import { useRouter } from 'next/navigation';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import TeamMemberDetailsSkeleton from './TeamMemberDetailsSkeleton';
 import {

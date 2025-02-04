@@ -1,7 +1,6 @@
 // components/TeamTable.tsx
 import { useEffect } from 'react';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { DateFormats } from '@src/constants/dateFormats';
 import { CustomClipBoardIcon } from '@src/shared/components/UIElements';

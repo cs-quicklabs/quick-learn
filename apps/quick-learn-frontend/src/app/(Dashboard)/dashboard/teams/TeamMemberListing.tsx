@@ -1,6 +1,5 @@
 'use client';
 import { RouteEnum } from '@src/constants/route.enum';
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUserType } from '@src/shared/types/userTypes';
