@@ -26,7 +26,7 @@ export class LessonProgressController {
   @Post('complete/:lessonId/:userId?')
   @ApiOperation({ summary: 'Mark Lesson as Completed' })
   async markLessonAsCompleted(
-    @Body() dto: completeBodyDto,
+    @Body() dto: { courseId: number; isCompleted: boolean },
     @CurrentUser() user: UserEntity,
     @Param() params: lessonProgressParamsDto,
   ) {
@@ -34,7 +34,7 @@ export class LessonProgressController {
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
       +params.lessonId,
-      +dto.courseId,
+      dto.courseId,
     );
     if (dto.isCompleted) {
       return new SuccessResponse(en.successfullyCompletedLesson, {
@@ -50,14 +50,14 @@ export class LessonProgressController {
   @Public()
   @ApiOperation({ summary: 'Mark lesson as completed (public url)' })
   async markLessonAsCompletedPublic(
-    @Body() dto: completeBodyDto,
+     @Body() dto: { courseId: number; isCompleted: boolean },
     @Param() params: lessonProgressParamsDto,
   ) {
     const currentUser = +params.userId;
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
       +params.lessonId,
-      +dto.courseId,
+      dto.courseId,
     );
     if (dto.isCompleted) {
       return new SuccessResponse(en.successfullyCompletedLesson, {

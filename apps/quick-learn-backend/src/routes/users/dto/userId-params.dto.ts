@@ -4,7 +4,7 @@ import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 export class userIdParamsDto{
     @ApiProperty({
      name: 'userId',
-    type: 'number',
+    type: String,
     required: true,
     })
     @IsNotEmpty()

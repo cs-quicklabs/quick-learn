@@ -88,7 +88,7 @@ export class RoadmapController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a roadmap' })
   async updateRoadmap(
-    @Param('id') Params: roadmapParamsDto,
+    @Param() Params: roadmapParamsDto,
     @Body() updateRoadmapDto: UpdateRoadmapDto,
     @CurrentUser('id') userID: number,
   ) {
@@ -103,7 +103,7 @@ export class RoadmapController {
   @Patch(':id/assign')
   @ApiOperation({ summary: 'Assign courses to roadmap' })
   async assignCoursesRoadmap(
-    @Param('id') params: roadmapParamsDto,
+    @Param() params: roadmapParamsDto,
     @Body() assignCoursesToRoadmapDto: AssignCoursesToRoadmapDto,
   ) {
     await this.service.assignRoadmap(+params.id, assignCoursesToRoadmapDto);

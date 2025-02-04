@@ -9,7 +9,7 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { SuccessResponse } from '@src/common/dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
@@ -47,11 +47,11 @@ export class UsersController {
   @ApiOperation({ summary: "Get current user's assigned roadmaps" })
   async getCurrentUserRoadmaps(
     @CurrentUser() user: UserEntity,
-    @Query() query: userIdParamsDto,
+    @Query('include_courses') includeCourses?: boolean,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getUserRoadmaps(
       user.id,
-      query.includeCourses,
+      includeCourses,
     );
     return new SuccessResponse(en.successGotUserRoadmaps, roadmaps);
   }
@@ -74,13 +74,13 @@ export class UsersController {
   @ApiOperation({ summary: "Get current user's course by id" })
   async getCurrentUserCoursesById(
     @CurrentUser() user: UserEntity,
-    @Param('id') id: string,
+    @Param() params:userParamsDto,
     @Query('roadmapId') roadmapId?: string,
-    @Param('userId') userId?: number,
+    
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getCourseDetails(
-      !isNaN(userId) ? userId : user.id,
-      +id,
+      !isNaN(+params.userId) ? +params.userId : user.id,
+      +params.id,
       roadmapId ? +roadmapId : undefined,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
@@ -179,8 +179,13 @@ export class UsersController {
   // This should come AFTER all the specific routes
   @Get(':id')
   @ApiOperation({ summary: 'Get specific user by uuid' })
+   @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   async findOne(
-    @Param() params: userIdParamsDto,
+     @Param('id') userId: number,
     @Query() getUserQueryDto: GetUserQueryDto,
   ): Promise<SuccessResponse> {
     const relations = [];
@@ -192,7 +197,7 @@ export class UsersController {
       relations.push('assigned_roadmaps.courses.lessons');
     }
     const user = await this.usersService.findOneWithSelectedRelationData(
-      { id: +params.userId },
+      { id: userId },
       relations,
     );
     return new SuccessResponse(en.successGotUser, user);
@@ -200,12 +205,17 @@ export class UsersController {
 
   @Patch(':userId')
   @ApiOperation({ summary: 'Update specific user by userId' })
+   @ApiParam({
+    name: 'userId',
+    type: 'number',
+    required: true,
+  })
   async update(
-    @Param() params: userIdParamsDto,
+   @Param('userId') userId: number,
     @CurrentUser() currentUser: UserEntity,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.updateUser(+params.userId, {
+    const user = await this.usersService.updateUser(userId, {
       ...updateUserDto,
       updated_by: currentUser,
     });
@@ -214,18 +224,28 @@ export class UsersController {
 
   @Patch(':userId/assign-roadmaps')
   @ApiOperation({ summary: 'Assign roadmaps to user' })
+  @ApiParam({
+    name: 'userId',
+    type: 'number',
+    required: true,
+  })
   async assignRoadmaps(
-    @Param() params: userIdParamsDto,
+    @Param('userId') userId: number,
     @Body() assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
   ): Promise<SuccessResponse> {
-    await this.usersService.assignRoadmaps(+params.userId, assignRoadmapsToUserDto);
+    await this.usersService.assignRoadmaps(userId, assignRoadmapsToUserDto);
     return new SuccessResponse(en.successUserUpdated);
   }
 
   @Delete(':userId')
   @ApiOperation({ summary: 'Permanently delete user by userId' })
-  async remove(@Param() params: userIdParamsDto,) {
-    await this.usersService.delete({ id: +params.userId });
+   @ApiParam({
+    name: 'userId',
+    type: 'number',
+    required: true,
+  })
+  async remove(@Param('userId') userId: number) {
+    await this.usersService.delete({ id: userId });
     return new SuccessResponse(en.successUserDelete);
   }
 }
