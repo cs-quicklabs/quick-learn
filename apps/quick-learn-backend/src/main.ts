@@ -1,4 +1,4 @@
-import 'newrelic';
+require('newrelic');
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { setupSwagger } from './swagger';

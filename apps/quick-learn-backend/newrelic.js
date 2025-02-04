@@ -19,6 +19,11 @@ exports.config = {
   logging: {
     level: 'info',
   },
+  transaction_tracer: {
+    enabled: true,
+    record_sql: 'obfuscated',
+    explain_threshold: 500,
+  },
   /**
    * When true, all request headers except for those listed in attributes.exclude
    * will be captured for all traces, unless otherwise specified in a destination's
