@@ -34,7 +34,7 @@ const Breadcrumb: FC<Props> = ({ links }) => {
           {links.map(({ name, link }, index) => (
             <li
               className="inline-flex items-center text-gray-700 "
-              key={Math.random() * 1000}
+              key={`${name}-${index}`}
             >
               {index != 0 && index != links.length && <ArrowRightIcon />}
               {index == 0 ? <HomeIcon /> : ''}

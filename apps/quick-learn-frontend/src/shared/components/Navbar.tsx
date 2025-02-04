@@ -364,7 +364,7 @@ const Navbar = () => {
               <div className="flex-shrink-0">
                 <Image
                   alt=""
-                  src={user?.profile_image || '/placeholder.png'}
+                  src={user?.profile_image ?? '/placeholder.png'}
                   className="h-10 w-10 rounded-full object-cover"
                   height={40}
                   width={40}

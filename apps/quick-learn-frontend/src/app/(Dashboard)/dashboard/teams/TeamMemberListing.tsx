@@ -60,6 +60,12 @@ const TeamMemberListing = () => {
     debouncedSearch(value); // Debounce the Redux update and API call
   };
 
+  function showRange() {
+    const initial = filteredTotal === 0 ? 0 : (currentPage - 1) * 10 + 1;
+    const end = Math.min(currentPage * 10, filteredTotal);
+    return `${initial} ${en.teams.to} ${end} ${en.teams.of} ${filteredTotal}`;
+  }
+
   return (
     <>
       <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
@@ -131,22 +137,7 @@ const TeamMemberListing = () => {
         <div>
           <p className="text-sm text-gray-700">
             {en.teams.showing}{' '}
-            <span className="font-medium">
-              {currentPage > 1
-                ? (currentPage - 1) * 10 + 1
-                : filteredTotal === 0
-                ? 0
-                : 1}
-            </span>{' '}
-            {en.teams.to}{' '}
-            <span className="font-medium">
-              {currentPage * 10 <= filteredTotal
-                ? currentPage * 10
-                : filteredTotal}
-            </span>{' '}
-            {en.teams.to}
-            <span> </span>
-            <span className="font-medium">{filteredTotal}</span>{' '}
+            <span className="font-medium">{showRange()}</span>{' '}
             {en.teams.results}
           </p>
         </div>
