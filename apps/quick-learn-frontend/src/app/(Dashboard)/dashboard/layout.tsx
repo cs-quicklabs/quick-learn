@@ -34,15 +34,13 @@ export default function Layout({
     isFetching.current = true;
 
     currentFetchPromise = getUser()
-      .then((res) => {
+      .then(async (res) => {
         if (!hasInitialFetchStarted) {
           hasInitialFetchStarted = true;
           dispatch(setUser(res.data));
 
-          return fetchMetadata(res?.data.user_type_id).then(() => {
-            fetchApprovalData(res?.data.user_type_id);
-            return res.data;
-          });
+          await fetchMetadata(res?.data.user_type_id);
+          await fetchApprovalData(res?.data.user_type_id);
         }
         return res.data;
       })
