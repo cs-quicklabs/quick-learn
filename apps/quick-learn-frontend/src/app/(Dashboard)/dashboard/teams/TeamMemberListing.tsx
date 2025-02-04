@@ -15,6 +15,7 @@ import {
 } from '@src/store/features/teamSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { en } from '@src/constants/lang/en';
+import { SuperLink } from '@src/utils/HiLink';
 const TeamMemberListing = () => {
   const dispatch = useAppDispatch();
   const [searchInputValue, setSearchInputValue] = useState(''); // Local state for input value
@@ -81,13 +82,13 @@ const TeamMemberListing = () => {
               onChange={handleSearchChange}
               id="search"
             />
-            <Link
+            <SuperLink
               id="addNewMember"
               href={`${RouteEnum.TEAM_EDIT}/add`}
               className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
             >
               {en.teams.addNewMember}
-            </Link>
+            </SuperLink>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-x-8 p-4 border-t border-b border-gray-300 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">

@@ -8,8 +8,8 @@ import {
   MenuItem,
   MenuItems,
 } from '@headlessui/react';
-import Link from 'next/link';
 import Image from 'next/image';
+import { SuperLink } from '@src/utils/HiLink';
 
 import { usePathname } from 'next/navigation';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -143,12 +143,12 @@ const Navbar = () => {
 
     return (
       <MenuItem key={item.link}>
-        <Link
+        <SuperLink
           href={item.link}
           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
         >
           {item.name}
-        </Link>
+        </SuperLink>
       </MenuItem>
     );
   };
@@ -171,19 +171,19 @@ const Navbar = () => {
           <div className="flex py-2 justify-between align-center">
             <div className="flex px-2 lg:px-0">
               <div className="flex-shrink-0 flex items-center">
-                <Link
+                <SuperLink
                   id="homeLogo"
                   href={RouteEnum.MY_LEARNING_PATH}
                   className="items-center justify-center text-white font-extrabold font-mono px-3 hidden lg:flex tracking-wider"
                 >
                   <WebsiteLogo width="45" />
                   <p className="ml-3">{en.common.quickLearn}</p>
-                </Link>
+                </SuperLink>
                 <span className="text-white font-medium px-3 block lg:hidden"></span>
               </div>
               <div className="hidden lg:ml-6 lg:flex lg:space-x-4">
                 {links.map((item, index) => (
-                  <Link
+                  <SuperLink
                     key={item.link}
                     href={item.link}
                     id={`navDesktop${index}`}
@@ -198,7 +198,7 @@ const Navbar = () => {
                   >
                     {item.name}
                     {showApprovalCount(item, 'desktop')}
-                  </Link>
+                  </SuperLink>
                 ))}
               </div>
             </div>
@@ -285,12 +285,12 @@ const Navbar = () => {
                           .map((item) => renderMenuItem(item))}
                       {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN && (
                         <MenuItem>
-                          <Link
+                          <SuperLink
                             href={RouteEnum.PROFILE_SETTINGS}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             {en.component.profile}
-                          </Link>
+                          </SuperLink>
                         </MenuItem>
                       )}
                     </div>
@@ -418,7 +418,7 @@ const Navbar = () => {
                 {menuItems.map(
                   (item, index) =>
                     item.isExtended && (
-                      <Link
+                      <SuperLink
                         id={`profileMenuMobile${index}`}
                         key={item.link + item.name}
                         href={item.link}
@@ -426,7 +426,7 @@ const Navbar = () => {
                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                       >
                         {item.name}
-                      </Link>
+                      </SuperLink>
                     ),
                 )}
               </div>

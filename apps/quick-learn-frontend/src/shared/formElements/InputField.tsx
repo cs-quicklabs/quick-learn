@@ -4,6 +4,7 @@ import { FieldType } from '../types/formTypes';
 import { OpenEyeIcon, ClosedEyeIcon } from '../components/UIElements';
 import { FieldValues, UseFormRegister } from 'react-hook-form';
 import { RouteEnum } from '@src/constants/route.enum';
+import { SuperLink } from '@src/utils/HiLink';
 
 interface Props {
   label?: string;
@@ -74,12 +75,12 @@ const InputField: FC<Props> = ({
         </div>
         {/* TODO: Remove this and make independent component for login */}
         {name === 'rememberMe' && (
-          <Link
+          <SuperLink
             href={RouteEnum.FORGOT_PASSWORD}
             className="text-sm font-medium text-primary-600 hover:underline"
           >
             Forgot password?
-          </Link>
+          </SuperLink>
         )}
       </div>
     );

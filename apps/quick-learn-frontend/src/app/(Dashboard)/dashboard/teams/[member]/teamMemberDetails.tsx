@@ -47,6 +47,7 @@ import {
 import ActivityGraph, { Course } from '@src/shared/modals/ActivityGraph';
 import { useDispatch } from 'react-redux';
 import { decrementTotalUsers } from '@src/store/features/teamSlice';
+import { SuperLink } from '@src/utils/HiLink';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
@@ -224,12 +225,12 @@ const TeamMemberDetails = () => {
           {/* Action Buttons */}
           <div className="flex items-center justify-center gap-2 mt-4">
             <Tooltip content="Edit User">
-              <Link
+              <SuperLink
                 href={`${RouteEnum.TEAM_EDIT}/${userId}`}
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
               >
                 <PencilIcon className="h-4 w-4" />
-              </Link>
+              </SuperLink>
             </Tooltip>
 
             <Tooltip content="Deactivate User">

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { FC, useRef, useEffect, useState } from 'react';
 import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { en } from '@src/constants/lang/en';
+import { SuperLink } from '@src/utils/HiLink';
 interface CardProps {
   title: string;
   description: string;
@@ -130,9 +131,9 @@ const Card: FC<CardProps> = ({
   }
 
   return (
-    <Link id={id} href={link} className={baseClassName}>
+    <SuperLink id={id} href={link} className={baseClassName}>
       <CardContent />
-    </Link>
+    </SuperLink>
   );
 };
 
