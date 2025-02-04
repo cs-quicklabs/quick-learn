@@ -3,6 +3,7 @@ import { getUser } from '@src/apiServices/authService';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useFetchContentRepositoryMetadata } from '@src/context/contextHelperService';
 import Navbar from '@src/shared/components/Navbar';
+import { TUser } from '@src/shared/types/userTypes';
 import { selectHideNavbar } from '@src/store/features/uiSlice';
 import { setUser } from '@src/store/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
@@ -11,7 +12,7 @@ import { useEffect, useRef } from 'react';
 
 // Create a module-level flag for the entire session
 let hasInitialFetchStarted = false;
-let currentFetchPromise: Promise<any> | null = null;
+let currentFetchPromise: Promise<TUser | void> | null = null;
 
 export default function Layout({
   children,
@@ -39,9 +40,11 @@ export default function Layout({
           dispatch(setUser(res.data));
 
           return fetchMetadata(res?.data.user_type_id).then(() => {
-            return fetchApprovalData(res?.data.user_type_id);
+            fetchApprovalData(res?.data.user_type_id);
+            return res.data;
           });
         }
+        return res.data;
       })
       .catch((err) => {
         hasInitialFetchStarted = false;
