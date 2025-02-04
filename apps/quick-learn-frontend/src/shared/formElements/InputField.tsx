@@ -50,14 +50,14 @@ const InputField: FC<Props> = ({
       <div className="flex justify-between items-center">
         <div className="flex items-start space-x-2">
           <input
-            id={`${id ? id : ''}_checkbox_${name}`}
+            id={`${id ?? ''}_checkbox_${name}`}
             type={type}
             className="mt-0.5 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
             {...register(name)}
           />
           <div className="ml-3 text-sm">
             <label
-              htmlFor={`${id ? id : ''}_checkbox_${name}`}
+              htmlFor={`${id ?? ''}_checkbox_${name}`}
               className={
                 sub_label ? 'font-medium text-gray-900' : 'text-gray-500'
               }
@@ -88,12 +88,12 @@ const InputField: FC<Props> = ({
       <div>
         <label
           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          htmlFor={`${id ? id : ''}_select_${name}`}
+          htmlFor={`${id ?? ''}_select_${name}`}
         >
           {label}
         </label>
         <select
-          id={`${id ? id : ''}_select_${name}`}
+          id={`${id ?? ''}_select_${name}`}
           className={`${className} dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
           {...register(name)}
           defaultValue=""
@@ -115,12 +115,12 @@ const InputField: FC<Props> = ({
       <div>
         <label
           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          htmlFor={`${id ? id : ''}_textarea_${name}`}
+          htmlFor={`${id ?? ''}_textarea_${name}`}
         >
           {label}
         </label>
         <textarea
-          id={`${id ? id : ''}_textarea_${name}`}
+          id={`${id ?? ''}_textarea_${name}`}
           className={`${className} dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
           placeholder={placeholder}
           {...register(name)}
@@ -135,7 +135,7 @@ const InputField: FC<Props> = ({
       {label && (
         <label
           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          htmlFor={`${id ? id : ''}_input_${
+          htmlFor={`${id ?? ''}_input_${
             showPassword ? 'text' : 'password' + name
           }`}
         >
@@ -144,9 +144,7 @@ const InputField: FC<Props> = ({
       )}
       <div className="relative">
         <input
-          id={`${id ? id : ''}_input_${
-            showPassword ? 'text' : 'password' + name
-          }`}
+          id={`${id ?? ''}_input_${showPassword ? 'text' : 'password' + name}`}
           type={showPassword ? 'text' : 'password'}
           className={`${className} pr-10 ${
             errorMsg ? 'border-red-500' : ''

@@ -46,6 +46,7 @@ export default function Layout({
       .catch((err) => {
         hasInitialFetchStarted = false;
         currentFetchPromise = null;
+        console.log(err);
       })
       .finally(() => {
         isFetching.current = false;
