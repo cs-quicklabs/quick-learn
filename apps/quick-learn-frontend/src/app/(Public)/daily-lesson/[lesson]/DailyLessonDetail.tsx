@@ -1,5 +1,6 @@
 'use client';
 import {
+  flagLesson,
   getDailyLessionDetail,
   getLessonStatusPublic,
   markAsDonePublic,
@@ -32,6 +33,7 @@ const DailyLessonDetail = () => {
   const [completedOn, setCompletedOn] = useState<string>('');
   const [isAdmins, setIsAdmins] = useState<boolean>(false);
   const [isFlagged, setIsFlagged] = useState<null | unknown>(null);
+  const [isFlagging, setIsFlagging] = useState<boolean>(false);
 
   const { lesson } = useParams<{
     lesson: string;
@@ -67,28 +69,31 @@ const DailyLessonDetail = () => {
   };
 
   const handleFlagLesson = async () => {
-    if (!userDetail?.id || !courseId || !lesson) {
+    if (!token) {
       showApiErrorInToast('Missing required information');
       return;
     }
 
+    setIsFlagging(true);
+
     try {
+      // Flag the lesson
+      const flag = await flagLesson(token);
+      showApiMessageInToast(flag);
+      // Fetch updated lesson details to get flagging information
       const response = await getDailyLessionDetail({
         lessonId: lesson,
         courseId,
         token,
-        flag: true,
-        userId: userDetail.id.toString(),
       });
 
+      // Update states with fresh data including who flagged it
       setLessonDetails(response.data.lessonDetail);
-      setUserDetail(response.data.userDetail);
       setIsFlagged(response.data.lessonDetail.flagged_lesson);
-
-      showApiMessageInToast({ message: 'Lesson flagged successfully' });
     } catch (error) {
       showApiErrorInToast(error);
-      setIsFlagged(false);
+    } finally {
+      setIsFlagging(false);
     }
   };
 
@@ -194,16 +199,18 @@ const DailyLessonDetail = () => {
         <button
           className="text-blue-600 font-semibold hover:bg-slate-400 hover:rounded-md py-2 px-3 disabled:rounded-md disabled:bg-yellow-100 disabled:px-6 disabled:py-4 disabled:text-gray-800"
           onClick={handleFlagLesson}
-          disabled={isFlagged}
+          disabled={isFlagged || isFlagging}
         >
-          {isFlagged ? (
-            <div className="flex items-center gap-2 ">
+          {isFlagging ? (
+            'Flagging...'
+          ) : isFlagged ? (
+            <div className="flex items-center gap-2">
               <div className="h-5 w-5">
                 <FlagIcon />
               </div>
               {`The Lesson is flagged by ${
                 isFlagged.user.first_name + ' ' + isFlagged.user.last_name
-              }  on ${new Date(isFlagged.flagged_on).toLocaleDateString(
+              } on ${new Date(isFlagged.flagged_on).toLocaleDateString(
                 'en-US',
                 {
                   month: 'short',

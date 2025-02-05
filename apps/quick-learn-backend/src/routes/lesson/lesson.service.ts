@@ -364,27 +364,6 @@ export class LessonService extends PaginationService<LessonEntity> {
     return tokenEntity;
   }
 
-  async fetchLesson(lessonId: number, courseId: number) {
-    const lessonDetail = await this.repository
-      .createQueryBuilder('lesson')
-      .leftJoinAndSelect('lesson.course', 'course')
-      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
-      .leftJoin('course.roadmaps', 'roadmaps')
-      .innerJoin('roadmaps.users', 'users')
-      .leftJoinAndSelect('lesson.flagged_lesson', 'flagged_lesson')
-      .leftJoinAndSelect('flagged_lesson.user', 'flagged_by_user')
-      .where('lesson.id = :id', { id: lessonId })
-      .andWhere('course.id = :courseId', { courseId })
-      .andWhere('lesson.archived = :archived', { archived: false })
-      .andWhere('lesson.approved = :approved', { approved: true })
-      .andWhere('course.archived = :courseArchived', { courseArchived: false })
-      .getOne();
-
-    return {
-      ...lessonDetail,
-    };
-  }
-
   async updateDailyLessonToken(
     token: string,
     course_id: number,
@@ -436,34 +415,47 @@ export class LessonService extends PaginationService<LessonEntity> {
       .getRawMany(); // Changed from getMany() to getRawMany()
   }
 
-  async flagLesson(token: {
-    user_id: number;
-    lesson_id: number;
-    course_id: number;
-  }): Promise<FlaggedLessonEntity> {
-    try {
-      const { user_id, lesson_id, course_id } = token; // Extract values properly
+  async fetchLesson(lessonId: number, courseId: number) {
+    const lessonDetail = await this.repository
+      .createQueryBuilder('lesson')
+      .leftJoinAndSelect('lesson.course', 'course')
+      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
+      .leftJoin('course.roadmaps', 'roadmaps')
+      .innerJoin('roadmaps.users', 'users')
+      .leftJoinAndSelect('lesson.flagged_lesson', 'flagged_lesson')
+      .leftJoinAndSelect('flagged_lesson.user', 'flagged_by_user')
+      .where('lesson.id = :id', { id: lessonId })
+      .andWhere('course.id = :courseId', { courseId })
+      .andWhere('lesson.archived = :archived', { archived: false })
+      .andWhere('lesson.approved = :approved', { approved: true })
+      .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .getOne();
 
-      const existingFlag = await this.flaggedLessonEnity.findOne({
-        where: { user_id, lesson_id, course_id },
-      });
+    return {
+      ...lessonDetail,
+    };
+  }
 
-      if (existingFlag) {
-        throw new BadRequestException('This lesson has already been flagged');
-      }
+  async flagLesson(token: string) {
+    // Find the lesson token entry using the token
+    const lessonToken = await this.LessonTokenRepository.findOne({
+      where: { token },
+      relations: ['user'], // Include relations if needed
+    });
 
-      const flaggedLesson = this.flaggedLessonEnity.create({
-        user_id,
-        lesson_id,
-        course_id,
-        flagged_on: new Date(),
-      });
-
-      return await this.flaggedLessonEnity.save(flaggedLesson);
-    } catch (error) {
-      console.error('Error flagging lesson:', error);
-      throw new BadRequestException('Error flagging lesson');
+    if (!lessonToken) {
+      throw new Error('Lesson token not found');
     }
+
+    // Create new flagged lesson entry
+    const flaggedLesson = this.flaggedLessonEnity.create({
+      user_id: lessonToken.user_id,
+      lesson_id: lessonToken.lesson_id,
+      course_id: lessonToken.course_id,
+      flagged_on: new Date(),
+    });
+
+    return await this.flaggedLessonEnity.save(flaggedLesson);
   }
 
   async findAllFlaggedLesson(page = 1, limit = 10, search = '') {

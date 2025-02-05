@@ -166,40 +166,31 @@ export const getDailyLessionDetail = async ({
   lessonId,
   courseId,
   token,
-  flag = false,
-  userId,
 }: {
   lessonId: string;
   courseId: string;
   token: string;
-  flag?: boolean;
-  userId?: string;
 }): Promise<
   AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
 > => {
-  const queryParams = new URLSearchParams();
-  if (flag) queryParams.append('flag', 'true');
-  if (userId) queryParams.append('userId', userId);
-
   const response = await axiosInstance.get<
     AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
   >(
     `${DailyLessionEnum.GET_DAILY_LESSON_DETAILS.replace(':lesson', lessonId)
       .replace(':course', courseId)
-      .replace(':token', token)}${
-      queryParams.toString() ? `?${queryParams.toString()}` : ''
-    }`,
+      .replace(':token', token)}`,
   );
   return response.data;
 };
 
-export const flagLesson = async (token: {
-  user_id: number;
-  lesson_id: number;
-  course_id: number;
-}): Promise<AxiosSuccessResponse> => {
+export const flagLesson = async (
+  token: string,
+): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
-    `${ContentRepositoryApiEnum.LESSON_FLAGGED}/${JSON.stringify(token)}`, // Send token as JSON
+    `${ContentRepositoryApiEnum.LESSON_FLAGGED}/${token}`,
+    {
+      token,
+    },
   );
   return response.data;
 };

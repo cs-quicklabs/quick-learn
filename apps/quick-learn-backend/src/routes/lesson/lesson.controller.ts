@@ -238,8 +238,6 @@ export class LessonController {
     @Param('lessonId') lessonId: string,
     @Param('courseId') courseId: string,
     @Param('token') token: string,
-    @Query('flag') flag?: boolean,
-    @Query('userId') userId?: string,
   ): Promise<SuccessResponse> {
     const userTokenDetail = await this.service.validateLessionToken(
       token,
@@ -247,16 +245,7 @@ export class LessonController {
       +lessonId,
     );
 
-    let lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
-    // Handle flagging if requested
-    if (flag && userId) {
-      await this.service.flagLesson({
-        user_id: +userId,
-        lesson_id: +lessonId,
-        course_id: +courseId,
-      });
-      lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
-    }
+    const lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
 
     await this.service.updateDailyLessonToken(token, +courseId, +lessonId);
 
@@ -264,5 +253,21 @@ export class LessonController {
       lessonDetail,
       userDetail: userTokenDetail.user,
     });
+  }
+
+  @ApiOperation({ summary: 'Flag a lesson for review' })
+  @Post('flag/:token')
+  @UseGuards(JwtAuthGuard)
+  async flagLesson(@Param('token') token: string): Promise<SuccessResponse> {
+    try {
+      await this.service.flagLesson(token);
+      return new SuccessResponse('Lesson flagged successfully');
+    } catch (error) {
+      if (error.code === '23505') {
+        // Unique constraint violation
+        throw new BadRequestException('This lesson has already been flagged');
+      }
+      throw new BadRequestException('Error flagging lesson');
+    }
   }
 }
