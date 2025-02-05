@@ -64,9 +64,8 @@ const TeamMemberDetails = () => {
     TRoadmapCategories[]
   >([]);
   const [userProgress, setUserProgress] = useState<UserLessonProgress[]>([]);
-  const [userDailyLessonProgressData, setUserDalyLessonProgressData] = useState<
-    TUserDailyProgress[]
-  >([]);
+  const [userDailyLessonProgressData, setUserDailyLessonProgressData] =
+    useState<TUserDailyProgress[]>([]);
   const [allCourses, setAllCourses] = useState<TUserCourse[]>([]);
   const [userActivityModal, setUserActivityModal] = useState(false);
 
@@ -100,7 +99,7 @@ const TeamMemberDetails = () => {
 
         // Set the user's daily lesson progress data
         getUserDailyLessonProgress(Number(userId))
-          .then((res) => setUserDalyLessonProgressData(res.data))
+          .then((res) => setUserDailyLessonProgressData(res.data))
           .catch((e) => showApiErrorInToast(e));
 
         setLinks([
@@ -216,7 +215,7 @@ const TeamMemberDetails = () => {
             {member?.first_name} {member?.last_name}
           </h1>
           <p className="text-sm text-gray-500">
-            ({member?.assigned_roadmaps?.length || 0} {en.common.roadmaps},{' '}
+            ({member?.assigned_roadmaps?.length ?? 0} {en.common.roadmaps},{' '}
             {allCourses.length} {en.common.courses})
           </p>
 

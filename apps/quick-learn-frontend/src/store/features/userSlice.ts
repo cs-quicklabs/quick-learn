@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getUser } from '@src/apiServices/authService';
 import { TUser } from '@src/shared/types/userTypes';
-// import { useFetchContentRepositoryMetadata } from './contextHelperService';
 
 interface UserState {
   user: TUser | null;

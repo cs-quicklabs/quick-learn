@@ -28,12 +28,13 @@ const RouteTab: React.FC<RouteTabProps> = ({
 
   return (
     <SuperLink href={link}>
-      <div
+      <button
+        type="button"
         onClick={onClick}
-        className="cursor-pointer flex justify-between items-center text-slate-600 font-normal hover:bg-slate-200 px-3 py-2 active:bg-slate-500"
+        className="cursor-pointer flex justify-between items-center text-slate-600 font-normal hover:bg-slate-200 px-3 py-2 active:bg-slate-500 w-full text-left"
       >
         <span className="capitalize text-sm line-clamp-2 w-full">{name}</span>
-      </div>
+      </button>
     </SuperLink>
   );
 };
