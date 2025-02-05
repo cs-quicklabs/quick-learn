@@ -1,6 +1,6 @@
 import { TBreadcrumb } from '../types/breadcrumbType';
 import { FC } from 'react';
-import Link from 'next/link';
+import { SuperLink } from '@src/utils/HiLink';
 import { ArrowRightIcon, HomeIcon } from './UIElements';
 
 interface Props {
@@ -16,13 +16,13 @@ function customLink({ link, name }: TBreadcrumb, isLast = false) {
     );
   }
   return (
-    <Link
+    <SuperLink
       href={link}
       aria-disabled={isLast}
       className="flex items-center text-sm font-medium capitalize hover:underline hover:text-blue-600"
     >
       {name}
-    </Link>
+    </SuperLink>
   );
 }
 
@@ -34,7 +34,7 @@ const Breadcrumb: FC<Props> = ({ links }) => {
           {links.map(({ name, link }, index) => (
             <li
               className="inline-flex items-center text-gray-700 "
-              key={Math.random() * 1000}
+              key={`${name}-${index}`}
             >
               {index != 0 && index != links.length && <ArrowRightIcon />}
               {index == 0 ? <HomeIcon /> : ''}
