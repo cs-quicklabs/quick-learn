@@ -177,4 +177,8 @@ export class LessonProgressController {
     );
     return new SuccessResponse(en.lessonStatus, data);
   }
+
+  async getLeaderboardData() {
+    return new SuccessResponse(en.successLeaderboardData, {});
+  }
 }

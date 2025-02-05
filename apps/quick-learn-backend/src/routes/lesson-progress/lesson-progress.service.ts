@@ -9,13 +9,13 @@ import { BasicCrudService } from '@src/common/services';
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
     @InjectRepository(UserLessonProgressEntity)
-    private userLessonProgressRepository: Repository<UserLessonProgressEntity>,
+    private readonly userLessonProgressRepository: Repository<UserLessonProgressEntity>,
     @InjectRepository(LessonEntity)
-    private lessonRepository: Repository<LessonEntity>,
+    private readonly lessonRepository: Repository<LessonEntity>,
     @InjectRepository(CourseEntity)
-    private courseRepository: Repository<CourseEntity>,
+    private readonly courseRepository: Repository<CourseEntity>,
     @InjectRepository(LessonTokenEntity)
-    private LessonTokenRepository: Repository<LessonTokenEntity>,
+    private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {
     super(userLessonProgressRepository);
   }

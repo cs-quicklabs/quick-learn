@@ -108,4 +108,7 @@ export const en = {
   successdullyPasswordUpdated: 'Password updated successfully.',
   successPreferencesUpdated: 'Email preference updated successfully.',
   successPreferences: 'Successfully got user preferences.',
+
+  //Leaderboard Data
+  successLeaderboardData: 'Successfully got the leaderboad details',
 };
