@@ -13,7 +13,7 @@ import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, ILike } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
@@ -96,61 +96,6 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns nothing
    */
-  // async updateLesson(
-  //   user: UserEntity,
-  //   id: LessonEntity['id'],
-  //   updateLessonDto: UpdateLessonDto,
-  // ) {
-  //   return this.dataSour.transaction(async (manager) => {
-  //   const lesson = await this.getLesson(id);
-
-  //   const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
-  //     lesson.content,
-  //     undefined,
-  //     true,
-  //   );
-
-  //   const incomingContentImageUrl = Helpers.extractImageUrlsFromHtml(
-  //     updateLessonDto.content,
-  //     undefined,
-  //     true,
-  //   );
-
-  //   const UrlsToBeDeletedFromBucket = existingContentImageUrl.filter(
-  //     (urls) => !incomingContentImageUrl.includes(urls),
-  //   );
-
-  //   if (UrlsToBeDeletedFromBucket && UrlsToBeDeletedFromBucket.length) {
-  //     await this.FileService.deleteFiles(UrlsToBeDeletedFromBucket);
-  //   }
-
-  //   let payload: Partial<LessonEntity> = {
-  //     name: updateLessonDto.name || lesson.name,
-  //     new_content: updateLessonDto.content,
-  //     approved: false,
-  //   };
-
-  //   // checking if the user is admin or not
-  //   // if user is admin then approve the lesson
-  //   const checkUserAdminOrNot = [
-  //     UserTypeIdEnum.SUPERADMIN,
-  //     UserTypeIdEnum.ADMIN,
-  //   ].includes(user.user_type_id);
-  //   if (checkUserAdminOrNot) {
-  //     payload = {
-  //       ...payload,
-  //       approved: true,
-  //       approved_by: user.id,
-  //       content: updateLessonDto.content,
-  //       new_content: '',
-  //     };
-
-  //   }
-
-  //   //  update the lesson and mark lesson as unapproved.
-  //   await this.update({ id }, payload);
-
-  // }
 
   async updateLesson(
     user: UserEntity,
@@ -426,13 +371,18 @@ export class LessonService extends PaginationService<LessonEntity> {
       .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
       .leftJoin('course.roadmaps', 'roadmaps')
       .innerJoin('roadmaps.users', 'users')
+      .leftJoinAndSelect('lesson.flagged_lesson', 'flagged_lesson')
+      .leftJoinAndSelect('flagged_lesson.user', 'flagged_by_user')
       .where('lesson.id = :id', { id: lessonId })
       .andWhere('course.id = :courseId', { courseId })
       .andWhere('lesson.archived = :archived', { archived: false })
       .andWhere('lesson.approved = :approved', { approved: true })
       .andWhere('course.archived = :courseArchived', { courseArchived: false })
       .getOne();
-    return lessonDetail;
+
+    return {
+      ...lessonDetail,
+    };
   }
 
   async updateDailyLessonToken(
@@ -486,33 +436,67 @@ export class LessonService extends PaginationService<LessonEntity> {
       .getRawMany(); // Changed from getMany() to getRawMany()
   }
 
-  async flagLesson(lesson_id: number, course_id: number, user_id: number) {
-    const flaggedLesson = this.flaggedLessonEnity.create({
-      lesson_id,
-      course_id,
-      user_id,
-      flagged_on: new Date(),
-    });
-    return await this.flaggedLessonEnity.save(flaggedLesson);
+  async flagLesson(token: {
+    user_id: number;
+    lesson_id: number;
+    course_id: number;
+  }): Promise<FlaggedLessonEntity> {
+    try {
+      const { user_id, lesson_id, course_id } = token; // Extract values properly
+
+      const existingFlag = await this.flaggedLessonEnity.findOne({
+        where: { user_id, lesson_id, course_id },
+      });
+
+      if (existingFlag) {
+        throw new BadRequestException('This lesson has already been flagged');
+      }
+
+      const flaggedLesson = this.flaggedLessonEnity.create({
+        user_id,
+        lesson_id,
+        course_id,
+        flagged_on: new Date(),
+      });
+
+      return await this.flaggedLessonEnity.save(flaggedLesson);
+    } catch (error) {
+      console.error('Error flagging lesson:', error);
+      throw new BadRequestException('Error flagging lesson');
+    }
   }
 
-  async findAllWithRelations(page = 1, limit = 10) {
+  async findAllFlaggedLesson(page = 1, limit = 10, search = '') {
     try {
-      const [lessons, total] = await this.flaggedLessonEnity
-        .createQueryBuilder('flaggedLesson')
-        .leftJoinAndSelect('flaggedLesson.user', 'user')
-        .leftJoinAndSelect('flaggedLesson.lesson', 'lesson')
-        .leftJoinAndSelect('flaggedLesson.course', 'course')
-        .select([
-          'flaggedLesson',
-          'user.first_name',
-          'user.last_name',
-          'lesson.name',
-        ])
-        .orderBy('flaggedLesson.flagged_on', 'DESC')
-        .skip((page - 1) * limit)
-        .take(limit)
-        .getManyAndCount(); // Returns both records and total count
+      const skipItems = (page - 1) * limit;
+
+      const findOptions = {
+        relations: {
+          user: true,
+          lesson: true,
+          course: true,
+        },
+        where: {},
+        skip: skipItems,
+        take: limit,
+      };
+
+      // Add search condition if search term exists
+      if (search) {
+        findOptions.where = {
+          lesson: {
+            name: ILike(`%${search}%`),
+          },
+        };
+      }
+
+      // Get both lessons and count in parallel for better performance
+      const [lessons, total] = await Promise.all([
+        this.flaggedLessonEnity.find(findOptions),
+        this.flaggedLessonEnity.count({
+          where: findOptions.where,
+        }),
+      ]);
 
       return {
         lessons,
@@ -523,15 +507,8 @@ export class LessonService extends PaginationService<LessonEntity> {
       };
     } catch (error) {
       console.error('Error querying flagged lessons:', error);
-      throw error; // Propagate the error for proper handling
+      throw error;
     }
-  }
-
-  async isLessonFlagged(lesson_id: number): Promise<boolean> {
-    const flaggedLesson = await this.flaggedLessonEnity.findOne({
-      where: { lesson_id },
-    });
-    return !!flaggedLesson;
   }
 
   async getUnApprovedLessonCount() {

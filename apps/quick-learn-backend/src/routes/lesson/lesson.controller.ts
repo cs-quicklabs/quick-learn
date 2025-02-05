@@ -8,11 +8,10 @@ import {
   Patch,
   Post,
   Query,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { LessonService } from './lesson.service';
-import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { CreateLessonDto, UpdateLessonDto } from './dto';
@@ -71,15 +70,17 @@ export class LessonController {
     return new SuccessResponse(en.getLessons, lessons);
   }
 
-  @ApiOperation({ summary: 'Get all flagged lessons.' })
+  @ApiOperation({ summary: 'Get all flagged lessons with optional search.' })
   @Get('flagged')
   async findAllFlaggedLessons(
     @Query('page') page = 1,
     @Query('limit') limit = 10,
+    @Query('search') search = '',
   ): Promise<SuccessResponse> {
-    const lessons = await this.service.findAllWithRelations(
+    const lessons = await this.service.findAllFlaggedLesson(
       Number(page),
       Number(limit),
+      search,
     );
     return new SuccessResponse(en.getLessons, lessons);
   }
@@ -211,11 +212,10 @@ export class LessonController {
    * @param token validatation token sent on mail
    * @returns lesson details
    */
+
   @Get(':lessonId/:courseId/:token')
   @Public()
-  @ApiOperation({
-    summary: "Get current user's lesson details and handle lesson flagging",
-  })
+  @ApiOperation({ summary: "Get current user's lesson by id and course id" })
   @ApiParam({
     name: 'lessonId',
     required: true,
@@ -234,12 +234,6 @@ export class LessonController {
     type: String,
     description: 'validate lesson url using token',
   })
-  @ApiQuery({
-    name: 'flag',
-    required: false,
-    type: Boolean,
-    description: 'Optional flag to mark lesson for review',
-  })
   async getCurrentUserLessonsByIdAndCourseId(
     @Param('lessonId') lessonId: string,
     @Param('courseId') courseId: string,
@@ -247,38 +241,28 @@ export class LessonController {
     @Query('flag') flag?: boolean,
     @Query('userId') userId?: string,
   ): Promise<SuccessResponse> {
-    try {
-      // Validate token and get user details
-      const userTokenDetail = await this.service.validateLessionToken(
-        token,
-        +courseId,
-        +lessonId,
-      );
+    const userTokenDetail = await this.service.validateLessionToken(
+      token,
+      +courseId,
+      +lessonId,
+    );
 
-      // If flag query parameter is true, flag the lesson
-      if (flag && userId) {
-        await this.service.flagLesson(+lessonId, +courseId, +userId);
-      }
-
-      // Get lesson details
-      const lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
-      const flaggedLesson = await this.service.isLessonFlagged(+lessonId);
-
-      // Update daily lesson token
-      await this.service.updateDailyLessonToken(token, +courseId, +lessonId);
-
-      return new SuccessResponse(en.lessonForTheDay, {
-        lessonDetail: lessonDetail,
-        userDetail: userTokenDetail.user,
-        flaggedLesson: flaggedLesson,
+    let lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
+    // Handle flagging if requested
+    if (flag && userId) {
+      await this.service.flagLesson({
+        user_id: +userId,
+        lesson_id: +lessonId,
+        course_id: +courseId,
       });
-    } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
-      throw new BadRequestException(
-        error?.message || 'Error processing lesson request',
-      );
+      lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
     }
+
+    await this.service.updateDailyLessonToken(token, +courseId, +lessonId);
+
+    return new SuccessResponse(en.lessonForTheDay, {
+      lessonDetail,
+      userDetail: userTokenDetail.user,
+    });
   }
 }

@@ -27,18 +27,35 @@ const FlaggedList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalLessons, setTotalLessons] = useState(0); // Total flagged lessons count
-  const [totalPages, setTotalPages] = useState(1); // Total pages
+  const [totalLessons, setTotalLessons] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchInputValue, setSearchInputValue] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Debounce search input to reduce unnecessary API calls
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchInputValue);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchInputValue]);
 
   useEffect(() => {
     const fetchFlaggedLessons = async () => {
       try {
         setIsLoading(true);
-        const response = await getFlaggedLessons(currentPage, ITEMS_PER_PAGE);
+        const response = await getFlaggedLessons(
+          currentPage,
+          ITEMS_PER_PAGE,
+          debouncedSearch,
+        );
 
         if (response?.data) {
           setFlaggedLessons(response.data.lessons);
-          setTotalLessons(response.data.totalCount); // Store total lessons count
+          setTotalLessons(response.data.totalCount);
           setTotalPages(response.data.totalPages);
         } else {
           setFlaggedLessons([]);
@@ -55,7 +72,14 @@ const FlaggedList = () => {
     };
 
     fetchFlaggedLessons();
-  }, [currentPage]);
+  }, [currentPage, debouncedSearch]);
+
+  // Handle search input changes
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchInputValue(value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   const formatDate = (date: string | Date) => {
     if (!date) return '-';
@@ -71,7 +95,7 @@ const FlaggedList = () => {
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
       <div className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
-        <div>
+        <div className="flex items-center justify-between">
           <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
             <div>
               <h1 className="mr-3 text-lg font-semibold">
@@ -79,6 +103,16 @@ const FlaggedList = () => {
               </h1>
               <p className="text-gray-500 text-sm">{en.common.flaggedDesc}</p>
             </div>
+          </div>
+          <div className="mr-6">
+            <input
+              type="text"
+              className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+              placeholder="Search Lessons"
+              value={searchInputValue}
+              onChange={handleSearchChange}
+              id="search"
+            />
           </div>
         </div>
         <div className={`overflow-x-auto ${isLoading ? 'opacity-60' : ''}`}>

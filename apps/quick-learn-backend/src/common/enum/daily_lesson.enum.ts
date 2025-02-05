@@ -1,6 +1,7 @@
 export enum DailyLessonEnum {
   PENDING = 'PENDING',
   COMPLETED = 'COMPLETED',
+  FLAGGED = 'FLAGGED',
 }
 
 export enum DailyLessonGreetings {

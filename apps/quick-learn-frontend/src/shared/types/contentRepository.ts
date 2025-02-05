@@ -77,6 +77,7 @@ export type TLesson = {
   course_id: number;
   course: TCourse;
   updated_by: TUser;
+  flagged_lesson: unknown;
 };
 
 export type TUserRoadmap = {
