@@ -167,3 +167,12 @@ export const getDailyLessionDetail = async (
   );
   return response.data;
 };
+
+export const getLeaderBoardStatus = async (): Promise<
+  AxiosSuccessResponse<any>
+> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<any>>(
+    `${ContentRepositoryApiEnum.LEADERBOARD_STATUS}`,
+  );
+  return response.data;
+};

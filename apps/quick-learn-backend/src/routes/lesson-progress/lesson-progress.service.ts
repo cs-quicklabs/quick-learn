@@ -4,18 +4,19 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
+import { previousMonday } from 'date-fns';
 
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
     @InjectRepository(UserLessonProgressEntity)
-    private readonly userLessonProgressRepository: Repository<UserLessonProgressEntity>,
+    private userLessonProgressRepository: Repository<UserLessonProgressEntity>,
     @InjectRepository(LessonEntity)
-    private readonly lessonRepository: Repository<LessonEntity>,
+    private lessonRepository: Repository<LessonEntity>,
     @InjectRepository(CourseEntity)
-    private readonly courseRepository: Repository<CourseEntity>,
+    private courseRepository: Repository<CourseEntity>,
     @InjectRepository(LessonTokenEntity)
-    private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
+    private LessonTokenRepository: Repository<LessonTokenEntity>,
   ) {
     super(userLessonProgressRepository);
   }
@@ -198,5 +199,155 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
         .select(['lesson_tokens', 'lesson.name'])
         .getMany();
     return userDailyLessonProgress;
+  }
+
+  async getLeaderboardDataService() {
+    const lastMonday = previousMonday(new Date());
+    lastMonday.setDate(lastMonday.getDate() - 7);
+    lastMonday.setHours(8, 0, 0, 0);
+
+    const allUsers = await this.LessonTokenRepository.createQueryBuilder(
+      'lesson_token',
+    )
+      .where('lesson_token.created_at >= :lastWeek', {
+        lastWeek: lastMonday.toISOString(),
+      })
+      .leftJoinAndSelect('lesson_token.user', 'user')
+      .select([
+        'user.id AS user_id',
+        'COUNT(lesson_token.id) AS lesson_count',
+        'CONCAT(user.first_name, user.last_name) AS name',
+        'user.email AS email',
+      ])
+      .groupBy('user.id')
+      .getRawMany();
+
+    const completedLessonsData =
+      await this.LessonTokenRepository.createQueryBuilder('lesson_token')
+        .where('lesson_token.created_at >= :lastWeek', {
+          lastWeek: lastMonday.toISOString(),
+        })
+        .andWhere('lesson_token.status = :status', { status: 'COMPLETED' })
+        .select('lesson_token.user_id', 'userId')
+        .addSelect('ARRAY_AGG(lesson_token.lesson_id)', 'lessonIds')
+        .addSelect('ARRAY_AGG(lesson_token.created_at)', 'createdAtArray')
+        .groupBy('lesson_token.user_id')
+        .getRawMany();
+
+    // return formattedData;
+    const completedLessonsMap = new Map(
+      completedLessonsData.map((data) => [data.userId, data]),
+    );
+
+    // Format the data for all users
+    const formattedData = allUsers.map((user) => {
+      const completedData = completedLessonsMap.get(user.user_id);
+
+      return {
+        ...user,
+        lessonIds: completedData
+          ? completedData.lessonIds.map((lessonId, index) => [
+              lessonId.toString(),
+              completedData.createdAtArray[index],
+            ])
+          : [],
+      };
+    });
+
+    return formattedData;
+  }
+
+  /**
+   * Retrieves the Leaderboard data for last week with .
+   * @returns An array of User records with daily lessons.
+   */
+  async calculateLeaderBoardPercentage() {
+    const getLeaderboardData = await this.getLeaderboardDataService();
+
+    const leaderBoardWithPercentage = await Promise.all(
+      getLeaderboardData.map(async (entry) => {
+        // const { userId, lessonIds } = entry;
+
+        if (entry.lessonIds.length === 0) {
+          return {
+            ...entry,
+            lessonCompleted: 0,
+            average_completion_time: 0,
+          };
+        }
+
+        const lessonIdsIndex = entry.lessonIds.map((item) => item[0]);
+
+        const completedLessons = await this.userLessonProgressRepository
+          .createQueryBuilder('userLessonProgress')
+          .where('userLessonProgress.user_id =:userId', {
+            userId: entry.user_id,
+          })
+          .andWhere('userLessonProgress.lesson_id IN (:...lessonIds)', {
+            lessonIds: lessonIdsIndex,
+          })
+          .getMany();
+        const totalOpeningTime = completedLessons
+          .map((completedLesson) => {
+            const lessonIndex = entry.lessonIds.find(
+              (item) => item[0] === String(completedLesson.lesson_id),
+            );
+            if (!lessonIndex) return 0;
+
+            const LessonOpeningTime = new Date(lessonIndex[1]).getTime();
+            const completionTime = new Date(
+              completedLesson.completed_date,
+            ).getTime();
+            return completionTime - LessonOpeningTime;
+          })
+          .reduce((acc, openTime) => acc + openTime, 0);
+
+        const averageCompletionTime =
+          completedLessons.length > 0
+            ? totalOpeningTime / completedLessons.length / 1000 / 60
+            : 0;
+
+        return {
+          ...entry,
+          lessonCompleted: completedLessons.length,
+          average_completion_time: +averageCompletionTime.toFixed(2),
+        };
+      }),
+    );
+
+    leaderBoardWithPercentage.sort((a, b) => {
+      // Sort by lessonCompleted (higher is better)
+      if (b.lessonCompleted !== a.lessonCompleted) {
+        return b.lessonCompleted - a.lessonCompleted;
+      }
+      // If lessonCompleted is the same, sort by average_completion_time (lower is better)
+      return a.average_completion_time - b.average_completion_time;
+    });
+
+    return { leaderBoardWithPercentage };
+  }
+
+  async getuserdetailss() {
+    const lastMonday = previousMonday(new Date());
+    lastMonday.setDate(lastMonday.getDate() - 7);
+    lastMonday.setHours(8, 0, 0, 0);
+
+    const allUsers = await this.LessonTokenRepository.createQueryBuilder(
+      'lesson_token',
+    )
+      .where('lesson_token.created_at >= :lastWeek', {
+        lastWeek: lastMonday.toISOString(),
+      })
+      .leftJoinAndSelect('lesson_token.user', 'user')
+      .select([
+        'user.id AS user_id',
+        'COUNT(lesson_token.id) AS lessonCount',
+        'CONCAT(user.first_name, user.last_name) AS name',
+        'user.email AS email',
+      ])
+      .groupBy('user.id')
+      .getRawMany();
+
+    return allUsers;
   }
 }

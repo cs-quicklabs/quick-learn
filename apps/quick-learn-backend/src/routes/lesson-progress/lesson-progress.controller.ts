@@ -178,7 +178,16 @@ export class LessonProgressController {
     return new SuccessResponse(en.lessonStatus, data);
   }
 
+  @Get('leaderboard')
   async getLeaderboardData() {
-    return new SuccessResponse(en.successLeaderboardData, {});
+    const leaderBoardData =
+      await this.lessonProgressService.calculateLeaderBoardPercentage();
+    return new SuccessResponse(en.successLeaderboardData, leaderBoardData);
+  }
+
+  @Get('leaderboarduser')
+  async getLeaderboardUser() {
+    const leaderBoardData = await this.lessonProgressService.getuserdetailss();
+    return new SuccessResponse(en.successLeaderboardData, leaderBoardData);
   }
 }

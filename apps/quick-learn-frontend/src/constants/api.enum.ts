@@ -41,6 +41,7 @@ export enum ContentRepositoryApiEnum {
   COMMUNITY = 'course/community', //to fetch courses which are community course , unarchived, unapproved
   GET_USER_ROADMAPS = '/users/my-roadmaps',
   LESSON_PROGRESS = '/lessonprogress',
+  LEADERBOARD_STATUS = '/lessonprogress/leaderboard',
 }
 
 export enum ArchivedApiEnum {

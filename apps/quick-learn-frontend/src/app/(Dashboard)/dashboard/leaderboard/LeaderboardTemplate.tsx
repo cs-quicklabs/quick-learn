@@ -3,7 +3,7 @@ import LeaderboardTable from './LeaderboardTable';
 
 const LeaderboardTemplate = () => {
   return (
-    <section className="relative overflow-hidden bg-white shadow-md sm:rounded-md">
+    <section className="relative bg-white shadow-md sm:rounded-md">
       <div>
         <h1 className="text-lg font-semibold px-3">LEADERBOARD</h1>
       </div>
