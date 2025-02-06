@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
-import { previousMonday } from 'date-fns';
+import { previousSunday } from 'date-fns';
 
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
@@ -202,21 +202,26 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   }
 
   async getLeaderboardDataService() {
-    const lastMonday = previousMonday(new Date());
-    lastMonday.setDate(lastMonday.getDate() - 7);
-    lastMonday.setHours(8, 0, 0, 0);
+    const toThisMonday = previousSunday(new Date().setHours(0, 0, 0, 0)); // last week Monday
+    // toThisMonday.setHours(0, 0, 0, 0); // set hours for last week Monday
 
+    const fromPreviousMonday = new Date(toThisMonday); // create a new Date object
+    fromPreviousMonday.setDate(toThisMonday.getDate() - 7); // set to this week Monday
+    fromPreviousMonday.setHours(0, 0, 0, 0); // set hours for this week Monday
+
+    console.log(fromPreviousMonday, toThisMonday);
     const allUsers = await this.LessonTokenRepository.createQueryBuilder(
       'lesson_token',
     )
-      .where('lesson_token.created_at >= :lastWeek', {
-        lastWeek: lastMonday.toISOString(),
+      .where('lesson_token.created_at >= :fromPreviousMonday', {
+        fromPreviousMonday: fromPreviousMonday.toISOString(),
       })
       .leftJoinAndSelect('lesson_token.user', 'user')
       .select([
         'user.id AS user_id',
         'COUNT(lesson_token.id) AS lesson_count',
-        'CONCAT(user.first_name, user.last_name) AS name',
+        'user.first_name AS first_name',
+        'user.last_name AS last_name',
         'user.email AS email',
       ])
       .groupBy('user.id')
@@ -224,8 +229,8 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
     const completedLessonsData =
       await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-        .where('lesson_token.created_at >= :lastWeek', {
-          lastWeek: lastMonday.toISOString(),
+        .where('lesson_token.created_at >= :fromPreviousMonday ', {
+          fromPreviousMonday: fromPreviousMonday.toISOString(),
         })
         .andWhere('lesson_token.status = :status', { status: 'COMPLETED' })
         .select('lesson_token.user_id', 'userId')
@@ -266,8 +271,6 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
     const leaderBoardWithPercentage = await Promise.all(
       getLeaderboardData.map(async (entry) => {
-        // const { userId, lessonIds } = entry;
-
         if (entry.lessonIds.length === 0) {
           return {
             ...entry,
@@ -325,29 +328,5 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     });
 
     return { leaderBoardWithPercentage };
-  }
-
-  async getuserdetailss() {
-    const lastMonday = previousMonday(new Date());
-    lastMonday.setDate(lastMonday.getDate() - 7);
-    lastMonday.setHours(8, 0, 0, 0);
-
-    const allUsers = await this.LessonTokenRepository.createQueryBuilder(
-      'lesson_token',
-    )
-      .where('lesson_token.created_at >= :lastWeek', {
-        lastWeek: lastMonday.toISOString(),
-      })
-      .leftJoinAndSelect('lesson_token.user', 'user')
-      .select([
-        'user.id AS user_id',
-        'COUNT(lesson_token.id) AS lessonCount',
-        'CONCAT(user.first_name, user.last_name) AS name',
-        'user.email AS email',
-      ])
-      .groupBy('user.id')
-      .getRawMany();
-
-    return allUsers;
   }
 }

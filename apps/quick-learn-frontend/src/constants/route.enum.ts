@@ -23,4 +23,5 @@ export enum RouteEnum {
   ARCHIVED_LESSONS = '/dashboard/archived/lessons',
   CHANGE_LOGS = 'https://release.quicklabs.in/quick-learn/changelogs',
   FEATURE_LOGS = 'https://release.quicklabs.in/quick-learn/roadmap',
+  LEADERBOARD = '/dashboard/leaderboard',
 }

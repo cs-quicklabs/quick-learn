@@ -62,6 +62,10 @@ const menuItems: TLink[] = [
     link: RouteEnum.ARCHIVED_USERS,
   },
   {
+    name: 'Leaderboard',
+    link: RouteEnum.LEADERBOARD,
+  },
+  {
     name: 'Change-Logs',
     link: RouteEnum.CHANGE_LOGS,
     isExtended: true,

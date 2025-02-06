@@ -184,10 +184,4 @@ export class LessonProgressController {
       await this.lessonProgressService.calculateLeaderBoardPercentage();
     return new SuccessResponse(en.successLeaderboardData, leaderBoardData);
   }
-
-  @Get('leaderboarduser')
-  async getLeaderboardUser() {
-    const leaderBoardData = await this.lessonProgressService.getuserdetailss();
-    return new SuccessResponse(en.successLeaderboardData, leaderBoardData);
-  }
 }
