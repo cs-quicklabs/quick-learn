@@ -24,6 +24,7 @@ import { CourseArchiveDto } from './dto/course-archive.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
 import { Roles } from '@src/common/decorators/roles.decorator';
+import { CourseParamDto } from './dto/course-param.dto';
 
 @ApiTags('Course')
 @Controller({
@@ -70,11 +71,10 @@ export class CourseController {
   }
 
   @Get(':id')
-  @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Get course details' })
-  async getRoadmapDetails(@Param('id') id: string) {
+  async getRoadmapDetails(@Param() param: CourseParamDto) {
     const data = await this.service.getCourseDetails(
-      { id: +id },
+      { id: +param.id },
       ['lessons', 'lessons.created_by_user'],
       { countParticipant: true },
     );
@@ -82,11 +82,10 @@ export class CourseController {
   }
 
   @Get('/community/:id')
-  @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Get course details' })
-  async getcourseDetails(@Param('id') id: string) {
+  async getcourseDetails(@Param() param: CourseParamDto) {
     const data = await this.service.getCourseDetails(
-      { id: +id, is_community_available: true },
+      { id: +param.id, is_community_available: true },
       ['lessons', 'lessons.created_by_user'],
       { isCommunity: true },
     );
@@ -105,13 +104,15 @@ export class CourseController {
   }
 
   @Patch(':id/assign')
-  @ApiParam({ name: 'id', description: 'Roadmap ID', required: true })
   @ApiOperation({ summary: 'Assign a roadmaps to course' })
   async assignRoadmapCourse(
-    @Param('id') id: string,
+    @Param() param: CourseParamDto,
     @Body() assignRoadmapsToCourseDto: AssignRoadmapsToCourseDto,
   ) {
-    await this.service.assignRoadmapCourse(+id, assignRoadmapsToCourseDto);
+    await this.service.assignRoadmapCourse(
+      +param.id,
+      assignRoadmapsToCourseDto,
+    );
     return new SuccessResponse(en.UpdateCourse);
   }
 
@@ -132,10 +133,9 @@ export class CourseController {
   }
 
   @Delete(':id')
-  @ApiParam({ name: 'id', description: 'course id', required: true })
   @ApiOperation({ summary: 'Delete a course permanently' })
-  async deleteCourse(@Param('id') id: string): Promise<SuccessResponse> {
-    await this.service.deleteCourse(+id);
+  async deleteCourse(@Param() param: CourseParamDto): Promise<SuccessResponse> {
+    await this.service.deleteCourse(+param.id);
     return new SuccessResponse(en.CourseDeleted);
   }
 }
