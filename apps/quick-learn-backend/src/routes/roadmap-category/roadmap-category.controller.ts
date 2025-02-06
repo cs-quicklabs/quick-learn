@@ -58,12 +58,24 @@ export class RoadmapCategoryController {
     });
   }
 
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'The id of the roadmap category to get.',
+  })
   @Get(':id')
   @ApiOperation({ summary: 'Get the roadmap category details.' })
   findOne(@Param('id') id: string) {
     return this.roadmapCategoryService.get({ id: +id });
   }
 
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'The id of the roadmap category to update.',
+  })
   @Patch(':id')
   @ApiOperation({ summary: 'Update the roadmap category.' })
   @ApiParam({ name: 'id', type: 'string' })
@@ -78,6 +90,12 @@ export class RoadmapCategoryController {
     return new SuccessResponse(en.successUpdateRoadmap);
   }
 
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'The id of the roadmap category to delete.',
+  })
   @Delete(':id')
   @ApiOperation({ summary: 'Delete the roadmap category.' })
   async remove(@Param('id') id: string) {

@@ -5,7 +5,6 @@ export class CourseCategoryParamsDto {
   @ApiProperty({
     name: 'id',
     type: 'string',
-    description: 'Course Catgeory Id',
   })
   @IsNotEmpty()
   @IsString()

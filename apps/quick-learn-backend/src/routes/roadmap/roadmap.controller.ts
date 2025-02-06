@@ -21,7 +21,7 @@ import { UserEntity } from '@src/entities';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
 import { PaginationDto } from '../users/dto';
 import { ActivateRoadmapDto } from './dto/activate-roadmap.dto';
-import { RoadmapParamsDto } from './dto/roadmap-params.dto';
+import { roadmapParamsDto } from './dto/roadmap-params.dto';
 
 @ApiTags('Roadmap')
 @Controller({
@@ -74,7 +74,7 @@ export class RoadmapController {
   @Get(':id')
   @ApiOperation({ summary: 'Get roadmap details' })
   async getRoadmapDetails(
-    @Param() params: RoadmapParamsDto,
+    @Param() params: roadmapParamsDto,
     @Query('courseId') courseId?: string,
   ) {
     const roadmaps =
@@ -88,7 +88,7 @@ export class RoadmapController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a roadmap' })
   async updateRoadmap(
-    @Param() Params: RoadmapParamsDto,
+    @Param() Params: roadmapParamsDto,
     @Body() updateRoadmapDto: UpdateRoadmapDto,
     @CurrentUser('id') userID: number,
   ) {
@@ -103,7 +103,7 @@ export class RoadmapController {
   @Patch(':id/assign')
   @ApiOperation({ summary: 'Assign courses to roadmap' })
   async assignCoursesRoadmap(
-    @Param() params: RoadmapParamsDto,
+    @Param() params: roadmapParamsDto,
     @Body() assignCoursesToRoadmapDto: AssignCoursesToRoadmapDto,
   ) {
     await this.service.assignRoadmap(+params.id, assignCoursesToRoadmapDto);
@@ -112,7 +112,7 @@ export class RoadmapController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Permanently delete roadmap' })
-  async deleteRoadmap(@Param() params: RoadmapParamsDto) {
+  async deleteRoadmap(@Param() params: roadmapParamsDto) {
     await this.service.delete({ id: +params.id });
     return new SuccessResponse(en.successDeleteRoadmap);
   }

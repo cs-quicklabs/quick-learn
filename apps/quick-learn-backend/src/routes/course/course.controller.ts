@@ -24,7 +24,8 @@ import { CourseArchiveDto } from './dto/course-archive.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
 import { Roles } from '@src/common/decorators/roles.decorator';
-import { courseParamsDto } from './dto/course-params.dto';
+import { CourseParamsDto } from './dto/course-params.dto';
+import { roadmapParamsDto } from '../roadmap/dto/roadmap-params.dto';
 
 @ApiTags('Course')
 @Controller({
@@ -84,7 +85,7 @@ export class CourseController {
 
   @Get('/community/:id')
   @ApiOperation({ summary: 'Get course details' })
-  async getcourseDetails(@Param() params: courseParamsDto) {
+  async getcourseDetails(@Param() params: CourseParamsDto) {
     const data = await this.service.getCourseDetails(
       { id: +params.id, is_community_available: true },
       ['lessons', 'lessons.created_by_user'],
@@ -96,7 +97,7 @@ export class CourseController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a course' })
   async updateRoadmap(
-    @Param() params: courseParamsDto,
+    @Param() params: CourseParamsDto,
     @Body() updateCourseDto: UpdateCourseDto,
   ) {
     await this.service.updateCourse(+params.id, updateCourseDto);
@@ -106,7 +107,7 @@ export class CourseController {
   @Patch(':id/assign')
   @ApiOperation({ summary: 'Assign a roadmaps to course' })
   async assignRoadmapCourse(
-    @Param() params: courseParamsDto,
+    @Param() params: roadmapParamsDto,
     @Body() assignRoadmapsToCourseDto: AssignRoadmapsToCourseDto,
   ) {
     await this.service.assignRoadmapCourse(
@@ -135,7 +136,7 @@ export class CourseController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a course permanently' })
   async deleteCourse(
-    @Param() params: courseParamsDto,
+    @Param() params: CourseParamsDto,
   ): Promise<SuccessResponse> {
     await this.service.deleteCourse(+params.id);
     return new SuccessResponse(en.CourseDeleted);

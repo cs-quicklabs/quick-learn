@@ -7,7 +7,7 @@ import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { LessonEmailService } from './lesson-email-cron.service';
 import { JwtAuthGuard } from '../auth/guards';
-import { CronjobQyeryDto } from './dto/cronjob-query.dto';
+import { CronjobDto } from './dto/cronjob.dto';
 
 /**
  * Controller for cronjob routes
@@ -29,7 +29,7 @@ export class CronjobController {
   @Post('daily-lessons')
   @ApiOperation({ summary: 'Send daily lessons to the users.' })
   async triggerCronJobmaunually(
-    @Query() query: CronjobQyeryDto,
+    @Query() query: CronjobDto,
   ): Promise<SuccessResponse> {
     await this.lessonCronJobService.sendLessonEmails(query.greeting);
     return new SuccessResponse(en.triggeredDailyLessonMails);

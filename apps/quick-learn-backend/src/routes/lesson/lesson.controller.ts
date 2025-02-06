@@ -105,6 +105,11 @@ export class LessonController {
     return new SuccessResponse(en.createLesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @ApiOperation({ summary: 'Get a specific lesson.' })
   @Get('/:id')
   /**
@@ -136,6 +141,11 @@ export class LessonController {
     return new SuccessResponse(en.getLesson, lesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @ApiOperation({ summary: 'Update an existing lesson.' })
   @Patch('/:id')
   /**
@@ -154,6 +164,11 @@ export class LessonController {
     return new SuccessResponse(en.updateLesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @UseGuards(RolesGuard)
   @Roles(UserTypeId.SUPER_ADMIN, UserTypeId.ADMIN)
   @ApiOperation({ summary: 'Approved an lessons.' })
@@ -206,6 +221,11 @@ export class LessonController {
     return new SuccessResponse(en.archiveLesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @ApiOperation({ summary: 'Activate or deactivate a lesson.' })
   @Post('activate')
   async activateLesson(
@@ -221,6 +241,11 @@ export class LessonController {
     return new SuccessResponse(en.unarchiveLesson);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+  })
   @Delete(':id')
   @ApiOperation({ summary: 'Permanently delete a lesson' })
   @ApiParam({
@@ -249,7 +274,11 @@ export class LessonController {
     @Param() params: lessonTokenValidation,
   ): Promise<SuccessResponse> {
     const [userTokenDetail, lessonDetail] = await Promise.all([
-      await this.service.validateLessionToken(params.token, +params.courseId, +params.lessonId),
+      await this.service.validateLessionToken(
+        params.token,
+        +params.courseId,
+        +params.lessonId,
+      ),
       await this.service.fetchLesson(+params.lessonId, +params.courseId),
     ]);
 
@@ -258,7 +287,11 @@ export class LessonController {
       +params.lessonId,
     );
 
-    await this.service.updateDailyLessonToken(params.token, +params.courseId, +params.lessonId);
+    await this.service.updateDailyLessonToken(
+      params.token,
+      +params.courseId,
+      +params.lessonId,
+    );
 
     return new SuccessResponse(en.lessonForTheDay, {
       lesson_detail: lessonDetail,

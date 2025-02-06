@@ -15,20 +15,17 @@ import { SuccessResponse } from '@src/common/dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
 import {
+  AssignRoadmapsToUserDto,
   CreateUserDto,
+  GetLessonByIdQueryDto,
+  GetUserQueryDto,
   ListFilterDto,
   PaginationDto,
   UpdateUserDto,
+  UserActivateDto,
 } from './dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { en } from '@src/lang/en';
-import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
-import { GetUserQueryDto } from './dto/get-user-query.dto';
-import { GetLessonByIdQueryDto } from './dto/get-lesson-by-id.dto';
-import { UserRoadmapParamsDto } from './dto/user-roadmap.dto';
-import { UserCourseDto } from './dto/user-course.dto';
-import { UserLesosnDto } from './dto/user-lesson.dto';
-import { UserParamDto } from './dto/user-param.dto';
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -47,12 +44,6 @@ export class UsersController {
 
   @Get('my-roadmaps')
   @ApiOperation({ summary: "Get current user's assigned roadmaps" })
-  @ApiQuery({
-    name: 'include_courses',
-    required: false,
-    type: Boolean,
-    description: 'Include associated courses in the response',
-  })
   async getCurrentUserRoadmaps(
     @CurrentUser() user: UserEntity,
     @Query('include_courses') includeCourses?: boolean,
@@ -68,25 +59,26 @@ export class UsersController {
   @ApiOperation({ summary: "Get current user's roadmap by id" })
   async getCurrentUserRoadmapsById(
     @CurrentUser() user: UserEntity,
-    @Param() param: UserRoadmapParamsDto,
+    @Param() params: userParamsDto,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getRoadmapDetails(
-      !isNaN(param.userId) ? param.userId : user.id,
-      +param.id,
+      !isNaN(+params.userId) ? +params.userId : user.id,
+      +params.id,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
+  @ApiQuery({ name: 'roadmapId', required: false })
   @Get('myroadmaps/courses/:id/:userId?')
   @ApiOperation({ summary: "Get current user's course by id" })
   async getCurrentUserCoursesById(
     @CurrentUser() user: UserEntity,
-    @Param() param: UserCourseDto,
+    @Param() params: userParamsDto,
     @Query('roadmapId') roadmapId?: string,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getCourseDetails(
-      !isNaN(param.userId) ? param.userId : user.id,
-      +param.id,
+      !isNaN(+params.userId) ? +params.userId : user.id,
+      +params.id,
       roadmapId ? +roadmapId : undefined,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
@@ -96,18 +88,19 @@ export class UsersController {
   @ApiOperation({ summary: "Get current user's lesson by id" })
   async getCurrentUserLessonsById(
     @CurrentUser() user: UserEntity,
-    @Param() param: UserLesosnDto,
     @Query() query: GetLessonByIdQueryDto,
+    @Param() params: userParamsDto,
   ): Promise<SuccessResponse> {
     const roadmaps = await this.usersService.getLessonDetails(
-      !isNaN(param.userId) ? param.userId : user.id,
-      +param.id,
+      !isNaN(+params.userId) ? +params.userId : user.id,
+      +params.id,
       +query.courseId,
       query.roadmapId ? +query.roadmapId : undefined,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
+  @ApiQuery({ name: 'query', required: false })
   @Get('search')
   @ApiOperation({ summary: 'Get search queries' })
   async getSearchQuery(
@@ -174,9 +167,7 @@ export class UsersController {
 
   @Post('activate')
   @ApiOperation({ summary: 'Activate or deactivate user' })
-  async activateUser(
-    @Body() body: { userId: number; active: boolean },
-  ): Promise<SuccessResponse> {
+  async activateUser(@Body() body: UserActivateDto): Promise<SuccessResponse> {
     const { active, userId } = body;
     const updatedUser = await this.usersService.updateUser(userId, { active });
     return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
@@ -211,12 +202,17 @@ export class UsersController {
 
   @Patch(':userId')
   @ApiOperation({ summary: 'Update specific user by userId' })
+  @ApiParam({
+    name: 'userId',
+    type: 'number',
+    required: true,
+  })
   async update(
-    @Param() param: UserParamDto,
+    @Param('userId') userId: number,
     @CurrentUser() currentUser: UserEntity,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.updateUser(param.userId, {
+    const user = await this.usersService.updateUser(userId, {
       ...updateUserDto,
       updated_by: currentUser,
     });
@@ -225,21 +221,28 @@ export class UsersController {
 
   @Patch(':userId/assign-roadmaps')
   @ApiOperation({ summary: 'Assign roadmaps to user' })
+  @ApiParam({
+    name: 'userId',
+    type: 'number',
+    required: true,
+  })
   async assignRoadmaps(
-    @Param() param: UserParamDto,
+    @Param('userId') userId: number,
     @Body() assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
   ): Promise<SuccessResponse> {
-    await this.usersService.assignRoadmaps(
-      param.userId,
-      assignRoadmapsToUserDto,
-    );
+    await this.usersService.assignRoadmaps(userId, assignRoadmapsToUserDto);
     return new SuccessResponse(en.successUserUpdated);
   }
 
   @Delete(':userId')
   @ApiOperation({ summary: 'Permanently delete user by userId' })
-  async remove(@Param() param: UserParamDto) {
-    await this.usersService.delete({ id: param.userId });
+  @ApiParam({
+    name: 'userId',
+    type: 'number',
+    required: true,
+  })
+  async remove(@Param('userId') userId: number) {
+    await this.usersService.delete({ id: userId });
     return new SuccessResponse(en.successUserDelete);
   }
 }

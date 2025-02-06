@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class RoadmapParamsDto {
+export class roadmapParamsDto {
   @ApiProperty({
     name: 'id',
-    description: 'Roadmap Id',
+    description: 'Roadmap ID',
     required: true,
   })
   @IsString()
