@@ -35,7 +35,7 @@ const FlaggedList = () => {
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isInitialLoad) {
       dispatch(
         updateSystemPreferencesData({
           flagged_lessons: totalLessons,
@@ -43,7 +43,7 @@ const FlaggedList = () => {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [isInitialLoad]);
 
   // Debounce search input to reduce unnecessary API calls
   useEffect(() => {
