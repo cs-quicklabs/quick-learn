@@ -77,6 +77,7 @@ export const en = {
   lessonStatus: 'Lesson Status',
   searchResults: 'Search Results',
   triggeredDailyLessonMails: 'Successfully triggered daily lesson mails',
+  succcessLessonFlagged: 'Lesson flagged successfully',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',
@@ -111,4 +112,7 @@ export const en = {
 
   //Leaderboard Data
   successLeaderboardData: 'Successfully got the leaderboad details',
+  // flagged lesson
+  invalidLesson: 'Invalid lesson is provided.',
+  successUnflagLesson: 'Successfully unflagged the lesson.',
 };

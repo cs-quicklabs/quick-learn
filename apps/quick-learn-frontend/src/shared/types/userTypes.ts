@@ -17,6 +17,7 @@ export type TUser = {
   id: number;
   uuid: string;
   full_name: string;
+  display_name: string;
   first_name: string;
   last_name: string;
   role: string;

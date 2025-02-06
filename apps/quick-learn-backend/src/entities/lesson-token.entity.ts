@@ -1,9 +1,10 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
 import { CourseEntity } from './course.entity';
 import { LessonEntity } from './lesson.entity';
 import { UserEntity } from './user.entity';
+import { FlaggedLessonEntity } from './flagged-lesson.enitity';
 
 @Entity('lesson_tokens')
 export class LessonTokenEntity extends BaseEntity {
@@ -37,6 +38,9 @@ export class LessonTokenEntity extends BaseEntity {
     default: DailyLessonEnum.PENDING,
   })
   status: string;
+
+  @OneToOne(() => FlaggedLessonEntity, (flagged) => flagged.lesson)
+  flagged_lesson: FlaggedLessonEntity;
 
   @Column()
   expiresAt: Date;

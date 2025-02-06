@@ -31,6 +31,21 @@ export class BasicCrudService<T> {
   }
 
   /**
+   * Retrieves a count based on the provided options.
+   * @param {FindOptionsWhere<T> | FindOptionsWhere<T>[]} [options] - The options for finding the entity.
+   * @returns {Promise<T>} A promise that resolves with the retrieved entity.
+   */
+  async count(
+    options?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
+    relations: string[] = [],
+  ): Promise<number> {
+    return await this.repository.count({
+      where: options,
+      relations: [...relations],
+    });
+  }
+
+  /**
    * Retrieves multiple entities based on the provided options.
    * @param {FindOptionsWhere<T> | FindOptionsWhere<T>[]} [options] - The options for finding the entities.
    * @param {FindOptionsOrder<T>} [orderOptions] - The options for ordering the retrieved entities.

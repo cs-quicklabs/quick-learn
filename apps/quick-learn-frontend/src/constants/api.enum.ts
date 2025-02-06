@@ -42,6 +42,8 @@ export enum ContentRepositoryApiEnum {
   GET_USER_ROADMAPS = '/users/my-roadmaps',
   LESSON_PROGRESS = '/lessonprogress',
   LEADERBOARD_STATUS = '/lessonprogress/leaderboard',
+  LESSON_FLAGGED = '/lesson/flag',
+  GET_FLAGGED_LESSON = '/lesson/flagged',
 }
 
 export enum ArchivedApiEnum {

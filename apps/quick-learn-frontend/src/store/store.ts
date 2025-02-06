@@ -10,7 +10,6 @@ import {
   REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-
 // Import your reducers
 import metadataReducer from './features/metadataSlice';
 import dashboardReducer from './features/dashboardSlice';

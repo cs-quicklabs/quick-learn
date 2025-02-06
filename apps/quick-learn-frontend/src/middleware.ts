@@ -22,6 +22,7 @@ const ADMIN_AND_SUPERADMIN_ROUTES = [
   RouteEnum.ARCHIVED_USERS,
   RouteEnum.TEAM,
   RouteEnum.APPROVALS,
+  RouteEnum.FLAGGED,
 ];
 const EDITOR_ROUTES = [RouteEnum.CONTENT];
 

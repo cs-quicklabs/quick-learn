@@ -1,8 +1,6 @@
-'use client';
 import 'flowbite/dist/flowbite.css';
 import './global.css';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { ReduxProvider } from '@src/store/provider';
 import { getClientIp } from '@src/apiServices/ipService';
 

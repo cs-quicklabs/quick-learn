@@ -9,9 +9,9 @@ import ViewLesson from '@src/shared/components/ViewLesson';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
 import { selectUser } from '@src/store/features/userSlice';
+import { SuperLink } from '@src/utils/HiLink';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -87,13 +87,13 @@ const LessonDetails = () => {
     <>
       <ViewLesson lesson={lesson} links={links} isPending={true} />
       {canEdit && (
-        <Link
+        <SuperLink
           href={`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/edit/${lessonId}`}
         >
           <span className="fixed flex items-center bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500">
             <PencilIcon className="flex-shrink-0 inline w-4 h-4 me-1" />| Edit
           </span>
-        </Link>
+        </SuperLink>
       )}
     </>
   );
