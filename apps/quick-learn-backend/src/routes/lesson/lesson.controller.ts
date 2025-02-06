@@ -36,7 +36,7 @@ export class LessonController {
   constructor(
     private readonly service: LessonService,
     private readonly lessonProgressService: LessonProgressService,
-  ) {}
+  ) { }
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()
@@ -79,7 +79,6 @@ export class LessonController {
   async findAllFlaggedLessons(
     @Query() paginationDto: BasePaginationDto,
   ): Promise<SuccessResponse> {
-    console.log(paginationDto);
     const lessons = await this.service.findAllFlaggedLesson(
       Number(paginationDto.page),
       Number(paginationDto.limit),
@@ -265,15 +264,7 @@ export class LessonController {
   @Post('flag/:token')
   @UseGuards(JwtAuthGuard)
   async flagLesson(@Param('token') token: string): Promise<SuccessResponse> {
-    try {
-      await this.service.flagLesson(token);
-      return new SuccessResponse('Lesson flagged successfully');
-    } catch (error) {
-      if (error.code === '23505') {
-        // Unique constraint violation
-        throw new BadRequestException('This lesson has already been flagged');
-      }
-      throw new BadRequestException('Error flagging lesson');
-    }
+    await this.service.flagLesson(token);
+    return new SuccessResponse(en.succcessLessonFlagged);
   }
 }
