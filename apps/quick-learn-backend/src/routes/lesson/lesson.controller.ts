@@ -36,7 +36,7 @@ export class LessonController {
   constructor(
     private readonly service: LessonService,
     private readonly lessonProgressService: LessonProgressService,
-  ) { }
+  ) {}
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()
