@@ -21,18 +21,6 @@ export class Migration1738068274532 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'created_at',
-            type: 'timestamp',
-            isNullable: false,
-            default: 'CURRENT_TIMESTAMP',
-          },
-          {
-            name: 'updated_at',
-            type: 'timestamp',
-            isNullable: false,
-            default: 'CURRENT_TIMESTAMP',
-          },
-          {
             name: 'user_id',
             type: 'int',
             isNullable: false,

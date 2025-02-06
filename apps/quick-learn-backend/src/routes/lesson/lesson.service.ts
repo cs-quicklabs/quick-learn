@@ -452,7 +452,6 @@ export class LessonService extends PaginationService<LessonEntity> {
       user_id: lessonToken.user_id,
       lesson_id: lessonToken.lesson_id,
       course_id: lessonToken.course_id,
-      flagged_on: new Date(),
     });
 
     return await this.flaggedLessonEnity.save(flaggedLesson);
@@ -475,11 +474,18 @@ export class LessonService extends PaginationService<LessonEntity> {
 
       // Add search condition if search term exists
       if (search) {
-        findOptions.where = {
-          lesson: {
-            name: ILike(`%${search}%`),
+        findOptions.where = [
+          {
+            lesson: {
+              name: ILike(`%${search}%`),
+            },
           },
-        };
+          {
+            user: {
+              full_name: ILike(`%${search}%`),
+            },
+          },
+        ];
       }
 
       // Get both lessons and count in parallel for better performance

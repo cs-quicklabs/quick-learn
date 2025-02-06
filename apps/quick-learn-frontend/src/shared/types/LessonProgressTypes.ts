@@ -1,3 +1,6 @@
+import { TLesson } from './contentRepository';
+import { TUser } from './userTypes';
+
 export type LessonProgress = {
   lesson_id: number;
   completed_date: Date;
@@ -6,6 +9,12 @@ export type LessonProgress = {
 export type LessonStatus = {
   isRead: boolean;
   completed_date: string;
+};
+
+export type TDailyLessonResponse = {
+  lesson_detail: TLesson;
+  user_detail: TUser;
+  user_lesson_read_info: LessonStatus;
 };
 
 export type UserLessonProgress = {

@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { LessonService } from './lesson.service';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { SuccessResponse } from '@src/common/dto';
+import { BasePaginationDto, SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { CreateLessonDto, UpdateLessonDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards';
@@ -24,6 +24,7 @@ import { Public } from '@src/common/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
+import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 
 @ApiTags('Lessons')
 @Controller({
@@ -32,7 +33,10 @@ import { UserTypeId } from '@src/common/enum/user_role.enum';
 })
 @UseGuards(JwtAuthGuard)
 export class LessonController {
-  constructor(private readonly service: LessonService) {}
+  constructor(
+    private readonly service: LessonService,
+    private readonly lessonProgressService: LessonProgressService,
+  ) {}
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()
@@ -73,14 +77,13 @@ export class LessonController {
   @ApiOperation({ summary: 'Get all flagged lessons with optional search.' })
   @Get('flagged')
   async findAllFlaggedLessons(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('search') search = '',
+    @Query() paginationDto: BasePaginationDto,
   ): Promise<SuccessResponse> {
+    console.log(paginationDto);
     const lessons = await this.service.findAllFlaggedLesson(
-      Number(page),
-      Number(limit),
-      search,
+      Number(paginationDto.page),
+      Number(paginationDto.limit),
+      paginationDto.q,
     );
     return new SuccessResponse(en.getLessons, lessons);
   }
@@ -239,19 +242,22 @@ export class LessonController {
     @Param('courseId') courseId: string,
     @Param('token') token: string,
   ): Promise<SuccessResponse> {
-    const userTokenDetail = await this.service.validateLessionToken(
-      token,
-      +courseId,
+    const [userTokenDetail, lessonDetail] = await Promise.all([
+      await this.service.validateLessionToken(token, +courseId, +lessonId),
+      await this.service.fetchLesson(+lessonId, +courseId),
+    ]);
+
+    const userLessonReadInfo = await this.lessonProgressService.checkLessonRead(
+      userTokenDetail.user.id,
       +lessonId,
     );
-
-    const lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
 
     await this.service.updateDailyLessonToken(token, +courseId, +lessonId);
 
     return new SuccessResponse(en.lessonForTheDay, {
-      lessonDetail,
-      userDetail: userTokenDetail.user,
+      lesson_detail: lessonDetail,
+      user_detail: userTokenDetail.user,
+      user_lesson_read_info: userLessonReadInfo,
     });
   }
 

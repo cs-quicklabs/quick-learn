@@ -153,10 +153,10 @@ const FlaggedList = () => {
                     </div>
                   </th>
                   <td className="px-4 py-2">
-                    {formatDate(flaggedLesson.updated_at)}
+                    {formatDate(flaggedLesson.lesson.updated_at)}
                   </td>
                   <td className="px-4 py-2">
-                    {formatDate(flaggedLesson.created_at)}
+                    {formatDate(flaggedLesson.lesson.created_at)}
                   </td>
                   <td className="px-4 py-2">
                     {formatDate(flaggedLesson.flagged_on)}

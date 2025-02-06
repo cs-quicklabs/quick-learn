@@ -2,13 +2,13 @@
 import {
   flagLesson,
   getDailyLessionDetail,
-  getLessonStatusPublic,
   markAsDonePublic,
 } from '@src/apiServices/lessonsService';
-import { TLesson } from '@src/shared/types/contentRepository';
+import { TFlaggedLesson, TLesson } from '@src/shared/types/contentRepository';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
+  showErrorMessage,
 } from '@src/utils/toastUtils';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -21,6 +21,8 @@ import { TUser } from '@src/shared/types/userTypes';
 import { HomeIcon } from '@heroicons/react/20/solid';
 import { FlagIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { UserTypeIdEnum } from 'lib/shared/src';
+import { format } from 'date-fns';
+import { DateFormats } from '@src/constants/dateFormats';
 
 const DailyLessonDetail = () => {
   const router = useRouter();
@@ -31,8 +33,8 @@ const DailyLessonDetail = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isRead, setIsRead] = useState<boolean>(false);
   const [completedOn, setCompletedOn] = useState<string>('');
-  const [isAdmins, setIsAdmins] = useState<boolean>(false);
-  const [isFlagged, setIsFlagged] = useState<null | unknown>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isFlagged, setIsFlagged] = useState<TFlaggedLesson | null>(null);
   const [isFlagging, setIsFlagging] = useState<boolean>(false);
 
   const { lesson } = useParams<{
@@ -70,81 +72,73 @@ const DailyLessonDetail = () => {
 
   const handleFlagLesson = async () => {
     if (!token) {
-      showApiErrorInToast('Missing required information');
+      showErrorMessage('Missing required information');
       return;
     }
 
     setIsFlagging(true);
 
-    try {
-      // Flag the lesson
-      const flag = await flagLesson(token);
-      showApiMessageInToast(flag);
-      // Fetch updated lesson details to get flagging information
-      const response = await getDailyLessionDetail({
-        lessonId: lesson,
-        courseId,
-        token,
-      });
-
-      // Update states with fresh data including who flagged it
-      setLessonDetails(response.data.lessonDetail);
-      setIsFlagged(response.data.lessonDetail.flagged_lesson);
-    } catch (error) {
-      showApiErrorInToast(error);
-    } finally {
-      setIsFlagging(false);
-    }
+    flagLesson(token)
+      .then((res) => {
+        showApiMessageInToast(res);
+        setIsFlagged({
+          flagged_on: new Date(),
+          user: userDetail,
+          user_id: Number(userDetail?.id) || 1,
+          lesson_id: Number(lesson),
+          course_id: Number(courseId),
+          id: 1, // dummy id
+        });
+      })
+      .catch((err) => showApiErrorInToast(err))
+      .finally(() => setIsFlagging(false));
   };
 
   const markLessionAsUnread = async () => {
-    try {
-      const res = await markAsDonePublic(
-        lesson,
-        courseId,
-        false,
-        Number(userDetail?.id),
-      );
-      showApiMessageInToast(res);
-      setIsRead(false);
-      setIsChecked(false);
-    } catch (error) {
-      console.error('Error marking lesson as completed:', error);
-    }
+    markAsDonePublic(lesson, courseId, false, Number(userDetail?.id))
+      .then((res) => {
+        showApiMessageInToast(res);
+        setIsRead(false);
+        setIsChecked(false);
+      })
+      .catch((err) => {
+        console.error('Error marking lesson as completed:', err);
+        showApiErrorInToast(err);
+      });
   };
 
   useEffect(() => {
-    if (courseId && token && lesson) {
-      getDailyLessionDetail({
-        lessonId: lesson,
-        courseId,
-        token,
-      })
-        .then((response) => {
-          setLessonDetails(response.data.lessonDetail);
-          setUserDetail(response.data.userDetail);
-          setIsFlagged(response.data.lessonDetail.flagged_lesson);
-          const userType = response.data.userDetail.user_type_id;
-          setIsAdmins(
-            userType === UserTypeIdEnum.ADMIN ||
-              userType === UserTypeIdEnum.SUPERADMIN,
-          );
-          return response.data.userDetail;
-        })
-        .then((response) => {
-          getLessonStatusPublic(lesson, Number(response.id))
-            .then((res) => {
-              setIsRead(res.data.isRead);
-              setCompletedOn(res.data.completed_date);
-              setIsChecked(res.data.isRead);
-            })
-            .catch((err) => console.log('err', err));
-        })
-        .catch((err) => {
-          showApiErrorInToast(err);
-          router.replace(RouteEnum.LOGIN);
-        });
+    if (!courseId || !token || !lesson) {
+      return;
     }
+    getDailyLessionDetail({
+      lessonId: lesson,
+      courseId,
+      token,
+    })
+      .then(({ data }) => {
+        const { lesson_detail, user_detail, user_lesson_read_info } = data;
+        const { user_type_id } = user_detail;
+        // lesson and admin details
+        setLessonDetails(lesson_detail);
+        setUserDetail(user_detail);
+        // lesson flagged details
+        setIsFlagged(lesson_detail?.flagged_lesson ?? null);
+        //
+        setIsAdmin(
+          [UserTypeIdEnum.ADMIN, UserTypeIdEnum.SUPERADMIN].includes(
+            user_type_id,
+          ),
+        );
+        // lesson read status
+        setIsRead(user_lesson_read_info.isRead);
+        setCompletedOn(user_lesson_read_info.completed_date);
+        setIsChecked(user_lesson_read_info.isRead);
+      })
+      .catch((err) => {
+        showApiErrorInToast(err);
+        router.replace(RouteEnum.LOGIN);
+      });
   }, [courseId, token, lesson, router]);
 
   const navigateUserToLearningPath = () => {
@@ -164,12 +158,13 @@ const DailyLessonDetail = () => {
                 {en.myLearningPath.alreadyCompleted}
               </span>{' '}
               {completedOn && en.myLearningPath.lessonCompleted(completedOn)}{' '}
-              <span
+              <button
+                type="button"
                 className="font-bold underline cursor-pointer"
                 onClick={markLessionAsUnread}
               >
                 {en.myLearningPath.markAsUnread}
-              </span>
+              </button>
             </p>
           </p>
         </div>
@@ -177,7 +172,7 @@ const DailyLessonDetail = () => {
     }
 
     return (
-      <div className="flex justify-center items-center gap-2 mb-20 mt-12">
+      <div className="flex justify-center items-center gap-2 mb-12 mt-12">
         <input
           type="checkbox"
           checked={isChecked}
@@ -192,37 +187,38 @@ const DailyLessonDetail = () => {
   };
 
   const renderAdminControls = () => {
-    if (!isAdmins) return null;
+    if (!isAdmin) return null;
+
+    function renderFlaggedBy() {
+      if (isFlagging) return 'Flagging...';
+
+      if (isFlagged) {
+        return (
+          <div className="flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
+            <div className="h-5 w-5">
+              <FlagIcon />
+            </div>
+            {`The Lesson is flagged by ${
+              isFlagged?.user?.display_name ?? 'Unknown'
+            } on ${format(isFlagged.flagged_on, DateFormats.shortDate)}`}
+          </div>
+        );
+      }
+
+      return (
+        <button
+          className="inline-flex justify-center items-center p-2 text-xs hover:underline font-medium rounded-lg text-gray-700 sm:text-sm hover:bg-gray-100"
+          onClick={handleFlagLesson}
+          disabled={isFlagged ?? isFlagging}
+        >
+          Flag lesson for editing
+        </button>
+      );
+    }
 
     return (
-      <div className="flex justify-center items-center mb-10 mt-6 ml-4">
-        <button
-          className="text-blue-600 font-semibold hover:bg-slate-400 hover:rounded-md py-2 px-3 disabled:rounded-md disabled:bg-yellow-100 disabled:px-6 disabled:py-4 disabled:text-gray-800"
-          onClick={handleFlagLesson}
-          disabled={isFlagged || isFlagging}
-        >
-          {isFlagging ? (
-            'Flagging...'
-          ) : isFlagged ? (
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-5">
-                <FlagIcon />
-              </div>
-              {`The Lesson is flagged by ${
-                isFlagged.user.first_name + ' ' + isFlagged.user.last_name
-              } on ${new Date(isFlagged.flagged_on).toLocaleDateString(
-                'en-US',
-                {
-                  month: 'short',
-                  day: '2-digit',
-                  year: 'numeric',
-                },
-              )}`}
-            </div>
-          ) : (
-            'Flag lesson for editing'
-          )}
-        </button>
+      <div className="flex justify-center items-center mb-12 mt-6 ml-4">
+        {renderFlaggedBy()}
       </div>
     );
   };

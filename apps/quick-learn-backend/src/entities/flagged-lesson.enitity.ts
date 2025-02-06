@@ -5,15 +5,19 @@ import {
   JoinColumn,
   Unique,
   CreateDateColumn,
+  PrimaryGeneratedColumn,
+  OneToOne,
 } from 'typeorm';
-import { BaseEntity } from './BaseEntity';
 import { CourseEntity } from './course.entity';
 import { LessonEntity } from './lesson.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('flagged_lessons')
 @Unique(['lesson_id']) // Ensures lesson_id is unique
-export class FlaggedLessonEntity extends BaseEntity {
+export class FlaggedLessonEntity {
+  @PrimaryGeneratedColumn('increment')
+  id: number;
+
   @Column({ type: 'int', nullable: false })
   user_id: number;
 
@@ -27,7 +31,9 @@ export class FlaggedLessonEntity extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @ManyToOne(() => LessonEntity, { onDelete: 'CASCADE' })
+  @OneToOne(() => LessonEntity, (lesson) => lesson.flagged_lesson, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'lesson_id' })
   lesson: LessonEntity;
 
