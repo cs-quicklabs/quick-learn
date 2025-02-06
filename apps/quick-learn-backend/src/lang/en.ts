@@ -109,4 +109,8 @@ export const en = {
   successdullyPasswordUpdated: 'Password updated successfully.',
   successPreferencesUpdated: 'Email preference updated successfully.',
   successPreferences: 'Successfully got user preferences.',
+
+  // flagged lesson
+  invalidLesson: 'Invalid lesson is provided.',
+  successUnflagLesson: 'Successfully unflagged the lesson.',
 };

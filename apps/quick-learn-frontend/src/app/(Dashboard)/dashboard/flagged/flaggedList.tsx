@@ -1,16 +1,17 @@
 'use client';
-import { DateFormats } from '@src/constants/dateFormats';
-import { en } from '@src/constants/lang/en';
-import { RouteEnum } from '@src/constants/route.enum';
-import { format } from 'date-fns';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import FlaggedListSkeleton from './flaggedSkeleton';
+import { format } from 'date-fns';
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { en } from '@src/constants/lang/en';
+import { DateFormats } from '@src/constants/dateFormats';
+import { RouteEnum } from '@src/constants/route.enum';
 import { getFlaggedLessons } from '@src/apiServices/lessonsService';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
-import { AxiosErrorObject } from '@src/apiServices/axios';
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
-import { FlaggedLesson } from '@src/shared/types/utilTypes';
+import FlaggedListSkeleton from './flaggedSkeleton';
+import { TFlaggedLesson } from '@src/shared/types/contentRepository';
+import { useAppDispatch } from '@src/store/hooks';
+import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
+import { SuperLink } from '@src/utils/HiLink';
 
 const columns = [
   en.common.lesson,
@@ -23,7 +24,8 @@ const columns = [
 const ITEMS_PER_PAGE = 10;
 
 const FlaggedList = () => {
-  const [flaggedLessons, setFlaggedLessons] = useState<FlaggedLesson[]>([]);
+  const dispatch = useAppDispatch();
+  const [flaggedLessons, setFlaggedLessons] = useState<TFlaggedLesson[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,6 +33,17 @@ const FlaggedList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchInputValue, setSearchInputValue] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    if (!isLoading) {
+      dispatch(
+        updateSystemPreferencesData({
+          flagged_lessons: flaggedLessons?.length ?? 0,
+        }),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
 
   // Debounce search input to reduce unnecessary API calls
   useEffect(() => {
@@ -45,30 +58,18 @@ const FlaggedList = () => {
 
   useEffect(() => {
     const fetchFlaggedLessons = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getFlaggedLessons(
-          currentPage,
-          ITEMS_PER_PAGE,
-          debouncedSearch,
-        );
-
-        if (response?.data) {
-          setFlaggedLessons(response.data.lessons);
-          setTotalLessons(response.data.totalCount);
-          setTotalPages(response.data.totalPages);
-        } else {
-          setFlaggedLessons([]);
-          setTotalLessons(0);
-        }
-      } catch (error) {
-        showApiErrorInToast(error as AxiosErrorObject);
-        setFlaggedLessons([]);
-        setTotalLessons(0);
-      } finally {
-        setIsLoading(false);
-        setIsInitialLoad(false);
-      }
+      setIsLoading(true);
+      await getFlaggedLessons(currentPage, ITEMS_PER_PAGE, debouncedSearch)
+        .then(({ data }) => {
+          setFlaggedLessons(data.items || []);
+          setTotalLessons(data.total || 0);
+          setTotalPages(data.total_pages || 0);
+        })
+        .catch((err) => showApiErrorInToast(err))
+        .finally(() => {
+          setIsLoading(false);
+          setIsInitialLoad(false);
+        });
     };
 
     fetchFlaggedLessons();
@@ -144,19 +145,23 @@ const FlaggedList = () => {
                     className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap"
                   >
                     <div className="flex items-center">
-                      <Link
+                      <SuperLink
                         className="ml-2 hover:underline"
-                        href={`${RouteEnum.CONTENT}/course/${flaggedLesson.course_id}/${flaggedLesson.lesson_id}`}
+                        href={`${RouteEnum.FLAGGED}/${flaggedLesson.lesson_id}`}
                       >
-                        {flaggedLesson.lesson?.name || '-'}
-                      </Link>
+                        {flaggedLesson.lesson?.name ?? '-'}
+                      </SuperLink>
                     </div>
                   </th>
                   <td className="px-4 py-2">
-                    {formatDate(flaggedLesson.lesson.updated_at)}
+                    {(flaggedLesson?.lesson?.updated_at &&
+                      formatDate(flaggedLesson?.lesson?.updated_at)) ||
+                      '-'}
                   </td>
                   <td className="px-4 py-2">
-                    {formatDate(flaggedLesson.lesson.created_at)}
+                    {(flaggedLesson?.lesson?.created_at &&
+                      formatDate(flaggedLesson.lesson.created_at)) ||
+                      '-'}
                   </td>
                   <td className="px-4 py-2">
                     {formatDate(flaggedLesson.flagged_on)}

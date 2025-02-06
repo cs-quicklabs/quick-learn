@@ -24,9 +24,16 @@ import WebsiteLogo from './WebsiteLogo';
 import NavbarSearchBox from './NavbarSearchBox';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@src/store/features/userSlice';
-import { getUnapprovedLessonCount } from '@src/store/features/systemPreferenceSlice';
+import { getSystemPreferencesState } from '@src/store/features/systemPreferenceSlice';
+import { SystemPreferencesKey } from '../types/contentRepository';
 
-type TLink = { name: string; link: string; isExtended?: boolean };
+type TLink = {
+  name: string;
+  link: string;
+  isExtended?: boolean;
+  showCount?: boolean;
+  countKey?: SystemPreferencesKey;
+};
 
 const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
 const myLearningPath: TLink = {
@@ -34,8 +41,18 @@ const myLearningPath: TLink = {
   link: RouteEnum.MY_LEARNING_PATH,
 };
 const content: TLink = { name: 'Content', link: RouteEnum.CONTENT };
-const approvals: TLink = { name: 'Approvals', link: RouteEnum.APPROVALS };
-const flagged: TLink = { name: 'Flagged', link: RouteEnum.FLAGGED };
+const approvals: TLink = {
+  name: 'Approvals',
+  link: RouteEnum.APPROVALS,
+  showCount: true,
+  countKey: SystemPreferencesKey.UNAPPROVED_LESSONS,
+};
+const flagged: TLink = {
+  name: 'Flagged',
+  link: RouteEnum.FLAGGED,
+  showCount: true,
+  countKey: SystemPreferencesKey.FLAGGED_LESSONS,
+};
 const community: TLink = { name: 'Community', link: RouteEnum.COMMUNITY };
 
 const adminUserLinks: TLink[] = [
@@ -80,7 +97,9 @@ const Navbar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector(selectUser);
   const pathname = usePathname();
-  const approvalLessonCount = useSelector(getUnapprovedLessonCount);
+  const { metadata: systemPreferenceMetadata } = useSelector(
+    getSystemPreferencesState,
+  );
 
   useEffect(() => {
     if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
@@ -112,16 +131,20 @@ const Navbar = () => {
     }
   }
 
-  const showApprovalCount = (item: TLink, type: string) => {
+  const showCount = (item: TLink, type: string) => {
     return (
       <div
         className={`${
-          item.name === 'Approvals' && approvalLessonCount > 0 ? '' : 'hidden'
+          item?.showCount &&
+          item?.countKey &&
+          systemPreferenceMetadata[item.countKey] > 0
+            ? ''
+            : 'hidden'
         }  h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center ${
           type == 'desktop' && 'absolute top-1 ml-20'
         }`}
       >
-        {approvalLessonCount}
+        {(item?.countKey && systemPreferenceMetadata[item.countKey]) || 0}
       </div>
     );
   };
@@ -198,7 +221,7 @@ const Navbar = () => {
                     }
                   >
                     {item.name}
-                    {showApprovalCount(item, 'desktop')}
+                    {showCount(item, 'desktop')}
                   </SuperLink>
                 ))}
               </div>
@@ -355,7 +378,7 @@ const Navbar = () => {
                 <span className="flex justify-between items-center">
                   {item.name}
 
-                  {showApprovalCount(item, 'mobile')}
+                  {showCount(item, 'mobile')}
                 </span>
               </DisclosureButton>
             ))}

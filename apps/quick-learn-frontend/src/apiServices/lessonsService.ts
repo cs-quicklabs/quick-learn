@@ -1,4 +1,5 @@
 import {
+  TFlaggedLesson,
   TLesson,
   TUserDailyProgress,
 } from '@src/shared/types/contentRepository';
@@ -13,6 +14,7 @@ import {
   TDailyLessonResponse,
   UserLessonProgress,
 } from '@src/shared/types/LessonProgressTypes';
+import { PaginateWrapper } from '@src/shared/types/utilTypes';
 
 export const getArchivedLessons = async (): Promise<
   AxiosSuccessResponse<TLesson[]>
@@ -38,6 +40,15 @@ export const getLessonDetails = async (
 ): Promise<AxiosSuccessResponse<TLesson>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<TLesson>>(
     ContentRepositoryApiEnum.LESSON + `/${id}` + `?approved=${approved}`,
+  );
+  return response.data;
+};
+
+export const getFlaggedLessonDetails = async (
+  id: string,
+): Promise<AxiosSuccessResponse<TLesson>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<TLesson>>(
+    ContentRepositoryApiEnum.LESSON + `/${id}?flagged=true`,
   );
   return response.data;
 };
@@ -85,8 +96,10 @@ export const getFlaggedLessons = async (
   page = 1,
   limit = 10,
   search = '',
-): Promise<AxiosSuccessResponse> => {
-  const response = await axiosInstance.get<AxiosSuccessResponse>(
+): Promise<AxiosSuccessResponse<PaginateWrapper<TFlaggedLesson[]>>> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<PaginateWrapper<TFlaggedLesson[]>>
+  >(
     `${ContentRepositoryApiEnum.GET_FLAGGED_LESSON}?page=${page}&limit=${limit}&q=${search}`,
   );
   return response.data;
@@ -189,6 +202,15 @@ export const flagLesson = async (
     {
       token,
     },
+  );
+  return response.data;
+};
+
+export const markLessonAsUnFlagged = async (
+  id: string,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.patch<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.LESSON + `/${id}/unflag`,
   );
   return response.data;
 };
