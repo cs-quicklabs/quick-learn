@@ -32,7 +32,7 @@ const ApprovalList = () => {
     if (!isLoading) {
       dispatch(
         updateSystemPreferencesData({
-          unapprovedLessons: lessons?.length ?? 0,
+          unapproved_lessons: lessons?.length ?? 0,
         }),
       );
     }

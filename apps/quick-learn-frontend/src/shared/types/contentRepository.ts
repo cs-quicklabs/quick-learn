@@ -154,6 +154,12 @@ export type SearchedQuery = {
   Lessons: SearchedCourseOrRoadpmap[];
 };
 
+export enum SystemPreferencesKey {
+  UNAPPROVED_LESSONS = 'unapproved_lessons',
+  FLAGGED_LESSONS = 'flagged_lessons',
+}
+
 export type SystemPreferences = {
-  unapprovedLessons: number;
+  [SystemPreferencesKey.UNAPPROVED_LESSONS]: number;
+  [SystemPreferencesKey.FLAGGED_LESSONS]: number;
 };

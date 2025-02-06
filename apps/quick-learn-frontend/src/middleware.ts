@@ -24,7 +24,7 @@ const ADMIN_AND_SUPERADMIN_ROUTES = [
   RouteEnum.APPROVALS,
   RouteEnum.FLAGGED,
 ];
-const EDITOR_ROUTES = [RouteEnum.CONTENT, RouteEnum.FLAGGED];
+const EDITOR_ROUTES = [RouteEnum.CONTENT];
 
 // Helper functions
 const isPublicRoute = (path: string) => PUBLIC_ROUTES.includes(path);

@@ -23,11 +23,15 @@ export class MetadataService {
 
     return metadata;
   }
+
   async getLessonMetaData() {
-    const unapprovedLesson =
-      await this.lessonService.getUnApprovedLessonCount();
+    const [unapproved_lessons, flagged_lessons] = await Promise.all([
+      await this.lessonService.getUnApprovedLessonCount(),
+      await this.lessonService.getFlaggedLessonCount(),
+    ]);
     return {
-      unapprovedLessons: unapprovedLesson,
+      unapproved_lessons,
+      flagged_lessons,
     };
   }
 }

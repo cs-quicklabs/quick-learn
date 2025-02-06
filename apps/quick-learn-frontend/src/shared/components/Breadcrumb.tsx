@@ -9,11 +9,11 @@ interface Props {
 }
 
 function customLink(
-  { link, name }: TBreadcrumb,
+  { link, name, disabled: linkDisabled }: TBreadcrumb,
   isLast = false,
   disabled = false,
 ) {
-  if (isLast || disabled) {
+  if (isLast || disabled || linkDisabled) {
     return (
       <span className="flex items-center text-sm font-medium capitalize cursor-not-allowed">
         {name}
@@ -35,14 +35,14 @@ const Breadcrumb: FC<Props> = ({ links, disabled = false }) => {
     <div className="px-4 pb-4 sm:flex sm:items-center sm:justify-center sm:flex-wrap sm:px-6 lg:px-8">
       <nav className="flex" aria-label="Breadcrumb">
         <ol className="inline-flex justify-self-center flex-wrap align-center justify-center rtl:space-x-reverse">
-          {links.map(({ name, link }, index) => (
+          {links.map((link, index) => (
             <li
               className="inline-flex items-center text-gray-700 "
-              key={`${name}-${index}`}
+              key={`${link.name}-${index}`}
             >
               {index != 0 && index != links.length && <ArrowRightIcon />}
               {index == 0 ? <HomeIcon /> : ''}
-              {customLink({ name, link }, index == links.length - 1, disabled)}
+              {customLink(link, index == links.length - 1, disabled)}
             </li>
           ))}
         </ol>

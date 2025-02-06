@@ -13,7 +13,7 @@ import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
-import { Repository, DataSource, ILike } from 'typeorm';
+import { Repository, DataSource, ILike, MoreThan } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
@@ -25,7 +25,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     @InjectRepository(LessonTokenEntity)
     private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
     @InjectRepository(FlaggedLessonEntity)
-    private flaggedLessonEnity: Repository<FlaggedLessonEntity>,
+    private flaggedLessonRepository: Repository<FlaggedLessonEntity>,
     private readonly courseService: CourseService,
     private readonly FileService: FileService,
     private readonly dataSource: DataSource,
@@ -448,13 +448,13 @@ export class LessonService extends PaginationService<LessonEntity> {
     }
 
     // Create new flagged lesson entry
-    const flaggedLesson = this.flaggedLessonEnity.create({
+    const flaggedLesson = this.flaggedLessonRepository.create({
       user_id: lessonToken.user_id,
       lesson_id: lessonToken.lesson_id,
       course_id: lessonToken.course_id,
     });
 
-    return await this.flaggedLessonEnity.save(flaggedLesson);
+    return await this.flaggedLessonRepository.save(flaggedLesson);
   }
 
   async findAllFlaggedLesson(page = 1, limit = 10, search = '') {
@@ -490,18 +490,18 @@ export class LessonService extends PaginationService<LessonEntity> {
 
       // Get both lessons and count in parallel for better performance
       const [lessons, total] = await Promise.all([
-        this.flaggedLessonEnity.find(findOptions),
-        this.flaggedLessonEnity.count({
+        this.flaggedLessonRepository.find(findOptions),
+        this.flaggedLessonRepository.count({
           where: findOptions.where,
         }),
       ]);
 
       return {
-        lessons,
-        totalCount: total,
+        items: lessons,
+        total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        total_pages: Math.ceil(total / limit),
       };
     } catch (error) {
       console.error('Error querying flagged lessons:', error);
@@ -509,16 +509,41 @@ export class LessonService extends PaginationService<LessonEntity> {
     }
   }
 
+  async unFlagLesson(id: number): Promise<void> {
+    const isValid = await this.flaggedLessonRepository.find({
+      where: { lesson_id: id },
+    });
+
+    if (!isValid) throw new BadRequestException(en.invalidLesson);
+
+    await this.flaggedLessonRepository.delete({ lesson_id: id });
+  }
+
   async getUnApprovedLessonCount() {
-    return await this.repository.count({
-      where: {
+    return await this.count(
+      {
         archived: false,
         approved: false,
         course: {
           archived: false,
         },
       },
-      relations: ['course'],
-    });
+      ['course'],
+    );
+  }
+
+  async getFlaggedLessonCount() {
+    return await this.count(
+      {
+        archived: false,
+        flagged_lesson: {
+          id: MoreThan(0),
+        },
+        course: {
+          archived: false,
+        },
+      },
+      ['flagged_lesson'],
+    );
   }
 }

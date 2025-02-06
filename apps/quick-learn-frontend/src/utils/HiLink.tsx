@@ -1,10 +1,12 @@
 'use client';
-
+import React, { forwardRef, type ComponentPropsWithRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { type ComponentPropsWithRef } from 'react';
 
-export const SuperLink = (props: ComponentPropsWithRef<typeof Link>) => {
+export const SuperLink = forwardRef<
+  HTMLAnchorElement,
+  ComponentPropsWithRef<typeof Link>
+>((props, ref) => {
   const router = useRouter();
   const strHref = typeof props.href === 'string' ? props.href : props.href.href;
 
@@ -17,6 +19,7 @@ export const SuperLink = (props: ComponentPropsWithRef<typeof Link>) => {
   return (
     <Link
       {...props}
+      ref={ref}
       prefetch={false}
       onMouseEnter={(e) => {
         conditionalPrefetch();
@@ -36,4 +39,6 @@ export const SuperLink = (props: ComponentPropsWithRef<typeof Link>) => {
       }}
     />
   );
-};
+});
+
+SuperLink.displayName = 'SuperLink';
