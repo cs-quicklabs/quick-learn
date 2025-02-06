@@ -119,6 +119,7 @@ interface Props {
   setIsApproved?: (value: boolean) => void;
   isPending?: boolean;
   showCreatedBy?: boolean;
+  disableLink?: boolean;
 }
 
 const ViewLesson: FC<Props> = ({
@@ -128,6 +129,7 @@ const ViewLesson: FC<Props> = ({
   links,
   isPending = false,
   showCreatedBy = true,
+  disableLink = false,
 }) => {
   useNavbarManagement();
 
@@ -136,7 +138,7 @@ const ViewLesson: FC<Props> = ({
 
   return (
     <div className="-mt-8">
-      <Breadcrumb links={links} />
+      <Breadcrumb links={links} disabled={disableLink} />
 
       <LessonHeader
         name={lesson?.name}

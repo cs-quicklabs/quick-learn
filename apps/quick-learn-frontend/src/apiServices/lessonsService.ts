@@ -10,9 +10,9 @@ import {
 import {
   LessonProgress,
   LessonStatus,
+  TDailyLessonResponse,
   UserLessonProgress,
 } from '@src/shared/types/LessonProgressTypes';
-import { TUser } from '@src/shared/types/userTypes';
 
 export const getArchivedLessons = async (): Promise<
   AxiosSuccessResponse<TLesson[]>
@@ -77,6 +77,17 @@ export const markAsDone = async (
       courseId: parseInt(courseId),
       isCompleted: isCompleted,
     },
+  );
+  return response.data;
+};
+
+export const getFlaggedLessons = async (
+  page = 1,
+  limit = 10,
+  search = '',
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse>(
+    `${ContentRepositoryApiEnum.GET_FLAGGED_LESSON}?page=${page}&limit=${limit}&q=${search}`,
   );
   return response.data;
 };
@@ -151,19 +162,33 @@ export const getUserDailyLessonProgress = async (
   return response.data;
 };
 
-export const getDailyLessionDetail = async (
-  lessonId: string,
-  courseId: string,
-  token: string,
-): Promise<
-  AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
-> => {
+export const getDailyLessionDetail = async ({
+  lessonId,
+  courseId,
+  token,
+}: {
+  lessonId: string;
+  courseId: string;
+  token: string;
+}): Promise<AxiosSuccessResponse<TDailyLessonResponse>> => {
   const response = await axiosInstance.get<
-    AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
+    AxiosSuccessResponse<TDailyLessonResponse>
   >(
     `${DailyLessionEnum.GET_DAILY_LESSON_DETAILS.replace(':lesson', lessonId)
       .replace(':course', courseId)
       .replace(':token', token)}`,
+  );
+  return response.data;
+};
+
+export const flagLesson = async (
+  token: string,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    `${ContentRepositoryApiEnum.LESSON_FLAGGED}/${token}`,
+    {
+      token,
+    },
   );
   return response.data;
 };

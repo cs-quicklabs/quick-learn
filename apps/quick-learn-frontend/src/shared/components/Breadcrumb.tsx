@@ -5,10 +5,15 @@ import { ArrowRightIcon, HomeIcon } from './UIElements';
 
 interface Props {
   links: TBreadcrumb[];
+  disabled?: boolean;
 }
 
-function customLink({ link, name }: TBreadcrumb, isLast = false) {
-  if (isLast) {
+function customLink(
+  { link, name }: TBreadcrumb,
+  isLast = false,
+  disabled = false,
+) {
+  if (isLast || disabled) {
     return (
       <span className="flex items-center text-sm font-medium capitalize cursor-not-allowed">
         {name}
@@ -18,7 +23,6 @@ function customLink({ link, name }: TBreadcrumb, isLast = false) {
   return (
     <SuperLink
       href={link}
-      aria-disabled={isLast}
       className="flex items-center text-sm font-medium capitalize hover:underline hover:text-blue-600"
     >
       {name}
@@ -26,7 +30,7 @@ function customLink({ link, name }: TBreadcrumb, isLast = false) {
   );
 }
 
-const Breadcrumb: FC<Props> = ({ links }) => {
+const Breadcrumb: FC<Props> = ({ links, disabled = false }) => {
   return (
     <div className="px-4 pb-4 sm:flex sm:items-center sm:justify-center sm:flex-wrap sm:px-6 lg:px-8">
       <nav className="flex" aria-label="Breadcrumb">
@@ -38,7 +42,7 @@ const Breadcrumb: FC<Props> = ({ links }) => {
             >
               {index != 0 && index != links.length && <ArrowRightIcon />}
               {index == 0 ? <HomeIcon /> : ''}
-              {customLink({ name, link }, index == links.length - 1)}
+              {customLink({ name, link }, index == links.length - 1, disabled)}
             </li>
           ))}
         </ol>

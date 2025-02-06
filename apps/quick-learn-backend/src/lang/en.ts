@@ -77,6 +77,7 @@ export const en = {
   lessonStatus: 'Lesson Status',
   searchResults: 'Search Results',
   triggeredDailyLessonMails: 'Successfully triggered daily lesson mails',
+  succcessLessonFlagged: 'Lesson flagged successfully',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',
