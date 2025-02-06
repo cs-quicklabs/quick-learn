@@ -76,6 +76,10 @@ export const en = {
     updatedOn: 'Updated on',
     createdOn: 'Created on',
     createdBy: 'Created by',
+    flaggedBy: 'Flagged by',
+    flaggedOn: 'Flagged on',
+    flaggedLessons: 'Flagged Lessons',
+    flaggedDesc: 'Following lessons have been flagged for review by admins.',
 
     // Confirmation dialogs
     logoutConformation: 'Are you sure you want to Log out?',
@@ -103,6 +107,7 @@ export const en = {
     createNewRoadmap: 'Create New Roadmap',
     editRoadmap: 'Edit Roadmap',
     createdThisRoadmapOn: 'created this roadmap on',
+    createdThisCourseOn: 'created this course on',
     archiveRoadmap: 'Archive Roadmap',
     noRoadmaps: 'No roadmaps available',
     noRoadmapsDescription: 'There are no roadmaps yet',
@@ -116,6 +121,7 @@ export const en = {
     addOnAlreadyExistingCourse: 'Add already existing courses to this roadmap',
     assignToRoadmap: 'Move or add this course to another Roadmap',
     archiveCourse: 'Archive Course',
+    allLesson: 'All Lessons',
   },
 
   /**
@@ -201,6 +207,7 @@ export const en = {
     subHeading:
       'Following lessons are waiting for approval after being created or updated by the team.',
     approveThisLesson: 'Approve this lesson',
+    unFlagThisLesson: 'Unflag this lesson',
     approvalPendingExclamation: 'Approval pending!',
     approvalPendingInfo:
       'This lesson is awaiting approval from the team. After approval this will be available to all the team members.',
@@ -210,7 +217,7 @@ export const en = {
    * Categories and Skills management
    */
   courseCategories: {
-    heading: 'Courses Categories',
+    heading: 'Course Categories',
     subHeading:
       'Courses can belong to a category. A category could be a way to group learning courses. For example, you can create a learning course from a book, a blog, a video, for a software application or for any onboarding needs.',
     inputlabel: 'Add new course category',
@@ -433,6 +440,7 @@ export const en = {
     openMenu: 'Open main menu',
     viewNotification: 'View notifications',
     profile: 'My Profile',
+    accountSetting: 'Account Setting',
     signOut: 'Sign out',
 
     //Search Box

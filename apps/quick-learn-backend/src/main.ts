@@ -1,3 +1,4 @@
+require('newrelic');
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { setupSwagger } from './swagger';
@@ -15,6 +16,24 @@ import { AllConfigType } from './config/config.type';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Adding checks if the req.ip has valid ipv4 otherwiseit checks for
+  // x-forwarded-for and if it doesn't exists it will check for connection.remoteAddress
+  morgan.token(
+    'client-ip',
+    (req) =>
+      (/^(\d{1,3}\.){3}\d{1,3}$/.test(req.ip) && req.ip) ||
+      req.headers['x-forwarded-for'] ||
+      req.connection.remoteAddress ||
+      req.headers['x-client-ip'],
+  );
+
+  // adding request logger to the application
+  app.use(
+    morgan(
+      ':client-ip :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms',
+    ),
+  );
+
   // Added helment for the response headers.
   app.use(
     helmet({
@@ -31,12 +50,6 @@ async function bootstrap() {
     }),
   );
 
-  // adding request logger to the application
-  app.use(
-    morgan(
-      ':remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms',
-    ),
-  );
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   // adding cookie parser

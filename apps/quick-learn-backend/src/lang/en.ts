@@ -77,6 +77,7 @@ export const en = {
   lessonStatus: 'Lesson Status',
   searchResults: 'Search Results',
   triggeredDailyLessonMails: 'Successfully triggered daily lesson mails',
+  succcessLessonFlagged: 'Lesson flagged successfully',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',
@@ -85,6 +86,7 @@ export const en = {
 
   // Content Repository related messages
   GetContentRepositoryMetadata: 'Successfully got content repository metadata.',
+  GetContentMetadata: 'Successfully got content metadata.',
   successUserUpdated: 'Successfully updated user details.',
   userNotFound: 'User details not found.',
   lessonNotFoundInCourse: 'Lesson not found in this course',
@@ -101,4 +103,14 @@ export const en = {
   successfullyGotUser: 'Successfully got the user.',
   userLinkedToEmail: 'No user is linked to the provided email.',
   wrongCredentials: 'Wrong Credentials!',
+
+  // Profile Service related messages
+  invalidOldPassword: 'Invalid old password.',
+  successdullyPasswordUpdated: 'Password updated successfully.',
+  successPreferencesUpdated: 'Email preference updated successfully.',
+  successPreferences: 'Successfully got user preferences.',
+
+  // flagged lesson
+  invalidLesson: 'Invalid lesson is provided.',
+  successUnflagLesson: 'Successfully unflagged the lesson.',
 };

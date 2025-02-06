@@ -31,6 +31,7 @@ export enum FileApiEnum {
 
 export enum ContentRepositoryApiEnum {
   METADATA = '/metadata/content-repository',
+  SYSTEM_PREFERNCES = '/metadata/system-preferences',
   ROADMAP = '/roadmap',
   COURSE = '/course',
   LESSON = '/lesson',
@@ -40,6 +41,8 @@ export enum ContentRepositoryApiEnum {
   COMMUNITY = 'course/community', //to fetch courses which are community course , unarchived, unapproved
   GET_USER_ROADMAPS = '/users/my-roadmaps',
   LESSON_PROGRESS = '/lessonprogress',
+  LESSON_FLAGGED = '/lesson/flag',
+  GET_FLAGGED_LESSON = '/lesson/flagged',
 }
 
 export enum ArchivedApiEnum {

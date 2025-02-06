@@ -1,7 +1,6 @@
 // components/TeamTable.tsx
 import { useEffect } from 'react';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { DateFormats } from '@src/constants/dateFormats';
 import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
@@ -11,7 +10,7 @@ import TeamMemberListingSkeleton from './TeamMemberListingSkeleton';
 import { RootState } from '@src/store/store';
 import { fetchTeamMembers } from '@src/store/features/teamSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-
+import { SuperLink } from '@src/utils/HiLink';
 const TeamTable = () => {
   const dispatch = useAppDispatch();
   const {
@@ -94,10 +93,10 @@ const TeamTable = () => {
                   key={user.uuid}
                   className="border-b border-gray-200 hover:bg-gray-100"
                 >
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap capitalize hover:underline">
-                    <Link href={`${RouteEnum.TEAM}/${user.id}`}>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap capitalize">
+                    <SuperLink href={`${RouteEnum.TEAM}/${user.id}`}>
                       {user.first_name} {user.last_name}
-                    </Link>
+                    </SuperLink>
                   </td>
                   <td className="px-4 py-2">
                     <div className="inline-flex items-center bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded capitalize">

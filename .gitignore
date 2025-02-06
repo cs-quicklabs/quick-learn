@@ -53,3 +53,7 @@ yarn.lock
 
 # Exclude .env.example from being ignored in any directory
 !**/.env.example
+
+#ignore logs
+newrelic_agent.log
+newrelic_agent.log.*

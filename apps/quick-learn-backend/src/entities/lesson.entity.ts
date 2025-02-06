@@ -1,8 +1,16 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { CourseEntity } from './course.entity';
 import { UserEntity } from './user.entity';
 import { BaseEntity } from './BaseEntity';
 import { UserLessonProgressEntity } from './user-lesson-progress.entity';
+import { FlaggedLessonEntity } from './flagged-lesson.enitity';
 
 @Entity('lesson')
 export class LessonEntity extends BaseEntity {
@@ -59,4 +67,7 @@ export class LessonEntity extends BaseEntity {
 
   @OneToMany(() => UserLessonProgressEntity, (progress) => progress.lesson)
   users_lesson_progress: UserLessonProgressEntity[];
+
+  @OneToOne(() => FlaggedLessonEntity, (flagged) => flagged.lesson)
+  flagged_lesson: FlaggedLessonEntity;
 }

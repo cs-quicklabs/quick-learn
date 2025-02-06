@@ -8,23 +8,32 @@ import {
   MenuItem,
   MenuItems,
 } from '@headlessui/react';
-import Link from 'next/link';
 import Image from 'next/image';
+import { SuperLink } from '@src/utils/HiLink';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { logoutApiCall } from '@src/apiServices/authService';
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '@src/context/userContext';
+import { useEffect, useState } from 'react';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import ConformationModal from '../modals/conformationModal';
 import { en } from '@src/constants/lang/en';
 import { getInitials } from '@src/utils/helpers';
 import WebsiteLogo from './WebsiteLogo';
 import NavbarSearchBox from './NavbarSearchBox';
+import { useSelector } from 'react-redux';
+import { selectUser } from '@src/store/features/userSlice';
+import { getSystemPreferencesState } from '@src/store/features/systemPreferenceSlice';
+import { SystemPreferencesKey } from '../types/contentRepository';
 
-type TLink = { name: string; link: string; isExtended?: boolean };
+type TLink = {
+  name: string;
+  link: string;
+  isExtended?: boolean;
+  showCount?: boolean;
+  countKey?: SystemPreferencesKey;
+};
 
 const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
 const myLearningPath: TLink = {
@@ -32,18 +41,29 @@ const myLearningPath: TLink = {
   link: RouteEnum.MY_LEARNING_PATH,
 };
 const content: TLink = { name: 'Content', link: RouteEnum.CONTENT };
-const approvals: TLink = { name: 'Approvals', link: RouteEnum.APPROVALS };
+const approvals: TLink = {
+  name: 'Approvals',
+  link: RouteEnum.APPROVALS,
+  showCount: true,
+  countKey: SystemPreferencesKey.UNAPPROVED_LESSONS,
+};
+const flagged: TLink = {
+  name: 'Flagged',
+  link: RouteEnum.FLAGGED,
+  showCount: true,
+  countKey: SystemPreferencesKey.FLAGGED_LESSONS,
+};
 const community: TLink = { name: 'Community', link: RouteEnum.COMMUNITY };
 
-const superAdminUserLinks: TLink[] = [
+const adminUserLinks: TLink[] = [
   team,
   myLearningPath,
   content,
   approvals,
-  community,
+  flagged,
 ];
-const adminUserLinks: TLink[] = [team, myLearningPath, content, approvals];
-const editorUserLinks: TLink[] = [myLearningPath, content];
+const superAdminUserLinks: TLink[] = [...adminUserLinks, community];
+const editorUserLinks: TLink[] = [myLearningPath, content, flagged];
 const memberUserLinks: TLink[] = [myLearningPath];
 
 const menuItems: TLink[] = [
@@ -75,9 +95,11 @@ const Navbar = () => {
   const [links, setLinks] = useState<TLink[]>([]);
   const [showConformationModal, setShowConformationModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useContext(UserContext);
+  const user = useSelector(selectUser);
   const pathname = usePathname();
-  const router = useRouter();
+  const { metadata: systemPreferenceMetadata } = useSelector(
+    getSystemPreferencesState,
+  );
 
   useEffect(() => {
     if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
@@ -101,13 +123,31 @@ const Navbar = () => {
 
   async function doLogout() {
     try {
-      localStorage.removeItem('searchHistory');
+      localStorage.clear();
       await logoutApiCall();
-      router.push('/');
+      window.location.href = '/';
     } catch (error) {
       console.log(error);
     }
   }
+
+  const showCount = (item: TLink, type: string) => {
+    return (
+      <div
+        className={`${
+          item?.showCount &&
+          item?.countKey &&
+          systemPreferenceMetadata[item.countKey] > 0
+            ? ''
+            : 'hidden'
+        }  h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center ${
+          type == 'desktop' && 'absolute top-1 ml-20'
+        }`}
+      >
+        {(item?.countKey && systemPreferenceMetadata[item.countKey]) || 0}
+      </div>
+    );
+  };
 
   const renderMenuItem = (item: TLink) => {
     if (item.isExtended) {
@@ -127,12 +167,12 @@ const Navbar = () => {
 
     return (
       <MenuItem key={item.link}>
-        <Link
+        <SuperLink
           href={item.link}
           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
         >
           {item.name}
-        </Link>
+        </SuperLink>
       </MenuItem>
     );
   };
@@ -155,19 +195,19 @@ const Navbar = () => {
           <div className="flex py-2 justify-between align-center">
             <div className="flex px-2 lg:px-0">
               <div className="flex-shrink-0 flex items-center">
-                <Link
+                <SuperLink
                   id="homeLogo"
                   href={RouteEnum.MY_LEARNING_PATH}
                   className="items-center justify-center text-white font-extrabold font-mono px-3 hidden lg:flex tracking-wider"
                 >
                   <WebsiteLogo width="45" />
                   <p className="ml-3">{en.common.quickLearn}</p>
-                </Link>
+                </SuperLink>
                 <span className="text-white font-medium px-3 block lg:hidden"></span>
               </div>
               <div className="hidden lg:ml-6 lg:flex lg:space-x-4">
                 {links.map((item, index) => (
-                  <Link
+                  <SuperLink
                     key={item.link}
                     href={item.link}
                     id={`navDesktop${index}`}
@@ -181,7 +221,8 @@ const Navbar = () => {
                     }
                   >
                     {item.name}
-                  </Link>
+                    {showCount(item, 'desktop')}
+                  </SuperLink>
                 ))}
               </div>
             </div>
@@ -268,12 +309,12 @@ const Navbar = () => {
                           .map((item) => renderMenuItem(item))}
                       {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN && (
                         <MenuItem>
-                          <Link
+                          <SuperLink
                             href={RouteEnum.PROFILE_SETTINGS}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             {en.component.profile}
-                          </Link>
+                          </SuperLink>
                         </MenuItem>
                       )}
                     </div>
@@ -334,7 +375,11 @@ const Navbar = () => {
                     : 'text-gray-300 hover:bg-gray-700 hover:text-white')
                 }
               >
-                {item.name}
+                <span className="flex justify-between items-center">
+                  {item.name}
+
+                  {showCount(item, 'mobile')}
+                </span>
               </DisclosureButton>
             ))}
           </div>
@@ -343,7 +388,7 @@ const Navbar = () => {
               <div className="flex-shrink-0">
                 <Image
                   alt=""
-                  src={user?.profile_image || '/placeholder.png'}
+                  src={user?.profile_image ?? '/placeholder.png'}
                   className="h-10 w-10 rounded-full object-cover"
                   height={40}
                   width={40}
@@ -397,7 +442,7 @@ const Navbar = () => {
                 {menuItems.map(
                   (item, index) =>
                     item.isExtended && (
-                      <Link
+                      <SuperLink
                         id={`profileMenuMobile${index}`}
                         key={item.link + item.name}
                         href={item.link}
@@ -405,7 +450,7 @@ const Navbar = () => {
                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                       >
                         {item.name}
-                      </Link>
+                      </SuperLink>
                     ),
                 )}
               </div>

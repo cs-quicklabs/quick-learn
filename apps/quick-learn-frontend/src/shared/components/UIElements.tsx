@@ -48,7 +48,7 @@ export const OpenEyeIcon = () => {
 };
 
 export const Loader = ({
-  className = 'inline w-4 h-4 me-3',
+  className = 'inline w-4 h-4 mx-[7px]',
 }: {
   className?: string;
 }) => {
@@ -389,6 +389,25 @@ export const CalenderIcon = () => {
         fillRule="evenodd"
         d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
         clipRule="evenodd"
+      />
+    </svg>
+  );
+};
+
+export const flagIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="h-1 w-1"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
       />
     </svg>
   );
