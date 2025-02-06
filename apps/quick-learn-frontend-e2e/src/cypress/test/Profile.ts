@@ -1,9 +1,9 @@
 export class Profile {
   visitProfilePage() {
-    return cy.get('button[class="flex items-center"]').click();
+    return cy.get('[id="headerProfileImage"]').click();
   }
   getMyProfile() {
-    cy.get('button[class="flex items-center"]').click();
+    cy.get('[id="headerProfileImage"]').click();
     cy.get('[href="/dashboard/profile-settings"]').click();
   }
 

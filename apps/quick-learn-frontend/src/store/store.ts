@@ -10,7 +10,6 @@ import {
   REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-
 // Import your reducers
 import metadataReducer from './features/metadataSlice';
 import dashboardReducer from './features/dashboardSlice';
@@ -40,6 +39,11 @@ const metadataPersistConfig = {
   storage,
 };
 
+const systemPreferencesPersistConfig = {
+  key: 'systemPreferences',
+  storage,
+};
+
 // Create persisted reducers for the slices you want to persist
 const persistedDashboardReducer = persistReducer(
   dashboardPersistConfig,
@@ -54,11 +58,15 @@ const persistedMetadataReducer = persistReducer(
   metadataPersistConfig,
   metadataReducer,
 );
+const persistedSystemPreferencesReducer = persistReducer(
+  systemPreferencesPersistConfig,
+  systemPreferencesReducer,
+);
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
-    systemPreference: systemPreferencesReducer,
+    systemPreference: persistedSystemPreferencesReducer,
     metadata: persistedMetadataReducer, //persisted
     dashboard: persistedDashboardReducer, // persisted
     roadmaps: roadmapsReducer,

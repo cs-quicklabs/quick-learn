@@ -8,6 +8,7 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { TLesson } from '../types/contentRepository';
 import { TBreadcrumb } from '../types/breadcrumbType';
+import { FlagIcon } from '@heroicons/react/24/outline';
 // Separate components for better performance
 const LessonHeader = memo(
   ({
@@ -54,26 +55,28 @@ LessonContent.displayName = 'LessonContent';
 
 const ApprovalCheckbox = memo(
   ({
-    isApproved,
-    setIsApproved,
+    value,
+    setValue,
+    text = en.approvals.approveThisLesson,
   }: {
-    isApproved?: boolean;
-    setIsApproved?: (value: boolean) => void;
+    value?: boolean;
+    setValue?: (value: boolean) => void;
+    text?: string;
   }) => (
     <div className="flex items-center p-16 mb-16 w-full max-w-5xl justify-center mx-auto">
       <input
         id="default-checkbox"
         type="checkbox"
-        checked={isApproved}
-        onChange={() => setIsApproved?.(true)}
-        disabled={isApproved}
+        checked={value}
+        onChange={() => setValue?.(true)}
+        disabled={value}
         className="w-8 h-8 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
       />
       <label
         htmlFor="default-checkbox"
         className="ms-4 text-2xl ml-4 font-semibold text-gray-900"
       >
-        {en.approvals.approveThisLesson}
+        {text}
       </label>
     </div>
   ),
@@ -119,15 +122,21 @@ interface Props {
   setIsApproved?: (value: boolean) => void;
   isPending?: boolean;
   showCreatedBy?: boolean;
+  disableLink?: boolean;
+  isFlagged?: boolean;
+  setIsFlagged?: (value: boolean) => void;
 }
 
 const ViewLesson: FC<Props> = ({
   lesson,
   isApproved,
   setIsApproved,
+  isFlagged,
+  setIsFlagged,
   links,
   isPending = false,
   showCreatedBy = true,
+  disableLink = false,
 }) => {
   useNavbarManagement();
 
@@ -136,7 +145,7 @@ const ViewLesson: FC<Props> = ({
 
   return (
     <div className="-mt-8">
-      <Breadcrumb links={links} />
+      <Breadcrumb links={links} disabled={disableLink} />
 
       <LessonHeader
         name={lesson?.name}
@@ -149,10 +158,28 @@ const ViewLesson: FC<Props> = ({
       <LessonContent content={content} />
 
       {setIsApproved && (
-        <ApprovalCheckbox
-          isApproved={isApproved}
-          setIsApproved={setIsApproved}
-        />
+        <ApprovalCheckbox value={isApproved} setValue={setIsApproved} />
+      )}
+
+      {setIsFlagged && (
+        <>
+          <div className="mx-auto max-w-fit flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
+            <div className="h-5 w-5">
+              <FlagIcon />
+            </div>
+            {`The Lesson is flagged by ${
+              lesson?.flagged_lesson?.user?.display_name ?? 'Unknown'
+            } on ${format(
+              lesson?.flagged_lesson?.flagged_on ?? Date.now(),
+              DateFormats.shortDate,
+            )}`}
+          </div>
+          <ApprovalCheckbox
+            value={isFlagged}
+            setValue={setIsFlagged}
+            text={en.approvals.unFlagThisLesson}
+          />
+        </>
       )}
 
       {isPending && <PendingAlert />}

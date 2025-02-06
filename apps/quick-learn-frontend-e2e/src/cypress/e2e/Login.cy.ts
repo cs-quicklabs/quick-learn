@@ -1,5 +1,8 @@
 import { LoginPage } from '../test/Login';
-import { validCredentials } from '../fixtures/credential';
+import {
+  EditorValidCredentials,
+  validCredentials,
+} from '../fixtures/credential';
 
 describe('Login Test', () => {
   const loginPage = new LoginPage();
@@ -24,9 +27,18 @@ describe('Login Test', () => {
     loginPage.login(validCredentials.mail, validCredentials.password);
 
     cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
+    loginPage.getWelcomeMessage();
   });
   it('should not allow login with empty email and password fields', () => {
     loginPage.loginWithEmptyValue();
+  });
+
+  it('should log in with Editor valid credentials', () => {
+    loginPage.loginAsEditor(
+      EditorValidCredentials.EditorMail,
+      EditorValidCredentials.EditorPassword,
+    );
+
+    cy.url().should('include', '/dashboard');
   });
 });

@@ -8,8 +8,8 @@ import {
   MenuItem,
   MenuItems,
 } from '@headlessui/react';
-import Link from 'next/link';
 import Image from 'next/image';
+import { SuperLink } from '@src/utils/HiLink';
 
 import { usePathname } from 'next/navigation';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -24,9 +24,16 @@ import WebsiteLogo from './WebsiteLogo';
 import NavbarSearchBox from './NavbarSearchBox';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@src/store/features/userSlice';
-import { getUnapprovedLessonCount } from '@src/store/features/systemPreferenceSlice';
+import { getSystemPreferencesState } from '@src/store/features/systemPreferenceSlice';
+import { SystemPreferencesKey } from '../types/contentRepository';
 
-type TLink = { name: string; link: string; isExtended?: boolean };
+type TLink = {
+  name: string;
+  link: string;
+  isExtended?: boolean;
+  showCount?: boolean;
+  countKey?: SystemPreferencesKey;
+};
 
 const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
 const myLearningPath: TLink = {
@@ -34,18 +41,29 @@ const myLearningPath: TLink = {
   link: RouteEnum.MY_LEARNING_PATH,
 };
 const content: TLink = { name: 'Content', link: RouteEnum.CONTENT };
-const approvals: TLink = { name: 'Approvals', link: RouteEnum.APPROVALS };
+const approvals: TLink = {
+  name: 'Approvals',
+  link: RouteEnum.APPROVALS,
+  showCount: true,
+  countKey: SystemPreferencesKey.UNAPPROVED_LESSONS,
+};
+const flagged: TLink = {
+  name: 'Flagged',
+  link: RouteEnum.FLAGGED,
+  showCount: true,
+  countKey: SystemPreferencesKey.FLAGGED_LESSONS,
+};
 const community: TLink = { name: 'Community', link: RouteEnum.COMMUNITY };
 
-const superAdminUserLinks: TLink[] = [
+const adminUserLinks: TLink[] = [
   team,
   myLearningPath,
   content,
   approvals,
-  community,
+  flagged,
 ];
-const adminUserLinks: TLink[] = [team, myLearningPath, content, approvals];
-const editorUserLinks: TLink[] = [myLearningPath, content];
+const superAdminUserLinks: TLink[] = [...adminUserLinks, community];
+const editorUserLinks: TLink[] = [myLearningPath, content, flagged];
 const memberUserLinks: TLink[] = [myLearningPath];
 
 const menuItems: TLink[] = [
@@ -79,7 +97,9 @@ const Navbar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector(selectUser);
   const pathname = usePathname();
-  const approvalLessonCount = useSelector(getUnapprovedLessonCount);
+  const { metadata: systemPreferenceMetadata } = useSelector(
+    getSystemPreferencesState,
+  );
 
   useEffect(() => {
     if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
@@ -103,7 +123,7 @@ const Navbar = () => {
 
   async function doLogout() {
     try {
-      localStorage.removeItem('searchHistory');
+      localStorage.clear();
       await logoutApiCall();
       window.location.href = '/';
     } catch (error) {
@@ -111,16 +131,20 @@ const Navbar = () => {
     }
   }
 
-  const showApprovalCount = (item: TLink, type: string) => {
+  const showCount = (item: TLink, type: string) => {
     return (
       <div
         className={`${
-          item.name === 'Approvals' && approvalLessonCount > 0 ? '' : 'hidden'
+          item?.showCount &&
+          item?.countKey &&
+          systemPreferenceMetadata[item.countKey] > 0
+            ? ''
+            : 'hidden'
         }  h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center ${
           type == 'desktop' && 'absolute top-1 ml-20'
         }`}
       >
-        {approvalLessonCount}
+        {(item?.countKey && systemPreferenceMetadata[item.countKey]) || 0}
       </div>
     );
   };
@@ -143,12 +167,12 @@ const Navbar = () => {
 
     return (
       <MenuItem key={item.link}>
-        <Link
+        <SuperLink
           href={item.link}
           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
         >
           {item.name}
-        </Link>
+        </SuperLink>
       </MenuItem>
     );
   };
@@ -171,19 +195,19 @@ const Navbar = () => {
           <div className="flex py-2 justify-between align-center">
             <div className="flex px-2 lg:px-0">
               <div className="flex-shrink-0 flex items-center">
-                <Link
+                <SuperLink
                   id="homeLogo"
                   href={RouteEnum.MY_LEARNING_PATH}
                   className="items-center justify-center text-white font-extrabold font-mono px-3 hidden lg:flex tracking-wider"
                 >
                   <WebsiteLogo width="45" />
                   <p className="ml-3">{en.common.quickLearn}</p>
-                </Link>
+                </SuperLink>
                 <span className="text-white font-medium px-3 block lg:hidden"></span>
               </div>
               <div className="hidden lg:ml-6 lg:flex lg:space-x-4">
                 {links.map((item, index) => (
-                  <Link
+                  <SuperLink
                     key={item.link}
                     href={item.link}
                     id={`navDesktop${index}`}
@@ -197,8 +221,8 @@ const Navbar = () => {
                     }
                   >
                     {item.name}
-                    {showApprovalCount(item, 'desktop')}
-                  </Link>
+                    {showCount(item, 'desktop')}
+                  </SuperLink>
                 ))}
               </div>
             </div>
@@ -285,12 +309,12 @@ const Navbar = () => {
                           .map((item) => renderMenuItem(item))}
                       {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN && (
                         <MenuItem>
-                          <Link
+                          <SuperLink
                             href={RouteEnum.PROFILE_SETTINGS}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             {en.component.profile}
-                          </Link>
+                          </SuperLink>
                         </MenuItem>
                       )}
                     </div>
@@ -354,7 +378,7 @@ const Navbar = () => {
                 <span className="flex justify-between items-center">
                   {item.name}
 
-                  {showApprovalCount(item, 'mobile')}
+                  {showCount(item, 'mobile')}
                 </span>
               </DisclosureButton>
             ))}
@@ -364,7 +388,7 @@ const Navbar = () => {
               <div className="flex-shrink-0">
                 <Image
                   alt=""
-                  src={user?.profile_image || '/placeholder.png'}
+                  src={user?.profile_image ?? '/placeholder.png'}
                   className="h-10 w-10 rounded-full object-cover"
                   height={40}
                   width={40}
@@ -418,7 +442,7 @@ const Navbar = () => {
                 {menuItems.map(
                   (item, index) =>
                     item.isExtended && (
-                      <Link
+                      <SuperLink
                         id={`profileMenuMobile${index}`}
                         key={item.link + item.name}
                         href={item.link}
@@ -426,7 +450,7 @@ const Navbar = () => {
                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                       >
                         {item.name}
-                      </Link>
+                      </SuperLink>
                     ),
                 )}
               </div>

@@ -77,6 +77,7 @@ export const en = {
   lessonStatus: 'Lesson Status',
   searchResults: 'Search Results',
   triggeredDailyLessonMails: 'Successfully triggered daily lesson mails',
+  succcessLessonFlagged: 'Lesson flagged successfully',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',
@@ -108,4 +109,8 @@ export const en = {
   successdullyPasswordUpdated: 'Password updated successfully.',
   successPreferencesUpdated: 'Email preference updated successfully.',
   successPreferences: 'Successfully got user preferences.',
+
+  // flagged lesson
+  invalidLesson: 'Invalid lesson is provided.',
+  successUnflagLesson: 'Successfully unflagged the lesson.',
 };

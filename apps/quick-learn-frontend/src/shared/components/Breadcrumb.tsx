@@ -1,30 +1,48 @@
 import { TBreadcrumb } from '../types/breadcrumbType';
 import { FC } from 'react';
-import Link from 'next/link';
+import { SuperLink } from '@src/utils/HiLink';
 import { ArrowRightIcon, HomeIcon } from './UIElements';
 
 interface Props {
   links: TBreadcrumb[];
+  disabled?: boolean;
 }
 
-const Breadcrumb: FC<Props> = ({ links }) => {
+function customLink(
+  { link, name, disabled: linkDisabled }: TBreadcrumb,
+  isLast = false,
+  disabled = false,
+) {
+  if (isLast || disabled || linkDisabled) {
+    return (
+      <span className="flex items-center text-sm font-medium capitalize cursor-not-allowed">
+        {name}
+      </span>
+    );
+  }
+  return (
+    <SuperLink
+      href={link}
+      className="flex items-center text-sm font-medium capitalize hover:underline hover:text-blue-600"
+    >
+      {name}
+    </SuperLink>
+  );
+}
+
+const Breadcrumb: FC<Props> = ({ links, disabled = false }) => {
   return (
     <div className="px-4 pb-4 sm:flex sm:items-center sm:justify-center sm:flex-wrap sm:px-6 lg:px-8">
       <nav className="flex" aria-label="Breadcrumb">
         <ol className="inline-flex justify-self-center flex-wrap align-center justify-center rtl:space-x-reverse">
-          {links.map(({ name, link }, index) => (
+          {links.map((link, index) => (
             <li
-              className="inline-flex items-center text-gray-700 hover:text-blue-600"
-              key={Math.random() * 1000}
+              className="inline-flex items-center text-gray-700 "
+              key={`${link.name}-${index}`}
             >
               {index != 0 && index != links.length && <ArrowRightIcon />}
               {index == 0 ? <HomeIcon /> : ''}
-              <Link
-                href={link}
-                className="flex items-center text-sm font-medium capitalize hover:underline"
-              >
-                {name}
-              </Link>
+              {customLink(link, index == links.length - 1, disabled)}
             </li>
           ))}
         </ol>
