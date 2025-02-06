@@ -15,8 +15,9 @@ import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from '@src/entities';
 import { en } from '@src/lang/en';
 import { Public } from '@src/common/decorators/public.decorator';
-import { lessonProgressParamsDto } from './dto/lessonProgress-params.dto';
-import { completeBodyDto } from './dto/complete-body.dto';
+import { LessonProgressDto } from './dto/lesson-progress-param.dto';
+import { LessonProgressCheckDto } from './dto/lesson_progress-check.dto';
+
 @ApiTags('Lessons Progress')
 @Controller({ path: 'lessonprogress', version: '1' })
 @UseGuards(JwtAuthGuard)
@@ -24,16 +25,17 @@ export class LessonProgressController {
   constructor(private readonly lessonProgressService: LessonProgressService) {}
 
   @Post('complete/:lessonId/:userId?')
-  @ApiOperation({ summary: 'Mark Lesson as Completed' })
+  @ApiOperation({ summary: 'Mark Lesson as Completed or unread' })
   async markLessonAsCompleted(
     @Body() dto: { courseId: number; isCompleted: boolean },
     @CurrentUser() user: UserEntity,
-    @Param() params: lessonProgressParamsDto,
+    @Param() param: LessonProgressDto,
   ) {
-    const currentUser = +params.userId ? +params.userId : user.id;
+    console.log(param);
+    const currentUser = param.userId ? param.userId : user.id;
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
-      +params.lessonId,
+      +param.lessonId,
       dto.courseId,
     );
     if (dto.isCompleted) {
@@ -50,13 +52,13 @@ export class LessonProgressController {
   @Public()
   @ApiOperation({ summary: 'Mark lesson as completed (public url)' })
   async markLessonAsCompletedPublic(
-     @Body() dto: { courseId: number; isCompleted: boolean },
-    @Param() params: lessonProgressParamsDto,
+    @Body() dto: { courseId: number; isCompleted: boolean },
+    @Param() param: LessonProgressDto,
   ) {
-    const currentUser = +params.userId;
+    const currentUser = param.userId;
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
-      +params.lessonId,
+      +param.lessonId,
       dto.courseId,
     );
     if (dto.isCompleted) {
@@ -71,10 +73,10 @@ export class LessonProgressController {
 
   @Get(':courseId/progress')
   @ApiOperation({ summary: 'Get lesson Progress' })
-  async getLessonProgress(@Param('courseId') courseId: string, @Request() req) {
+  async getLessonProgress(@Param('courseId') courseId: number, @Request() req) {
     const data = await this.lessonProgressService.getLessonProgressArray(
       req.user.id,
-      +courseId,
+      courseId,
     );
     return new SuccessResponse(en.courseCompletedLessons, data);
   }
@@ -83,11 +85,11 @@ export class LessonProgressController {
   @ApiOperation({ summary: 'Get user Progress' })
   async getAllUserProgress(
     @CurrentUser() curentUser,
-    @Param('userID') userID?: string,
+    @Param('userID') userID?: number,
   ) {
     const data =
       await this.lessonProgressService.getUserLessonProgressViaCourse(
-        userID ? +userID : curentUser.id,
+        userID ? userID : curentUser.id,
       );
     return new SuccessResponse(en.userProgressGrouped, data);
   }
@@ -95,14 +97,14 @@ export class LessonProgressController {
   @ApiParam({
     name: 'userID',
     required: false,
-    type: String,
+    type: Number,
     description: 'user ID',
   })
   @ApiOperation({ summary: 'Get daily lesson' })
   @Get('daily-lesson/:userID')
-  async getAllDailyLesson(@Param('userID') userID?: string) {
+  async getAllDailyLesson(@Param('userID') userID?: number) {
     const data = await this.lessonProgressService.getDailyLessonProgress(
-      +userID,
+      userID,
     );
     return new SuccessResponse(en.allDailyLessons, data);
   }
@@ -110,13 +112,13 @@ export class LessonProgressController {
   @Get('check/:lessonId/:userId?')
   @ApiOperation({ summary: 'Check whether the lesson is readed or not' })
   async checkIsRead(
-    @Param() params: lessonProgressParamsDto,
+    @Param() param: LessonProgressCheckDto,
     @CurrentUser() user: UserEntity,
   ) {
-    const currentUserViewed = +params.userId ? +params.userId : user.id;
+    const currentUserViewed = param.userId ? param.userId : user.id;
     const data = await this.lessonProgressService.checkLessonRead(
       currentUserViewed,
-      +params.lessonId,
+      +param.lessonId,
     );
     return new SuccessResponse(en.lessonStatus, data);
   }
@@ -126,11 +128,11 @@ export class LessonProgressController {
   @ApiOperation({
     summary: 'check whether the lesson is readed or not (public)',
   })
-  async checkIsReadPublic(@Param() params: lessonProgressParamsDto) {
-    const currentUserViewed = +params.userId;
+  async checkIsReadPublic(@Param() param: LessonProgressCheckDto) {
+    const currentUserViewed = param.userId;
     const data = await this.lessonProgressService.checkLessonRead(
       currentUserViewed,
-      +params.lessonId,
+      +param.lessonId,
     );
     return new SuccessResponse(en.lessonStatus, data);
   }

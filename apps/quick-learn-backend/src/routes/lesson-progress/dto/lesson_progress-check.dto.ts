@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class lessonProgressParamsDto {
+export class LessonProgressCheckDto {
   @ApiProperty({
     name: 'lessonId',
     required: true,
@@ -15,10 +15,9 @@ export class lessonProgressParamsDto {
   @ApiProperty({
     name: 'userId',
     required: true,
-    type: String, // Route parameters are strings by default
+    type: Number, // Route parameters are strings by default
     description: 'Optional user ID',
   })
-  @IsOptional()
-  @IsString()
-  userId: string;
+  @IsNotEmpty()
+  userId: number;
 }

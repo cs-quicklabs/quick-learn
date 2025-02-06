@@ -25,7 +25,6 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { courseParamsDto } from './dto/course-params.dto';
-import { roadmapParamsDto } from '../roadmap/dto/roadmap-params.dto';
 
 @ApiTags('Course')
 @Controller({
@@ -105,7 +104,7 @@ export class CourseController {
   @Patch(':id/assign')
   @ApiOperation({ summary: 'Assign a roadmaps to course' })
   async assignRoadmapCourse(
-    @Param() params: roadmapParamsDto,
+    @Param() params: courseParamsDto,
     @Body() assignRoadmapsToCourseDto: AssignRoadmapsToCourseDto,
   ) {
     await this.service.assignRoadmapCourse(

@@ -1,13 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class RoadmapParamsDto {
+export class CronjobQyeryDto {
   @ApiProperty({
-    name: 'id',
-    description: 'Roadmap Id',
+    name: 'greeting',
     required: true,
+    type: String,
+    description: 'Get what is the greeting for the mail',
   })
-  @IsString()
   @IsNotEmpty()
-  id: string;
+  @IsString()
+  greeting: string;
 }

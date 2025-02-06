@@ -83,7 +83,7 @@ export class LessonController {
     @CurrentUser() user: UserEntity,
     @Body() createLessonDto: CreateLessonDto,
   ): Promise<SuccessResponse> {
-    await this.service.createLesson(user , createLessonDto);
+    await this.service.createLesson(user, createLessonDto);
     return new SuccessResponse(en.createLesson);
   }
 
