@@ -23,8 +23,10 @@ import { FlagIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
+import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 
 const DailyLessonDetail = () => {
+  const [link, setLink] = useState<TBreadcrumb[]>([]);
   const router = useRouter();
   const [courseId, setCourseId] = useState('');
   const [token, setToken] = useState('');
@@ -44,8 +46,8 @@ const DailyLessonDetail = () => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      setCourseId(params.get('course_id') || '');
-      setToken(params.get('token') || '');
+      setCourseId(params.get('course_id') ?? '');
+      setToken(params.get('token') ?? '');
     }
   }, []);
 
@@ -122,6 +124,19 @@ const DailyLessonDetail = () => {
         // lesson and admin details
         setLessonDetails(lesson_detail);
         setUserDetail(user_detail);
+
+        // breadcrumb
+        setLink([
+          {
+            name: lesson_detail?.course?.name ?? 'Course',
+            link: '#',
+          },
+          {
+            name: lesson_detail.name,
+            link: '#',
+          },
+        ]);
+
         // lesson flagged details
         setIsFlagged(lesson_detail?.flagged_lesson ?? null);
         //
@@ -243,8 +258,13 @@ const DailyLessonDetail = () => {
   if (!lessonDetails) return <FullPageLoader />;
 
   return (
-    <div className="max-w-screen-2xl mx-auto mt-16 py-3 px-4 sm:py-5 lg:px-8">
-      <ViewLesson lesson={lessonDetails} links={[]} showCreatedBy={false} />
+    <div className="max-w-screen-2xl mx-auto mt-12 py-3 px-4 sm:py-5 lg:px-8">
+      <ViewLesson
+        lesson={lessonDetails}
+        links={link}
+        showCreatedBy={false}
+        disableLink={true}
+      />
       {renderLessonCompletionStatus()}
       {renderAdminControls()}
       {renderNavigationButton()}
