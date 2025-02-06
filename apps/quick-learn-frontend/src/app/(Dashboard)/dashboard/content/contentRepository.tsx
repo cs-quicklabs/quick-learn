@@ -63,7 +63,7 @@ const ContentRepository = () => {
       try {
         await Promise.all([
           fetchRoadmapData(),
-          fetchMetadata(user?.user_type_id || UserTypeIdEnum.MEMBER),
+          fetchMetadata(user?.user_type_id ?? UserTypeIdEnum.MEMBER),
         ]);
       } catch (err) {
         // Log the error to the console for debugging

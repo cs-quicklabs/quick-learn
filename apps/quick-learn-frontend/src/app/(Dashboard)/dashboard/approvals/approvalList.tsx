@@ -3,12 +3,13 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import { useEffect } from 'react';
 import ApprovalListSkeleton from './ApprovalListSkeleton';
 import { RootState } from '@src/store/store';
 import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
+import { SuperLink } from '@src/utils/HiLink';
 
 const columns = [
   en.common.lesson,
@@ -26,6 +27,17 @@ const ApprovalList = () => {
   useEffect(() => {
     dispatch(fetchUnapprovedLessons());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      dispatch(
+        updateSystemPreferencesData({
+          unapprovedLessons: lessons?.length ?? 0,
+        }),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
 
   if (isInitialLoad && isLoading) return <ApprovalListSkeleton />;
 
@@ -71,12 +83,12 @@ const ApprovalList = () => {
                     className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
                     <div className="flex items-center">
-                      <Link
+                      <SuperLink
                         className="ml-2 hover:underline"
                         href={`${RouteEnum.APPROVALS}/${lesson.id}`}
                       >
                         {lesson.name}
-                      </Link>
+                      </SuperLink>
                     </div>
                   </th>
                   <td className="px-4 py-2">

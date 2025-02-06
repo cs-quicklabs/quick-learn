@@ -1,12 +1,14 @@
 'use client';
-
-import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
+import {
+  getContentRepositoryMetadata,
+  getSystemPreferences,
+} from '@src/apiServices/contentRepositoryService';
 import { updateContentRepository } from '@src/store/features/metadataSlice';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import { usePathname } from 'next/navigation';
 import { useAppDispatch } from '@src/store/hooks';
 import { RouteEnum } from '@src/constants/route.enum';
-import { fetchSystemPreferences } from '@src/store/features/systemPreferenceSlice';
+import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
 
 // Custom hook to fetch content repository metadata
 export const useFetchContentRepositoryMetadata = (forceFetch = false) => {
@@ -27,9 +29,13 @@ export const useFetchContentRepositoryMetadata = (forceFetch = false) => {
     }
   };
 
-  const fetchApprovalData = (user_type: number) => {
-    if (![UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER].includes(user_type)) {
-      dispatch(fetchSystemPreferences());
+  const fetchApprovalData = async (user_type: number) => {
+    if (
+      path !== RouteEnum.APPROVALS &&
+      ![UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER].includes(user_type)
+    ) {
+      const res = await getSystemPreferences();
+      dispatch(updateSystemPreferencesData(res.data));
     }
   };
 

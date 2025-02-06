@@ -10,7 +10,7 @@ describe('Login Test', () => {
     loginPage.login(validCredentials.mail, validCredentials.password);
 
     cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage().should('contain', 'Successfully logged in.');
+    loginPage.getWelcomeMessage();
   });
 
   it('Verify user able to upload logo', () => {

@@ -1,8 +1,8 @@
 'use client';
-import Link from 'next/link';
 import React, { FC } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
 import { usePathname } from 'next/navigation';
+import { SuperLink } from '@src/utils/HiLink';
 
 export type TNavLink = {
   title: string;
@@ -19,7 +19,7 @@ const Sidebar: FC<Props> = ({ navLinks }) => {
   return (
     <nav className="space-y-1">
       {navLinks.map(({ title, linkTo, icon }) => (
-        <Link
+        <SuperLink
           key={linkTo + title}
           href={linkTo}
           className={`${
@@ -28,7 +28,7 @@ const Sidebar: FC<Props> = ({ navLinks }) => {
         >
           {icon}
           <span className="truncate ml-2">{title}</span>
-        </Link>
+        </SuperLink>
       ))}
     </nav>
   );
