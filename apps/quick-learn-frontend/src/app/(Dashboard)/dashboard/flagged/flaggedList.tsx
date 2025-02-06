@@ -38,7 +38,7 @@ const FlaggedList = () => {
     if (!isLoading) {
       dispatch(
         updateSystemPreferencesData({
-          flagged_lessons: flaggedLessons?.length ?? 0,
+          flagged_lessons: totalLessons,
         }),
       );
     }
