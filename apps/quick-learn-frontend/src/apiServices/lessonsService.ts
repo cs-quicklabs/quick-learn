@@ -194,11 +194,12 @@ export const getDailyLessionDetail = async ({
   return response.data;
 };
 
-export const getLeaderBoardStatus = async (): Promise<
-  AxiosSuccessResponse<any>
-> => {
+export const getLeaderBoardStatus = async (
+  page: number = 1,
+  limit: number = 10,
+): Promise<AxiosSuccessResponse<any>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<any>>(
-    `${ContentRepositoryApiEnum.LEADERBOARD_STATUS}`,
+    `${ContentRepositoryApiEnum.LEADERBOARD_STATUS}?page=${page}&limit=${limit}`,
   );
   return response.data;
 };

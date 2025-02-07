@@ -1,4 +1,4 @@
-import { SuccessResponse } from '@src/common/dto';
+import { BasePaginationDto, SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { LessonProgressService } from './lesson-progress.service';
 import {
@@ -9,6 +9,7 @@ import {
   Request,
   Get,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam } from '@nestjs/swagger';
@@ -183,5 +184,23 @@ export class LessonProgressController {
     const leaderBoardData =
       await this.lessonProgressService.calculateLeaderBoardPercentage();
     return new SuccessResponse(en.successLeaderboardData, leaderBoardData);
+  }
+
+  @Get('leaderboard/create')
+  async createLeaderboardEntry() {
+    const leaderboardEntry =
+      await this.lessonProgressService.createLeaderboardEntry();
+    return new SuccessResponse(en.successLeaderboardData, leaderboardEntry);
+  }
+
+  @Get('leaderboard/get')
+  async getLeaderboardDataTable(
+    @Query() paginationDto: BasePaginationDto,
+  ): Promise<SuccessResponse> {
+    const leaderboardData = await this.lessonProgressService.getLeaderboardData(
+      Number(paginationDto.page),
+      Number(paginationDto.limit),
+    );
+    return new SuccessResponse(en.successLeaderboardData, leaderboardData);
   }
 }

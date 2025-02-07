@@ -5,7 +5,8 @@ import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.ent
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { previousSunday } from 'date-fns';
-
+import { Leaderboard } from '@src/entities/leaderboard.entity';
+import { PaginationService } from '@src/common/services/pagination.service';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
@@ -17,6 +18,9 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     private courseRepository: Repository<CourseEntity>,
     @InjectRepository(LessonTokenEntity)
     private LessonTokenRepository: Repository<LessonTokenEntity>,
+    @InjectRepository(Leaderboard)
+    private leaderboardRepository: Repository<Leaderboard>,
+    private paginationService: PaginationService<Leaderboard>,
   ) {
     super(userLessonProgressRepository);
   }
@@ -328,5 +332,39 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     });
 
     return { leaderBoardWithPercentage };
+  }
+  // create leaderboard entry once a week using cron job
+  async createLeaderboardEntry() {
+    const LeaderboardData = await this.calculateLeaderBoardPercentage();
+    const leaderboardEntry = LeaderboardData.leaderBoardWithPercentage.map(
+      (entry, index) =>
+        this.leaderboardRepository.create({
+          userId: entry.user_id,
+          lessonsCompleted: entry.lessonCompleted,
+          rank: index + 1,
+        }),
+    );
+
+    return this.leaderboardRepository.save(leaderboardEntry);
+  }
+
+  async getLeaderboardData(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await this.leaderboardRepository.findAndCount({
+      skip,
+      take: limit,
+      order: {
+        rank: 'ASC',
+      },
+      relations: ['user'],
+    });
+
+    return {
+      items,
+      total,
+      currentPage: page,
+      hasMore: skip + items.length < total,
+    };
   }
 }
