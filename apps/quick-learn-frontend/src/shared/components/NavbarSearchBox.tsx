@@ -203,6 +203,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
                   key={i}
                   type="lesson"
                   course_id={lesson.course_id}
+                  course_name={lesson.course_name}
                 />
               );
             }

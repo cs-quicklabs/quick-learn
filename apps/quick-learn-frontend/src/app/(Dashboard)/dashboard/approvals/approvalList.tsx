@@ -1,43 +1,60 @@
 'use client';
+import { useEffect, useRef, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
+import ApprovalListSkeleton from './ApprovalListSkeleton';
+import { SuperLink } from '@src/utils/HiLink';
+import { RootState } from '@src/store/store';
+import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import { format } from 'date-fns';
-import { useEffect } from 'react';
-import ApprovalListSkeleton from './ApprovalListSkeleton';
-import { RootState } from '@src/store/store';
-import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
-import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
-import { SuperLink } from '@src/utils/HiLink';
-
-const columns = [
-  en.common.lesson,
-  en.common.updatedOn,
-  en.common.createdOn,
-  en.common.createdBy,
-];
 
 const ApprovalList = () => {
+  const columns = [
+    en.common.lesson,
+    en.common.updatedOn,
+    en.common.createdOn,
+    en.common.createdBy,
+  ];
   const dispatch = useAppDispatch();
-  const { lessons, isLoading, isInitialLoad } = useAppSelector(
-    (state: RootState) => state.approval,
-  );
+  const { lessons, isLoading, isInitialLoad, page, totalPages, total } =
+    useAppSelector((state: RootState) => state.approval);
+  const [limit] = useState(10);
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    dispatch(fetchUnapprovedLessons());
-  }, [dispatch]);
+    dispatch(fetchUnapprovedLessons({ page: 1, limit }));
+  }, [dispatch, limit]);
 
   useEffect(() => {
     if (!isLoading) {
       dispatch(
         updateSystemPreferencesData({
-          unapproved_lessons: lessons?.length ?? 0,
+          unapproved_lessons: total,
         }),
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && page < totalPages && !isLoading) {
+          dispatch(fetchUnapprovedLessons({ page: page + 1, limit }));
+        }
+      },
+      { threshold: 1.0 },
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [dispatch, page, totalPages, limit, isLoading]);
 
   if (isInitialLoad && isLoading) return <ApprovalListSkeleton />;
 
@@ -118,8 +135,9 @@ const ApprovalList = () => {
           </table>
         </div>
       </div>
+      <div ref={observerRef} className="h-10" /> {/* Scroll trigger element */}
       {isLoading && !isInitialLoad && (
-        <div className="fixed top-4 right-4">
+        <div className="text-center mt-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
         </div>
       )}

@@ -25,11 +25,15 @@ export const getArchivedLessons = async (): Promise<
   return response.data;
 };
 
-export const getUnapprovedLessons = async (): Promise<
-  AxiosSuccessResponse<TLesson[]>
-> => {
-  const response = await axiosInstance.get<AxiosSuccessResponse<TLesson[]>>(
-    ContentRepositoryApiEnum.LESSON_UNAPPROVED,
+export const getUnapprovedLessons = async ({
+  page = 1,
+  limit = 10,
+}: {
+  page?: number;
+  limit?: number;
+}): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.get(
+    `${ContentRepositoryApiEnum.LESSON_UNAPPROVED}?page=${page}&limit=${limit}`,
   );
   return response.data;
 };
