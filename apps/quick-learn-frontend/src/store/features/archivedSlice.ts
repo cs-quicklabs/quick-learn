@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import {
   TRoadmap,
   TCourse,
@@ -277,13 +277,12 @@ const archivedSlice = createSlice({
 });
 
 // Selectors
-export const selectArchivedUsers = (state: RootState) => state.archived.users;
-export const selectArchivedRoadmaps = (state: RootState) =>
-  state.archived.roadmaps;
-export const selectArchivedCourses = (state: RootState) =>
-  state.archived.courses;
-export const selectArchivedLessons = (state: RootState) =>
-  state.archived.lessons;
+const baseArchivedSelector = (state: RootState) => state.archived;
+
+export const selectArchivedUsers = createSelector([baseArchivedSelector], (data) => data.users);
+export const selectArchivedRoadmaps = createSelector([baseArchivedSelector], (data) => data.roadmaps);
+export const selectArchivedCourses = createSelector([baseArchivedSelector], (data) => data.courses);
+export const selectArchivedLessons = createSelector([baseArchivedSelector], (data) => data.lessons);
 
 export const {
   setUsersSearchValue,

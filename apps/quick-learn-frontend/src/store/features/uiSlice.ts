@@ -1,5 +1,5 @@
 // store/features/uiSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { UIState } from '../types/metadata.types';
 import { RootState } from '../store';
 
@@ -19,7 +19,9 @@ const uiSlice = createSlice({
 
 export const { setHideNavbar } = uiSlice.actions;
 
+const baseSelector = (state: RootState) => state.ui;
+
 // Selectors
-export const selectHideNavbar = (state: RootState) => state.ui.hideNavbar;
+export const selectHideNavbar = createSelector([baseSelector], data => data.hideNavbar);
 
 export default uiSlice.reducer;

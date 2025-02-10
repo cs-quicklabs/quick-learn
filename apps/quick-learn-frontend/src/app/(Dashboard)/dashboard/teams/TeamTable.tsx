@@ -7,10 +7,13 @@ import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import TeamMemberListingSkeleton from './TeamMemberListingSkeleton';
-import { RootState } from '@src/store/store';
-import { fetchTeamMembers } from '@src/store/features/teamSlice';
+import {
+  fetchTeamMembers,
+  selectTeamListingData,
+} from '@src/store/features/teamSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { SuperLink } from '@src/utils/HiLink';
+
 const TeamTable = () => {
   const dispatch = useAppDispatch();
   const {
@@ -20,14 +23,7 @@ const TeamTable = () => {
     currentPage,
     currentUserType,
     searchQuery,
-  } = useAppSelector((state: RootState) => ({
-    isLoading: state.team.isLoading,
-    isInitialLoad: state.team.isInitialLoad,
-    users: state.team.users,
-    currentPage: state.team.currentPage,
-    currentUserType: state.team.currentUserType,
-    searchQuery: state.team.searchQuery,
-  }));
+  } = useAppSelector(selectTeamListingData);
 
   useEffect(() => {
     const fetchData = async () => {

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import { TLesson } from '@src/shared/types/contentRepository';
 import {
   getUnapprovedLessons,
@@ -74,7 +74,11 @@ const approvalSlice = createSlice({
   },
 });
 
-export const getApprovalLessonCount = (state: RootState) =>
-  state.approval.lessons.length;
+const selectApproval = (state: RootState) => state.approval;
+
+export const getApprovalLessionList = createSelector([selectApproval], (approval) => approval.lessons);
+export const getApprovalLessionListInitialLoad = createSelector([selectApproval], (approval) => approval.isInitialLoad);
+export const getApprovalLessionListLoading = createSelector([selectApproval], (approval) => approval.isLoading);
+export const getApprovalLessonCount = createSelector([selectApproval], (approval) => approval.lessons.length)
 
 export default approvalSlice.reducer;

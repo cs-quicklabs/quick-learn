@@ -5,8 +5,12 @@ import { RouteEnum } from '@src/constants/route.enum';
 import { format } from 'date-fns';
 import { useEffect } from 'react';
 import ApprovalListSkeleton from './ApprovalListSkeleton';
-import { RootState } from '@src/store/store';
-import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
+import {
+  fetchUnapprovedLessons,
+  getApprovalLessionListLoading,
+  getApprovalLessionList,
+  getApprovalLessionListInitialLoad,
+} from '@src/store/features/approvalSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
 import { SuperLink } from '@src/utils/HiLink';
@@ -20,9 +24,9 @@ const columns = [
 
 const ApprovalList = () => {
   const dispatch = useAppDispatch();
-  const { lessons, isLoading, isInitialLoad } = useAppSelector(
-    (state: RootState) => state.approval,
-  );
+  const lessons = useAppSelector(getApprovalLessionList);
+  const isLoading = useAppSelector(getApprovalLessionListLoading);
+  const isInitialLoad = useAppSelector(getApprovalLessionListInitialLoad);
 
   useEffect(() => {
     dispatch(fetchUnapprovedLessons());

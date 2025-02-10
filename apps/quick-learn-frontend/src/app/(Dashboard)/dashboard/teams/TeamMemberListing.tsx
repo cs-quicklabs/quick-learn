@@ -8,6 +8,7 @@ import TeamTable from './TeamTable';
 import { RootState } from '@src/store/store';
 import {
   fetchTeamMembers,
+  selectTeamListingData,
   setCurrentPage,
   setCurrentUserType,
   setSearchQuery,
@@ -20,12 +21,7 @@ const TeamMemberListing = () => {
   const [searchInputValue, setSearchInputValue] = useState(''); // Local state for input value
 
   const { totalUsers, currentPage, currentUserType, filteredTotal } =
-    useAppSelector((state: RootState) => ({
-      totalUsers: state.team.totalUsers,
-      currentPage: state.team.currentPage,
-      currentUserType: state.team.currentUserType,
-      filteredTotal: state.team.filterdTotal,
-    }));
+    useAppSelector(selectTeamListingData);
 
   const userTypes: TUserType[] = [
     { name: 'Admin', code: 'admin' },

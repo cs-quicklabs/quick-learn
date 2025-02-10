@@ -35,7 +35,7 @@ import {
   selectRoadmapById,
   updateRoadmap as updateStoreRoadmap,
 } from '@src/store/features/roadmapsSlice';
-import { AppDispatch, RootState } from '@src/store/store';
+import { AppDispatch } from '@src/store/store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -58,9 +58,7 @@ const RoadmapDetails = () => {
   const { roadmap: roadmapId } = useParams<{ roadmap: string }>();
 
   // Get roadmap from store
-  const roadmapFromStore = useSelector((state: RootState) =>
-    selectRoadmapById(state, parseInt(roadmapId)),
-  );
+  const roadmapFromStore = useSelector(selectRoadmapById(parseInt(roadmapId)));
   const contentRepositoryMetadata = useSelector(
     selectContentRepositoryMetadata,
   );

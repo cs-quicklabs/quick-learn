@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { getUserProgress } from '@src/apiServices/lessonsService';
 
@@ -54,20 +54,20 @@ const userProgressSlice = createSlice({
       })
       .addCase(fetchUserProgress.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch user progress';
+        state.error = action.error.message ?? 'Failed to fetch user progress';
       });
   },
 });
 
 // Selectors
-export const selectUserProgress = (state: RootState) =>
-  state.userProgress.progress;
-export const selectUserProgressStatus = (state: RootState) =>
-  state.userProgress.status;
-export const selectUserProgressError = (state: RootState) =>
-  state.userProgress.error;
-export const selectCourseProgress = (courseId: number) => (state: RootState) =>
-  state.userProgress.progress.find((course) => course.course_id === courseId)
-    ?.lessons || [];
+const selectBaseUserProgress = (state: RootState) => state.userProgress;
 
+export const selectUserProgress = createSelector([selectBaseUserProgress], (userProgress) => userProgress.progress);
+export const selectUserProgressStatus = createSelector([selectBaseUserProgress], (userProgress) => userProgress.status);
+export const selectUserProgressError = createSelector([selectBaseUserProgress], (userProgress) => userProgress.error);
+
+export const selectCourseProgress = (courseId: number) => createSelector(
+  [selectBaseUserProgress],
+  (userProgress) => userProgress.progress.find((course) => course.course_id === courseId)?.lessons || []
+);
 export default userProgressSlice.reducer;

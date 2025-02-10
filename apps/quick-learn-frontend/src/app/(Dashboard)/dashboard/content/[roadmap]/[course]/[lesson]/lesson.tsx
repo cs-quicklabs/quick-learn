@@ -20,7 +20,11 @@ import Editor from '@src/shared/components/Editor';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
-import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
+import {
+  TCourse,
+  TLesson,
+  TRoadmap,
+} from '@src/shared/types/contentRepository';
 import { useDispatch, useSelector } from 'react-redux';
 import { setHideNavbar } from '@src/store/features/uiSlice';
 import {
@@ -36,7 +40,6 @@ import {
   selectRoadmapById,
   updateRoadmap,
 } from '@src/store/features/roadmapsSlice';
-import { store } from '@src/store/store';
 import { selectUser } from '@src/store/features/userSlice';
 
 // Move constants outside component to prevent recreating on each render
@@ -83,7 +86,7 @@ const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
 ArchiveButton.displayName = 'ArchiveButton';
 
 // Custom hook for form logic
-const useLessonForm = (courseId: string, lessonId: string) => {
+const useLessonForm = () => {
   const {
     setValue,
     control,
@@ -135,7 +138,7 @@ const Lesson = () => {
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
 
-  const form = useLessonForm(courseId, lessonId);
+  const form = useLessonForm();
 
   const isEdit = useMemo(() => {
     return (
@@ -226,15 +229,12 @@ const Lesson = () => {
           const courseRes = await getCourse(courseId);
 
           // Update roadmap in store with new course data
-          const roadmapFromStore = selectRoadmapById(
-            store.getState(),
-            parseInt(roadmapId),
-          );
+          const roadmapFromStore = selectRoadmapById(parseInt(roadmapId));
           if (roadmapFromStore) {
             dispatch(
               updateRoadmap({
                 ...roadmapFromStore,
-                courses: roadmapFromStore.courses.map((c) =>
+                courses: roadmapFromStore.courses.map((c: TCourse) =>
                   c.id === parseInt(courseId) ? courseRes.data : c,
                 ),
               }),

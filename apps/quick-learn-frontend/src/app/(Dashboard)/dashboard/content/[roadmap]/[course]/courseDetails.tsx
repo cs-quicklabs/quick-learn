@@ -35,7 +35,7 @@ import {
   selectContentRepositoryMetadata,
   updateContentRepository,
 } from '@src/store/features/metadataSlice';
-import { AppDispatch, RootState } from '@src/store/store';
+import { AppDispatch } from '@src/store/store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -63,9 +63,7 @@ const CourseDetails = () => {
   // Selectors
   const allCourses = useSelector(selectAllCourses);
   const courseFromStore = allCourses.find((course) => course.id === +courseId);
-  const roadmapFromStore = useSelector((state: RootState) =>
-    roadmapId ? selectRoadmapById(state, parseInt(roadmapId)) : undefined,
-  );
+  const roadmapFromStore = useSelector(selectRoadmapById(parseInt(roadmapId)));
   const contentRepositoryMetadata = useSelector(
     selectContentRepositoryMetadata,
   );

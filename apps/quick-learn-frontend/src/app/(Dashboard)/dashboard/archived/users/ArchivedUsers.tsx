@@ -93,6 +93,39 @@ const InactiveUsers = () => {
     dispatch(fetchArchivedUsers({ page: 1, search: '', resetList: true }));
   }, [dispatch]);
 
+  function renderComponentUI() {
+    if (isInitialLoad) return <LoadingSkeleton />;
+
+    if (usersList.length === 0)
+      return <EmptyState type="users" searchValue={searchValue} />;
+
+    return (
+      <InfiniteScroll
+        dataLength={usersList.length}
+        next={getNextUsers}
+        hasMore={hasMore}
+        loader={<LoadingSkeleton />}
+      >
+        {usersList.map((item) => (
+          <ArchivedCell
+            key={item.id}
+            title={item.full_name || `${item.first_name} ${item.last_name}`}
+            subtitle={item.skill.name}
+            deactivatedBy={
+              item.updated_by
+                ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
+                : ''
+            }
+            deactivationDate={item.updated_at}
+            onClickDelete={() => setDeleteId(item.id)}
+            onClickRestore={() => setRestoreId(item.id)}
+            alternateButton
+          />
+        ))}
+      </InfiniteScroll>
+    );
+  }
+
   return (
     <div className="max-w-xl px-4 pb-12 lg:col-span-8">
       <ConformationModal
@@ -126,37 +159,7 @@ const InactiveUsers = () => {
           handleQueryChange(e.target.value)
         }
       />
-      <div className="flex flex-col w-full">
-        {isInitialLoad ? (
-          <LoadingSkeleton />
-        ) : usersList.length === 0 ? (
-          <EmptyState type="users" searchValue={searchValue} />
-        ) : (
-          <InfiniteScroll
-            dataLength={usersList.length}
-            next={getNextUsers}
-            hasMore={hasMore}
-            loader={<LoadingSkeleton />}
-          >
-            {usersList.map((item) => (
-              <ArchivedCell
-                key={item.id}
-                title={item.full_name || `${item.first_name} ${item.last_name}`}
-                subtitle={item.skill.name}
-                deactivatedBy={
-                  item.updated_by
-                    ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
-                    : ''
-                }
-                deactivationDate={item.updated_at}
-                onClickDelete={() => setDeleteId(item.id)}
-                onClickRestore={() => setRestoreId(item.id)}
-                alternateButton
-              />
-            ))}
-          </InfiniteScroll>
-        )}
-      </div>
+      <div className="flex flex-col w-full">{renderComponentUI()}</div>
     </div>
   );
 };
