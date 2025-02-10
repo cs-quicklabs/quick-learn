@@ -32,7 +32,10 @@ const AccountSettingSechema = z.object({
     .refine((value) => value.trim().length > 0, {
       message: 'This field is mandatory and cannot contain only whitespace',
     })
-    .refine(noSpecialCharValidation, 'Only alphabets and space are allowed'),
+    .refine(
+      noSpecialCharValidation,
+      'Only alphabets, digits and space are allowed',
+    ),
   logo: z.union([z.instanceof(File), z.string()]).optional(),
 });
 
