@@ -5,6 +5,7 @@ import { getLeaderBoardStatus } from '@src/apiServices/lessonsService';
 import { useAppSelector } from '@src/store/hooks';
 import { selectUser } from '@src/store/features/userSlice';
 import { TUser } from '@src/shared/types/userTypes';
+
 interface LeaderboardData {
   user_id: number;
   lessonsCompleted: number;
