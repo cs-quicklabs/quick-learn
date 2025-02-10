@@ -22,7 +22,7 @@ export interface BaseAsyncState {
 
 export interface PaginatedCollectionState<T>
   extends BaseLoadingState,
-  BasePaginationState {
+    BasePaginationState {
   items: T[];
 }
 
