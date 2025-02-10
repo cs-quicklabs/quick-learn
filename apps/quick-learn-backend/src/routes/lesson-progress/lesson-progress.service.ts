@@ -330,7 +330,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     return { leaderBoardWithPercentage };
   }
   // create leaderboard entry once a week using cron job
-  async createLeaderboardEntry() {
+  async createLeaderboardRanking() {
     await this.deleteLeaderboardData();
     const LeaderboardData = await this.calculateLeaderBoardPercentage();
     const leaderboardEntry = LeaderboardData.leaderBoardWithPercentage.map(

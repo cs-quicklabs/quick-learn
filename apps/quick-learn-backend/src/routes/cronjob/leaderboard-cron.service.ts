@@ -28,21 +28,6 @@ export class LeaderboardCronService {
     });
   }
 
-  @Cron('0 7 * * 1', {
-    name: 'createLeaderboardEntryTable',
-    timeZone: CRON_TIMEZONE,
-    disabled: process.env.ENV !== EnvironmentEnum.Production,
-  })
-  async createLeaderboardEntryTable() {
-    try {
-      await this.lessonProgressService.createLeaderboardEntry();
-      this.logger.log('Created new leaderboard entries');
-    } catch (error) {
-      this.logger.error('Error in daily leaderboard reset:', error);
-      throw error;
-    }
-  }
-
   @Cron('0 8 * * 1', {
     name: 'sendLeaderboardEmail',
     timeZone: CRON_TIMEZONE,
@@ -51,6 +36,11 @@ export class LeaderboardCronService {
   async sendLeaderboardEmail() {
     let skip = 0;
     let processedCount = 0;
+
+    await this.lessonProgressService.createLeaderboardRanking();
+
+    this.logger.log('Created new leaderboard entries');
+
     const totalMembers = await this.leaderboardRepository.count();
     try {
       this.logger.log('Starting leaderboard email...');

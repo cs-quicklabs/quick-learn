@@ -43,16 +43,14 @@ export class CronjobController {
     return new SuccessResponse(en.triggeredDailyLessonMails);
   }
 
-  @ApiOperation({ summary: 'Send leaderboard email to the users.' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserTypeId.SUPER_ADMIN)
+  @ApiOperation({
+    summary: 'Create new Ranking and send leaderboard email to the users.',
+  })
   @Post('leaderboard-email')
   async triggerLeaderboardEmail(): Promise<SuccessResponse> {
     await this.leaderboardCronService.sendLeaderboardEmail();
-    return new SuccessResponse(en.triggeredLeaderboardEmail);
-  }
-  @ApiOperation({ summary: 'Create new Leaderboard Entry' })
-  @Post('leaderboard-entry')
-  async triggerLeaderboardEntry(): Promise<SuccessResponse> {
-    await this.leaderboardCronService.createLeaderboardEntryTable();
     return new SuccessResponse(en.triggeredLeaderboardEmail);
   }
 }
