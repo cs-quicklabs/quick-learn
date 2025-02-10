@@ -20,7 +20,7 @@ type formOutput = {
   name: string;
 };
 
-const Roadmapcategories = () => {
+function Roadmapcategories() {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
@@ -73,7 +73,7 @@ const Roadmapcategories = () => {
     setIsEditLoading(true);
     updateRoadmapCategory(id, data)
       .then((res) => {
-        const name = data.name;
+        const { name } = data;
         const updateData = roadmapCategories.map((item) => {
           if (item.id === id) {
             return { ...item, name } as TRoadmapCategories;
@@ -120,6 +120,6 @@ const Roadmapcategories = () => {
       />
     </>
   );
-};
+}
 
 export default Roadmapcategories;

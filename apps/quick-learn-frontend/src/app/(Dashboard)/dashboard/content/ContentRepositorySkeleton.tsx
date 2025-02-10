@@ -1,21 +1,21 @@
 import React from 'react';
 
-const ContentRepositorySkeleton = () => {
+function ContentRepositorySkeleton() {
   return (
     <div className="animate-pulse">
       {/* Main Header Skeleton */}
       <div className="px-4 mb-8 sm:flex sm:items-center sm:justify-center sm:px-6 lg:px-8">
         <div className="items-baseline">
-          <div className="h-12 bg-gray-200 rounded w-96 mx-auto"></div>
-          <div className="mt-2 h-4 bg-gray-200 rounded w-48 mx-auto"></div>
+          <div className="h-12 bg-gray-200 rounded w-96 mx-auto" />
+          <div className="mt-2 h-4 bg-gray-200 rounded w-48 mx-auto" />
         </div>
       </div>
 
       {/* Roadmaps Section */}
       <div className="px-8 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <div className="h-8 bg-gray-200 rounded w-48 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-24 ml-2 mt-1"></div>
+          <div className="h-8 bg-gray-200 rounded w-48 mb-2" />
+          <div className="h-4 bg-gray-200 rounded w-24 ml-2 mt-1" />
         </div>
       </div>
 
@@ -25,8 +25,8 @@ const ContentRepositorySkeleton = () => {
             {/* Create New Card Skeleton */}
             <li>
               <div className="bg-white rounded-lg shadow-sm w-full border-2 border-dashed border-gray-200 p-6">
-                <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-24"></div>
+                <div className="h-5 bg-gray-200 rounded w-3/4 mb-2" />
+                <div className="h-24" />
               </div>
             </li>
             {/* Roadmap Card Skeletons */}
@@ -34,9 +34,9 @@ const ContentRepositorySkeleton = () => {
               <li key={`roadmap-${index}`}>
                 <div className="bg-white rounded-lg shadow-sm w-full">
                   <div className="px-6 py-4">
-                    <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-5 bg-gray-200 rounded w-3/4 mb-2" />
+                    <div className="h-4 bg-gray-200 rounded w-full mb-4" />
+                    <div className="h-4 bg-gray-200 rounded w-1/2" />
                   </div>
                 </div>
               </li>
@@ -48,8 +48,8 @@ const ContentRepositorySkeleton = () => {
       {/* Courses Section */}
       <div className="px-8 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <div className="h-8 bg-gray-200 rounded w-48 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-24 ml-2 mt-1"></div>
+          <div className="h-8 bg-gray-200 rounded w-48 mb-2" />
+          <div className="h-4 bg-gray-200 rounded w-24 ml-2 mt-1" />
         </div>
       </div>
 
@@ -61,9 +61,9 @@ const ContentRepositorySkeleton = () => {
               <li key={`course-${index}`}>
                 <div className="bg-white rounded-lg shadow-sm w-full">
                   <div className="px-6 py-4">
-                    <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-5 bg-gray-200 rounded w-3/4 mb-2" />
+                    <div className="h-4 bg-gray-200 rounded w-full mb-4" />
+                    <div className="h-4 bg-gray-200 rounded w-1/3" />
                   </div>
                 </div>
               </li>
@@ -73,6 +73,6 @@ const ContentRepositorySkeleton = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ContentRepositorySkeleton;

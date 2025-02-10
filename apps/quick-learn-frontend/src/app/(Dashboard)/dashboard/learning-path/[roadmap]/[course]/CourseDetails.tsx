@@ -55,7 +55,7 @@ const headerVariants = {
   },
 };
 
-const CourseDetails = () => {
+function CourseDetails() {
   const { member, roadmap, course } = useParams<{
     member: string;
     roadmap: string;
@@ -262,7 +262,7 @@ const CourseDetails = () => {
                             }
                           : undefined
                       }
-                      isLesson={true}
+                      isLesson
                     />
                   </motion.li>
                 );
@@ -273,6 +273,6 @@ const CourseDetails = () => {
       </div>
     </motion.div>
   );
-};
+}
 
 export default CourseDetails;

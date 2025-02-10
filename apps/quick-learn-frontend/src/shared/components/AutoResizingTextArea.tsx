@@ -9,14 +9,14 @@ interface AutoResizingTextareaProps {
   maxLength?: number;
 }
 
-const AutoResizingTextarea = ({
+function AutoResizingTextarea({
   value,
   onChange,
   isEditing,
   placeholder,
   className = '',
   maxLength = 80,
-}: AutoResizingTextareaProps) => {
+}: AutoResizingTextareaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const adjustHeight = () => {
@@ -56,6 +56,6 @@ const AutoResizingTextarea = ({
       aria-label="Lesson title"
     />
   );
-};
+}
 
 export default AutoResizingTextarea;

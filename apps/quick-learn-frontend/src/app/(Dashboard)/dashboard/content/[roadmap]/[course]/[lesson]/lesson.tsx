@@ -20,7 +20,11 @@ import Editor from '@src/shared/components/Editor';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
-import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
+import {
+  TCourse,
+  TLesson,
+  TRoadmap,
+} from '@src/shared/types/contentRepository';
 import { useDispatch, useSelector } from 'react-redux';
 import { setHideNavbar } from '@src/store/features/uiSlice';
 import {
@@ -36,8 +40,8 @@ import {
   selectRoadmapById,
   updateRoadmap,
 } from '@src/store/features/roadmapsSlice';
-import { store } from '@src/store/store';
 import { selectUser } from '@src/store/features/userSlice';
+import { useAppSelector } from '@src/store/hooks';
 
 // Move constants outside component to prevent recreating on each render
 const defaultlinks: TBreadcrumb[] = [
@@ -73,6 +77,7 @@ SaveButton.displayName = 'SaveButton';
 
 const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
   <button
+    type="button"
     className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
     onClick={onClick}
   >
@@ -83,7 +88,7 @@ const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
 ArchiveButton.displayName = 'ArchiveButton';
 
 // Custom hook for form logic
-const useLessonForm = (courseId: string, lessonId: string) => {
+const useLessonForm = () => {
   const {
     setValue,
     control,
@@ -105,7 +110,7 @@ const useLessonForm = (courseId: string, lessonId: string) => {
   };
 };
 
-const Lesson = () => {
+function Lesson() {
   const router = useRouter();
   const dispatch = useDispatch();
   const path = usePathname();
@@ -135,7 +140,7 @@ const Lesson = () => {
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
 
-  const form = useLessonForm(courseId, lessonId);
+  const form = useLessonForm();
 
   const isEdit = useMemo(() => {
     return (
@@ -211,6 +216,10 @@ const Lesson = () => {
     };
   }, [dispatch]);
 
+  const roadmapFromStore = useAppSelector(
+    selectRoadmapById(parseInt(roadmapId, 10)),
+  );
+
   const onSubmit = useCallback<SubmitHandler<LessonFormData>>(
     async (data) => {
       setLoading(true);
@@ -226,19 +235,14 @@ const Lesson = () => {
           const courseRes = await getCourse(courseId);
 
           // Update roadmap in store with new course data
-          const roadmapFromStore = selectRoadmapById(
-            store.getState(),
-            parseInt(roadmapId),
-          );
           if (roadmapFromStore) {
-            dispatch(
-              updateRoadmap({
-                ...roadmapFromStore,
-                courses: roadmapFromStore.courses.map((c) =>
-                  c.id === parseInt(courseId) ? courseRes.data : c,
-                ),
-              }),
-            );
+            const roadmapData: TRoadmap = {
+              ...roadmapFromStore,
+              courses: roadmapFromStore.courses.map((c: TCourse) =>
+                c.id === parseInt(courseId, 10) ? courseRes.data : c,
+              ),
+            };
+            dispatch(updateRoadmap(roadmapData));
           }
 
           showApiMessageInToast(res);
@@ -316,7 +320,7 @@ const Lesson = () => {
     try {
       setIsArchiving(true);
       const response = await activateLesson({
-        id: parseInt(lessonId),
+        id: parseInt(lessonId, 10),
         active: false,
       });
       showApiMessageInToast(response);
@@ -392,6 +396,6 @@ const Lesson = () => {
       </div>
     </>
   );
-};
+}
 
 export default memo(Lesson);

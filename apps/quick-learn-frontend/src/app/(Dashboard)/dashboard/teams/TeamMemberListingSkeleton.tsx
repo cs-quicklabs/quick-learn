@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TeamMemberListingSkeleton = () => {
+function TeamMemberListingSkeleton() {
   return (
     <>
       <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
@@ -115,6 +115,6 @@ const TeamMemberListingSkeleton = () => {
       </div>
     </>
   );
-};
+}
 
 export default TeamMemberListingSkeleton;

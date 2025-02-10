@@ -15,24 +15,26 @@ interface Props {
   isLoading?: boolean;
 }
 
-const LoadingSkeleton = () => (
-  <div className="flex items-center p-4 mt-4">
-    <div className="flex-1 min-w-0">
-      <div className="flex">
-        <div className="h-5 bg-gray-200 rounded w-48 animate-pulse"></div>
-        <div className="h-5 bg-gray-200 rounded w-24 ml-1 animate-pulse"></div>
+function LoadingSkeleton() {
+  return (
+    <div className="flex items-center p-4 mt-4">
+      <div className="flex-1 min-w-0">
+        <div className="flex">
+          <div className="h-5 bg-gray-200 rounded w-48 animate-pulse" />
+          <div className="h-5 bg-gray-200 rounded w-24 ml-1 animate-pulse" />
+        </div>
+        <div className="mt-2 flex items-center">
+          <div className="h-5 w-5 bg-gray-200 rounded-full mr-1.5 animate-pulse" />
+          <div className="h-5 bg-gray-200 rounded w-64 animate-pulse" />
+        </div>
       </div>
-      <div className="mt-2 flex items-center">
-        <div className="h-5 w-5 bg-gray-200 rounded-full mr-1.5 animate-pulse"></div>
-        <div className="h-5 bg-gray-200 rounded w-64 animate-pulse"></div>
+      <div className="flex justify-end space-x-4">
+        <div className="h-5 bg-gray-200 rounded w-16 animate-pulse" />
+        <div className="h-5 bg-gray-200 rounded w-16 animate-pulse" />
       </div>
     </div>
-    <div className="flex justify-end space-x-4">
-      <div className="h-5 bg-gray-200 rounded w-16 animate-pulse"></div>
-      <div className="h-5 bg-gray-200 rounded w-16 animate-pulse"></div>
-    </div>
-  </div>
-);
+  );
+}
 
 const ArchivedCell: FC<Props> = ({
   title,
@@ -74,6 +76,7 @@ const ArchivedCell: FC<Props> = ({
       </div>
       <div className="flex justify-end shrink-0">
         <button
+          type="button"
           className="text-sm text-gray-500 hover:text-red-600 hover:underline"
           onClick={onClickRestore}
           disabled={isLoading}
@@ -81,6 +84,7 @@ const ArchivedCell: FC<Props> = ({
           {!alternateButton ? en.common.restore : en.common.activate}
         </button>
         <button
+          type="button"
           className="text-sm text-gray-500 hover:text-red-600 hover:underline ml-4"
           onClick={onClickDelete}
           disabled={isLoading}

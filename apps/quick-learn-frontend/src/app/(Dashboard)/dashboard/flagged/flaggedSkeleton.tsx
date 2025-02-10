@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FlaggedListSkeleton = () => {
+function FlaggedListSkeleton() {
   return (
     <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
       {/* Header Section */}
@@ -68,6 +68,6 @@ const FlaggedListSkeleton = () => {
       </div>
     </section>
   );
-};
+}
 
 export default FlaggedListSkeleton;

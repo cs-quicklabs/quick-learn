@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Edit roadmap quick learn',
 };
 
-const Page = () => {
+function Page() {
   return <RoadmapDetails />;
-};
+}
 
 export default Page;
