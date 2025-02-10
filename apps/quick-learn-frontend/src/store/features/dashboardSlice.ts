@@ -1,7 +1,11 @@
-import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from '@reduxjs/toolkit';
 import { getUserRoadmapsService } from '@src/apiServices/contentRepositoryService';
 import { TUserRoadmap, TUserCourse } from '@src/shared/types/contentRepository';
-import { RootState } from '../store';
+import { RootState } from '../types/base.types';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 
@@ -165,7 +169,7 @@ export const selectDashboardData = createSelector(
     status: dashboard?.status || 'idle',
     error: dashboard?.error ?? null,
     isInitialized: dashboard?.isInitialized || false,
-  })
+  }),
 );
 
 export default dashboardSlice.reducer;

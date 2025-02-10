@@ -1,15 +1,20 @@
-import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector,
+} from '@reduxjs/toolkit';
 import {
   TRoadmap,
   TCourse,
   TLesson,
 } from '@src/shared/types/contentRepository';
 import * as archivedService from '@src/apiServices/archivedService';
-import { RootState } from '../store';
 import { TUser } from '@src/shared/types/userTypes';
 import {
   createInitialPaginatedState,
   PaginatedCollectionState,
+  RootState,
 } from '../types/base.types';
 
 export interface ArchivedState {
@@ -279,10 +284,22 @@ const archivedSlice = createSlice({
 // Selectors
 const baseArchivedSelector = (state: RootState) => state.archived;
 
-export const selectArchivedUsers = createSelector([baseArchivedSelector], (data) => data.users);
-export const selectArchivedRoadmaps = createSelector([baseArchivedSelector], (data) => data.roadmaps);
-export const selectArchivedCourses = createSelector([baseArchivedSelector], (data) => data.courses);
-export const selectArchivedLessons = createSelector([baseArchivedSelector], (data) => data.lessons);
+export const selectArchivedUsers = createSelector(
+  [baseArchivedSelector],
+  (data) => data.users,
+);
+export const selectArchivedRoadmaps = createSelector(
+  [baseArchivedSelector],
+  (data) => data.roadmaps,
+);
+export const selectArchivedCourses = createSelector(
+  [baseArchivedSelector],
+  (data) => data.courses,
+);
+export const selectArchivedLessons = createSelector(
+  [baseArchivedSelector],
+  (data) => data.lessons,
+);
 
 export const {
   setUsersSearchValue,

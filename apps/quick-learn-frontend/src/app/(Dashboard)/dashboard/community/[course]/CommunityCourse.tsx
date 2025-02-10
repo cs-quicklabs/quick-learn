@@ -12,7 +12,7 @@ import Card from '@src/shared/components/Card';
 import CommunityCourseDetailsSkeleton from './CommunityCourseDetailSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 
-const CommunityCourse = () => {
+function CommunityCourse() {
   const [courseData, setCourseData] = useState<TCourse | undefined>();
   const [isLoading, setIsLoading] = useState(true);
   const params = useParams<{ course: string }>();
@@ -92,6 +92,6 @@ const CommunityCourse = () => {
       )}
     </div>
   );
-};
+}
 
 export default CommunityCourse;

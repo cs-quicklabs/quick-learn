@@ -1,5 +1,10 @@
-import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
-import { RootState } from '../store';
+import { RootState } from '../types/base.types';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector,
+} from '@reduxjs/toolkit';
 import { getUser } from '@src/apiServices/authService';
 import { TUser } from '@src/shared/types/userTypes';
 
@@ -65,6 +70,15 @@ export default userSlice.reducer;
 
 const baseSelector = (state: RootState) => state.user;
 
-export const selectUser = createSelector([baseSelector], data => data?.user || null);
-export const selectUserStatus = createSelector([baseSelector], data => data.status);
-export const selectUserError = createSelector([baseSelector], data => data.error);
+export const selectUser = createSelector(
+  [baseSelector],
+  (data) => data?.user || null,
+);
+export const selectUserStatus = createSelector(
+  [baseSelector],
+  (data) => data.status,
+);
+export const selectUserError = createSelector(
+  [baseSelector],
+  (data) => data.error,
+);

@@ -5,12 +5,12 @@ export const metadata = {
   description: 'Teams quick learn',
 };
 
-const MemberPage = () => {
+function MemberPage() {
   return (
     <main className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8 lg:py-3">
       <AddUpdateMemberPage />
     </main>
   );
-};
+}
 
 export default MemberPage;

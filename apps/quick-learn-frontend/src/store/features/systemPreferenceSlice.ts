@@ -1,8 +1,13 @@
 import { REHYDRATE } from 'redux-persist';
 import type { PersistedState } from 'redux-persist';
-import { RootState } from '../store';
-import { getSystemPreferences } from './../../apiServices/contentRepositoryService';
-import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
+import { RootState } from '../types/base.types';
+import { getSystemPreferences } from '../../apiServices/contentRepositoryService';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector,
+} from '@reduxjs/toolkit';
 import { SystemPreferences } from '@src/shared/types/contentRepository';
 
 interface SystemPreferencesState {
@@ -87,8 +92,11 @@ export default systemPreferenceSlice.reducer;
 
 const baseSelector = (state: RootState) => state.systemPreference;
 
-export const getSystemPreferencesState = createSelector([baseSelector], (data) => ({
-  metadata: data.metadata,
-  status: data.status,
-  error: data.error,
-}))
+export const getSystemPreferencesState = createSelector(
+  [baseSelector],
+  (data) => ({
+    metadata: data.metadata,
+    status: data.status,
+    error: data.error,
+  }),
+);

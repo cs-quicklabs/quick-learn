@@ -22,7 +22,7 @@ const columns = [
   en.common.createdBy,
 ];
 
-const ApprovalList = () => {
+function ApprovalList() {
   const dispatch = useAppDispatch();
   const lessons = useAppSelector(getApprovalLessionList);
   const isLoading = useAppSelector(getApprovalLessionListLoading);
@@ -124,11 +124,11 @@ const ApprovalList = () => {
       </div>
       {isLoading && !isInitialLoad && (
         <div className="fixed top-4 right-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700" />
         </div>
       )}
     </div>
   );
-};
+}
 
 export default ApprovalList;

@@ -1,4 +1,8 @@
-import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from '@reduxjs/toolkit';
 import { TLesson } from '@src/shared/types/contentRepository';
 import {
   getUnapprovedLessons,
@@ -6,8 +10,7 @@ import {
 } from '@src/apiServices/lessonsService';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
-import { BaseLoadingState } from '../types/base.types';
-import { RootState } from '../store';
+import { BaseLoadingState, RootState } from '../types/base.types';
 
 interface ApprovalState extends BaseLoadingState {
   lessons: TLesson[];
@@ -76,9 +79,21 @@ const approvalSlice = createSlice({
 
 const selectApproval = (state: RootState) => state.approval;
 
-export const getApprovalLessionList = createSelector([selectApproval], (approval) => approval.lessons);
-export const getApprovalLessionListInitialLoad = createSelector([selectApproval], (approval) => approval.isInitialLoad);
-export const getApprovalLessionListLoading = createSelector([selectApproval], (approval) => approval.isLoading);
-export const getApprovalLessonCount = createSelector([selectApproval], (approval) => approval.lessons.length)
+export const getApprovalLessionList = createSelector(
+  [selectApproval],
+  (approval) => approval.lessons,
+);
+export const getApprovalLessionListInitialLoad = createSelector(
+  [selectApproval],
+  (approval) => approval.isInitialLoad,
+);
+export const getApprovalLessionListLoading = createSelector(
+  [selectApproval],
+  (approval) => approval.isLoading,
+);
+export const getApprovalLessonCount = createSelector(
+  [selectApproval],
+  (approval) => approval.lessons.length,
+);
 
 export default approvalSlice.reducer;

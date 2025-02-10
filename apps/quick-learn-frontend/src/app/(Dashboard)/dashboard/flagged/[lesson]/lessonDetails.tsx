@@ -22,7 +22,7 @@ import { UserTypeIdEnum } from 'lib/shared/src';
 
 const defaultLinks = [{ name: 'Flagged Lessons', link: RouteEnum.FLAGGED }];
 
-const LessonDetails = () => {
+function LessonDetails() {
   const { lesson: id } = useParams<{ lesson: string }>();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -94,6 +94,6 @@ const LessonDetails = () => {
       />
     </div>
   );
-};
+}
 
 export default LessonDetails;

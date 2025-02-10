@@ -53,7 +53,7 @@ const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
-const CourseDetails = () => {
+function CourseDetails() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const params = useParams<{ roadmap: string; course: string }>();
@@ -63,7 +63,9 @@ const CourseDetails = () => {
   // Selectors
   const allCourses = useSelector(selectAllCourses);
   const courseFromStore = allCourses.find((course) => course.id === +courseId);
-  const roadmapFromStore = useSelector(selectRoadmapById(parseInt(roadmapId)));
+  const roadmapFromStore = useSelector(
+    selectRoadmapById(parseInt(roadmapId, 10)),
+  );
   const contentRepositoryMetadata = useSelector(
     selectContentRepositoryMetadata,
   );
@@ -119,10 +121,10 @@ const CourseDetails = () => {
     if (
       courseData.roadmaps?.length &&
       courseData.roadmaps?.length > 0 &&
-      parseInt(roadmapId)
+      parseInt(roadmapId, 10)
     ) {
       const roadmap = courseData.roadmaps.find(
-        (ele) => ele.id === parseInt(roadmapId),
+        (ele) => ele.id === parseInt(roadmapId, 10),
       );
       if (!roadmap) return;
       setLinks([
@@ -397,6 +399,6 @@ const CourseDetails = () => {
       </div>
     </>
   );
-};
+}
 
 export default CourseDetails;

@@ -1,10 +1,14 @@
-import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector,
+} from '@reduxjs/toolkit';
+import { BaseAsyncState, RootState } from '../types/base.types';
 import { getRoadmaps } from '@src/apiServices/contentRepositoryService';
 import { TRoadmap, TCourse } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
-import { RootState } from '../store';
 import { AxiosErrorObject } from '@src/apiServices/axios';
-import { BaseAsyncState } from '../types/base.types';
 
 interface RoadmapsState extends BaseAsyncState {
   roadmaps: TRoadmap[];
@@ -134,18 +138,30 @@ const roadmapsSlice = createSlice({
 export const { addRoadmap, updateRoadmap, removeRoadmap } =
   roadmapsSlice.actions;
 
-const selectBaseRoadMap = (state: RootState) => state.roadmaps
+const selectBaseRoadMap = (state: RootState) => state.roadmaps;
 
 // Selectors
-export const selectAllRoadmaps = createSelector([selectBaseRoadMap], (data) => data.roadmaps ?? initialState.roadmaps);
+export const selectAllRoadmaps = createSelector(
+  [selectBaseRoadMap],
+  (data) => data.roadmaps ?? initialState.roadmaps,
+);
 
 export const selectRoadmapById = (roadmapId: number) =>
   createSelector([selectBaseRoadMap], (data): TRoadmap | undefined =>
-    data.roadmaps.find((roadmap) => roadmap.id === roadmapId)
+    data.roadmaps.find((roadmap: TRoadmap) => roadmap.id === roadmapId),
   );
 
-export const selectAllCourses = createSelector([selectBaseRoadMap], (data) => data.courses ?? initialState.courses);
-export const selectRoadmapsStatus = createSelector([selectBaseRoadMap], (data) => data.status);
-export const selectIsRoadmapsInitialized = createSelector([selectBaseRoadMap], (data) => data.isInitialized);
+export const selectAllCourses = createSelector(
+  [selectBaseRoadMap],
+  (data) => data.courses ?? initialState.courses,
+);
+export const selectRoadmapsStatus = createSelector(
+  [selectBaseRoadMap],
+  (data) => data.status,
+);
+export const selectIsRoadmapsInitialized = createSelector(
+  [selectBaseRoadMap],
+  (data) => data.isInitialized,
+);
 
 export default roadmapsSlice.reducer;

@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { en } from '@src/constants/lang/en';
+
 type BaseType = {
   id: number | string;
   name: string;
@@ -45,7 +46,7 @@ const addSchema = z.object({
 type AddSchemaType = z.infer<typeof addSchema>;
 type EditSchemaType = z.infer<typeof addSchema>;
 
-const BaseLayout = ({
+function BaseLayout({
   heading,
   subHeading,
   tableColumnName,
@@ -57,7 +58,7 @@ const BaseLayout = ({
   onAdd,
   onEdit,
   isPageLoading = false,
-}: Props) => {
+}: Props) {
   const [list, setList] = useState<BaseType[]>([]);
   const [editRow, setEditRow] = useState<number>(-1);
 
@@ -237,6 +238,6 @@ const BaseLayout = ({
       </div>
     </>
   );
-};
+}
 
 export default BaseLayout;

@@ -37,7 +37,7 @@ const containerVariants = {
   },
 };
 
-const Dashboard = () => {
+function Dashboard() {
   const dispatch = useAppDispatch();
 
   // Only select from store if it's ready
@@ -197,6 +197,6 @@ const Dashboard = () => {
       {renderCoursesSection()}
     </motion.div>
   );
-};
+}
 
 export default Dashboard;

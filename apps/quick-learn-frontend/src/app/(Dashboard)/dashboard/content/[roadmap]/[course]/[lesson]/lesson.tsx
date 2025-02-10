@@ -76,6 +76,7 @@ SaveButton.displayName = 'SaveButton';
 
 const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
   <button
+    type="button"
     className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
     onClick={onClick}
   >
@@ -108,7 +109,7 @@ const useLessonForm = () => {
   };
 };
 
-const Lesson = () => {
+function Lesson() {
   const router = useRouter();
   const dispatch = useDispatch();
   const path = usePathname();
@@ -229,13 +230,13 @@ const Lesson = () => {
           const courseRes = await getCourse(courseId);
 
           // Update roadmap in store with new course data
-          const roadmapFromStore = selectRoadmapById(parseInt(roadmapId));
+          const roadmapFromStore = selectRoadmapById(parseInt(roadmapId, 10));
           if (roadmapFromStore) {
             dispatch(
               updateRoadmap({
                 ...roadmapFromStore,
                 courses: roadmapFromStore.courses.map((c: TCourse) =>
-                  c.id === parseInt(courseId) ? courseRes.data : c,
+                  c.id === parseInt(courseId, 10) ? courseRes.data : c,
                 ),
               }),
             );
@@ -316,7 +317,7 @@ const Lesson = () => {
     try {
       setIsArchiving(true);
       const response = await activateLesson({
-        id: parseInt(lessonId),
+        id: parseInt(lessonId, 10),
         active: false,
       });
       showApiMessageInToast(response);
@@ -392,6 +393,6 @@ const Lesson = () => {
       </div>
     </>
   );
-};
+}
 
 export default memo(Lesson);

@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-cycle
+import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { authApiEnum } from '@src/constants/api.enum';
 import {
   ForgotPasswordPayload,
@@ -5,7 +7,6 @@ import {
   LoginResponse,
   ResetPasswordPayload,
 } from '../shared/types/authTypes';
-import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { TUser } from '@src/shared/types/userTypes';
 
 type LoginSuccessResData = TUser & {

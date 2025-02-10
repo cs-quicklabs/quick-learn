@@ -83,7 +83,8 @@ const InputField: FC<Props> = ({
         )}
       </div>
     );
-  } else if (type === 'select') {
+  }
+  if (type === 'select') {
     return (
       <div>
         <label
@@ -110,7 +111,8 @@ const InputField: FC<Props> = ({
         {errorMsg && <p className="mt-1 text-red-500 text-sm">{errorMsg}</p>}
       </div>
     );
-  } else if (type === 'textarea') {
+  }
+  if (type === 'textarea') {
     return (
       <div>
         <label

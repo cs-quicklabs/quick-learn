@@ -1,5 +1,9 @@
-import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
-import { RootState } from '../store';
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from '@reduxjs/toolkit';
+import { RootState } from '../types/base.types';
 import { getUserProgress } from '@src/apiServices/lessonsService';
 
 // Types
@@ -62,12 +66,24 @@ const userProgressSlice = createSlice({
 // Selectors
 const selectBaseUserProgress = (state: RootState) => state.userProgress;
 
-export const selectUserProgress = createSelector([selectBaseUserProgress], (userProgress) => userProgress.progress);
-export const selectUserProgressStatus = createSelector([selectBaseUserProgress], (userProgress) => userProgress.status);
-export const selectUserProgressError = createSelector([selectBaseUserProgress], (userProgress) => userProgress.error);
-
-export const selectCourseProgress = (courseId: number) => createSelector(
+export const selectUserProgress = createSelector(
   [selectBaseUserProgress],
-  (userProgress) => userProgress.progress.find((course) => course.course_id === courseId)?.lessons || []
+  (userProgress) => userProgress.progress,
 );
+export const selectUserProgressStatus = createSelector(
+  [selectBaseUserProgress],
+  (userProgress) => userProgress.status,
+);
+export const selectUserProgressError = createSelector(
+  [selectBaseUserProgress],
+  (userProgress) => userProgress.error,
+);
+
+export const selectCourseProgress = (courseId: number) =>
+  createSelector(
+    [selectBaseUserProgress],
+    (userProgress) =>
+      userProgress.progress.find((course) => course.course_id === courseId)
+        ?.lessons || [],
+  );
 export default userProgressSlice.reducer;

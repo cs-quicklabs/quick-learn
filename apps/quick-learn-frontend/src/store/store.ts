@@ -38,7 +38,10 @@ const createNoopStorage = () => {
 };
 
 // Check if localStorage is available
-const storageAvailable = typeof window !== 'undefined' && window.localStorage ? createWebStorage('local') : createNoopStorage();
+const storageAvailable =
+  typeof window !== 'undefined' && window.localStorage
+    ? createWebStorage('local')
+    : createNoopStorage();
 
 // Configure persist for each reducer you want to persist
 const dashboardPersistConfig = {
@@ -102,12 +105,12 @@ export const makeStore = () => {
         },
       }),
   });
-}
+};
 
 export const persistor = persistStore(makeStore());
 
 // Infer the type of makeStore
-export type AppStore = ReturnType<typeof makeStore>
+export type AppStore = ReturnType<typeof makeStore>;
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<AppStore['getState']>
-export type AppDispatch = AppStore['dispatch']
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];

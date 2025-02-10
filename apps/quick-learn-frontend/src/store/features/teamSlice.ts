@@ -1,9 +1,13 @@
 // store/features/teamSlice.ts
-import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from '@reduxjs/toolkit';
 import { teamListApiCall } from '@src/apiServices/teamService';
 import { en } from '@src/constants/lang/en';
 import { TUser } from '@src/shared/types/userTypes';
-import { RootState } from '../store';
+import { RootState } from '../types/base.types';
 
 interface TeamState {
   users: TUser[];
@@ -103,22 +107,19 @@ export const {
   increamentTotalUsers,
 } = teamSlice.actions;
 
-
 // Base selector
 const selectTeam = (state: RootState) => state.team;
 
-export const selectTeamListingData = createSelector(
-  [selectTeam], (data) => ({
-    users: data.users,
-    totalUsers: data.totalUsers,
-    filteredTotal: data.filteredTotal,
-    isLoading: data.isLoading,
-    isInitialLoad: data.isInitialLoad,
-    error: data.error,
-    currentPage: data.currentPage,
-    currentUserType: data.currentUserType,
-    searchQuery: data.searchQuery,
-  })
-);
+export const selectTeamListingData = createSelector([selectTeam], (data) => ({
+  users: data.users,
+  totalUsers: data.totalUsers,
+  filteredTotal: data.filteredTotal,
+  isLoading: data.isLoading,
+  isInitialLoad: data.isInitialLoad,
+  error: data.error,
+  currentPage: data.currentPage,
+  currentUserType: data.currentUserType,
+  searchQuery: data.searchQuery,
+}));
 
 export default teamSlice.reducer;

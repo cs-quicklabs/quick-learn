@@ -40,7 +40,7 @@ const AccountSettingSechema = z.object({
 });
 
 type AccountSettingsData = z.infer<typeof AccountSettingSechema>;
-const AccountSettings = () => {
+function AccountSettings() {
   const dispatch = useAppDispatch();
   const user = useSelector(selectUser);
 
@@ -145,6 +145,6 @@ const AccountSettings = () => {
       </FormProvider>
     </div>
   );
-};
+}
 
 export default AccountSettings;

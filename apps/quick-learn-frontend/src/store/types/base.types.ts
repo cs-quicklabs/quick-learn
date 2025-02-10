@@ -1,4 +1,7 @@
 // base.types.ts
+import { Store } from '@reduxjs/toolkit';
+
+export type RootState = ReturnType<Store['getState']>;
 export interface BaseLoadingState {
   isLoading: boolean;
   isInitialLoad: boolean;

@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
 
-const InactiveUsers = () => {
+function InactiveUsers() {
   const dispatch = useAppDispatch();
   const {
     items: usersList,
@@ -59,7 +59,7 @@ const InactiveUsers = () => {
   const restoreUser = useCallback(
     async (userId: number) => {
       try {
-        await dispatch(activateArchivedUser({ userId: userId })).unwrap();
+        await dispatch(activateArchivedUser({ userId })).unwrap();
         dispatch(
           fetchArchivedUsers({ page: 1, search: searchValue, resetList: true }),
         );
@@ -76,11 +76,15 @@ const InactiveUsers = () => {
   const handleQueryChange = useMemo(
     () =>
       debounce(async (value: string) => {
-        const _value = value || '';
+        const searchText = value || '';
         try {
-          dispatch(setUsersSearchValue(_value));
+          dispatch(setUsersSearchValue(searchText));
           dispatch(
-            fetchArchivedUsers({ page: 1, search: _value, resetList: true }),
+            fetchArchivedUsers({
+              page: 1,
+              search: searchText,
+              resetList: true,
+            }),
           );
         } catch (err) {
           console.log('Something went wrong!', err);
@@ -162,6 +166,6 @@ const InactiveUsers = () => {
       <div className="flex flex-col w-full">{renderComponentUI()}</div>
     </div>
   );
-};
+}
 
 export default InactiveUsers;

@@ -5,8 +5,8 @@ export const metadata = {
   description: 'My Learning Path quick learn',
 };
 
-const LearningPathRoadmapPage = () => {
+function LearningPathRoadmapPage() {
   return <RoadmapDetails />;
-};
+}
 
 export default LearningPathRoadmapPage;

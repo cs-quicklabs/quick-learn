@@ -1,6 +1,6 @@
 import React from 'react';
 
-const BaseSettingSkeleton = () => {
+function BaseSettingSkeleton() {
   return (
     <div className="w-full animate-pulse">
       {/* Header Section */}
@@ -44,6 +44,6 @@ const BaseSettingSkeleton = () => {
       </div>
     </div>
   );
-};
+}
 
 export default BaseSettingSkeleton;

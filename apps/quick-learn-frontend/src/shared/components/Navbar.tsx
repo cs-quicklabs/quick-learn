@@ -91,7 +91,7 @@ const menuItems: TLink[] = [
   },
 ];
 
-const Navbar = () => {
+function Navbar() {
   const [links, setLinks] = useState<TLink[]>([]);
   const [showConformationModal, setShowConformationModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -141,7 +141,7 @@ const Navbar = () => {
             ? ''
             : 'hidden'
         }  h-5 w-5 bg-red-700 rounded-full font-bold flex items-center justify-center ${
-          type == 'desktop' && 'absolute top-1 ml-20'
+          type === 'desktop' && 'absolute top-1 ml-20'
         }`}
       >
         {(item?.countKey && systemPreferenceMetadata[item.countKey]) || 0}
@@ -203,7 +203,7 @@ const Navbar = () => {
                   <WebsiteLogo width="45" />
                   <p className="ml-3">{en.common.quickLearn}</p>
                 </SuperLink>
-                <span className="text-white font-medium px-3 block lg:hidden"></span>
+                <span className="text-white font-medium px-3 block lg:hidden" />
               </div>
               <div className="hidden lg:ml-6 lg:flex lg:space-x-4">
                 {links.map((item, index) => (
@@ -213,9 +213,9 @@ const Navbar = () => {
                     id={`navDesktop${index}`}
                     className={
                       'flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-gray-300 ' +
-                      ((item.link != RouteEnum.DASHBOARD &&
+                      ((item.link !== RouteEnum.DASHBOARD &&
                         pathname.includes(item.link)) ||
-                      item.link == pathname
+                      item.link === pathname
                         ? 'text-white bg-gray-500 rounded-md'
                         : 'hover:bg-gray-700 hover:text-white')
                     }
@@ -330,6 +330,7 @@ const Navbar = () => {
                     <div className="py-1">
                       <MenuItem>
                         <button
+                          type="button"
                           onClick={() => setShowConformationModal(true)}
                           className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
                         >
@@ -347,7 +348,7 @@ const Navbar = () => {
         <DisclosurePanel className="lg:hidden">
           <div className="border-y border-gray-700">
             {menuItems.map(
-              (item, index) =>
+              (item) =>
                 item.isExtended && (
                   <a
                     key={item.link + item.name}
@@ -480,6 +481,6 @@ const Navbar = () => {
       />
     </>
   );
-};
+}
 
 export default Navbar;

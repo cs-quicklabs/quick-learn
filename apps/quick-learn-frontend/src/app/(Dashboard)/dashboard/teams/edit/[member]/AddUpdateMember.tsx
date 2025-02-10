@@ -54,7 +54,7 @@ function setFormOptions<T>(
   }
 }
 
-const AddUpdateMemberPage = () => {
+function AddUpdateMemberPage() {
   const router = useRouter();
   const params = useParams<{ member: string }>();
   const isAddMember = params.member === 'add';
@@ -156,17 +156,16 @@ const AddUpdateMemberPage = () => {
           loading={isLoading}
         />
       );
-    } else {
-      return (
-        <MemberForm<typeof editMemberFormSchema>
-          formFields={editMemberFields}
-          initialValues={editInitialValues}
-          onSubmit={handleEditSubmit}
-          schema={editMemberFormSchema}
-          loading={isLoading}
-        />
-      );
     }
+    return (
+      <MemberForm<typeof editMemberFormSchema>
+        formFields={editMemberFields}
+        initialValues={editInitialValues}
+        onSubmit={handleEditSubmit}
+        schema={editMemberFormSchema}
+        loading={isLoading}
+      />
+    );
   }
 
   return (
@@ -175,6 +174,6 @@ const AddUpdateMemberPage = () => {
       {render()}
     </>
   );
-};
+}
 
 export default AddUpdateMemberPage;

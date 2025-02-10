@@ -52,13 +52,15 @@ const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
-const RoadmapDetails = () => {
+function RoadmapDetails() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { roadmap: roadmapId } = useParams<{ roadmap: string }>();
 
   // Get roadmap from store
-  const roadmapFromStore = useSelector(selectRoadmapById(parseInt(roadmapId)));
+  const roadmapFromStore = useSelector(
+    selectRoadmapById(parseInt(roadmapId, 10)),
+  );
   const contentRepositoryMetadata = useSelector(
     selectContentRepositoryMetadata,
   );
@@ -114,7 +116,7 @@ const RoadmapDetails = () => {
       }
     };
 
-    if (!parseInt(roadmapId)) {
+    if (!parseInt(roadmapId, 10)) {
       router.replace(RouteEnum.CONTENT);
       return;
     }
@@ -247,7 +249,7 @@ const RoadmapDetails = () => {
       <AddEditCourseModal
         open={openAddCourseModal}
         setOpen={setOpenAddCourseModal}
-        isAdd={true}
+        isAdd
         onSubmit={onAddCourse}
         isloading={isLoading}
       />
@@ -380,6 +382,6 @@ const RoadmapDetails = () => {
       </div>
     </>
   );
-};
+}
 
 export default RoadmapDetails;

@@ -14,7 +14,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { SuperLink } from '@src/utils/HiLink';
 
-const TeamTable = () => {
+function TeamTable() {
   const dispatch = useAppDispatch();
   const {
     isLoading,
@@ -108,7 +108,7 @@ const TeamTable = () => {
                         className={`w-3 h-3 mr-2 border border-gray-200 rounded-full ${
                           user.active ? 'bg-green-500' : 'bg-red-500'
                         }`}
-                      ></div>
+                      />
                       {user.active ? 'Active' : 'Inactive'}
                     </div>
                   </td>
@@ -142,11 +142,11 @@ const TeamTable = () => {
       {/* Optional loading indicator for non-initial loads */}
       {isLoading && !isInitialLoad && (
         <div className="fixed top-4 right-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700" />
         </div>
       )}
     </div>
   );
-};
+}
 
 export default TeamTable;
