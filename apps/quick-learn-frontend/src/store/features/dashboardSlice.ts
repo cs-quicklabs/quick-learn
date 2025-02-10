@@ -1,7 +1,11 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from '@reduxjs/toolkit';
 import { getUserRoadmapsService } from '@src/apiServices/contentRepositoryService';
 import { TUserRoadmap, TUserCourse } from '@src/shared/types/contentRepository';
-import { RootState } from '../store';
+import { RootState } from '../types/base.types';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 
@@ -24,8 +28,8 @@ const initialState: DashboardState = {
 // Helper function to sort items alphabetically by name
 const sortByName = <T extends { name?: string }>(items: T[]): T[] => {
   return [...items].sort((a, b) => {
-    const nameA = (a.name || '').toLowerCase();
-    const nameB = (b.name || '').toLowerCase();
+    const nameA = (a.name ?? '').toLowerCase();
+    const nameB = (b.name ?? '').toLowerCase();
     return nameA.localeCompare(nameB);
   });
 };
@@ -155,12 +159,17 @@ export const { addRoadmap, updateRoadmap, removeRoadmap } =
   dashboardSlice.actions;
 
 // Selectors
-export const selectDashboardData = (state: RootState) => ({
-  roadmaps: state.dashboard?.roadmaps || [],
-  courses: state.dashboard?.courses || [],
-  status: state.dashboard?.status || 'idle',
-  error: state.dashboard?.error || null,
-  isInitialized: state.dashboard?.isInitialized || false,
-});
+const selectDashboard = (state: RootState) => state.dashboard;
+
+export const selectDashboardData = createSelector(
+  [selectDashboard],
+  (dashboard) => ({
+    roadmaps: dashboard?.roadmaps || [],
+    courses: dashboard?.courses || [],
+    status: dashboard?.status || 'idle',
+    error: dashboard?.error ?? null,
+    isInitialized: dashboard?.isInitialized || false,
+  }),
+);
 
 export default dashboardSlice.reducer;

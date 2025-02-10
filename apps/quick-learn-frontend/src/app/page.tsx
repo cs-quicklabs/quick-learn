@@ -7,12 +7,12 @@ export const metadata: Metadata = {
   title: 'Quick Learn',
   description: 'Quick Learn from Crownstack',
 };
-const LoginPage = () => {
+function LoginPage() {
   return (
     <AuthTemplate title="Sign in to your account">
       <Login />
     </AuthTemplate>
   );
-};
+}
 
 export default LoginPage;

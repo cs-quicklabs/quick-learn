@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
 
-const ArchivedRoadmaps = () => {
+function ArchivedRoadmaps() {
   const dispatch = useAppDispatch();
   const {
     items: roadmapsList,
@@ -84,11 +84,15 @@ const ArchivedRoadmaps = () => {
   const handleQueryChange = useMemo(
     () =>
       debounce(async (value: string) => {
-        const _value = value || '';
+        const searchValue = value || '';
         try {
-          dispatch(setRoadmapsSearchValue(_value));
+          dispatch(setRoadmapsSearchValue(searchValue));
           dispatch(
-            fetchArchivedRoadmaps({ page: 1, search: _value, resetList: true }),
+            fetchArchivedRoadmaps({
+              page: 1,
+              search: searchValue,
+              resetList: true,
+            }),
           );
         } catch (err) {
           toast.error(en.common.somethingWentWrong);
@@ -169,6 +173,6 @@ const ArchivedRoadmaps = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ArchivedRoadmaps;

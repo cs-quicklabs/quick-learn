@@ -25,7 +25,7 @@ import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 
-const DailyLessonDetail = () => {
+function DailyLessonDetail() {
   const [link, setLink] = useState<TBreadcrumb[]>([]);
   const router = useRouter();
   const [courseId, setCourseId] = useState('');
@@ -54,7 +54,7 @@ const DailyLessonDetail = () => {
   const handleCheckboxChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const checked = event.target.checked;
+    const { checked } = event.target;
     setIsChecked(checked);
     try {
       const res = await markAsDonePublic(
@@ -166,7 +166,7 @@ const DailyLessonDetail = () => {
         <div className="w-full flex align-middle justify-center">
           <p className="bg-green-100 p-5 rounded-md text-[#166534] flex justify-center items-center gap-2 my-5 mx-2 w-full lg:w-1/2 text-start">
             <span className="text-[#166534] flex bg-white rounded-full w-5 h-5 aspect-square font-bold items-center justify-center">
-              <InformationCircleIcon fontWeight={''} />
+              <InformationCircleIcon fontWeight="" />
             </span>
             <p>
               <span className="font-bold">
@@ -222,6 +222,7 @@ const DailyLessonDetail = () => {
 
       return (
         <button
+          type="button"
           className="inline-flex justify-center items-center p-2 text-xs hover:underline font-medium rounded-lg text-gray-700 sm:text-sm hover:bg-gray-100"
           onClick={handleFlagLesson}
           disabled={isFlagged ?? isFlagging}
@@ -245,7 +246,7 @@ const DailyLessonDetail = () => {
       <div className="fixed flex bottom-5 left-5">
         <Button color="blue" pill onClick={navigateUserToLearningPath}>
           <span className="flex items-center gap-1 justify-center">
-            <HomeIcon height={'1rem'} width={'1rem'} />
+            <HomeIcon height="1rem" width="1rem" />
             <span className="hidden md:flex">
               {en.lesson.NavigateToLearningPath}
             </span>
@@ -263,13 +264,13 @@ const DailyLessonDetail = () => {
         lesson={lessonDetails}
         links={link}
         showCreatedBy={false}
-        disableLink={true}
+        disableLink
       />
       {renderLessonCompletionStatus()}
       {renderAdminControls()}
       {renderNavigationButton()}
     </div>
   );
-};
+}
 
 export default DailyLessonDetail;

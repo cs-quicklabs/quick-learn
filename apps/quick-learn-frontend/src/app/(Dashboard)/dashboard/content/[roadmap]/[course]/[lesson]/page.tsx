@@ -6,8 +6,8 @@ export const metadata = {
   description: 'Lesson quick learn',
 };
 
-const Page = () => {
+function Page() {
   return <Lesson />;
-};
+}
 
 export default Page;

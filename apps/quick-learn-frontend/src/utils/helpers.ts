@@ -107,10 +107,9 @@ export function mapQueryParams(
 ) {
   return (
     (Object.keys(params).length > 0 &&
-      '?' +
-        Object.entries(params)
-          .map(([key, value]) => `${key}=${value}`)
-          .join('&')) ||
+      `?${Object.entries(params)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&')}`) ||
     ''
   );
 }

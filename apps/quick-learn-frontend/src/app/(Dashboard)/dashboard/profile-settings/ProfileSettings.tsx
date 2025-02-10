@@ -55,7 +55,7 @@ const profileSchema = z.object({
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
-const ProfileSettings = () => {
+function ProfileSettings() {
   const user = useSelector(selectUser);
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -202,6 +202,6 @@ const ProfileSettings = () => {
       </FormProvider>
     </div>
   );
-};
+}
 
 export default ProfileSettings;

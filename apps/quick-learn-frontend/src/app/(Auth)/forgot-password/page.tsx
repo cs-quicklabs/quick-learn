@@ -9,12 +9,12 @@ export const metadata: Metadata = {
     'Get instructions to reset your password in Quick Learn from Crownstack',
 };
 
-const ForgotPasswordPage = () => {
+function ForgotPasswordPage() {
   return (
     <AuthTemplate title="Forgot your password?">
       <ForgotPassword />
     </AuthTemplate>
   );
-};
+}
 
 export default ForgotPasswordPage;
