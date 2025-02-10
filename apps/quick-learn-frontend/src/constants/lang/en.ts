@@ -463,6 +463,7 @@ export const en = {
     Loading: 'Loading....',
   },
   leaderboard: {
+    smallLeaderboard: 'Leaderboard',
     leaderboard: 'LEADERBOARD',
     leaderboardDescription: 'Weekly records of Last Week',
     leaderboardRank: 'Rank',

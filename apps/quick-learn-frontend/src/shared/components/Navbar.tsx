@@ -312,14 +312,24 @@ function Navbar() {
                           .filter((item) => !item.isExtended)
                           .map((item) => renderMenuItem(item))}
                       {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN && (
-                        <MenuItem>
-                          <SuperLink
-                            href={RouteEnum.PROFILE_SETTINGS}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                          >
-                            {en.component.profile}
-                          </SuperLink>
-                        </MenuItem>
+                        <div>
+                          <MenuItem>
+                            <SuperLink
+                              href={RouteEnum.PROFILE_SETTINGS}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                            >
+                              {en.component.profile}
+                            </SuperLink>
+                          </MenuItem>
+                          <MenuItem>
+                            <SuperLink
+                              href={RouteEnum.LEADERBOARD}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                            >
+                              {en.leaderboard.smallLeaderboard}
+                            </SuperLink>
+                          </MenuItem>
+                        </div>
                       )}
                     </div>
 
