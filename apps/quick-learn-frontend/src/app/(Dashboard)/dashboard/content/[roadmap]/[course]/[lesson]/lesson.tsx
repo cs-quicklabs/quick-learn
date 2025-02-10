@@ -41,6 +41,7 @@ import {
   updateRoadmap,
 } from '@src/store/features/roadmapsSlice';
 import { selectUser } from '@src/store/features/userSlice';
+import { useAppSelector } from '@src/store/hooks';
 
 // Move constants outside component to prevent recreating on each render
 const defaultlinks: TBreadcrumb[] = [
@@ -215,6 +216,10 @@ function Lesson() {
     };
   }, [dispatch]);
 
+  const roadmapFromStore = useAppSelector(
+    selectRoadmapById(parseInt(roadmapId, 10)),
+  );
+
   const onSubmit = useCallback<SubmitHandler<LessonFormData>>(
     async (data) => {
       setLoading(true);
@@ -230,16 +235,14 @@ function Lesson() {
           const courseRes = await getCourse(courseId);
 
           // Update roadmap in store with new course data
-          const roadmapFromStore = selectRoadmapById(parseInt(roadmapId, 10));
           if (roadmapFromStore) {
-            dispatch(
-              updateRoadmap({
-                ...roadmapFromStore,
-                courses: roadmapFromStore.courses.map((c: TCourse) =>
-                  c.id === parseInt(courseId, 10) ? courseRes.data : c,
-                ),
-              }),
-            );
+            const roadmapData: TRoadmap = {
+              ...roadmapFromStore,
+              courses: roadmapFromStore.courses.map((c: TCourse) =>
+                c.id === parseInt(courseId, 10) ? courseRes.data : c,
+              ),
+            };
+            dispatch(updateRoadmap(roadmapData));
           }
 
           showApiMessageInToast(res);

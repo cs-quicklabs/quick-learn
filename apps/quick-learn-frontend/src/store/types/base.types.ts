@@ -1,7 +1,7 @@
 // base.types.ts
-import { Store } from '@reduxjs/toolkit';
+import { store } from '../store';
 
-export type RootState = ReturnType<Store['getState']>;
+export type RootState = ReturnType<typeof store.getState>;
 export interface BaseLoadingState {
   isLoading: boolean;
   isInitialLoad: boolean;
@@ -22,7 +22,7 @@ export interface BaseAsyncState {
 
 export interface PaginatedCollectionState<T>
   extends BaseLoadingState,
-    BasePaginationState {
+  BasePaginationState {
   items: T[];
 }
 
