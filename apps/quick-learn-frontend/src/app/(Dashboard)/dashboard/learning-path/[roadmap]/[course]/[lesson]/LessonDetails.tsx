@@ -17,7 +17,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { MdInfo } from 'react-icons/md';
 
-const LessonDetails = () => {
+function LessonDetails() {
   const { roadmap, course, lesson, member } = useParams<{
     roadmap: string;
     course: string;
@@ -57,7 +57,7 @@ const LessonDetails = () => {
   const handleCheckboxChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const checked = event.target.checked;
+    const { checked } = event.target;
     setIsChecked(checked);
     try {
       const res = await markAsDone(lesson, course, true, Number(member));
@@ -140,12 +140,13 @@ const LessonDetails = () => {
                 {en.myLearningPath.alreadyCompleted}
               </span>{' '}
               {completedOn && en.myLearningPath.lessonCompleted(completedOn)}{' '}
-              <span
+              <button
+                type="button"
                 className="font-bold underline cursor-pointer"
                 onClick={markLessionAsUnread}
               >
                 {en.myLearningPath.markAsUnread}
-              </span>
+              </button>
             </p>
           </p>
         </div>
@@ -164,6 +165,6 @@ const LessonDetails = () => {
       )}
     </>
   );
-};
+}
 
 export default LessonDetails;

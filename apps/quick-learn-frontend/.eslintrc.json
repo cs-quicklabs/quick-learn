@@ -1,11 +1,72 @@
 {
   "extends": [
+    "airbnb",
+    "airbnb/hooks",
     "plugin:@nx/react-typescript",
     "next",
     "next/core-web-vitals",
     "../../.eslintrc.json"
   ],
+  "plugins": ["react", "@typescript-eslint", "unused-imports"],
+  "parser": "@typescript-eslint/parser",
   "ignorePatterns": ["!**/*", ".next/**/*"],
+  "rules": {
+    "import/no-unresolved": "off",
+    "react/jsx-no-bind": "off",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "arrow-body-style": "off",
+    "class-methods-use-this": "off",
+    "linebreak-style": "off",
+    "no-param-reassign": "off",
+    "max-classes-per-file": "off",
+    "react/jsx-props-no-spreading": "off",
+    "import/no-named-as-default": "off",
+    "no-alert": "off",
+    "import/no-extraneous-dependencies": "off",
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "react/require-default-props": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "args": "all",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "import/order": "off",
+    "import/extensions": "off",
+    "lines-around-directive": "off",
+    "no-console": "off",
+    "spaced-comment": "off",
+    "import/prefer-default-export": "off",
+    "react/jsx-filename-extension": [
+      "error",
+      { "extensions": [".tsx", ".jsx"] }
+    ],
+    "prefer-template": "off",
+    "react/function-component-definition": "off",
+    "import/no-cycle": "off",
+    "react/no-array-index-key": "off",
+    "no-shadow": "off",
+    " array-callback-return": "off",
+    "consistent-return": "off",
+    "camelcase": "off",
+    "array-callback-return": "off",
+    "jsx-a11y/heading-has-content": "off",
+    "jsx-a11y/control-has-associated-label": "off",
+    "no-nested-ternary": "off",
+    "no-restricted-globals": "off"
+  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

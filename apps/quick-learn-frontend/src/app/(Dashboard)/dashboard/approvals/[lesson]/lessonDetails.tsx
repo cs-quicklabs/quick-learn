@@ -20,7 +20,7 @@ import { setHideNavbar } from '@src/store/features/uiSlice';
 
 const defaultLinks = [{ name: 'Approvals', link: RouteEnum.APPROVALS }];
 
-const LessonDetails = () => {
+function LessonDetails() {
   const { lesson: id } = useParams<{ lesson: string }>();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -85,6 +85,6 @@ const LessonDetails = () => {
       />
     </div>
   );
-};
+}
 
 export default LessonDetails;

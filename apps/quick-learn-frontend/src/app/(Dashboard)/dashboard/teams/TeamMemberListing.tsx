@@ -5,9 +5,9 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUserType } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
 import TeamTable from './TeamTable';
-import { RootState } from '@src/store/store';
 import {
   fetchTeamMembers,
+  selectTeamListingData,
   setCurrentPage,
   setCurrentUserType,
   setSearchQuery,
@@ -15,17 +15,13 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { en } from '@src/constants/lang/en';
 import { SuperLink } from '@src/utils/HiLink';
-const TeamMemberListing = () => {
+
+function TeamMemberListing() {
   const dispatch = useAppDispatch();
   const [searchInputValue, setSearchInputValue] = useState(''); // Local state for input value
 
   const { totalUsers, currentPage, currentUserType, filteredTotal } =
-    useAppSelector((state: RootState) => ({
-      totalUsers: state.team.totalUsers,
-      currentPage: state.team.currentPage,
-      currentUserType: state.team.currentUserType,
-      filteredTotal: state.team.filterdTotal,
-    }));
+    useAppSelector(selectTeamListingData);
 
   const userTypes: TUserType[] = [
     { name: 'Admin', code: 'admin' },
@@ -55,7 +51,7 @@ const TeamMemberListing = () => {
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const { value } = e.target;
     setSearchInputValue(value); // Update local state immediately
     debouncedSearch(value); // Debounce the Redux update and API call
   };
@@ -107,7 +103,7 @@ const TeamMemberListing = () => {
                   id={userType.code}
                   name="user_type_id"
                   type="radio"
-                  onChange={(e) => filterByUserType(userType.code)}
+                  onChange={() => filterByUserType(userType.code)}
                   checked={currentUserType === userType.code}
                   className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-2 cursor-pointer"
                 />
@@ -145,6 +141,7 @@ const TeamMemberListing = () => {
           <div className="flex">
             {currentPage > 1 && (
               <button
+                type="button"
                 id="prev"
                 onClick={() => {
                   const newPage = currentPage - 1;
@@ -165,6 +162,7 @@ const TeamMemberListing = () => {
             )}
             {currentPage * 10 < filteredTotal && (
               <button
+                type="button"
                 id="next"
                 onClick={() => {
                   const newPage = currentPage + 1;
@@ -188,6 +186,6 @@ const TeamMemberListing = () => {
       </div>
     </>
   );
-};
+}
 
 export default TeamMemberListing;

@@ -59,6 +59,7 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
             </h3>
             <p
               className="font-normal capitalize text-sm text-gray-500 line-clamp-3 mt-2"
+              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{
                 __html: title,
               }}

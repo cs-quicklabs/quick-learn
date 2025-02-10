@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TeamMemberDetailsSkeleton = () => {
+function TeamMemberDetailsSkeleton() {
   return (
     <div className="container mx-auto px-4 animate-pulse">
       {/* Breadcrumb */}
@@ -82,6 +82,6 @@ const TeamMemberDetailsSkeleton = () => {
       </section>
     </div>
   );
-};
+}
 
 export default TeamMemberDetailsSkeleton;

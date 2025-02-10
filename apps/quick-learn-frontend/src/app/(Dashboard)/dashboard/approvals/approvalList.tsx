@@ -5,8 +5,12 @@ import { RouteEnum } from '@src/constants/route.enum';
 import { format } from 'date-fns';
 import { useEffect } from 'react';
 import ApprovalListSkeleton from './ApprovalListSkeleton';
-import { RootState } from '@src/store/store';
-import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
+import {
+  fetchUnapprovedLessons,
+  getApprovalLessionListLoading,
+  getApprovalLessionList,
+  getApprovalLessionListInitialLoad,
+} from '@src/store/features/approvalSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
 import { SuperLink } from '@src/utils/HiLink';
@@ -18,11 +22,11 @@ const columns = [
   en.common.createdBy,
 ];
 
-const ApprovalList = () => {
+function ApprovalList() {
   const dispatch = useAppDispatch();
-  const { lessons, isLoading, isInitialLoad } = useAppSelector(
-    (state: RootState) => state.approval,
-  );
+  const lessons = useAppSelector(getApprovalLessionList);
+  const isLoading = useAppSelector(getApprovalLessionListLoading);
+  const isInitialLoad = useAppSelector(getApprovalLessionListInitialLoad);
 
   useEffect(() => {
     dispatch(fetchUnapprovedLessons());
@@ -120,11 +124,11 @@ const ApprovalList = () => {
       </div>
       {isLoading && !isInitialLoad && (
         <div className="fixed top-4 right-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700" />
         </div>
       )}
     </div>
   );
-};
+}
 
 export default ApprovalList;

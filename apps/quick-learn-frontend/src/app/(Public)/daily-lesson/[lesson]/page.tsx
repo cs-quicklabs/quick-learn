@@ -5,8 +5,8 @@ export const metadata = {
   description: 'Daily Lesson Details quick learn',
 };
 
-const LearningPathLessonPage = () => {
+function LearningPathLessonPage() {
   return <DailyLessonDetail />;
-};
+}
 
 export default LearningPathLessonPage;

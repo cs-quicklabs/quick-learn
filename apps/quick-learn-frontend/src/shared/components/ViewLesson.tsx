@@ -44,6 +44,7 @@ const LessonContent = memo(({ content }: { content: string }) => (
   <article className="lesson-content flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-10 py-4 mb-8">
     <div
       className="lesson-viewer"
+      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{
         __html: content,
       }}
