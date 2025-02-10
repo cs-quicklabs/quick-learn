@@ -64,8 +64,8 @@ export async function middleware(request: NextRequest) {
   if (isEditorRoute(pathname)) {
     return roleBasedRedirect(
       userRoleNum === UserTypeIdEnum.EDITOR ||
-      userRoleNum === UserTypeIdEnum.ADMIN ||
-      userRoleNum === UserTypeIdEnum.SUPERADMIN,
+        userRoleNum === UserTypeIdEnum.ADMIN ||
+        userRoleNum === UserTypeIdEnum.SUPERADMIN,
     );
   }
 
@@ -76,7 +76,7 @@ export async function middleware(request: NextRequest) {
   if (isAdminAndSuperAdminRoute(pathname)) {
     return roleBasedRedirect(
       userRoleNum === UserTypeIdEnum.ADMIN ||
-      userRoleNum === UserTypeIdEnum.SUPERADMIN,
+        userRoleNum === UserTypeIdEnum.SUPERADMIN,
     );
   }
 
