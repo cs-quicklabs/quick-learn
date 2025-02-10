@@ -2,17 +2,15 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { en } from '@src/constants/lang/en';
 import { getLeaderBoardStatus } from '@src/apiServices/lessonsService';
-import { TUser } from '@src/shared/types/userTypes';
 import { useAppSelector } from '@src/store/hooks';
 import { selectUser } from '@src/store/features/userSlice';
-
+import { TUser } from '@src/shared/types/userTypes';
 interface LeaderboardData {
   user_id: number;
   lessonsCompleted: number;
   rank: number;
   user: TUser;
 }
-
 const getMedalEmoji = (index: number) => {
   if (index === 1) return <span className="text-yellow-500">🥇</span>;
   if (index === 2) return <span className="text-gray-500">🥈</span>;
@@ -71,9 +69,11 @@ const LeaderboardTable = () => {
       <table className="w-full text-sm text-left text-gray-500 ">
         <thead className="text-xs text-gray-700 border-b border-gray-200 uppercase bg-gray-50">
           <tr>
-            <th className="px-4 py-3">User ID</th>
-            <th className="px-4 py-3">Rank</th>
-            <th className="px-4 py-3">Lessons Completed</th>
+            <th className="px-4 py-3">{en.leaderboard.leaderboardUser}</th>
+            <th className="px-4 py-3">{en.leaderboard.leaderboardRank}</th>
+            <th className="px-4 py-3">
+              {en.leaderboard.leaderboardLessonsCompleted}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -96,23 +96,23 @@ const LeaderboardTable = () => {
                 <td className="px-4 py-2">
                   {user.user.first_name} {user.user.last_name}
                 </td>
-                <td className="px-4 py-2">
+                <td className="pl-6 py-2">
                   {user.rank} {getMedalEmoji(user.rank)}
                 </td>
-                <td className="px-4 py-2">{user.lessonsCompleted}</td>
+                <td className="pl-10 md:pl-16 py-2">{user.lessonsCompleted}</td>
               </tr>
             ))}
           {isLoading && (
             <tr>
               <td colSpan={3} className="px-4 py-3 text-center">
-                Loading more...
+                {en.leaderboard.leaderboardLoading}
               </td>
             </tr>
           )}
           {!hasMore && (
             <tr>
               <td colSpan={3} className="px-4 py-3 text-center text-gray-500">
-                No more data to load
+                {en.leaderboard.leaderboardNoMoreData}
               </td>
             </tr>
           )}

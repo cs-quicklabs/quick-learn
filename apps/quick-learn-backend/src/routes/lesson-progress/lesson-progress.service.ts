@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
-import { previousMonday, previousSunday } from 'date-fns';
+import { previousMonday } from 'date-fns';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { PaginationService } from '@src/common/services/pagination.service';
 @Injectable()
@@ -345,7 +345,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     return this.leaderboardRepository.save(leaderboardEntry);
   }
 
-  async getLeaderboardData(page: number = 1, limit: number = 10) {
+  async getLeaderboardData(page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
     const [items, total] = await this.leaderboardRepository.findAndCount({
@@ -365,7 +365,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     };
   }
 
-  async deleteLeaderboardData(): Promise<any> {
+  async deleteLeaderboardData() {
     try {
       const result = await this.leaderboardRepository.delete({});
       return result;

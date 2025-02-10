@@ -13,6 +13,7 @@ import {
   LessonStatus,
   TDailyLessonResponse,
   UserLessonProgress,
+  LeaderboardData,
 } from '@src/shared/types/LessonProgressTypes';
 import { PaginateWrapper } from '@src/shared/types/utilTypes';
 
@@ -195,10 +196,12 @@ export const getDailyLessionDetail = async ({
 };
 
 export const getLeaderBoardStatus = async (
-  page: number = 1,
-  limit: number = 10,
-): Promise<AxiosSuccessResponse<any>> => {
-  const response = await axiosInstance.get<AxiosSuccessResponse<any>>(
+  page: number,
+  limit: number,
+): Promise<AxiosSuccessResponse<PaginateWrapper<LeaderboardData[]>>> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<PaginateWrapper<LeaderboardData[]>>
+  >(
     `${ContentRepositoryApiEnum.LEADERBOARD_STATUS}?page=${page}&limit=${limit}`,
   );
   return response.data;

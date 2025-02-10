@@ -10,7 +10,6 @@ import {
   Get,
   UseGuards,
   Query,
-  Delete,
 } from '@nestjs/common';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam } from '@nestjs/swagger';

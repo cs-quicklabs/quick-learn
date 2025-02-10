@@ -462,4 +462,13 @@ export const en = {
     no_search_result_found: 'No Lessons, Courses, or Roadmaps found',
     Loading: 'Loading....',
   },
+  leaderboard: {
+    leaderboard: 'LEADERBOARD',
+    leaderboardDescription: 'Weekly records of Last Week',
+    leaderboardRank: 'Rank',
+    leaderboardLessonsCompleted: 'Lessons Completed',
+    leaderboardUser: 'User',
+    leaderboardNoMoreData: 'No more data to show',
+    leaderboardLoading: 'Loading...',
+  },
 };
