@@ -24,7 +24,7 @@ const ADMIN_AND_SUPERADMIN_ROUTES = [
   RouteEnum.APPROVALS,
   RouteEnum.FLAGGED,
 ];
-const EDITOR_ROUTES = [RouteEnum.CONTENT];
+const EDITOR_ROUTES = [RouteEnum.CONTENT, RouteEnum.FLAGGED];
 
 // Helper functions
 const isPublicRoute = (path: string) => PUBLIC_ROUTES.includes(path);
@@ -64,8 +64,8 @@ export async function middleware(request: NextRequest) {
   if (isEditorRoute(pathname)) {
     return roleBasedRedirect(
       userRoleNum === UserTypeIdEnum.EDITOR ||
-        userRoleNum === UserTypeIdEnum.ADMIN ||
-        userRoleNum === UserTypeIdEnum.SUPERADMIN,
+      userRoleNum === UserTypeIdEnum.ADMIN ||
+      userRoleNum === UserTypeIdEnum.SUPERADMIN,
     );
   }
 
@@ -76,7 +76,7 @@ export async function middleware(request: NextRequest) {
   if (isAdminAndSuperAdminRoute(pathname)) {
     return roleBasedRedirect(
       userRoleNum === UserTypeIdEnum.ADMIN ||
-        userRoleNum === UserTypeIdEnum.SUPERADMIN,
+      userRoleNum === UserTypeIdEnum.SUPERADMIN,
     );
   }
 
