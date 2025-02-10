@@ -7,7 +7,7 @@ import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { LessonEmailService } from './lesson-email-cron.service';
 import { JwtAuthGuard } from '../auth/guards';
-
+import { LeaderboardCronService } from './leaderboard-cron.service';
 /**
  * Controller for cronjob routes
  */
@@ -19,7 +19,10 @@ import { JwtAuthGuard } from '../auth/guards';
   version: '1',
 })
 export class CronjobController {
-  constructor(private readonly lessonCronJobService: LessonEmailService) {}
+  constructor(
+    private readonly lessonCronJobService: LessonEmailService,
+    private readonly leaderboardCronService: LeaderboardCronService,
+  ) {}
 
   /**
    *@ApiQueryParam greeting
@@ -38,5 +41,18 @@ export class CronjobController {
   ): Promise<SuccessResponse> {
     await this.lessonCronJobService.sendLessonEmails(greeting);
     return new SuccessResponse(en.triggeredDailyLessonMails);
+  }
+
+  @ApiOperation({ summary: 'Send leaderboard email to the users.' })
+  @Post('leaderboard-email')
+  async triggerLeaderboardEmail(): Promise<SuccessResponse> {
+    await this.leaderboardCronService.sendLeaderboardEmail();
+    return new SuccessResponse(en.triggeredLeaderboardEmail);
+  }
+  @ApiOperation({ summary: 'Create new Leaderboard Entry' })
+  @Post('leaderboard-entry')
+  async triggerLeaderboardEntry(): Promise<SuccessResponse> {
+    await this.leaderboardCronService.createLeaderboardEntryTable();
+    return new SuccessResponse(en.triggeredLeaderboardEmail);
   }
 }

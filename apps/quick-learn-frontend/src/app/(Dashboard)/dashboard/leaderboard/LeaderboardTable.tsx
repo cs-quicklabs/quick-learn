@@ -3,6 +3,8 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { en } from '@src/constants/lang/en';
 import { getLeaderBoardStatus } from '@src/apiServices/lessonsService';
 import { TUser } from '@src/shared/types/userTypes';
+import { useAppSelector } from '@src/store/hooks';
+import { selectUser } from '@src/store/features/userSlice';
 
 interface LeaderboardData {
   user_id: number;
@@ -25,6 +27,7 @@ const LeaderboardTable = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const currentUser = useAppSelector(selectUser);
   const observer = useRef<IntersectionObserver>();
   const lastElementRef = useCallback(
     (node: HTMLElement | null) => {
@@ -84,7 +87,11 @@ const LeaderboardTable = () => {
                     ? lastElementRef
                     : null
                 }
-                className="bg-white border-b border-gray-200 hover:bg-gray-50"
+                className={`bg-white border-b border-gray-200 hover:bg-gray-50 ${
+                  currentUser?.id === user?.user?.id
+                    ? 'bg-yellow-200 hover:bg-yellow-100'
+                    : ''
+                }`}
               >
                 <td className="px-4 py-2">
                   {user.user.first_name} {user.user.last_name}

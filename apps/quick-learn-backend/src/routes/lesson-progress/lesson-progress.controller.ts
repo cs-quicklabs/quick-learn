@@ -10,6 +10,7 @@ import {
   Get,
   UseGuards,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam } from '@nestjs/swagger';
@@ -177,20 +178,6 @@ export class LessonProgressController {
       lessonId,
     );
     return new SuccessResponse(en.lessonStatus, data);
-  }
-
-  @Get('leaderboard')
-  async getLeaderboardData() {
-    const leaderBoardData =
-      await this.lessonProgressService.calculateLeaderBoardPercentage();
-    return new SuccessResponse(en.successLeaderboardData, leaderBoardData);
-  }
-
-  @Get('leaderboard/create')
-  async createLeaderboardEntry() {
-    const leaderboardEntry =
-      await this.lessonProgressService.createLeaderboardEntry();
-    return new SuccessResponse(en.successLeaderboardData, leaderboardEntry);
   }
 
   @Get('leaderboard/get')

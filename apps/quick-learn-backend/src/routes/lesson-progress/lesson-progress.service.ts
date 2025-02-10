@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
-import { previousSunday } from 'date-fns';
+import { previousMonday, previousSunday } from 'date-fns';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { PaginationService } from '@src/common/services/pagination.service';
 @Injectable()
@@ -206,14 +206,10 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   }
 
   async getLeaderboardDataService() {
-    const toThisMonday = previousSunday(new Date().setHours(0, 0, 0, 0)); // last week Monday
-    // toThisMonday.setHours(0, 0, 0, 0); // set hours for last week Monday
+    const fromPreviousMonday = previousMonday(
+      new Date(new Date().setHours(7, 0, 0, 0)),
+    );
 
-    const fromPreviousMonday = new Date(toThisMonday); // create a new Date object
-    fromPreviousMonday.setDate(toThisMonday.getDate() - 7); // set to this week Monday
-    fromPreviousMonday.setHours(0, 0, 0, 0); // set hours for this week Monday
-
-    console.log(fromPreviousMonday, toThisMonday);
     const allUsers = await this.LessonTokenRepository.createQueryBuilder(
       'lesson_token',
     )
@@ -335,6 +331,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   }
   // create leaderboard entry once a week using cron job
   async createLeaderboardEntry() {
+    await this.deleteLeaderboardData();
     const LeaderboardData = await this.calculateLeaderBoardPercentage();
     const leaderboardEntry = LeaderboardData.leaderBoardWithPercentage.map(
       (entry, index) =>
@@ -366,5 +363,14 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       currentPage: page,
       hasMore: skip + items.length < total,
     };
+  }
+
+  async deleteLeaderboardData(): Promise<any> {
+    try {
+      const result = await this.leaderboardRepository.delete({});
+      return result;
+    } catch (error) {
+      throw new Error('Failed to delete leaderboard data');
+    }
   }
 }
