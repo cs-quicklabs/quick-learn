@@ -2,7 +2,7 @@ import { TBreadcrumb } from '../types/breadcrumbType';
 import { FC } from 'react';
 import { SuperLink } from '@src/utils/HiLink';
 import { ArrowRightIcon, HomeIcon } from './UIElements';
-
+import { firstLetterCapital } from '@src/utils/helpers';
 interface Props {
   links: TBreadcrumb[];
   disabled?: boolean;
@@ -15,8 +15,8 @@ function customLink(
 ) {
   if (isLast || disabled || linkDisabled) {
     return (
-      <span className="flex items-center text-sm font-medium capitalize cursor-not-allowed">
-        {name}
+      <span className="flex items-center text-sm font-medium cursor-not-allowed">
+        {firstLetterCapital(name)}
       </span>
     );
   }

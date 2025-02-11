@@ -1,6 +1,6 @@
 import { SuperLink } from '@src/utils/HiLink';
 import React from 'react';
-
+import { firstLetterCapital } from '@src/utils/helpers';
 interface RouteTabProps {
   id: number;
   name: string;
@@ -33,7 +33,9 @@ const RouteTab: React.FC<RouteTabProps> = ({
         onClick={onClick}
         className="cursor-pointer flex justify-between items-center text-slate-600 font-normal hover:bg-slate-200 px-3 py-2 active:bg-slate-500 w-full text-left"
       >
-        <span className="capitalize text-sm line-clamp-2 w-full">{name}</span>
+        <span className="text-sm line-clamp-2 w-full">
+          {firstLetterCapital(name)}
+        </span>
       </button>
     </SuperLink>
   );

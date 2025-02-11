@@ -6,7 +6,7 @@ import { Modal, Accordion } from 'flowbite-react';
 import { CloseIcon, Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
-
+import { firstLetterCapital } from '@src/utils/helpers';
 interface Props {
   show: boolean;
   setShow: (value: boolean) => void;
@@ -245,9 +245,9 @@ const AssignDataModal: FC<Props> = ({
                                     />
                                     <label
                                       htmlFor={item.name}
-                                      className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 capitalize"
+                                      className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                                     >
-                                      {item.name}
+                                      {firstLetterCapital(item.name)}
                                     </label>
                                   </div>
                                 ))

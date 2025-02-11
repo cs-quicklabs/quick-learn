@@ -47,7 +47,6 @@ import { useEffect, useState } from 'react';
 import RoadmapDetailsSkeleton from './RoadmapDetailsSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { AxiosErrorObject } from '@src/apiServices/axios';
-
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
@@ -281,7 +280,7 @@ function RoadmapDetails() {
 
         {/* Roadmap Header */}
         <div className="flex flex-col items-center justify-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold first-letter:uppercase mb-2">
             {roadmapData.name}
           </h1>
           <p className="text-sm text-gray-500 text-center">
