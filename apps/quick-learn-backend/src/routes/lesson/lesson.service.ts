@@ -202,8 +202,8 @@ export class LessonService extends PaginationService<LessonEntity> {
     if (q) {
       queryBuilder.andWhere(
         '(lesson.name ILIKE :search OR ' +
-        'lesson.content ILIKE :search OR ' +
-        'course.name ILIKE :search)',
+          'lesson.content ILIKE :search OR ' +
+          'course.name ILIKE :search)',
         { search: `%${q}%` },
       );
     }
