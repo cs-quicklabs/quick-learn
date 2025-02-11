@@ -13,7 +13,14 @@ import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
-import { Repository, DataSource, ILike, MoreThan } from 'typeorm';
+import {
+  Repository,
+  DataSource,
+  ILike,
+  MoreThan,
+  FindOptionsWhere,
+  FindManyOptions,
+} from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
@@ -310,16 +317,40 @@ export class LessonService extends PaginationService<LessonEntity> {
    * Retrieves all unapproved lessons
    * @returns A promise that resolves to a list of LessonEntity
    */
-  async getUnapprovedLessons(): Promise<LessonEntity[]> {
-    const queryBuilder = this.repository
-      .createQueryBuilder('lesson')
-      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
-      .innerJoin('lesson.course', 'course')
-      .where('course.archived = :courseArchived', { courseArchived: false })
-      .andWhere('lesson.archived = :archived', { archived: false })
-      .andWhere('lesson.approved = :approved', { approved: false });
+  async getUnapprovedLessons(page = 1, limit = 10, q = '') {
+    let options:
+      | FindOptionsWhere<LessonEntity>
+      | FindOptionsWhere<LessonEntity>[] = {
+      archived: false,
+      approved: false,
+      course: {
+        archived: false,
+      },
+    };
 
-    return await queryBuilder.getMany();
+    if (q) {
+      options = [
+        {
+          ...options,
+          name: ILike(`%${q}%`),
+        },
+        {
+          ...options,
+          created_by_user: {
+            full_name: ILike(`%${q}%`),
+          },
+        },
+      ];
+    }
+
+    return await this.paginate(
+      {
+        page,
+        limit,
+      },
+      options,
+      ['created_by_user', 'course'],
+    );
   }
 
   async validateLessionToken(
@@ -400,6 +431,7 @@ export class LessonService extends PaginationService<LessonEntity> {
         'lesson.id AS id',
         'lesson.name AS name',
         'course.id AS course_id',
+        'course.name AS course_name',
       ])
       .groupBy('lesson.id')
       .addGroupBy('lesson.name')
@@ -454,13 +486,20 @@ export class LessonService extends PaginationService<LessonEntity> {
     try {
       const skipItems = (page - 1) * limit;
 
-      const findOptions = {
+      const findOptions: FindManyOptions<FlaggedLessonEntity> = {
         relations: {
           user: true,
           lesson: true,
           course: true,
         },
-        where: {},
+        where: {
+          lesson: {
+            archived: false,
+          },
+          course: {
+            archived: false,
+          },
+        },
         skip: skipItems,
         take: limit,
       };
@@ -469,11 +508,14 @@ export class LessonService extends PaginationService<LessonEntity> {
       if (search) {
         findOptions.where = [
           {
+            ...findOptions.where,
             lesson: {
               name: ILike(`%${search}%`),
+              archived: false,
             },
           },
           {
+            ...findOptions.where,
             user: {
               full_name: ILike(`%${search}%`),
             },

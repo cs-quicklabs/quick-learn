@@ -13,6 +13,7 @@ import {
   LessonStatus,
   TDailyLessonResponse,
   UserLessonProgress,
+  LeaderboardData,
 } from '@src/shared/types/LessonProgressTypes';
 import { PaginateWrapper } from '@src/shared/types/utilTypes';
 
@@ -25,11 +26,23 @@ export const getArchivedLessons = async (): Promise<
   return response.data;
 };
 
-export const getUnapprovedLessons = async (): Promise<
-  AxiosSuccessResponse<TLesson[]>
-> => {
-  const response = await axiosInstance.get<AxiosSuccessResponse<TLesson[]>>(
-    ContentRepositoryApiEnum.LESSON_UNAPPROVED,
+export const getUnapprovedLessons = async ({
+  page = 1,
+  limit = 10,
+  q = '',
+}: {
+  page?: number;
+  limit?: number;
+  q?: string;
+}): Promise<AxiosSuccessResponse> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    q,
+  });
+
+  const response = await axiosInstance.get(
+    `${ContentRepositoryApiEnum.LESSON_UNAPPROVED}?${params.toString()}`,
   );
   return response.data;
 };
@@ -159,7 +172,7 @@ export const getUserProgress = async (
   const response = await axiosInstance.get<
     AxiosSuccessResponse<UserLessonProgress[]>
   >(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/userprogress${
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/user-progress${
       userId ? `/${userId}` : ''
     }`,
   );
@@ -190,6 +203,18 @@ export const getDailyLessionDetail = async ({
     `${DailyLessionEnum.GET_DAILY_LESSON_DETAILS.replace(':lesson', lessonId)
       .replace(':course', courseId)
       .replace(':token', token)}`,
+  );
+  return response.data;
+};
+
+export const getLeaderBoardStatus = async (
+  page: number,
+  limit: number,
+): Promise<AxiosSuccessResponse<PaginateWrapper<LeaderboardData[]>>> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<PaginateWrapper<LeaderboardData[]>>
+  >(
+    `${ContentRepositoryApiEnum.LEADERBOARD_STATUS}?page=${page}&limit=${limit}`,
   );
   return response.data;
 };

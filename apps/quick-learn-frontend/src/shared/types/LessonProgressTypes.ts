@@ -24,3 +24,10 @@ export type UserLessonProgress = {
     completed_date: string;
   }[];
 };
+
+export type LeaderboardData = {
+  user_id: number;
+  lessons_completed_count: number;
+  rank: number;
+  user: TUser;
+};

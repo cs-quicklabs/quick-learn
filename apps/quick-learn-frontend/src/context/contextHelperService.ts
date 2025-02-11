@@ -30,7 +30,7 @@ export const useFetchContentRepositoryMetadata = (forceFetch = false) => {
   };
 
   const fetchApprovalData = async (user_type: number) => {
-    if (![UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER].includes(user_type)) {
+    if (![UserTypeIdEnum.MEMBER].includes(user_type)) {
       const res = await getSystemPreferences();
       dispatch(updateSystemPreferencesData(res.data));
     }

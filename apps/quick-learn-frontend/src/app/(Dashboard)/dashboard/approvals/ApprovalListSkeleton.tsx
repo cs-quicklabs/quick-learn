@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ApprovalListSkeleton() {
+export function ApprovalListSkeleton() {
   return (
     <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
       {/* Header Section */}
@@ -33,26 +33,7 @@ function ApprovalListSkeleton() {
 
               {/* Table Body */}
               <tbody className="divide-y divide-gray-200 bg-white">
-                {[1, 2, 3, 4, 5].map((row) => (
-                  <tr key={row} className="border-b border-gray-200">
-                    {/* Lesson Name */}
-                    <td className="px-4 py-2">
-                      <div className="h-5 w-48 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
-                    </td>
-                    {/* Updated On */}
-                    <td className="px-4 py-2">
-                      <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
-                    </td>
-                    {/* Created On */}
-                    <td className="px-4 py-2">
-                      <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
-                    </td>
-                    {/* Created By */}
-                    <td className="px-4 py-2">
-                      <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
-                    </td>
-                  </tr>
-                ))}
+                {DataSkeleton()}
               </tbody>
             </table>
           </div>
@@ -62,4 +43,40 @@ function ApprovalListSkeleton() {
   );
 }
 
-export default ApprovalListSkeleton;
+export function ApprovalListDataSkeleton() {
+  return (
+    <table className="min-w-full divide-y divide-gray-300">
+      {/* Table Body */}
+      <tbody className="divide-y divide-gray-200 bg-white">
+        {DataSkeleton()}
+      </tbody>
+    </table>
+  );
+}
+
+function DataSkeleton() {
+  return (
+    <>
+      {[1, 2, 3, 4, 5].map((row) => (
+        <tr key={row} className="w-full border-b border-gray-200">
+          {/* Lesson Name */}
+          <td className="px-4 py-2">
+            <div className="h-5 w-48 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+          </td>
+          {/* Updated On */}
+          <td className="px-4 py-2">
+            <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+          </td>
+          {/* Created On */}
+          <td className="px-4 py-2">
+            <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+          </td>
+          {/* Created By */}
+          <td className="px-4 py-2">
+            <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+}

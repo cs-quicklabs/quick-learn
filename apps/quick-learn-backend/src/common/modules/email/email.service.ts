@@ -20,6 +20,12 @@ interface IMailBody {
   lessonURL: string;
   userEmail: string;
 }
+interface ILeaderboardData {
+  fullName: string;
+  rank: number;
+  totalMembers: number;
+  leaderboardLink: string;
+}
 @Injectable()
 export class EmailService {
   private emailService: EmailNotification;
@@ -108,6 +114,23 @@ export class EmailService {
         recipients: [mailBody.userEmail],
         body: emailBody,
         subject: emailSubjects.LESSON_FOR_THE_DAY,
+      });
+    } catch (err) {
+      this.logger.error('Something went wrong:', JSON.stringify(err));
+      throw new Error('Failed to send email.');
+    }
+  }
+
+  async leaderboardEmail(leaderboardData: ILeaderboardData, email: string) {
+    const emailBody = await this.compileMjmlTemplate(
+      leaderboardData as unknown as Record<string, string>,
+      'weekly-Leaderboard',
+    );
+    try {
+      await this.emailService.send({
+        recipients: [email],
+        body: emailBody,
+        subject: emailSubjects.LEADERBOARD,
       });
     } catch (err) {
       this.logger.error('Something went wrong:', JSON.stringify(err));

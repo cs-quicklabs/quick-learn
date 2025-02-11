@@ -77,6 +77,7 @@ export const en = {
   lessonStatus: 'Lesson Status',
   searchResults: 'Search Results',
   triggeredDailyLessonMails: 'Successfully triggered daily lesson mails',
+  triggeredLeaderboardEmail: 'Successfully triggered leaderboard email',
   succcessLessonFlagged: 'Lesson flagged successfully',
 
   // Skill related messages
@@ -110,6 +111,8 @@ export const en = {
   successPreferencesUpdated: 'Email preference updated successfully.',
   successPreferences: 'Successfully got user preferences.',
 
+  //Leaderboard Data
+  successLeaderboardData: 'Successfully got the leaderboad details',
   // flagged lesson
   invalidLesson: 'Invalid lesson is provided.',
   successUnflagLesson: 'Successfully unflagged the lesson.',

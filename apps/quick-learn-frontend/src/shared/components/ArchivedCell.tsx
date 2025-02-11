@@ -54,9 +54,11 @@ const ArchivedCell: FC<Props> = ({
     <div className="flex items-center p-4">
       <div className="flex-1 min-w-0">
         <div className="flex text-sm font-medium text-gray-600">
-          <p className="truncate max-w-[200px] capitalize">{title}</p>
+          <p className="truncate max-w-[200px] first-letter:uppercase">
+            {title}
+          </p>
           {subtitle && (
-            <p className="ml-1 font-normal text-gray-500 truncate max-w-[150px]">
+            <p className="ml-1 font-normal text-gray-500 truncate max-w-[150px] first-letter:uppercase">
               {subtitle}
             </p>
           )}
