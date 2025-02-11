@@ -40,7 +40,7 @@ const changePasswordFormSchema = z
 
 type ChangePasswordData = z.infer<typeof changePasswordFormSchema>;
 
-const ChangePassword = () => {
+function ChangePassword() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const changePasswordFields: FieldConfig[] = [
     {
@@ -107,6 +107,6 @@ const ChangePassword = () => {
       />
     </div>
   );
-};
+}
 
 export default ChangePassword;

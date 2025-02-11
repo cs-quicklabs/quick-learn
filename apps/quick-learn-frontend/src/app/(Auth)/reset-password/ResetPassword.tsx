@@ -10,7 +10,7 @@ import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { RouteEnum } from '@src/constants/route.enum';
 
-const ResetPassword = () => {
+function ResetPassword() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const router = useRouter();
@@ -54,6 +54,6 @@ const ResetPassword = () => {
       id="resetPasswordForm"
     />
   );
-};
+}
 
 export default ResetPassword;

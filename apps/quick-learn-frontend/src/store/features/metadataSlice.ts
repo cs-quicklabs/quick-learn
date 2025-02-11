@@ -1,10 +1,14 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector,
+} from '@reduxjs/toolkit';
+import { BaseAsyncState, RootState } from '../types/base.types';
 import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
 import { TContentRepositoryMetadata } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
-import { RootState } from '../store';
 import { AxiosErrorObject } from '@src/apiServices/axios';
-import { BaseAsyncState } from '../types/base.types';
 
 interface MetadataState extends BaseAsyncState {
   metadata: {
@@ -66,13 +70,23 @@ const metadataSlice = createSlice({
 
 export const { updateContentRepository } = metadataSlice.actions;
 
-export const selectMetadataStatus = (state: RootState) => state.metadata.status;
+const metadataSelector = (state: RootState) => state.metadata;
 
-export const selectContentRepositoryMetadata = (state: RootState) =>
-  state.metadata?.metadata?.contentRepository ??
-  initialState.metadata.contentRepository;
+export const selectMetadataStatus = createSelector(
+  [metadataSelector],
+  (data) => data.status,
+);
 
-export const selectIsMetadataInitialized = (state: RootState) =>
-  state.metadata?.isInitialized ?? false;
+export const selectContentRepositoryMetadata = createSelector(
+  [metadataSelector],
+  (data) =>
+    data?.metadata?.contentRepository ||
+    initialState.metadata.contentRepository,
+);
+
+export const selectIsMetadataInitialized = createSelector(
+  [metadataSelector],
+  (data) => data.isInitialized,
+);
 
 export default metadataSlice.reducer;

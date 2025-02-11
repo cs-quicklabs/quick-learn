@@ -49,7 +49,7 @@ import { SuperLink } from '@src/utils/HiLink';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
-const TeamMemberDetails = () => {
+function TeamMemberDetails() {
   const dispatch = useDispatch();
   const router = useRouter();
   const param = useParams<{ member: string }>();
@@ -373,6 +373,6 @@ const TeamMemberDetails = () => {
       </div>
     </>
   );
-};
+}
 
 export default TeamMemberDetails;

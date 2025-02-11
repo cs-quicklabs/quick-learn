@@ -1,16 +1,15 @@
 import React, { FC } from 'react';
 
 interface Props {
-  color?: string;
   height?: string;
   width?: string;
 }
 
-const WebsiteLogo: FC<Props> = (props) => {
+const WebsiteLogo: FC<Props> = ({ width, height }: Props) => {
   return (
     <svg
-      width={props.width}
-      height={props.height}
+      width={width}
+      height={height}
       viewBox="0 0 1382 1045"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

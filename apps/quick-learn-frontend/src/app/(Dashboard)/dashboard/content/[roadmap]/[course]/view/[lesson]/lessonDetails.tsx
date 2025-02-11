@@ -20,7 +20,7 @@ const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
-const LessonDetails = () => {
+function LessonDetails() {
   const {
     roadmap: roadmapId,
     course: courseId,
@@ -85,7 +85,7 @@ const LessonDetails = () => {
 
   return (
     <>
-      <ViewLesson lesson={lesson} links={links} isPending={true} />
+      <ViewLesson lesson={lesson} links={links} isPending />
       {canEdit && (
         <SuperLink
           href={`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/edit/${lessonId}`}
@@ -97,6 +97,6 @@ const LessonDetails = () => {
       )}
     </>
   );
-};
+}
 
 export default LessonDetails;

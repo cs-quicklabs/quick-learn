@@ -1,6 +1,6 @@
 import ArchivedCell from './ArchivedCell';
 
-export const ClosedEyeIcon = () => {
+export function ClosedEyeIcon() {
   return (
     <svg
       className="w-[24px] h-[24px] text-gray-800 dark:text-white"
@@ -23,9 +23,9 @@ export const ClosedEyeIcon = () => {
       />
     </svg>
   );
-};
+}
 
-export const OpenEyeIcon = () => {
+export function OpenEyeIcon() {
   return (
     <svg
       className="w-[24px] h-[24px] text-gray-800 dark:text-white"
@@ -45,40 +45,40 @@ export const OpenEyeIcon = () => {
       />
     </svg>
   );
-};
+}
 
-export const Loader = ({
+export function Loader({
   className = 'inline w-4 h-4 mx-[7px]',
-}: {
+}: Readonly<{
   className?: string;
-}) => {
+}>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      className={className + ' ' + 'text-white animate-spin'}
+      className={`${className} text-white animate-spin`}
       viewBox="0 0 100 101"
     >
       <path
         fill="#E5E7EB"
         d="M100 50.59c0 27.615-22.386 50.001-50 50.001s-50-22.386-50-50 22.386-50 50-50 50 22.386 50 50zm-90.919 0c0 22.6 18.32 40.92 40.919 40.92 22.599 0 40.919-18.32 40.919-40.92 0-22.598-18.32-40.918-40.919-40.918-22.599 0-40.919 18.32-40.919 40.919z"
-      ></path>
+      />
       <path
         fill="currentColor"
         d="M93.968 39.04c2.425-.636 3.894-3.128 3.04-5.486A50 50 0 0041.735 1.279c-2.474.414-3.922 2.919-3.285 5.344.637 2.426 3.12 3.849 5.6 3.484a40.916 40.916 0 0144.131 25.769c.902 2.34 3.361 3.802 5.787 3.165z"
-      ></path>
+      />
     </svg>
   );
-};
+}
 
-export const FullPageLoader = () => {
+export function FullPageLoader() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-blue-500"></div>
+      <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-blue-500" />
     </div>
   );
-};
-export const DocumentTextIcon = () => {
+}
+export function DocumentTextIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -95,9 +95,9 @@ export const DocumentTextIcon = () => {
       />
     </svg>
   );
-};
+}
 
-export const ClipboardWithTick = () => {
+export function ClipboardWithTick() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -114,9 +114,9 @@ export const ClipboardWithTick = () => {
       />
     </svg>
   );
-};
+}
 
-export const ProfileIdentificationCard = () => {
+export function ProfileIdentificationCard() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -133,9 +133,9 @@ export const ProfileIdentificationCard = () => {
       />
     </svg>
   );
-};
+}
 
-export const ShowInfoIcon = () => {
+export function ShowInfoIcon() {
   return (
     <svg
       aria-hidden="true"
@@ -148,12 +148,12 @@ export const ShowInfoIcon = () => {
         fillRule="evenodd"
         d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
         clipRule="evenodd"
-      ></path>
+      />
     </svg>
   );
-};
+}
 
-export const CustomClipBoardIcon = ({ color }: { color?: string }) => {
+export function CustomClipBoardIcon({ color }: Readonly<{ color?: string }>) {
   return (
     <svg
       className="text-gray-800 h-3.5 w-3.5 mr-1"
@@ -171,9 +171,9 @@ export const CustomClipBoardIcon = ({ color }: { color?: string }) => {
       />
     </svg>
   );
-};
+}
 
-export const HomeIcon = () => {
+export function HomeIcon() {
   return (
     <svg
       className="w-3 h-3 me-2.5"
@@ -182,12 +182,12 @@ export const HomeIcon = () => {
       fill="currentColor"
       viewBox="0 0 20 20"
     >
-      <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"></path>
+      <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
     </svg>
   );
-};
+}
 
-export const ArrowRightIcon = () => {
+export function ArrowRightIcon() {
   return (
     <svg
       className="rtl:rotate-180 w-3 h-3 text-gray-400 mx-3"
@@ -202,12 +202,12 @@ export const ArrowRightIcon = () => {
         strokeLinejoin="round"
         strokeWidth="2"
         d="m1 9 4-4-4-4"
-      ></path>
+      />
     </svg>
   );
-};
+}
 
-export const InfoIcon = ({ className }: { className?: string }) => {
+export function InfoIcon({ className }: Readonly<{ className?: string }>) {
   return (
     <svg
       className={className}
@@ -222,12 +222,12 @@ export const InfoIcon = ({ className }: { className?: string }) => {
         strokeLinejoin="round"
         strokeWidth="2"
         d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-      ></path>
+      />
     </svg>
   );
-};
+}
 
-export const CloseIcon = ({ className }: { className?: string }) => {
+export function CloseIcon({ className }: Readonly<{ className?: string }>) {
   return (
     <svg
       className={className}
@@ -242,12 +242,12 @@ export const CloseIcon = ({ className }: { className?: string }) => {
         strokeLinejoin="round"
         strokeWidth="2"
         d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-      ></path>
+      />
     </svg>
   );
-};
+}
 
-export const Repository = ({ className }: { className?: string }) => {
+export function Repository({ className }: Readonly<{ className?: string }>) {
   return (
     <svg
       className={className}
@@ -262,12 +262,12 @@ export const Repository = ({ className }: { className?: string }) => {
         strokeLinejoin="round"
         strokeWidth="2"
         d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-      ></path>
+      />
     </svg>
   );
-};
+}
 
-export const UndoWithTime = ({ className }: { className?: string }) => {
+export function UndoWithTime({ className }: Readonly<{ className?: string }>) {
   return (
     <svg
       className={className}
@@ -290,15 +290,15 @@ export const UndoWithTime = ({ className }: { className?: string }) => {
         strokeLinejoin="round"
         stroke="#CCCCCC"
         strokeWidth="0.184"
-      ></g>
+      />
       <g id="SVGRepo_iconCarrier">
-        <path d="M92,46c0,21.5-17.4,39-38.8,39c-7.9,0-15.5-2.4-22-6.8c-1.8-1.3-2.3-3.7-1-5.6c1.3-1.8,3.7-2.3,5.6-1 c5.1,3.5,11.2,5.4,17.4,5.4C70.2,77,84,63.1,84,46c0-17.1-13.8-31-30.8-31C36.6,15,23,28.3,22.4,44.9l9.3-9.4c1.6-1.6,4.1-1.6,5.7,0 c1.6,1.6,1.6,4.1,0,5.7L22.1,56.5c-0.8,0.8-1.8,1.2-2.8,1.2c-1.1,0-2.1-0.4-2.8-1.2L1.2,41.1c-1.6-1.6-1.6-4.1,0-5.7 c1.6-1.6,4.1-1.6,5.7,0l7.6,7.7C15.9,23,32.7,7,53.2,7C74.6,7,92,24.5,92,46z M53,23.3c-2.2,0-4,1.8-4,4V46c0,1.1,0.5,2.1,1.3,2.8 l8.6,8.6c0.8,0.8,1.8,1.2,2.9,1.2c1,0,2.1-0.4,2.8-1.2c1.6-1.6,1.5-4.1-0.1-5.7L57,44.3v-17C57,25.1,55.2,23.3,53,23.3z"></path>{' '}
+        <path d="M92,46c0,21.5-17.4,39-38.8,39c-7.9,0-15.5-2.4-22-6.8c-1.8-1.3-2.3-3.7-1-5.6c1.3-1.8,3.7-2.3,5.6-1 c5.1,3.5,11.2,5.4,17.4,5.4C70.2,77,84,63.1,84,46c0-17.1-13.8-31-30.8-31C36.6,15,23,28.3,22.4,44.9l9.3-9.4c1.6-1.6,4.1-1.6,5.7,0 c1.6,1.6,1.6,4.1,0,5.7L22.1,56.5c-0.8,0.8-1.8,1.2-2.8,1.2c-1.1,0-2.1-0.4-2.8-1.2L1.2,41.1c-1.6-1.6-1.6-4.1,0-5.7 c1.6-1.6,4.1-1.6,5.7,0l7.6,7.7C15.9,23,32.7,7,53.2,7C74.6,7,92,24.5,92,46z M53,23.3c-2.2,0-4,1.8-4,4V46c0,1.1,0.5,2.1,1.3,2.8 l8.6,8.6c0.8,0.8,1.8,1.2,2.9,1.2c1,0,2.1-0.4,2.8-1.2c1.6-1.6,1.5-4.1-0.1-5.7L57,44.3v-17C57,25.1,55.2,23.3,53,23.3z" />{' '}
       </g>
     </svg>
   );
-};
+}
 
-export const OpenBookIcon = ({ className }: { className?: string }) => {
+export function OpenBookIcon({ className }: Readonly<{ className?: string }>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -306,35 +306,37 @@ export const OpenBookIcon = ({ className }: { className?: string }) => {
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke="currentColor"
-      className="size-6"
+      className={`size-6 ${className}`}
     >
       <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
       />
     </svg>
   );
-};
+}
 
-export const LoadingSkeleton = () => (
-  <>
-    {[1, 2, 3].map((i) => (
-      <ArchivedCell
-        key={i}
-        isLoading={true}
-        title=""
-        subtitle=""
-        deactivatedBy=""
-        deactivationDate=""
-        onClickDelete={() => null}
-        onClickRestore={() => null}
-      />
-    ))}
-  </>
-);
+export function LoadingSkeleton() {
+  return (
+    <>
+      {[1, 2, 3].map((i) => (
+        <ArchivedCell
+          key={i}
+          isLoading
+          title=""
+          subtitle=""
+          deactivatedBy=""
+          deactivationDate=""
+          onClickDelete={() => null}
+          onClickRestore={() => null}
+        />
+      ))}
+    </>
+  );
+}
 
-export const SearchIcon = () => {
+export function SearchIcon() {
   return (
     <svg
       className="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -352,9 +354,9 @@ export const SearchIcon = () => {
       />
     </svg>
   );
-};
+}
 
-export const ReadFileIcon = ({ colorClass }: { colorClass: string }) => {
+export function ReadFileIcon({ colorClass }: { colorClass: string }) {
   return (
     <svg
       className={`w-4 h-4 ${colorClass}`}
@@ -371,12 +373,12 @@ export const ReadFileIcon = ({ colorClass }: { colorClass: string }) => {
         strokeLinejoin="round"
         strokeWidth="2"
         d="M10 3v4a1 1 0 0 1-1 1H5m4 6 2 2 4-4m4-8v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"
-      ></path>
+      />
     </svg>
   );
-};
+}
 
-export const CalenderIcon = () => {
+export function CalenderIcon() {
   return (
     <svg
       className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
@@ -392,7 +394,7 @@ export const CalenderIcon = () => {
       />
     </svg>
   );
-};
+}
 
 export const flagIcon = () => {
   return (

@@ -135,7 +135,7 @@ const Editor: FC<Props> = ({
     input.setAttribute('accept', 'image/*');
     input.click();
     input.onchange = async () => {
-      const files = input.files;
+      const { files } = input;
       if (files === null || files.length === 0) return;
       await handleImageUpload(files[0]);
     };

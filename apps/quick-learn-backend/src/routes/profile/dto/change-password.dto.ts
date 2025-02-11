@@ -17,7 +17,7 @@ export class ChangePasswordDTO {
   @IsNotEmpty()
   @IsString()
   @MinLength(8, { message: 'Password must be at least 8 characters long' })
-  @MaxLength(32, { message: 'Password must be less than 32 character' })
+  @MaxLength(32, { message: 'Password must be less than 32 characters' })
   @IsStrongPassword({
     minLength: 8,
     minLowercase: 1,

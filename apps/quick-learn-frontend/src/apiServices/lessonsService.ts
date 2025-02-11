@@ -43,7 +43,7 @@ export const getLessonDetails = async (
   approved = true,
 ): Promise<AxiosSuccessResponse<TLesson>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<TLesson>>(
-    ContentRepositoryApiEnum.LESSON + `/${id}` + `?approved=${approved}`,
+    `${ContentRepositoryApiEnum.LESSON}/${id}?approved=${approved}`,
   );
   return response.data;
 };
@@ -89,8 +89,8 @@ export const markAsDone = async (
       userId ? `/${userId}` : ''
     }`,
     {
-      courseId: parseInt(courseId),
-      isCompleted: isCompleted,
+      courseId: parseInt(courseId, 10),
+      isCompleted,
     },
   );
   return response.data;
@@ -118,8 +118,8 @@ export const markAsDonePublic = async (
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete-public/${lessonId}/${userId}`,
     {
-      courseId: parseInt(courseId),
-      isCompleted: isCompleted,
+      courseId: parseInt(courseId, 10),
+      isCompleted,
     },
   );
   return response.data;

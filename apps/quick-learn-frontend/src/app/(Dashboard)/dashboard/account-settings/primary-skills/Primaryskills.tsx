@@ -20,7 +20,7 @@ type AddSkillType = {
   name: string;
 };
 
-const Primaryskills = () => {
+function Primaryskills() {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
@@ -31,7 +31,7 @@ const Primaryskills = () => {
     setIsEditLoading(true);
     updateSkill(id, data)
       .then((res) => {
-        const name = data.name;
+        const { name } = data;
         const updateSkills = primarySkills.map((skill) => {
           if (skill.id === id) {
             return { ...skill, name } as TSkill;
@@ -118,6 +118,6 @@ const Primaryskills = () => {
       />
     </>
   );
-};
+}
 
 export default Primaryskills;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProfileSettingsSkeleton = () => {
+function ProfileSettingsSkeleton() {
   return (
     <div className="w-full animate-pulse">
       {/* Header Section */}
@@ -46,6 +46,6 @@ const ProfileSettingsSkeleton = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ProfileSettingsSkeleton;

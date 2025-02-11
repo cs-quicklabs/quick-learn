@@ -12,7 +12,7 @@ export const resetPasswordFormSchema = z
       .regex(/[a-z]/, {
         message: 'Password must contain at least one lowercase letter',
       })
-      .regex(/[0-9]/, { message: 'Password must contain at least one number' })
+      .regex(/\d/, { message: 'Password must contain at least one number' })
       .regex(/[^A-Za-z0-9]/, {
         message: 'Password must contain at least one special character',
       }),

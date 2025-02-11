@@ -3,6 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
+import { useSelector } from 'react-redux';
 import {
   getFlaggedLessonDetails,
   markLessonAsUnFlagged,
@@ -16,14 +17,22 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { useAppDispatch } from '@src/store/hooks';
-import { setHideNavbar } from '@src/store/features/uiSlice';
+import { setHideNavbar, selectUser } from '@src/store/features';
+import { UserTypeIdEnum } from 'lib/shared/src';
 
 const defaultLinks = [{ name: 'Flagged Lessons', link: RouteEnum.FLAGGED }];
 
-const LessonDetails = () => {
+function LessonDetails() {
   const { lesson: id } = useParams<{ lesson: string }>();
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const user = useSelector(selectUser);
+  const isAdmin = useMemo<boolean>(() => {
+    if (!user) return false;
+    return [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
+      user.user_type_id,
+    );
+  }, [user]);
 
   useEffect(() => {
     dispatch(setHideNavbar(true));
@@ -80,11 +89,11 @@ const LessonDetails = () => {
       <ViewLesson
         lesson={lesson}
         links={links}
-        isFlagged={isFlagged}
-        setIsFlagged={markAsUnFlagged}
+        isFlagged={isAdmin && isFlagged}
+        setIsFlagged={isAdmin ? markAsUnFlagged : undefined}
       />
     </div>
   );
-};
+}
 
 export default LessonDetails;

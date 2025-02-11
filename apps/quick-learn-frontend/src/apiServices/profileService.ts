@@ -1,6 +1,5 @@
 import { userApiEnum } from '@src/constants/api.enum';
-import axiosInstance from './axios';
-import { AxiosSuccessResponse } from './axios';
+import axiosInstance, { AxiosSuccessResponse } from './axios';
 import {
   TChangePasswordType,
   TChangePreferenceType,

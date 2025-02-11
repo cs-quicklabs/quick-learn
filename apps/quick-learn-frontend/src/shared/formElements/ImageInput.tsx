@@ -101,7 +101,9 @@ const ImageInput: FC<Props> = ({
   }, [watchProfileImage]);
 
   useEffect(() => {
-    typeof src === 'string' && setImagePreview(src);
+    if (typeof src === 'string') {
+      setImagePreview(src);
+    }
   }, [src]);
 
   // Handle Trash Icon Click - Open the confirmation modal
@@ -117,7 +119,7 @@ const ImageInput: FC<Props> = ({
     setIsLoading(true);
     try {
       if (onChangeImage) {
-        await onChangeImage(undefined);
+        onChangeImage(undefined);
       }
       // Update form value
       setValue(name, '');
@@ -129,6 +131,17 @@ const ImageInput: FC<Props> = ({
     }
   };
 
+  function showIcon() {
+    if (isLoading)
+      return (
+        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+      );
+
+    if (imagePreview) return <TrashIcon className="text-white w-8 h-8" />;
+
+    return <CameraIcon className="text-white w-8 h-8" />;
+  }
+
   return (
     <div>
       <label
@@ -139,7 +152,8 @@ const ImageInput: FC<Props> = ({
       </label>
 
       <div className="mt-2 flex justify-left">
-        <div
+        <button
+          type="button"
           className="relative w-20 h-20 rounded-full overflow-hidden cursor-pointer"
           onClick={handleImageClick}
         >
@@ -158,21 +172,16 @@ const ImageInput: FC<Props> = ({
               </span>
             </div>
           )}
-          <div
+          <button
+            type="button"
             className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity ${
               isLoading ? 'opacity-100' : ''
             }`}
             onClick={handleImagedeletion}
           >
-            {isLoading ? (
-              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : imagePreview ? (
-              <TrashIcon className="text-white w-8 h-8" />
-            ) : (
-              <CameraIcon className="text-white w-8 h-8" />
-            )}
-          </div>
-        </div>
+            {showIcon()}
+          </button>
+        </button>
         <input
           type="file"
           ref={fileInputRef}
@@ -180,7 +189,9 @@ const ImageInput: FC<Props> = ({
           onChange={handleFileChange}
           accept="image/*"
           id={'file_' + name}
-          onClick={(e) => (e.currentTarget.value = '')}
+          onClick={(e) => {
+            e.currentTarget.value = '';
+          }}
         />
       </div>
       {error && (

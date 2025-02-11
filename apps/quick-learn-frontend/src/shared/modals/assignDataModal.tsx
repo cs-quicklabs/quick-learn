@@ -169,6 +169,7 @@ const AssignDataModal: FC<Props> = ({
             </li>
             <li className="mr-1">
               <button
+                type="button"
                 className="bg-blue-700 px-3 py-2 rounded-md text-white mb-2 inline-block hover:bg-blue-600"
                 onClick={handleToggleAll}
               >

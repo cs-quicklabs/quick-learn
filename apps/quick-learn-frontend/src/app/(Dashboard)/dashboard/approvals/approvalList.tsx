@@ -1,26 +1,36 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-import { fetchUnapprovedLessons } from '@src/store/features/approvalSlice';
-import ApprovalListSkeleton from './ApprovalListSkeleton';
-import { SuperLink } from '@src/utils/HiLink';
-import { RootState } from '@src/store/store';
-import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
+import { format } from 'date-fns';
+import { useEffect, useRef, useState } from 'react';
+import ApprovalListSkeleton from './ApprovalListSkeleton';
+import {
+  fetchUnapprovedLessons,
+  getApprovalLessionListLoading,
+  getApprovalLessionList,
+  getApprovalLessionListInitialLoad,
+} from '@src/store/features/approvalSlice';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
+import { SuperLink } from '@src/utils/HiLink';
+import { RootState } from '@src/store/store';
 
-const ApprovalList = () => {
-  const columns = [
-    en.common.lesson,
-    en.common.updatedOn,
-    en.common.createdOn,
-    en.common.createdBy,
-  ];
+const columns = [
+  en.common.lesson,
+  en.common.updatedOn,
+  en.common.createdOn,
+  en.common.createdBy,
+];
+
+function ApprovalList() {
   const dispatch = useAppDispatch();
-  const { lessons, isLoading, isInitialLoad, page, totalPages, total } =
-    useAppSelector((state: RootState) => state.approval);
+  const lessons = useAppSelector(getApprovalLessionList);
+  const isLoading = useAppSelector(getApprovalLessionListLoading);
+  const isInitialLoad = useAppSelector(getApprovalLessionListInitialLoad);
+  const { page, totalPages, total } = useAppSelector(
+    (state: RootState) => state.approval,
+  );
   const [limit] = useState(10);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -137,12 +147,12 @@ const ApprovalList = () => {
       </div>
       <div ref={observerRef} className="h-10" /> {/* Scroll trigger element */}
       {isLoading && !isInitialLoad && (
-        <div className="text-center mt-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
+        <div className="fixed top-4 right-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700" />
         </div>
       )}
     </div>
   );
-};
+}
 
 export default ApprovalList;

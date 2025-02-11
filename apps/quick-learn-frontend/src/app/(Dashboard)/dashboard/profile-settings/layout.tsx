@@ -1,4 +1,5 @@
 'use client';
+
 import React, { FC, useEffect } from 'react';
 import Sidebar, { TNavLink } from '@src/shared/components/Sidebar';
 import { RouteEnum } from '@src/constants/route.enum';

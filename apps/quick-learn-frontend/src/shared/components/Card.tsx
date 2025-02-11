@@ -2,6 +2,7 @@ import { FC, useRef, useEffect, useState } from 'react';
 import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { en } from '@src/constants/lang/en';
 import { SuperLink } from '@src/utils/HiLink';
+
 interface CardProps {
   title: string;
   description: string;
@@ -18,37 +19,24 @@ interface CardProps {
   };
 }
 
-const Card: FC<CardProps> = ({
-  id,
+interface CardContentProps
+  extends Omit<CardProps, 'link' | 'className' | 'onClick'> {
+  isLongTitle: boolean;
+  titleRef: React.RefObject<HTMLHeadingElement>;
+}
+
+// Moved CardContent outside of Card component
+const CardContent: FC<CardContentProps> = ({
+  isCreateCard,
   title,
+  titleRef,
   description,
+  isLongTitle,
   stats,
-  link = '#',
-  className = '',
-  showWarning = false,
-  isCreateCard = false,
-  onClick,
+  showWarning,
   metadata,
 }) => {
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const [isLongTitle, setIsLongTitle] = useState(false);
-
-  useEffect(() => {
-    const checkTitleHeight = () => {
-      if (titleRef.current) {
-        const lineHeight = parseInt(
-          window.getComputedStyle(titleRef.current).lineHeight,
-        );
-        const titleHeight = titleRef.current.scrollHeight;
-        setIsLongTitle(titleHeight > lineHeight * 2);
-      }
-    };
-
-    checkTitleHeight();
-    window.addEventListener('resize', checkTitleHeight);
-    return () => window.removeEventListener('resize', checkTitleHeight);
-  }, [title]);
-  const CardContent = () => (
+  return (
     <div
       className={`flex flex-col h-48 ${
         isLongTitle ? 'p-4' : 'py-4 px-6'
@@ -71,6 +59,7 @@ const Card: FC<CardProps> = ({
           className={`font-normal text-gray-500 capitalize ${
             isLongTitle ? 'line-clamp-1' : 'line-clamp-2'
           } text-sm whitespace-pre-line`}
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: description,
           }}
@@ -101,7 +90,7 @@ const Card: FC<CardProps> = ({
                 {en.component.addedBy} {metadata.addedBy}
               </>
             ) : (
-              <>{en.component.Added}</>
+              en.component.Added
             )}
             {metadata.date && (
               <>
@@ -114,6 +103,39 @@ const Card: FC<CardProps> = ({
       </div>
     </div>
   );
+};
+
+const Card: FC<CardProps> = ({
+  id,
+  title,
+  description,
+  stats,
+  link = '#',
+  className = '',
+  showWarning = false,
+  isCreateCard = false,
+  onClick,
+  metadata,
+}) => {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const [isLongTitle, setIsLongTitle] = useState(false);
+
+  useEffect(() => {
+    const checkTitleHeight = () => {
+      if (titleRef.current) {
+        const lineHeight = parseInt(
+          window.getComputedStyle(titleRef.current).lineHeight,
+          10,
+        );
+        const titleHeight = titleRef.current.scrollHeight;
+        setIsLongTitle(titleHeight > lineHeight * 2);
+      }
+    };
+
+    checkTitleHeight();
+    window.addEventListener('resize', checkTitleHeight);
+    return () => window.removeEventListener('resize', checkTitleHeight);
+  }, [title]);
 
   const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full relative ${
     isCreateCard
@@ -121,17 +143,29 @@ const Card: FC<CardProps> = ({
       : ''
   } ${className}`;
 
+  const cardContentProps = {
+    isLongTitle,
+    titleRef,
+    title,
+    description,
+    stats,
+    showWarning,
+    isCreateCard,
+    metadata,
+    id,
+  };
+
   if (onClick) {
     return (
-      <button onClick={onClick} className={baseClassName}>
-        <CardContent />
+      <button onClick={onClick} className={baseClassName} type="button">
+        <CardContent {...cardContentProps} />
       </button>
     );
   }
 
   return (
     <SuperLink id={id} href={link} className={baseClassName}>
-      <CardContent />
+      <CardContent {...cardContentProps} />
     </SuperLink>
   );
 };

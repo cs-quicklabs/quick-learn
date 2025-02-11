@@ -1,7 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { getAccessToken } from './authService';
 import { authApiEnum } from '@src/constants/api.enum';
 import { getClientIp } from './ipService';
+// eslint-disable-next-line import/no-cycle
+import { getAccessToken } from './authService';
 
 const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${
   process.env.NEXT_PUBLIC_API_VERSION || 'v1'
@@ -38,7 +39,9 @@ axiosInstance.interceptors.request.use(
     // Use a module-level variable to cache the IP
     const clientIp = await getClientIp();
     if (config.headers && clientIp) {
+      // eslint-disable-next-line no-param-reassign
       config.headers['X-Client-IP'] = clientIp;
+      // eslint-disable-next-line no-param-reassign
       config.headers['x-forwarded-for'] = clientIp;
     }
 
@@ -61,7 +64,7 @@ axiosInstance.interceptors.response.use(
     if (
       error.response &&
       error.response.data.errorCode === 401 &&
-      error.config?.url != authApiEnum.REFRESH_TOKEN
+      error.config?.url !== authApiEnum.REFRESH_TOKEN
     ) {
       try {
         // create a new token
@@ -69,7 +72,8 @@ axiosInstance.interceptors.response.use(
         const originalRequest = error.config;
         if (originalRequest) {
           return axios(originalRequest);
-        } else throw new Error('Original request is undefined');
+        }
+        throw new Error('Original request is undefined');
       } catch (err) {
         setTimeout(() => {
           window.location.replace('/');

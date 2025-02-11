@@ -145,14 +145,7 @@ export class LessonService extends PaginationService<LessonEntity> {
           new_content: '',
         };
       }
-
-      // **Update the lesson**
       await manager.update(LessonEntity, id, payload);
-
-      // **Remove flagged lesson if it exists**
-      await manager.delete(FlaggedLessonEntity, { lesson_id: id });
-
-      return { message: 'Lesson updated, flagged lessons removed' };
     });
   }
 

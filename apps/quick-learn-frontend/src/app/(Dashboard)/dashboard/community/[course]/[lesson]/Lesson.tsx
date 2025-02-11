@@ -12,7 +12,7 @@ const defaultlinks: TBreadcrumb[] = [
   { name: 'Community Repository', link: RouteEnum.COMMUNITY },
 ];
 
-const Lesson = () => {
+function Lesson() {
   const [lessonData, setLessonData] = useState<TLesson>();
   const params = useParams<{ course: string; lesson: string }>();
   const lessonId = params.lesson;
@@ -45,6 +45,6 @@ const Lesson = () => {
   return (
     <div>{lessonData && <ViewLesson lesson={lessonData} links={links} />}</div>
   );
-};
+}
 
 export default Lesson;
