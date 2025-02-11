@@ -13,7 +13,13 @@ import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
-import { Repository, DataSource, ILike, MoreThan } from 'typeorm';
+import {
+  Repository,
+  DataSource,
+  ILike,
+  MoreThan,
+  FindManyOptions,
+} from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
@@ -454,13 +460,20 @@ export class LessonService extends PaginationService<LessonEntity> {
     try {
       const skipItems = (page - 1) * limit;
 
-      const findOptions = {
+      const findOptions: FindManyOptions<FlaggedLessonEntity> = {
         relations: {
           user: true,
           lesson: true,
           course: true,
         },
-        where: {},
+        where: {
+          lesson: {
+            archived: false,
+          },
+          course: {
+            archived: false,
+          },
+        },
         skip: skipItems,
         take: limit,
       };
@@ -469,11 +482,14 @@ export class LessonService extends PaginationService<LessonEntity> {
       if (search) {
         findOptions.where = [
           {
+            ...findOptions.where,
             lesson: {
               name: ILike(`%${search}%`),
+              archived: false,
             },
           },
           {
+            ...findOptions.where,
             user: {
               full_name: ILike(`%${search}%`),
             },
