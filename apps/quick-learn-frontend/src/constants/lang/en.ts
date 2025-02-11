@@ -465,7 +465,7 @@ export const en = {
   leaderboard: {
     smallLeaderboard: 'Leaderboard',
     leaderboard: 'LEADERBOARD',
-    leaderboardDescription: 'Weekly records of Last Week',
+    leaderboardDescription: 'Weekly Records Of Last Week',
     leaderboardRank: 'Rank',
     leaderboardLessonsCompleted: 'Lessons Completed',
     leaderboardUser: 'User',
