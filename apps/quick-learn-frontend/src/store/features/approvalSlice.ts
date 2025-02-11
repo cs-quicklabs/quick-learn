@@ -36,11 +36,11 @@ const initialState: ApprovalState = {
 export const fetchUnapprovedLessons = createAsyncThunk(
   'approval/fetchUnapproved',
   async (
-    { page = 1, limit = 10 }: { page: number; limit: number },
+    { page = 1, limit = 10 ,q='' }: { page: number; limit: number ,q:string },
     { rejectWithValue },
   ) => {
     try {
-      const response = await getUnapprovedLessons({ page, limit });
+      const response = await getUnapprovedLessons({ page, limit,q });
       return response.data;
     } catch (error) {
       showApiErrorInToast(error as AxiosErrorObject);

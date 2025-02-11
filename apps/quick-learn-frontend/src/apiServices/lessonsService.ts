@@ -28,12 +28,20 @@ export const getArchivedLessons = async (): Promise<
 export const getUnapprovedLessons = async ({
   page = 1,
   limit = 10,
+  q=''
 }: {
   page?: number;
   limit?: number;
+  q?:string
 }): Promise<AxiosSuccessResponse> => {
+   const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    ...(q && { q }),
+  });
+  
   const response = await axiosInstance.get(
-    `${ContentRepositoryApiEnum.LESSON_UNAPPROVED}?page=${page}&limit=${limit}`,
+    `${ContentRepositoryApiEnum.LESSON_UNAPPROVED}?${params.toString()}`
   );
   return response.data;
 };

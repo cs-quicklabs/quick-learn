@@ -62,6 +62,7 @@ export class LessonController {
     const lessons = await this.service.getUnapprovedLessons(
       Number(paginationDto.page),
       Number(paginationDto.limit),
+      String(paginationDto.q)
     );
     return new SuccessResponse(en.getLessons, lessons);
   }
