@@ -94,7 +94,7 @@ const LeaderboardTable = () => {
                     : ''
                 }`}
               >
-                <td className="px-4 py-2 font-medium text-slate-900">
+                <td className="px-4 py-2 font-medium text-slate-900 capitalize">
                   {user.user.first_name} {user.user.last_name}
                 </td>
                 <td className="pl-6 py-2">
