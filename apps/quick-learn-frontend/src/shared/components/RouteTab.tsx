@@ -36,7 +36,7 @@ const RouteTab: React.FC<RouteTabProps> = ({
         onClick={onClick}
         className="cursor-pointer flex justify-between items-center text-slate-600 font-normal hover:bg-slate-200 px-3 py-2 active:bg-slate-500 w-full text-left"
       >
-        <span className="capitalize text-sm line-clamp-2 mr-4">
+        <span className=" text-sm line-clamp-2 mr-4">
           {firstLetterCapital(name)}
         </span>
         {type === 'lesson' && (
