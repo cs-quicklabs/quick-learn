@@ -15,6 +15,9 @@ import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { en } from '@src/lang/en';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '@src/common/decorators/roles.decorator';
+import { UserTypeIdEnum } from '@quick-learn/shared';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/skills
 @ApiTags('Skills')
@@ -27,6 +30,8 @@ export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'adding skill name' })
   async create(
     @Body() createSkillDto: CreateSkillDto,
@@ -48,6 +53,8 @@ export class SkillsController {
   }
 
   @Patch(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiOperation({ summary: 'Edit skill by id' })
   async update(
@@ -59,6 +66,8 @@ export class SkillsController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiOperation({ summary: 'Delete skill by id' })
   async remove(@Param('id') id: string) {

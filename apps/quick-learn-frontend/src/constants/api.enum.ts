@@ -40,7 +40,8 @@ export enum ContentRepositoryApiEnum {
   COMMUNITY_COURSES = 'course/community-course', // to fetch only community courses is true
   COMMUNITY = 'course/community', //to fetch courses which are community course , unarchived, unapproved
   GET_USER_ROADMAPS = '/users/my-roadmaps',
-  LESSON_PROGRESS = '/lessonprogress',
+  LEADERBOARD_STATUS = '/lesson-progress/leaderboard/list',
+  LESSON_PROGRESS = '/lesson-progress',
   LESSON_FLAGGED = '/lesson/flag',
   GET_FLAGGED_LESSON = '/lesson/flagged',
 }

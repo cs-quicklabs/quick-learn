@@ -6,15 +6,18 @@ import { JwtAuthGuard } from '../auth/guards';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
 import { UpdateTeamDto } from './dto/update-team.dto';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '@src/common/decorators/roles.decorator';
+import { UserTypeIdEnum } from '@quick-learn/shared';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/team
 @ApiTags('Team')
-@UseGuards(JwtAuthGuard)
 @Controller({
   version: '1',
   path: 'team',
 })
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserTypeIdEnum.SUPERADMIN)
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 

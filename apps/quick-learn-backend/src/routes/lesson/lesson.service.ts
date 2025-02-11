@@ -19,6 +19,7 @@ import {
   ILike,
   MoreThan,
   FindOptionsWhere,
+  FindManyOptions,
 } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
@@ -201,8 +202,8 @@ export class LessonService extends PaginationService<LessonEntity> {
     if (q) {
       queryBuilder.andWhere(
         '(lesson.name ILIKE :search OR ' +
-          'lesson.content ILIKE :search OR ' +
-          'course.name ILIKE :search)',
+        'lesson.content ILIKE :search OR ' +
+        'course.name ILIKE :search)',
         { search: `%${q}%` },
       );
     }
@@ -485,13 +486,20 @@ export class LessonService extends PaginationService<LessonEntity> {
     try {
       const skipItems = (page - 1) * limit;
 
-      const findOptions = {
+      const findOptions: FindManyOptions<FlaggedLessonEntity> = {
         relations: {
           user: true,
           lesson: true,
           course: true,
         },
-        where: {},
+        where: {
+          lesson: {
+            archived: false,
+          },
+          course: {
+            archived: false,
+          },
+        },
         skip: skipItems,
         take: limit,
       };
@@ -500,11 +508,14 @@ export class LessonService extends PaginationService<LessonEntity> {
       if (search) {
         findOptions.where = [
           {
+            ...findOptions.where,
             lesson: {
               name: ILike(`%${search}%`),
+              archived: false,
             },
           },
           {
+            ...findOptions.where,
             user: {
               full_name: ILike(`%${search}%`),
             },
