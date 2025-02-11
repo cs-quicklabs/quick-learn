@@ -16,6 +16,9 @@ import { CourseCategoryService } from './course-category.service';
 import { UpdateCourseCategoryDto } from './dto/update-course-category.dto';
 import { en } from '@src/lang/en';
 import { CourseCategoryParamDto } from './dto/course-category-param.dto';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '@src/common/decorators/roles.decorator';
+import { UserTypeIdEnum } from '@quick-learn/shared';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/course-categories
 @ApiTags('Course Categories')
@@ -28,6 +31,8 @@ export class CourseCategoryController {
   constructor(private readonly courseCategoryService: CourseCategoryService) {}
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'Create course category.' })
   async create(
     @Body() createCourseCategoryDto: CreateCourseCategoryDto,
@@ -61,6 +66,8 @@ export class CourseCategoryController {
   }
 
   @Patch(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'Update the course category.' })
   async update(
     @Param() param: CourseCategoryParamDto,
@@ -74,6 +81,8 @@ export class CourseCategoryController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'Delete the course category.' })
   async remove(@Param() param: CourseCategoryParamDto) {
     await this.courseCategoryService.deleteCourseCategory(+param.id);

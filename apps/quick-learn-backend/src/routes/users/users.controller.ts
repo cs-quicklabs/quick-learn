@@ -29,6 +29,9 @@ import { UserRoadmapParamDto } from './dto/user-roadmap-param.dto';
 import { UsercourseParamDto } from './dto/user-course-param.dto';
 import { UserLessonParamDto } from './dto/user-lesson-param.dto';
 import { UserParamDto } from './dto/user-param.dto';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '@src/common/decorators/roles.decorator';
+import { UserTypeIdEnum } from '@quick-learn/shared';
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard)
 @Controller({
@@ -123,6 +126,8 @@ export class UsersController {
     return new SuccessResponse(en.searchResults, searchedQueryResult);
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @Post()
   @ApiOperation({ summary: 'Create new user' })
   async create(
@@ -137,6 +142,8 @@ export class UsersController {
   }
 
   @Get('list')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @ApiOperation({ summary: 'Filter users' })
   async findAll(
     @CurrentUser() user: UserEntity,
@@ -151,6 +158,8 @@ export class UsersController {
   }
 
   @Get('archived')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @ApiOperation({ summary: 'Get Archived Users' })
   async findAllInactiveUsers(
     @CurrentUser() user: UserEntity,
@@ -173,6 +182,8 @@ export class UsersController {
   }
 
   @Post('activate')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @ApiOperation({ summary: 'Activate or deactivate user' })
   async activateUser(
     @Body() body: { userId: number; active: boolean },
@@ -237,6 +248,8 @@ export class UsersController {
   }
 
   @Delete(':userId')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'Permanently delete user by userId' })
   async remove(@Param() param: UserParamDto) {
     await this.usersService.delete({ id: param.userId });

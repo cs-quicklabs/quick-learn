@@ -33,7 +33,7 @@ import { CourseParamDto } from './dto/course-param.dto';
 })
 @UseGuards(JwtAuthGuard)
 export class CourseController {
-  constructor(private service: CourseService) {}
+  constructor(private readonly service: CourseService) {}
 
   @UseGuards(RolesGuard)
   @Roles(UserTypeId.SUPER_ADMIN)

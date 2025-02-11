@@ -28,6 +28,7 @@ import { LessonProgressService } from '../lesson-progress/lesson-progress.servic
 import { MoreThan } from 'typeorm';
 import { LessonParamDto } from './dto/lesson-param.dto';
 import { TokenValidationDto } from './dto/token-validation.dto';
+import { UserTypeIdEnum } from '@quick-learn/shared';
 
 @ApiTags('Lessons')
 @Controller({
@@ -54,6 +55,8 @@ export class LessonController {
 
   @ApiOperation({ summary: 'Get all unapproved the lessons.' })
   @Get('unapproved')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   /**
    * Retrieves all unapproved lessons.
    * @returns A list of lessons.
@@ -65,6 +68,8 @@ export class LessonController {
 
   @ApiOperation({ summary: 'Get all archived lessons.' })
   @Get('archived')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   async findAllArchivedLessons(
     @Query() paginationDto: PaginationDto,
   ): Promise<SuccessResponse> {
@@ -79,6 +84,8 @@ export class LessonController {
 
   @ApiOperation({ summary: 'Get all flagged lessons with optional search.' })
   @Get('flagged')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   async findAllFlaggedLessons(
     @Query() paginationDto: BasePaginationDto,
   ): Promise<SuccessResponse> {
@@ -139,6 +146,8 @@ export class LessonController {
 
   @ApiOperation({ summary: 'Update an existing lesson.' })
   @Patch('/:id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   /**
    * Updates an existing lesson.
    * @param id The id of the lesson that needs to be updated.
@@ -223,6 +232,8 @@ export class LessonController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   @ApiOperation({ summary: 'Permanently delete a lesson' })
   async deleteLesson(@Param() param: LessonParamDto): Promise<SuccessResponse> {
     await this.service.deleteLesson(+param.id);

@@ -19,7 +19,7 @@ import { LessonProgressCompleteDto } from './dto/lesson-progress-complete.dto';
 import { LessonProgressCheckDto } from './dto/lesson-progress-check.dto';
 
 @ApiTags('Lesson Progress')
-@Controller({ path: 'lessonprogress', version: '1' })
+@Controller({ path: 'lesson-progress', version: '1' })
 @UseGuards(JwtAuthGuard)
 export class LessonProgressController {
   constructor(private readonly lessonProgressService: LessonProgressService) {}
@@ -77,26 +77,33 @@ export class LessonProgressController {
     return new SuccessResponse(en.courseCompletedLessons, data);
   }
 
-  @Get('/userprogress/:userID?')
+  @ApiParam({
+    name: 'userID',
+    required: false,
+    type: 'string',
+    description: 'user ID',
+  })
+  @Get('/user-progress/:userID?')
   async getAllUserProgress(
     @CurrentUser() curentUser,
-    @Param('userID') userID?: number,
+    @Param('userID') userID?: string,
   ) {
+    console.log(userID);
     const data =
       await this.lessonProgressService.getUserLessonProgressViaCourse(
-        userID ? userID : curentUser.id,
+        !isNaN(+userID) ? +userID : curentUser.id,
       );
     return new SuccessResponse(en.userProgressGrouped, data);
   }
 
   @ApiParam({
     name: 'userID',
-    required: false,
+    required: true,
     type: Number,
     description: 'user ID',
   })
   @Get('daily-lesson/:userID')
-  async getAllDailyLesson(@Param('userID') userID?: number) {
+  async getAllDailyLesson(@Param('userID') userID: number) {
     const data = await this.lessonProgressService.getDailyLessonProgress(
       userID,
     );

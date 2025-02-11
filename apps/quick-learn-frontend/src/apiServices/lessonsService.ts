@@ -159,7 +159,7 @@ export const getUserProgress = async (
   const response = await axiosInstance.get<
     AxiosSuccessResponse<UserLessonProgress[]>
   >(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/userprogress${
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/user-progress${
       userId ? `/${userId}` : ''
     }`,
   );
