@@ -20,12 +20,22 @@ describe('Login Test', () => {
     EditUser.getTeamsColumnData();
   });
 
-  it('Verify Error Validation', () => {
+  it('Verify Error Validations', () => {
     const EditUser = new EditTeamMember();
     EditUser.ErrorValidation();
   });
 
-  it('Admin able to Add Team', () => {
+  it('Verify Team member is not getting added on passing only spaces', () => {
+    const EditUser = new EditTeamMember();
+    EditUser.validateFieldWithEmptySpaces();
+  });
+
+  it('Verify User should not able to Add a team member with incorrect data', () => {
+    const EditUser = new EditTeamMember();
+    EditUser.InvalidDataTest();
+  });
+
+  it('Verify that Admin should able to Add Team', () => {
     const EditUser = new EditTeamMember();
     const randomFirstName = faker.person.firstName();
     const randomLastName = faker.person.lastName();
@@ -40,6 +50,21 @@ describe('Login Test', () => {
     EditUser.getConfirmPassword().type('Password@123');
     EditUser.getSkillID();
     EditUser.submitAddTeamButton();
+  });
+
+  it('Verify Admin able to Assign Roadmaps', () => {
+    const EditUser = new EditTeamMember();
+    EditUser.AssignRoadmap();
+  });
+
+  it('Verify Admin able to Unassign Roadmaps', () => {
+    const EditUser = new EditTeamMember();
+    EditUser.UnassignRoadmap();
+  });
+
+  it('Verify Save button remains disabled on selecting zero roadmaps ', () => {
+    const EditUser = new EditTeamMember();
+    EditUser.SaveDisable();
   });
 
   it('Verify Super admin able to edit users ', () => {

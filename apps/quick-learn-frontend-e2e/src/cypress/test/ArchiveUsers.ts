@@ -50,7 +50,7 @@ export class ArchiveUsers {
   }
 
   getActivateUserMessage() {
-    cy.get('div.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('User has been activated successfully')
       .should('be.visible');
   }
@@ -72,7 +72,7 @@ export class ArchiveUsers {
   }
 
   getDeleteUserMessage() {
-    cy.get('div.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('User has been permanently deleted')
       .should('be.visible');
   }

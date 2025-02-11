@@ -2,7 +2,7 @@ import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
 import { ArchiveRoadmaps } from '../test/ArchiveRoadmaps';
 
-describe('Activate and Delete Users', () => {
+describe('Activate and Delete Roadmaps', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {

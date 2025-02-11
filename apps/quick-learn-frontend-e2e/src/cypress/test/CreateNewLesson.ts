@@ -17,16 +17,7 @@ export class CreateNewLesson {
     });
     cy.get('main div div div a').eq(0).click();
     cy.get('p.text-sm').contains('created this course on');
-    // cy.get('.text-lg').contains('No Lessons found');
   }
-
-  // getCourseListToEdit() {
-  // cy.get('main div div div a').each(($el, index) => {
-  //     cy.log(`Index: ${index}, Text: ${$el.text()}`);
-  //   });
-  //  cy.get('main div div div a').eq(1).click();
-  //   cy.get('button.inline-flex').contains('Create New Lesson').click();
-  // }
 
   checkIfLessonsExist() {
     return cy.get('main div div div a').then(($main) => {
@@ -108,7 +99,7 @@ export class CreateNewLesson {
 
   getSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Successfully created a lesson.')
       .should('be.visible');
   }
@@ -119,7 +110,7 @@ export class CreateNewLesson {
 
   getArchiveSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Lesson archived successfully.')
       .should('be.visible');
   }
@@ -129,7 +120,6 @@ export class CreateNewLesson {
     cy.get('.text-2xl').contains('All Roadmaps');
     this.getRoadMapsList();
     this.getCourseList();
-    // this.checkIfLessonsExist();
     this.getCreateNewLessonButton();
   }
 

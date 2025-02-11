@@ -50,7 +50,7 @@ export class ArchiveCourses {
   }
 
   getActivateCourseMessage() {
-    cy.get('div.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Course has been restored successfully')
       .should('be.visible');
   }
@@ -72,7 +72,7 @@ export class ArchiveCourses {
   }
 
   getDeleteCourseMessage() {
-    cy.get('div.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Course has been permanently deleted')
       .should('be.visible');
   }

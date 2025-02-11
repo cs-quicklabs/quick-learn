@@ -2,7 +2,7 @@ import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
 import { ArchiveCourses } from '../test/ArchiveCourses';
 
-describe('Activate and Delete Users', () => {
+describe('Activate and Delete Course', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {

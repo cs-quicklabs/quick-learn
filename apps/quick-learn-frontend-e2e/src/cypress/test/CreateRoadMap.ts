@@ -59,6 +59,7 @@ export class CreateNewRoadMap {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
     cy.get('section div a').eq(0).click();
+    cy.get('h2.text-2xl').contains('All Courses').should('be.visible');
   }
 
   UpdateRoadMapCategory() {
@@ -81,21 +82,21 @@ export class CreateNewRoadMap {
 
   getSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Roadmap created Successfully.')
       .should('be.visible');
   }
 
   getEditSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Roadmap updated successfully.')
       .should('be.visible');
   }
 
   getAddExistingCoursesButton() {
     cy.get('p.text-sm').contains('created this roadmap on');
-    cy.get('button.text-black').eq(0).click();
+    cy.get('button.text-black').eq(1).click();
     cy.get('.text-xl').contains('Add existing Courses');
   }
 
@@ -104,12 +105,11 @@ export class CreateNewRoadMap {
     cy.get('[data-testid="flowbite-accordion-heading"]').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('[data-testid="flowbite-accordion-heading"]').eq(0).click();
   }
 
   EnsureExistingCoursesUnchecked() {
     cy.get('[type="checkbox"]')
-      .eq(5)
+      .eq(0)
       .then(($checkbox) => {
         if ($checkbox.is(':checked')) {
           cy.wrap($checkbox).uncheck();
@@ -122,18 +122,18 @@ export class CreateNewRoadMap {
 
   getAddExistingCoursesSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Successfully assigned courses to roadmap.');
   }
 
   getArchiveRoadmapButton() {
     cy.get('p.text-sm').contains('created this roadmap on');
-    cy.get('button.text-black').eq(0).click();
+    cy.get('button.text-black').eq(2).click();
     cy.contains("Yes, I'm sure").click();
   }
   getArchiveSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Roadmap status updated successfully.')
       .should('be.visible');
   }
@@ -166,7 +166,7 @@ export class CreateNewRoadMap {
 
   getCourseSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Course created Successfully.')
       .should('be.visible');
   }
@@ -188,6 +188,14 @@ export class CreateNewRoadMap {
     this.BlankRoadmapDescription();
     this.getCancelButton();
   }
+
+  ValidationTest() {
+    this.visitContentPage();
+    cy.get('.text-2xl').contains('All Roadmaps');
+    this.getCreateNewRoadMap();
+    this.EnterRoadMapName();
+  }
+
   CreateRoadmapWithLimitExceed() {
     this.visitContentPage();
     cy.get('.text-2xl').contains('All Roadmaps');

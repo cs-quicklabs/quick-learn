@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 export class ArchiveLessons {
   visitAccountsPage() {
     return cy.get('[id="headerProfileImage"]').click();
@@ -15,29 +16,43 @@ export class ArchiveLessons {
   getSearchLesson() {
     cy.get('.text-lg').contains('Archived Lessons').should('be.visible');
     cy.get('#default-search').type('Lesson');
+
     cy.get('body').then(($body) => {
-      if ($body.find('h3.text-lg:contains("No results found")').length > 0) {
-        cy.contains('No results found').should('be.visible');
-      } else {
+      if ($body.find('div.p-4').length > 0) {
+        cy.get('div.p-4').should('have.length.greaterThan', 0);
+        cy.log('Lessons found.');
         cy.get('div.p-4').each(($el, index) => {
           cy.log(`Index: ${index}, Text: ${$el.text()}`);
         });
-        cy.get('div.p-4').eq(0);
+
         cy.get('div.mt-2 > div > p')
           .contains('Deactivated on')
           .should('be.visible');
+      } else {
+        cy.get('.text-lg').contains('No results found').should('exist');
+        cy.log('No results found.');
       }
     });
   }
 
   getActivateLessonList() {
-    cy.get('.text-lg').contains('Archived Lessons').should('be.visible');
-    cy.get('div.justify-end > button:nth-child(1)').each(($el, index) => {
-      cy.log(`Index: ${index}, Text: ${$el.text()}`);
-    });
-    cy.get('div.mt-2 > div > p')
-      .contains('Deactivated on')
-      .should('be.visible');
+    cy.get('.text-lg')
+      .contains('Archived Lessons')
+      .then(($noLessons) => {
+        if ($noLessons.find('.text-lg:contains("No lessons")').length > 0) {
+          cy.log('No lesson found.');
+        } else {
+          cy.get('.text-lg').contains('Archived Lessons').should('be.visible');
+          cy.get('div.justify-end > button:nth-child(1)').each(($el, index) => {
+            cy.log(`Index: ${index}, Text: ${$el.text()}`);
+          });
+          cy.get('div.mt-2 > div > p')
+            .contains('Deactivated on')
+            .should('be.visible');
+          this.getActivateLessonButton();
+          this.getActivateLessonMessage();
+        }
+      });
   }
 
   getActivateLessonButton() {
@@ -50,7 +65,7 @@ export class ArchiveLessons {
   }
 
   getActivateLessonMessage() {
-    cy.get('div.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Lesson has been successfully restored')
       .should('be.visible');
   }
@@ -63,6 +78,24 @@ export class ArchiveLessons {
     cy.get('div.mt-2 > div > p')
       .contains('Deactivated on')
       .should('be.visible');
+
+    cy.get('.text-lg')
+      .contains('Archived Lessons')
+      .then(($noLessons) => {
+        if ($noLessons.find('.text-lg:contains("No lessons")').length > 0) {
+          cy.log('No lesson found.');
+        } else {
+          cy.get('.text-lg').contains('Archived Lessons').should('be.visible');
+          cy.get('button.ml-4').each(($el, index) => {
+            cy.log(`Index: ${index}, Text: ${$el.text()}`);
+          });
+          cy.get('div.mt-2 > div > p')
+            .contains('Deactivated on')
+            .should('be.visible');
+          this.getDeleteLessonButton();
+          this.getDeleteLessonMessage();
+        }
+      });
   }
 
   getDeleteLessonButton() {
@@ -72,7 +105,7 @@ export class ArchiveLessons {
   }
 
   getDeleteLessonMessage() {
-    cy.get('div.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Lesson has been permanently deleted')
       .should('be.visible');
   }

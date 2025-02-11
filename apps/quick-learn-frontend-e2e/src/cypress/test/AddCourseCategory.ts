@@ -20,6 +20,12 @@ export class AddCourseCategory {
   AddCourseCategoryWithOnlySpaces() {
     return cy.get('#course_categories_input_text').type('    ');
   }
+
+  AddCourseCategoryWithSpecialChar() {
+    cy.get('#course_categories_input_text').type('@#@#@$');
+    cy.get('p.mt-1').should('contain', 'Special characters are not allowed');
+    cy.get('.flex-wrap > .false').should('be.disabled');
+  }
   AddCourseCategoryWithMoreLimit() {
     return cy
       .get('#course_categories_input_text')
@@ -34,7 +40,9 @@ export class AddCourseCategory {
   getErrorMessage() {
     return cy.get('.mt-1');
   }
-
+  getSuccessMessage() {
+    return cy.get('div.Toastify__toast--success');
+  }
   editCourseCategories() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
@@ -49,13 +57,34 @@ export class AddCourseCategory {
     cy.get('.ml-5').should('be.disabled');
     cy.get('td > .px-2').should('contain', 'This field is mandatory');
   }
+  editCourseCategoryWithSpecialChars() {
+    cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
+    cy.get('#course_categories_name_edit').clear();
+    cy.get('#course_categories_name_edit').type('$#@$#@#$%');
+    cy.get('button.ml-5').should('be.disabled');
+    cy.get('td > .px-2').should(
+      'contain',
+      'Special characters are not allowed',
+    );
+  }
 
+  EditCourseCategoryWithMoreLimit() {
+    cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
+    cy.get('#course_categories_name_edit').clear();
+    cy.get('#course_categories_name_edit').type(
+      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem',
+    );
+    cy.get('td > .px-2').should(
+      'contain',
+      'The value should not exceed 30 characters.',
+    );
+  }
   deleteCourseCategory() {
-    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
   }
 
   deleteCourseCategoryAssociatedWithCourses() {
-    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
     cy.get('[class="flex-1 overflow-auto p-0"]');
     cy.get('button.bg-white.uppercase').click();
   }

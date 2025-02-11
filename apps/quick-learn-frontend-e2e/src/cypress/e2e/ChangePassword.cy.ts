@@ -29,6 +29,18 @@ describe('Change Password', () => {
     changePassword.UpdatePasswordWithDifferentNewAndConfirmPassword();
   });
 
+  it('Verify user not able to update password when length is small', () => {
+    const changePassword = new ChangePassword();
+    changePassword.getChangePassword();
+    changePassword.UpdatePasswordWithLesserLength();
+  });
+
+  it('Verify user not able to update password when password is lengthy', () => {
+    const changePassword = new ChangePassword();
+    changePassword.getChangePassword();
+    changePassword.UpdatePasswordWithLimitExceed();
+  });
+
   it('Verify User should not able to update password with invalid data', () => {
     const changePassword = new ChangePassword();
     changePassword.getChangePassword();

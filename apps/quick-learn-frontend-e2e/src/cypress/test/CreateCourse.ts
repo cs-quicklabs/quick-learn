@@ -86,14 +86,14 @@ export class CreateNewCourse {
 
   getSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Course created Successfully.')
       .should('be.visible');
   }
 
   getEditSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Course updated successfully.')
       .should('be.visible');
   }
@@ -132,7 +132,7 @@ export class CreateNewCourse {
   }
   getArchiveSuccessMessage() {
     return cy
-      .get('.Toastify__toast-body')
+      .get('div.Toastify__toast')
       .contains('Course archived successfully.')
       .should('be.visible');
   }

@@ -1,6 +1,8 @@
 import { LoginPage } from '../test/Login';
 import {
+  Admin1ValidCredentials,
   EditorValidCredentials,
+  MemberValidCredentials,
   validCredentials,
 } from '../fixtures/credential';
 
@@ -23,11 +25,14 @@ describe('Login Test', () => {
     loginPage.getErrorMessage().should('contain', 'Wrong Credentials!');
   });
 
-  it('should log in with valid credentials', () => {
+  it('Should display an error for incorrect data passed', () => {
+    loginPage.loginWithIncorrectData();
+  });
+
+  it('should log in with valid credentials of Super Admin', () => {
     loginPage.login(validCredentials.mail, validCredentials.password);
 
     cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
   });
   it('should not allow login with empty email and password fields', () => {
     loginPage.loginWithEmptyValue();
@@ -37,6 +42,24 @@ describe('Login Test', () => {
     loginPage.loginAsEditor(
       EditorValidCredentials.EditorMail,
       EditorValidCredentials.EditorPassword,
+    );
+
+    cy.url().should('include', '/dashboard');
+  });
+
+  it('should log in with Admin valid credentials', () => {
+    loginPage.loginAsAdmin(
+      Admin1ValidCredentials.Admin1Mail,
+      Admin1ValidCredentials.Admin1Password,
+    );
+
+    cy.url().should('include', '/dashboard');
+  });
+
+  it('should log in with Member valid credentials', () => {
+    loginPage.loginAsMember(
+      MemberValidCredentials.MemberMail,
+      MemberValidCredentials.MemberPassword,
     );
 
     cy.url().should('include', '/dashboard');

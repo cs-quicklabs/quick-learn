@@ -39,4 +39,20 @@ describe('Primary Skill Update', () => {
     myProfiles.getMyProfile();
     myProfiles.UpdateLastNameWithEmptySpaces();
   });
+  it('Verify error message is displayed when incorrect data is entered in the First and Last names ', () => {
+    const myProfiles = new Profile();
+    myProfiles.getMyProfile();
+    myProfiles.UpdateNameFieldWithIncorrectData();
+  });
+  it('Verify user not able to edit the email', () => {
+    const myProfiles = new Profile();
+    myProfiles.getMyProfile();
+    myProfiles.EmailFieldDisabled();
+  });
+  it('Verify User should not able to Upload Profile Pic more than 1 MB ', () => {
+    const myProfiles = new Profile();
+    myProfiles.getMyProfile();
+    myProfiles.uploadPicWithMoreMB();
+    myProfiles.uploadPic();
+  });
 });

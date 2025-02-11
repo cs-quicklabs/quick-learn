@@ -29,7 +29,7 @@ describe('New Lesson Creation', () => {
       parseSpecialCharSequences: false,
     });
     cy.get('button[type="submit"]').click();
-    cy.get('.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Successfully created a lesson.')
       .should('be.visible');
   });
@@ -39,7 +39,7 @@ describe('New Lesson Creation', () => {
     NewLesson.LessonCreationWithWhiteSpaces();
   });
 
-  it('Verify user not able to create lesson with exceeded limit', () => {
+  it('Verify user not able to create lesson title with exceeded limit', () => {
     const NewLesson = new CreateNewLesson();
     NewLesson.CreateLessonWithLimitExceed();
   });
@@ -53,7 +53,7 @@ describe('New Lesson Creation', () => {
     cy.get('div.ql-editor').clear();
     cy.get('div.ql-editor').type(lesson.content);
     cy.get('button[type="submit"]').click();
-    cy.get('.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Successfully updated a lesson.')
       .should('be.visible');
   });

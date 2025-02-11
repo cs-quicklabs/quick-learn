@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker';
 
 describe('New Course Creation', () => {
   const loginPage = new LoginPage();
-  const generateRandomLesson = () => ({
+  const generateRandomCourseTitle = () => ({
     title: faker.lorem.sentence(10),
   });
   beforeEach(() => {
@@ -24,10 +24,10 @@ describe('New Course Creation', () => {
     NewCourse.getCreateNewCourseButton();
     NewCourse.EnterCourseName();
     NewCourse.SelectCourseCategory();
-    const lesson = generateRandomLesson();
-    cy.get('#addCourseForm_textarea_description').type(lesson.title);
+    const course = generateRandomCourseTitle();
+    cy.get('#addCourseForm_textarea_description').type(course.title);
     cy.get('[type="submit"]').click();
-    cy.get('.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Course created successfully.')
       .should('be.visible');
   });
@@ -54,10 +54,10 @@ describe('New Course Creation', () => {
   it('Verify user able to Edit course', () => {
     const NewCourse = new CreateNewCourse();
     NewCourse.EditCourse();
-    const lesson = generateRandomLesson();
-    cy.get('#addCourseForm_textarea_description').type(lesson.title);
+    const course = generateRandomCourseTitle();
+    cy.get('#addCourseForm_textarea_description').type(course.title);
     cy.get('[type="submit"]').click();
-    cy.get('.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Course updated successfully.')
       .should('be.visible');
   });

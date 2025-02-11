@@ -23,7 +23,7 @@ describe('New RoadMap Creation', () => {
     const lesson = generateRandomLesson();
     cy.get('#addRoadmapForm_textarea_description').type(lesson.title);
     cy.get('[type="submit"]').click();
-    cy.get('.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Roadmap created Successfully.')
       .should('be.visible');
   });
@@ -31,6 +31,14 @@ describe('New RoadMap Creation', () => {
   it('Verify user not able to create empty roadmap', () => {
     const NewRoadmap = new CreateNewRoadMap();
     NewRoadmap.RoadMapWithWhiteSpaces();
+  });
+
+  it('Verify user not able to create roadmap without selecting any category', () => {
+    const NewRoadmap = new CreateNewRoadMap();
+    NewRoadmap.ValidationTest();
+    const lesson = generateRandomLesson();
+    cy.get('#addRoadmapForm_textarea_description').type(lesson.title);
+    cy.get('[type="submit"]').should('be.disabled');
   });
 
   it('Verify user not able to create roadmap with exceeded limit', () => {
@@ -53,7 +61,7 @@ describe('New RoadMap Creation', () => {
     const lesson = generateRandomLesson();
     cy.get('#addRoadmapForm_textarea_description').type(lesson.title);
     cy.get('[type="submit"]').click();
-    cy.get('.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Roadmap updated successfully.')
       .should('be.visible');
   });
@@ -79,7 +87,7 @@ describe('New RoadMap Creation', () => {
     const lesson = generateRandomLesson();
     cy.get('#addCourseForm_textarea_description').type(lesson.title);
     cy.get('[type="submit"]').click();
-    cy.get('.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Course created successfully.')
       .should('be.visible');
   });

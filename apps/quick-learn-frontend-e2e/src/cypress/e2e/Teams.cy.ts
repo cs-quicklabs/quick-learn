@@ -19,10 +19,6 @@ describe('Login Test', () => {
     Teams.getTeamsColumnData();
   });
 
-  it('Verify Complete Team members List', () => {
-    const Teams = new TeamsPage();
-    Teams.filterCompleteList();
-  });
   it('Verify User able to filter admin list', () => {
     const Teams = new TeamsPage();
     Teams.filterAdminList();
@@ -35,6 +31,12 @@ describe('Login Test', () => {
     const Teams = new TeamsPage();
     Teams.filterMembersList();
   });
+
+  it('Verify Complete Team members List', () => {
+    const Teams = new TeamsPage();
+    Teams.filterCompleteList();
+  });
+
   it('Verify Super admin able to Search Users', () => {
     const Teams = new TeamsPage();
     Teams.visitTeamPage().click();

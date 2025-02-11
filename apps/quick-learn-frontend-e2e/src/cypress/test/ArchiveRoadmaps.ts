@@ -50,7 +50,7 @@ export class ArchiveRoadmaps {
   }
 
   getActivateRoadmapMessage() {
-    cy.get('div.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Roadmap has been successfully restored')
       .should('be.visible');
   }
@@ -72,7 +72,7 @@ export class ArchiveRoadmaps {
   }
 
   getDeleteRoadmapMessage() {
-    cy.get('div.Toastify__toast-body')
+    cy.get('div.Toastify__toast')
       .contains('Roadmap has been permanently deleted')
       .should('be.visible');
   }
