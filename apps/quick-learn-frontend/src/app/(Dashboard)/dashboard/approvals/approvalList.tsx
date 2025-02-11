@@ -1,21 +1,24 @@
 'use client';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import { format } from 'date-fns';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import ApprovalListSkeleton from './ApprovalListSkeleton';
 import {
   fetchUnapprovedLessons,
   getApprovalLessionListLoading,
   getApprovalLessionList,
   getApprovalLessionListInitialLoad,
+  selectPagination,
 } from '@src/store/features/approvalSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
 import { SuperLink } from '@src/utils/HiLink';
-import { RootState } from '@src/store/store';
 import { debounce } from '@src/utils/helpers';
+import {
+  ApprovalListDataSkeleton,
+  ApprovalListSkeleton,
+} from './ApprovalListSkeleton';
 
 const columns = [
   en.common.lesson,
@@ -29,21 +32,23 @@ function ApprovalList() {
   const lessons = useAppSelector(getApprovalLessionList);
   const isLoading = useAppSelector(getApprovalLessionListLoading);
   const isInitialLoad = useAppSelector(getApprovalLessionListInitialLoad);
-  const { page, totalPages, total } = useAppSelector(
-    (state: RootState) => state.approval,
-  );
+  const { page, totalPages, total } = useAppSelector(selectPagination);
   const [limit] = useState(10);
   const [search, setSearch] = useState('');
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchLessons = (pageNum: number, searchTerm: string) => {
-    dispatch(fetchUnapprovedLessons({ page: pageNum, limit, q: searchTerm }));
-  };
+  const fetchLessons = useCallback(
+    (pageNum: number, searchTerm: string) => {
+      dispatch(fetchUnapprovedLessons({ page: pageNum, limit, q: searchTerm }));
+    },
+    [dispatch, limit],
+  );
 
-  // Debounced search function
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSearch = useCallback(
-    debounce((searchTerm: string) => fetchLessons(1, searchTerm), 300),
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((searchTerm: string) => {
+        fetchLessons(1, searchTerm);
+      }, 500),
     [fetchLessons],
   );
 
@@ -53,14 +58,15 @@ function ApprovalList() {
   }, []);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isInitialLoad) {
       dispatch(
         updateSystemPreferencesData({
           unapproved_lessons: total,
         }),
       );
     }
-  }, [dispatch, isLoading, total]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, isInitialLoad]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -86,7 +92,7 @@ function ApprovalList() {
     debouncedSearch(searchTerm);
   };
 
-  if (isInitialLoad && isLoading) return <ApprovalListSkeleton />;
+  if (isInitialLoad) return <ApprovalListSkeleton />;
 
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
@@ -110,7 +116,7 @@ function ApprovalList() {
             </div>
           </div>
         </div>
-        <div className={`overflow-x-auto ${isLoading ? 'opacity-60' : ''}`}>
+        <div className={`overflow-x-auto ${isInitialLoad ? 'opacity-60' : ''}`}>
           <table className="w-full text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
@@ -172,14 +178,10 @@ function ApprovalList() {
               )}
             </tbody>
           </table>
+          {isLoading && !isInitialLoad && <ApprovalListDataSkeleton />}
         </div>
       </div>
       <div ref={observerRef} className="h-10" />
-      {isLoading && !isInitialLoad && (
-        <div className="fixed top-4 right-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700" />
-        </div>
-      )}
     </div>
   );
 }

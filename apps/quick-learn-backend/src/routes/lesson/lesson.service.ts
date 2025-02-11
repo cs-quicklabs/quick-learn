@@ -13,7 +13,13 @@ import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
 import { PaginatedResult } from '@src/common/interfaces';
-import { Repository, DataSource, ILike, MoreThan } from 'typeorm';
+import {
+  Repository,
+  DataSource,
+  ILike,
+  MoreThan,
+  FindOptionsWhere,
+} from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
@@ -311,37 +317,39 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @returns A promise that resolves to a list of LessonEntity
    */
   async getUnapprovedLessons(page = 1, limit = 10, q = '') {
-    const queryBuilder = this.repository
-      .createQueryBuilder('lesson')
-      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
-      .innerJoin('lesson.course', 'course')
-      .where('course.archived = :courseArchived', { courseArchived: false })
-      .andWhere('lesson.archived = :archived', { archived: false })
-      .andWhere('lesson.approved = :approved', { approved: false });
+    let options:
+      | FindOptionsWhere<LessonEntity>
+      | FindOptionsWhere<LessonEntity>[] = {
+      archived: false,
+      approved: false,
+      course: {
+        archived: false,
+      },
+    };
 
     if (q) {
-      queryBuilder.andWhere(
-        '(LOWER(lesson.name) LIKE LOWER(:search) OR LOWER(created_by_user.first_name) LIKE LOWER(:search) OR LOWER(created_by_user.last_name) LIKE LOWER(:search))',
-        { search: `%${q}%` },
-      );
+      options = [
+        {
+          ...options,
+          name: ILike(`%${q}%`),
+        },
+        {
+          ...options,
+          created_by_user: {
+            full_name: ILike(`%${q}%`),
+          },
+        },
+      ];
     }
 
-    queryBuilder.orderBy('lesson.created_at', 'DESC');
-    const skip = (page - 1) * limit;
-
-    const total = await this.getUnApprovedLessonCount();
-
-    queryBuilder.skip(skip).take(limit);
-
-    const data = await queryBuilder.getMany();
-
-    return {
-      data,
-      total,
-      page,
-      limit,
-      total_pages: Math.ceil(total / limit),
-    };
+    return await this.paginate(
+      {
+        page,
+        limit,
+      },
+      options,
+      ['created_by_user', 'course'],
+    );
   }
 
   async validateLessionToken(

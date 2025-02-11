@@ -79,14 +79,14 @@ const approvalSlice = createSlice({
       .addCase(fetchUnapprovedLessons.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isInitialLoad = false;
-        const { data, page, limit, total, total_pages } = action.payload;
+        const { items, page, limit, total, total_pages } = action.payload;
 
         state.page = page;
         state.limit = limit;
         state.total = total;
         state.totalPages = total_pages;
         // Append lessons if not on the first page, otherwise replace them
-        state.lessons = page === 1 ? data : [...state.lessons, ...data];
+        state.lessons = page === 1 ? items : [...state.lessons, ...items];
 
         // Determine if there are more pages to fetch
         state.hasMore = page < total_pages;
@@ -94,7 +94,7 @@ const approvalSlice = createSlice({
       .addCase(fetchUnapprovedLessons.rejected, (state, action) => {
         state.isLoading = false;
         state.isInitialLoad = false;
-        state.error = action.error?.message || 'Failed to fetch lessons';
+        state.error = action.error?.message ?? 'Failed to fetch lessons';
       })
       .addCase(approveLessonThunk.fulfilled, (state, action) => {
         state.lessons = state.lessons.filter(
