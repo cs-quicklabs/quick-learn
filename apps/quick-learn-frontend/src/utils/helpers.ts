@@ -184,3 +184,7 @@ export const calculateCourseProgress = (
     ? Math.round((completedCount / totalLessons) * 100)
     : 0;
 };
+export const firstLetterCapital = (text: string | undefined) => {
+  if (typeof text !== 'string' || text.length === 0) return '';
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};

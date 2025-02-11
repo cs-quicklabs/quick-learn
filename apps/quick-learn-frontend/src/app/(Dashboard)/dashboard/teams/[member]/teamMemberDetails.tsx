@@ -260,7 +260,7 @@ function TeamMemberDetails() {
         {/* Roadmaps Section */}
         <section className="mb-12">
           <div className="flex items-baseline mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold capitalize">
+            <h2 className="text-2xl md:text-3xl font-bold ">
               {en.common.roadmaps}
             </h2>
             <p className="ml-2 text-sm text-gray-500">
@@ -316,7 +316,7 @@ function TeamMemberDetails() {
         {/* Courses Section */}
         <section>
           <div className="flex items-baseline mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold capitalize">
+            <h2 className="text-2xl md:text-3xl font-bold ">
               {en.common.courses}
             </h2>
             <p className="ml-2 text-sm text-gray-500">
