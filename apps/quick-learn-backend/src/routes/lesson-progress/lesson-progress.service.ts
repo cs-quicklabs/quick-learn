@@ -205,16 +205,10 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     return userDailyLessonProgress;
   }
 
-  async getLeaderboardDataService() {
-    const fromPreviousMonday = previousMonday(
-      new Date(new Date().setHours(7, 0, 0, 0)),
-    );
-
-    const allUsers = await this.LessonTokenRepository.createQueryBuilder(
-      'lesson_token',
-    )
+  async getAllUserProgressData(thisDate: Date) {
+    return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
       .where('lesson_token.created_at >= :fromPreviousMonday', {
-        fromPreviousMonday: fromPreviousMonday.toISOString(),
+        fromPreviousMonday: thisDate.toISOString(),
       })
       .leftJoinAndSelect('lesson_token.user', 'user')
       .select([
@@ -226,25 +220,37 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       ])
       .groupBy('user.id')
       .getRawMany();
+  }
 
-    const completedLessonsData =
-      await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-        .where('lesson_token.created_at >= :fromPreviousMonday ', {
-          fromPreviousMonday: fromPreviousMonday.toISOString(),
-        })
-        .andWhere('lesson_token.status = :status', { status: 'COMPLETED' })
-        .select('lesson_token.user_id', 'userId')
-        .addSelect('ARRAY_AGG(lesson_token.lesson_id)', 'lessonIds')
-        .addSelect('ARRAY_AGG(lesson_token.created_at)', 'createdAtArray')
-        .groupBy('lesson_token.user_id')
-        .getRawMany();
+  async getAllUserCompletedLessonData(thisDate: Date) {
+    return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
+      .where('lesson_token.created_at >= :fromPreviousMonday ', {
+        fromPreviousMonday: thisDate.toISOString(),
+      })
+      .andWhere('lesson_token.status = :status', { status: 'COMPLETED' })
+      .select('lesson_token.user_id', 'userId')
+      .addSelect('ARRAY_AGG(lesson_token.lesson_id)', 'lessonIds')
+      .addSelect('ARRAY_AGG(lesson_token.created_at)', 'createdAtArray')
+      .groupBy('lesson_token.user_id')
+      .getRawMany();
+  }
+
+  async getLeaderboardDataService() {
+    const fromPreviousMonday = previousMonday(
+      new Date(new Date().setHours(7, 0, 0, 0)),
+    );
+    //get all user with
+    const allUsers = await this.getAllUserProgressData(fromPreviousMonday);
+
+    const completedLessonsData = await this.getAllUserCompletedLessonData(
+      fromPreviousMonday,
+    );
 
     // return formattedData;
     const completedLessonsMap = new Map(
       completedLessonsData.map((data) => [data.userId, data]),
     );
 
-    // Format the data for all users
     const formattedData = allUsers.map((user) => {
       const completedData = completedLessonsMap.get(user.user_id);
 
@@ -274,7 +280,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
         if (entry.lessonIds.length === 0) {
           return {
             ...entry,
-            lessonCompleted: 0,
+            lesson_completed_count: 0,
             average_completion_time: 0,
           };
         }
@@ -312,7 +318,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
         return {
           ...entry,
-          lessonCompleted: completedLessons.length,
+          lesson_completed_count: completedLessons.length,
           average_completion_time: +averageCompletionTime.toFixed(2),
         };
       }),
@@ -320,26 +326,25 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
     leaderBoardWithPercentage.sort((a, b) => {
       // Sort by lessonCompleted (higher is better)
-      if (b.lessonCompleted !== a.lessonCompleted) {
-        return b.lessonCompleted - a.lessonCompleted;
+      if (b.lesson_completed_count !== a.lesson_completed_count) {
+        return b.lesson_completed_count - a.lesson_completed_count;
       }
       // If lessonCompleted is the same, sort by average_completion_time (lower is better)
       return a.average_completion_time - b.average_completion_time;
     });
 
-    return { leaderBoardWithPercentage };
+    return leaderBoardWithPercentage;
   }
   // create leaderboard entry once a week using cron job
   async createLeaderboardRanking() {
     await this.deleteLeaderboardData();
     const LeaderboardData = await this.calculateLeaderBoardPercentage();
-    const leaderboardEntry = LeaderboardData.leaderBoardWithPercentage.map(
-      (entry, index) =>
-        this.leaderboardRepository.create({
-          userId: entry.user_id,
-          lessonsCompleted: entry.lessonCompleted,
-          rank: index + 1,
-        }),
+    const leaderboardEntry = LeaderboardData.map((entry, index) =>
+      this.leaderboardRepository.create({
+        user_id: entry.user_id,
+        lessons_completed_count: entry.lesson_completed_count,
+        rank: index + 1,
+      }),
     );
 
     return this.leaderboardRepository.save(leaderboardEntry);

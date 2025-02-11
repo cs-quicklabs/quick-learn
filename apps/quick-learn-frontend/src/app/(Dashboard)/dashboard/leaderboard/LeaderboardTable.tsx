@@ -8,7 +8,7 @@ import { TUser } from '@src/shared/types/userTypes';
 
 interface LeaderboardData {
   user_id: number;
-  lessonsCompleted: number;
+  lessons_completed_count: number;
   rank: number;
   user: TUser;
 }
@@ -100,7 +100,9 @@ const LeaderboardTable = () => {
                 <td className="pl-6 py-2">
                   {user.rank} {getMedalEmoji(user.rank)}
                 </td>
-                <td className="pl-10 md:pl-16 py-2">{user.lessonsCompleted}</td>
+                <td className="pl-10 md:pl-16 py-2">
+                  {user.lessons_completed_count}
+                </td>
               </tr>
             ))}
           {isLoading && (

@@ -21,15 +21,17 @@ export class Migration1738908226095 implements MigrationInterface {
           {
             name: 'user_id',
             type: 'int',
+            isNullable: false,
           },
           {
-            name: 'lessons_completed',
+            name: 'lessons_completed_count',
             type: 'int',
             default: 0,
           },
           {
             name: 'rank',
             type: 'int',
+            isNullable: false,
           },
           {
             name: 'created_at',

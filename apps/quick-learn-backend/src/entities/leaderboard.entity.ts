@@ -13,21 +13,20 @@ export class Leaderboard {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'user_id' })
-  userId: number;
+  @Column({ nullable: false })
+  user_id: number;
 
-  @Column({ name: 'lessons_completed', default: 0 })
-  lessonsCompleted: number;
+  @Column({ default: 0 })
+  lessons_completed_count: number;
 
-  @Column({ name: 'rank' })
+  @Column({ nullable: false })
   rank: number;
 
   @CreateDateColumn({
     type: 'timestamp',
-    name: 'created_at',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt: Date;
+  created_at: Date;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })

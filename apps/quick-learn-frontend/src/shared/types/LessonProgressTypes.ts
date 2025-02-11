@@ -27,7 +27,7 @@ export type UserLessonProgress = {
 
 export type LeaderboardData = {
   user_id: number;
-  lessonsCompleted: number;
+  lessons_completed_count: number;
   rank: number;
   user: TUser;
 };
