@@ -12,7 +12,7 @@ import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { en } from '@src/constants/lang/en';
 import { SuperLink } from '@src/utils/HiLink';
 
-const ForgotPassword = () => {
+function ForgotPassword() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const forgotPasswordFields: FieldConfig[] = [
@@ -45,7 +45,7 @@ const ForgotPassword = () => {
         buttonText="Request Password Reset Instructions"
         id="forgotPasswordForm"
         isLoading={isLoading}
-        bigButton={true}
+        bigButton
       />
       <p className="text-sm font-light text-gray-500 dark:text-gray-400">
         {en.Auth.Login} &nbsp;
@@ -58,6 +58,6 @@ const ForgotPassword = () => {
       </p>
     </>
   );
-};
+}
 
 export default ForgotPassword;

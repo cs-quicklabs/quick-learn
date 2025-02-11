@@ -40,9 +40,9 @@ const Breadcrumb: FC<Props> = ({ links, disabled = false }) => {
               className="inline-flex items-center text-gray-700 "
               key={`${link.name}-${index}`}
             >
-              {index != 0 && index != links.length && <ArrowRightIcon />}
-              {index == 0 ? <HomeIcon /> : ''}
-              {customLink(link, index == links.length - 1, disabled)}
+              {index !== 0 && index !== links.length && <ArrowRightIcon />}
+              {index === 0 ? <HomeIcon /> : ''}
+              {customLink(link, index === links.length - 1, disabled)}
             </li>
           ))}
         </ol>

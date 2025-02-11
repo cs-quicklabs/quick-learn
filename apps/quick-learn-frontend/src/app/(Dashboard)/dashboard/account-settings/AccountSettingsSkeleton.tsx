@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AccountSettingsSkeleton = () => {
+function AccountSettingsSkeleton() {
   return (
     <div className="w-full">
       {/* Header Skeleton */}
@@ -33,6 +33,6 @@ const AccountSettingsSkeleton = () => {
       </div>
     </div>
   );
-};
+}
 
 export default AccountSettingsSkeleton;

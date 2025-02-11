@@ -18,17 +18,14 @@ export const formats = [
 interface Props {
   isEditing: boolean;
   setIsEditing: (value: boolean) => void;
-  undo?: () => void;
   isUpdating: boolean;
   isAdd: boolean;
-  onArchive?: () => void;
 }
 
 // Quill Toolbar component
 const EditorToolbar: FC<Props> = ({
   isEditing,
   setIsEditing,
-  undo,
   isUpdating,
   isAdd,
 }) => {
@@ -59,7 +56,7 @@ const EditorToolbar: FC<Props> = ({
             onChange={() => setIsEditing(!isEditing)}
             className="sr-only peer"
           />
-          <div className="relative w-11 h-6 bg-gray-400 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#3070b9]"></div>
+          <div className="relative w-11 h-6 bg-gray-400 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#3070b9]" />
         </label>
         <button
           type="button"
@@ -84,14 +81,14 @@ const EditorToolbar: FC<Props> = ({
           </select>
         </span>
         <span className="ql-formats" style={{ margin: '0px' }}>
-          <button className="ql-bold" />
-          <button className="ql-italic" />
-          <button className="ql-blockquote" />
-          <button className="ql-code-block" />
-          <button className="ql-link" />
-          <button className="ql-list" value="bullet" />
-          <button className="ql-list" value="ordered" />
-          <button className="ql-image" />
+          <button type="button" className="ql-bold" />
+          <button type="button" className="ql-italic" />
+          <button type="button" className="ql-blockquote" />
+          <button type="button" className="ql-code-block" />
+          <button type="button" className="ql-link" />
+          <button type="button" className="ql-list" value="bullet" />
+          <button type="button" className="ql-list" value="ordered" />
+          <button type="button" className="ql-image" />
         </span>
       </div>
       {/* Status indicator section */}

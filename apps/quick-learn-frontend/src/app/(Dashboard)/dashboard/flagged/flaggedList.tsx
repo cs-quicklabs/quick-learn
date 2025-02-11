@@ -23,7 +23,7 @@ const columns = [
 
 const ITEMS_PER_PAGE = 10;
 
-const FlaggedList = () => {
+function FlaggedList() {
   const dispatch = useAppDispatch();
   const [flaggedLessons, setFlaggedLessons] = useState<TFlaggedLesson[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +35,7 @@ const FlaggedList = () => {
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isInitialLoad) {
       dispatch(
         updateSystemPreferencesData({
           flagged_lessons: totalLessons,
@@ -43,7 +43,7 @@ const FlaggedList = () => {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [isInitialLoad]);
 
   // Debounce search input to reduce unnecessary API calls
   useEffect(() => {
@@ -77,7 +77,7 @@ const FlaggedList = () => {
 
   // Handle search input changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const { value } = e.target;
     setSearchInputValue(value);
     setCurrentPage(1); // Reset to first page when searching
   };
@@ -190,7 +190,7 @@ const FlaggedList = () => {
 
       {isLoading && !isInitialLoad && (
         <div className="fixed top-4 right-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700" />
         </div>
       )}
 
@@ -214,6 +214,7 @@ const FlaggedList = () => {
           <div className="flex">
             {currentPage > 1 && (
               <button
+                type="button"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
               >
@@ -222,6 +223,7 @@ const FlaggedList = () => {
             )}
             {currentPage < totalPages && (
               <button
+                type="button"
                 onClick={() => setCurrentPage((prev) => prev + 1)}
                 className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
               >
@@ -234,6 +236,6 @@ const FlaggedList = () => {
       </div>
     </div>
   );
-};
+}
 
 export default FlaggedList;

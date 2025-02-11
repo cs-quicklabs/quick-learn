@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ApprovalListSkeleton = () => {
+function ApprovalListSkeleton() {
   return (
     <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
       {/* Header Section */}
@@ -60,6 +60,6 @@ const ApprovalListSkeleton = () => {
       </div>
     </section>
   );
-};
+}
 
 export default ApprovalListSkeleton;
