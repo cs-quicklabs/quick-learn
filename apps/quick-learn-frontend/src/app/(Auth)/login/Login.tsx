@@ -10,7 +10,7 @@ import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { loginApiCall } from '@src/apiServices/authService';
 import { toast } from 'react-toastify';
 
-const Login = () => {
+function Login() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
@@ -68,6 +68,6 @@ const Login = () => {
       id="loginForm"
     />
   );
-};
+}
 
 export default Login;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const EmailPreferenceSkeleton = ({ isPartial = false }) => {
+function EmailPreferenceSkeleton({ isPartial = false }) {
   return (
     <div className="w-full animate-pulse">
       {/* Header Section */}
@@ -30,6 +30,6 @@ const EmailPreferenceSkeleton = ({ isPartial = false }) => {
       </div>
     </div>
   );
-};
+}
 
 export default EmailPreferenceSkeleton;

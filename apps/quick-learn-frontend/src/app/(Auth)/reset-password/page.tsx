@@ -3,12 +3,13 @@ import { Metadata } from 'next';
 import ResetPassword from './ResetPassword';
 import AuthTemplate from '@src/shared/pageTemplates/AuthTemplate';
 import { en } from '@src/constants/lang/en';
+
 export const metadata: Metadata = {
   title: 'Reset Password • Quick Learn',
   description: 'Reset your password in Quick Learn from Crownstack',
 };
 
-const ResetPasswordPage = () => {
+function ResetPasswordPage() {
   return (
     <Suspense fallback={<h1>{en.Auth.loading}</h1>}>
       <AuthTemplate title="Set your Password">
@@ -16,6 +17,6 @@ const ResetPasswordPage = () => {
       </AuthTemplate>
     </Suspense>
   );
-};
+}
 
 export default ResetPasswordPage;

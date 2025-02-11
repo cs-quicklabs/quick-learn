@@ -1,18 +1,20 @@
 // components/TeamTable.tsx
 import { useEffect } from 'react';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { DateFormats } from '@src/constants/dateFormats';
 import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import TeamMemberListingSkeleton from './TeamMemberListingSkeleton';
-import { RootState } from '@src/store/store';
-import { fetchTeamMembers } from '@src/store/features/teamSlice';
+import {
+  fetchTeamMembers,
+  selectTeamListingData,
+} from '@src/store/features/teamSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import { SuperLink } from '@src/utils/HiLink';
 
-const TeamTable = () => {
+function TeamTable() {
   const dispatch = useAppDispatch();
   const {
     isLoading,
@@ -21,14 +23,7 @@ const TeamTable = () => {
     currentPage,
     currentUserType,
     searchQuery,
-  } = useAppSelector((state: RootState) => ({
-    isLoading: state.team.isLoading,
-    isInitialLoad: state.team.isInitialLoad,
-    users: state.team.users,
-    currentPage: state.team.currentPage,
-    currentUserType: state.team.currentUserType,
-    searchQuery: state.team.searchQuery,
-  }));
+  } = useAppSelector(selectTeamListingData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,10 +89,10 @@ const TeamTable = () => {
                   key={user.uuid}
                   className="border-b border-gray-200 hover:bg-gray-100"
                 >
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap capitalize hover:underline">
-                    <Link href={`${RouteEnum.TEAM}/${user.id}`}>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap capitalize">
+                    <SuperLink href={`${RouteEnum.TEAM}/${user.id}`}>
                       {user.first_name} {user.last_name}
-                    </Link>
+                    </SuperLink>
                   </td>
                   <td className="px-4 py-2">
                     <div className="inline-flex items-center bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded capitalize">
@@ -113,7 +108,7 @@ const TeamTable = () => {
                         className={`w-3 h-3 mr-2 border border-gray-200 rounded-full ${
                           user.active ? 'bg-green-500' : 'bg-red-500'
                         }`}
-                      ></div>
+                      />
                       {user.active ? 'Active' : 'Inactive'}
                     </div>
                   </td>
@@ -147,11 +142,11 @@ const TeamTable = () => {
       {/* Optional loading indicator for non-initial loads */}
       {isLoading && !isInitialLoad && (
         <div className="fixed top-4 right-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700" />
         </div>
       )}
     </div>
   );
-};
+}
 
 export default TeamTable;

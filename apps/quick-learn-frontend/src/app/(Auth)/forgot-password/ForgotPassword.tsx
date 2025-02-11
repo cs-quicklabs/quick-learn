@@ -1,6 +1,5 @@
 'use client';
 import { z } from 'zod';
-import Link from 'next/link';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { forgotPasswordSchema } from './forgotPasswordSchema';
@@ -11,8 +10,9 @@ import { forgotPasswordApiCall } from '@src/apiServices/authService';
 import { toast } from 'react-toastify';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { en } from '@src/constants/lang/en';
+import { SuperLink } from '@src/utils/HiLink';
 
-const ForgotPassword = () => {
+function ForgotPassword() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const forgotPasswordFields: FieldConfig[] = [
@@ -45,19 +45,19 @@ const ForgotPassword = () => {
         buttonText="Request Password Reset Instructions"
         id="forgotPasswordForm"
         isLoading={isLoading}
-        bigButton={true}
+        bigButton
       />
       <p className="text-sm font-light text-gray-500 dark:text-gray-400">
         {en.Auth.Login} &nbsp;
-        <Link
+        <SuperLink
           href={RouteEnum.LOGIN}
           className="font-medium text-primary-600 hover:underline dark:text-primary-500"
         >
           {en.Auth.SignIn}
-        </Link>
+        </SuperLink>
       </p>
     </>
   );
-};
+}
 
 export default ForgotPassword;

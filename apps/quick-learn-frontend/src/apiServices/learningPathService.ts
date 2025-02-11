@@ -2,10 +2,10 @@ import {
   TLesson,
   TUserCourse,
   TRoadmap,
+  SearchedQuery,
 } from '@src/shared/types/contentRepository';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { LearningPathAPIEnum } from '@src/constants/api.enum';
-import { SearchedQuery } from '@src/shared/types/contentRepository';
 
 export const getLearningPathRoadmap = async (
   id: string,

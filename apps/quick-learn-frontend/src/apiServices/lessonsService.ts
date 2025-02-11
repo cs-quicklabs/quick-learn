@@ -1,4 +1,5 @@
 import {
+  TFlaggedLesson,
   TLesson,
   TUserDailyProgress,
 } from '@src/shared/types/contentRepository';
@@ -10,9 +11,11 @@ import {
 import {
   LessonProgress,
   LessonStatus,
+  TDailyLessonResponse,
   UserLessonProgress,
+  LeaderboardData,
 } from '@src/shared/types/LessonProgressTypes';
-import { TUser } from '@src/shared/types/userTypes';
+import { PaginateWrapper } from '@src/shared/types/utilTypes';
 
 export const getArchivedLessons = async (): Promise<
   AxiosSuccessResponse<TLesson[]>
@@ -23,11 +26,23 @@ export const getArchivedLessons = async (): Promise<
   return response.data;
 };
 
-export const getUnapprovedLessons = async (): Promise<
-  AxiosSuccessResponse<TLesson[]>
-> => {
-  const response = await axiosInstance.get<AxiosSuccessResponse<TLesson[]>>(
-    ContentRepositoryApiEnum.LESSON_UNAPPROVED,
+export const getUnapprovedLessons = async ({
+  page = 1,
+  limit = 10,
+  q = '',
+}: {
+  page?: number;
+  limit?: number;
+  q?: string;
+}): Promise<AxiosSuccessResponse> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    q,
+  });
+
+  const response = await axiosInstance.get(
+    `${ContentRepositoryApiEnum.LESSON_UNAPPROVED}?${params.toString()}`,
   );
   return response.data;
 };
@@ -37,7 +52,16 @@ export const getLessonDetails = async (
   approved = true,
 ): Promise<AxiosSuccessResponse<TLesson>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<TLesson>>(
-    ContentRepositoryApiEnum.LESSON + `/${id}` + `?approved=${approved}`,
+    `${ContentRepositoryApiEnum.LESSON}/${id}?approved=${approved}`,
+  );
+  return response.data;
+};
+
+export const getFlaggedLessonDetails = async (
+  id: string,
+): Promise<AxiosSuccessResponse<TLesson>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<TLesson>>(
+    ContentRepositoryApiEnum.LESSON + `/${id}?flagged=true`,
   );
   return response.data;
 };
@@ -74,9 +98,22 @@ export const markAsDone = async (
       userId ? `/${userId}` : ''
     }`,
     {
-      courseId: parseInt(courseId),
-      isCompleted: isCompleted,
+      courseId: parseInt(courseId, 10),
+      isCompleted,
     },
+  );
+  return response.data;
+};
+
+export const getFlaggedLessons = async (
+  page = 1,
+  limit = 10,
+  search = '',
+): Promise<AxiosSuccessResponse<PaginateWrapper<TFlaggedLesson[]>>> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<PaginateWrapper<TFlaggedLesson[]>>
+  >(
+    `${ContentRepositoryApiEnum.GET_FLAGGED_LESSON}?page=${page}&limit=${limit}&q=${search}`,
   );
   return response.data;
 };
@@ -90,8 +127,8 @@ export const markAsDonePublic = async (
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete-public/${lessonId}/${userId}`,
     {
-      courseId: parseInt(courseId),
-      isCompleted: isCompleted,
+      courseId: parseInt(courseId, 10),
+      isCompleted,
     },
   );
   return response.data;
@@ -135,7 +172,7 @@ export const getUserProgress = async (
   const response = await axiosInstance.get<
     AxiosSuccessResponse<UserLessonProgress[]>
   >(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/userprogress${
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/user-progress${
       userId ? `/${userId}` : ''
     }`,
   );
@@ -151,19 +188,54 @@ export const getUserDailyLessonProgress = async (
   return response.data;
 };
 
-export const getDailyLessionDetail = async (
-  lessonId: string,
-  courseId: string,
-  token: string,
-): Promise<
-  AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
-> => {
+export const getDailyLessionDetail = async ({
+  lessonId,
+  courseId,
+  token,
+}: {
+  lessonId: string;
+  courseId: string;
+  token: string;
+}): Promise<AxiosSuccessResponse<TDailyLessonResponse>> => {
   const response = await axiosInstance.get<
-    AxiosSuccessResponse<{ lessonDetail: TLesson; userDetail: TUser }>
+    AxiosSuccessResponse<TDailyLessonResponse>
   >(
     `${DailyLessionEnum.GET_DAILY_LESSON_DETAILS.replace(':lesson', lessonId)
       .replace(':course', courseId)
       .replace(':token', token)}`,
+  );
+  return response.data;
+};
+
+export const getLeaderBoardStatus = async (
+  page: number,
+  limit: number,
+): Promise<AxiosSuccessResponse<PaginateWrapper<LeaderboardData[]>>> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<PaginateWrapper<LeaderboardData[]>>
+  >(
+    `${ContentRepositoryApiEnum.LEADERBOARD_STATUS}?page=${page}&limit=${limit}`,
+  );
+  return response.data;
+};
+
+export const flagLesson = async (
+  token: string,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.post<AxiosSuccessResponse>(
+    `${ContentRepositoryApiEnum.LESSON_FLAGGED}/${token}`,
+    {
+      token,
+    },
+  );
+  return response.data;
+};
+
+export const markLessonAsUnFlagged = async (
+  id: string,
+): Promise<AxiosSuccessResponse> => {
+  const response = await axiosInstance.patch<AxiosSuccessResponse>(
+    ContentRepositoryApiEnum.LESSON + `/${id}/unflag`,
   );
   return response.data;
 };

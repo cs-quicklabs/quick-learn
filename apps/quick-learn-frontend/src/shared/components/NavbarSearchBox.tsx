@@ -22,6 +22,14 @@ interface NavbarSearchBoxProps {
   isMember: boolean;
 }
 
+function SearchSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="h-6 bg-gray-200 rounded w-full mb-2" />
+    </div>
+  );
+}
+
 const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
   const [isDropdownActive, setIsDropdownActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -45,7 +53,9 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
 
   // Load search history on component mount
   useEffect(() => {
-    isDropdownActive && loadSearchHistory();
+    if (isDropdownActive) {
+      loadSearchHistory();
+    }
   }, [isDropdownActive]);
 
   const loadSearchHistory = () => {
@@ -147,13 +157,6 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
     }
   };
 
-  //loading skeleton
-  const SearchSkeleton = () => (
-    <div className="animate-pulse">
-      <div className="h-6 bg-gray-200 rounded w-full mb-2"></div>
-    </div>
-  );
-
   // Check if there are any results across all categories
   const hasNoResults =
     searchQuery.length >= MINIMUM_SEARCH_LENGTH &&
@@ -187,7 +190,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
           className="max-h-[120px] overflow-none"
           style={{ scrollbarWidth: 'none' }}
         >
-          {items.map((item, i) => {
+          {items.map((item) => {
             const commonProps = {
               id: item.id,
               name: item.name,
@@ -200,9 +203,10 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
               return (
                 <RouteTab
                   {...commonProps}
-                  key={i}
+                  key={`lesson_${item.id}`}
                   type="lesson"
                   course_id={lesson.course_id}
+                  course_name={lesson.course_name}
                 />
               );
             }
@@ -210,7 +214,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
             return (
               <RouteTab
                 {...commonProps}
-                key={i}
+                key={item.id}
                 type={category.toLowerCase() as 'roadmaps' | 'courses'}
               />
             );
@@ -251,8 +255,9 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
               hasHistory ? (
                 <div>
                   <div className="flex justify-between items-center text-sm text-gray-500 p-2 border-b">
-                    <span>{'Recent search'}</span>
+                    <span>Recent search</span>
                     <button
+                      type="button"
                       onClick={handleClearHistory}
                       className="flex items-center gap-1 px-2 py-1 text-red-600 hover:bg-red-50 rounded-md transition-colors"
                     >

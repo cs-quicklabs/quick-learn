@@ -1,8 +1,6 @@
-'use client';
 import 'flowbite/dist/flowbite.css';
 import './global.css';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { ReduxProvider } from '@src/store/provider';
 import { getClientIp } from '@src/apiServices/ipService';
 
@@ -25,7 +23,7 @@ export default function RootLayout({
           <ToastContainer
             position="top-center"
             autoClose={2000}
-            hideProgressBar={true}
+            hideProgressBar
             pauseOnFocusLoss={false}
           />
           {children}

@@ -1,31 +1,27 @@
 'use client';
 import { RouteEnum } from '@src/constants/route.enum';
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUserType } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
 import TeamTable from './TeamTable';
-import { RootState } from '@src/store/store';
 import {
   fetchTeamMembers,
+  selectTeamListingData,
   setCurrentPage,
   setCurrentUserType,
   setSearchQuery,
 } from '@src/store/features/teamSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { en } from '@src/constants/lang/en';
-const TeamMemberListing = () => {
+import { SuperLink } from '@src/utils/HiLink';
+
+function TeamMemberListing() {
   const dispatch = useAppDispatch();
   const [searchInputValue, setSearchInputValue] = useState(''); // Local state for input value
 
   const { totalUsers, currentPage, currentUserType, filteredTotal } =
-    useAppSelector((state: RootState) => ({
-      totalUsers: state.team.totalUsers,
-      currentPage: state.team.currentPage,
-      currentUserType: state.team.currentUserType,
-      filteredTotal: state.team.filterdTotal,
-    }));
+    useAppSelector(selectTeamListingData);
 
   const userTypes: TUserType[] = [
     { name: 'Admin', code: 'admin' },
@@ -55,10 +51,16 @@ const TeamMemberListing = () => {
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const { value } = e.target;
     setSearchInputValue(value); // Update local state immediately
     debouncedSearch(value); // Debounce the Redux update and API call
   };
+
+  function showRange() {
+    const initial = filteredTotal === 0 ? 0 : (currentPage - 1) * 10 + 1;
+    const end = Math.min(currentPage * 10, filteredTotal);
+    return `${initial} ${en.teams.to} ${end} ${en.teams.of} ${filteredTotal}`;
+  }
 
   return (
     <>
@@ -81,13 +83,13 @@ const TeamMemberListing = () => {
               onChange={handleSearchChange}
               id="search"
             />
-            <Link
+            <SuperLink
               id="addNewMember"
               href={`${RouteEnum.TEAM_EDIT}/add`}
               className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
             >
               {en.teams.addNewMember}
-            </Link>
+            </SuperLink>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-x-8 p-4 border-t border-b border-gray-300 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
@@ -101,7 +103,7 @@ const TeamMemberListing = () => {
                   id={userType.code}
                   name="user_type_id"
                   type="radio"
-                  onChange={(e) => filterByUserType(userType.code)}
+                  onChange={() => filterByUserType(userType.code)}
                   checked={currentUserType === userType.code}
                   className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-2 cursor-pointer"
                 />
@@ -131,22 +133,7 @@ const TeamMemberListing = () => {
         <div>
           <p className="text-sm text-gray-700">
             {en.teams.showing}{' '}
-            <span className="font-medium">
-              {currentPage > 1
-                ? (currentPage - 1) * 10 + 1
-                : filteredTotal === 0
-                ? 0
-                : 1}
-            </span>{' '}
-            {en.teams.to}{' '}
-            <span className="font-medium">
-              {currentPage * 10 <= filteredTotal
-                ? currentPage * 10
-                : filteredTotal}
-            </span>{' '}
-            {en.teams.to}
-            <span> </span>
-            <span className="font-medium">{filteredTotal}</span>{' '}
+            <span className="font-medium">{showRange()}</span>{' '}
             {en.teams.results}
           </p>
         </div>
@@ -154,6 +141,7 @@ const TeamMemberListing = () => {
           <div className="flex">
             {currentPage > 1 && (
               <button
+                type="button"
                 id="prev"
                 onClick={() => {
                   const newPage = currentPage - 1;
@@ -174,6 +162,7 @@ const TeamMemberListing = () => {
             )}
             {currentPage * 10 < filteredTotal && (
               <button
+                type="button"
                 id="next"
                 onClick={() => {
                   const newPage = currentPage + 1;
@@ -197,6 +186,6 @@ const TeamMemberListing = () => {
       </div>
     </>
   );
-};
+}
 
 export default TeamMemberListing;

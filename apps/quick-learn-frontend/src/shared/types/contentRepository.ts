@@ -59,6 +59,17 @@ export type TAssignModalMetadata = {
   }[];
 };
 
+export type TFlaggedLesson = {
+  id: number;
+  user_id: number;
+  lesson_id: number;
+  course_id: number;
+  flagged_on: Date;
+  user?: TUser;
+  lesson?: TLesson;
+  course?: TCourse;
+};
+
 export type TLesson = {
   id: number;
   name: string;
@@ -77,6 +88,7 @@ export type TLesson = {
   course_id: number;
   course: TCourse;
   updated_by: TUser;
+  flagged_lesson?: TFlaggedLesson;
 };
 
 export type TUserRoadmap = {
@@ -126,6 +138,7 @@ export type SearchedLesson = {
   id: number;
   name: string;
   course_id: number;
+  course_name: string;
 };
 export type SearchedCourseOrRoadpmap = {
   id: number;
@@ -142,6 +155,12 @@ export type SearchedQuery = {
   Lessons: SearchedCourseOrRoadpmap[];
 };
 
+export enum SystemPreferencesKey {
+  UNAPPROVED_LESSONS = 'unapproved_lessons',
+  FLAGGED_LESSONS = 'flagged_lessons',
+}
+
 export type SystemPreferences = {
-  unapprovedLessons: number;
+  [SystemPreferencesKey.UNAPPROVED_LESSONS]: number;
+  [SystemPreferencesKey.FLAGGED_LESSONS]: number;
 };

@@ -11,6 +11,8 @@ import { CourseEntity } from './course.entity';
 import { LessonEntity } from './lesson.entity';
 import { UserLessonProgressEntity } from './user-lesson-progress.entity';
 import { LessonTokenEntity } from './lesson-token.entity';
+import { FlaggedLessonEntity } from './flagged-lesson.enitity';
+import { Leaderboard } from './leaderboard.entity';
 
 export const Entities = [
   UserEntity,
@@ -26,6 +28,8 @@ export const Entities = [
   LessonEntity,
   UserLessonProgressEntity,
   LessonTokenEntity,
+  FlaggedLessonEntity,
+  Leaderboard,
 ];
 
 export {
@@ -42,4 +46,6 @@ export {
   LessonEntity,
   UserLessonProgressEntity,
   LessonTokenEntity,
+  FlaggedLessonEntity,
+  Leaderboard,
 };

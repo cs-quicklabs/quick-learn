@@ -30,7 +30,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '@src/store/features/userSlice';
 import { UserTypeIdEnum } from 'lib/shared/src';
 
-const ContentRepository = () => {
+function ContentRepository() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const roadmaps = useAppSelector(selectAllRoadmaps);
@@ -198,6 +198,6 @@ const ContentRepository = () => {
       </div>
     </>
   );
-};
+}
 
 export default ContentRepository;

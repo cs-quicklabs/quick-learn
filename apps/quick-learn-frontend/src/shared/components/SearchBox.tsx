@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FC } from 'react';
 import { SearchIcon } from './UIElements';
 import { en } from '@src/constants/lang/en';
+
 interface Props {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
