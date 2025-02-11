@@ -5,7 +5,7 @@
         <mj-text padding="0">
           Hello, <b>{{fullName}}</b><br /><br />
           Our weekly leaderboard has beeen published and stood at {{rank}} place
-          among {{totalMembers}}.<br /><br />
+          among {{totalMembers}} team members.<br /><br />
           Please check the full leaderboard by clicking the link below.<br /><br />
         </mj-text>
         <mj-text padding="0">
