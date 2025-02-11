@@ -92,7 +92,7 @@ function ApprovalList() {
     debouncedSearch(searchTerm);
   };
 
-  if (isInitialLoad) return <ApprovalListSkeleton />;
+  if (isInitialLoad && total === 0) return <ApprovalListSkeleton />;
 
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
