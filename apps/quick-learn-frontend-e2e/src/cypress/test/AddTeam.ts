@@ -135,7 +135,9 @@ export class AddTeam {
     );
     this.getPassword().clear();
     this.getPassword().type('Password@123PasswordPasswordPassword');
-    this.getErrorMessage().contains('The value should not exceed 32 characters');
+    this.getErrorMessage().contains(
+      'The value should not exceed 32 characters',
+    );
     cy.get('#submit').should('be.disabled');
   }
 
