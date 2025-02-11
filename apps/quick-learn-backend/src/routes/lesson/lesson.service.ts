@@ -310,7 +310,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    * Retrieves all unapproved lessons
    * @returns A promise that resolves to a list of LessonEntity
    */
-  async getUnapprovedLessons(page = 1, limit = 10 ,q='') {
+  async getUnapprovedLessons(page = 1, limit = 10, q = '') {
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
       .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
@@ -319,10 +319,10 @@ export class LessonService extends PaginationService<LessonEntity> {
       .andWhere('lesson.archived = :archived', { archived: false })
       .andWhere('lesson.approved = :approved', { approved: false });
 
-       if (q) {
+    if (q) {
       queryBuilder.andWhere(
         '(LOWER(lesson.name) LIKE LOWER(:search) OR LOWER(created_by_user.first_name) LIKE LOWER(:search) OR LOWER(created_by_user.last_name) LIKE LOWER(:search))',
-        { search: `%${q}%` }
+        { search: `%${q}%` },
       );
     }
 
