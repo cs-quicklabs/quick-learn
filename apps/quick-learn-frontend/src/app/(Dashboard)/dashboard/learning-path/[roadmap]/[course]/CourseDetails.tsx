@@ -21,6 +21,7 @@ import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
 import { getUserProgress } from '@src/apiServices/lessonsService';
 import { motion } from 'framer-motion';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {

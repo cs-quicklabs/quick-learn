@@ -7,6 +7,7 @@ import { CloseIcon, Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
 import { firstLetterCapital } from '@src/utils/helpers';
+
 interface Props {
   show: boolean;
   setShow: (value: boolean) => void;

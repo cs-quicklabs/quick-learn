@@ -1,6 +1,7 @@
 import { SuperLink } from '@src/utils/HiLink';
 import React from 'react';
 import { firstLetterCapital } from '@src/utils/helpers';
+
 interface RouteTabProps {
   id: number;
   name: string;

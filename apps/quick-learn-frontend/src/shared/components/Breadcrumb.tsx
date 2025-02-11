@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { SuperLink } from '@src/utils/HiLink';
 import { ArrowRightIcon, HomeIcon } from './UIElements';
 import { firstLetterCapital } from '@src/utils/helpers';
+
 interface Props {
   links: TBreadcrumb[];
   disabled?: boolean;

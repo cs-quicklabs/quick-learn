@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import React, { FC } from 'react';
 import { en } from '@src/constants/lang/en';
 import { CalenderIcon } from './UIElements';
+
 interface Props {
   title: string;
   subtitle: string;
