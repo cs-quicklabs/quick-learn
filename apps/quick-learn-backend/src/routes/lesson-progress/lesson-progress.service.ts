@@ -6,7 +6,6 @@ import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { previousMonday } from 'date-fns';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
-import { PaginationService } from '@src/common/services/pagination.service';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
@@ -20,7 +19,6 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     private LessonTokenRepository: Repository<LessonTokenEntity>,
     @InjectRepository(Leaderboard)
     private leaderboardRepository: Repository<Leaderboard>,
-    private paginationService: PaginationService<Leaderboard>,
   ) {
     super(userLessonProgressRepository);
   }

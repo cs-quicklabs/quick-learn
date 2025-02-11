@@ -179,7 +179,7 @@ export class LessonProgressController {
     return new SuccessResponse(en.lessonStatus, data);
   }
 
-  @Get('leaderboard/get')
+  @Get('leaderboard/list')
   async getLeaderboardDataTable(
     @Query() paginationDto: BasePaginationDto,
   ): Promise<SuccessResponse> {

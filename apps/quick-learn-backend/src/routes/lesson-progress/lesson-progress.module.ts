@@ -10,7 +10,6 @@ import {
 import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { LessonProgressController } from './lesson-progress.controller';
 import { LessonProgressService } from './lesson-progress.service';
-import { PaginationService } from '@src/common/services/pagination.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -23,7 +22,7 @@ import { PaginationService } from '@src/common/services/pagination.service';
     ]),
   ],
   controllers: [LessonProgressController],
-  providers: [LessonProgressService, PaginationService],
+  providers: [LessonProgressService],
   exports: [LessonProgressService], // Export the service if you need to use it in other modules
 })
 export class LessonProgressModule {}
