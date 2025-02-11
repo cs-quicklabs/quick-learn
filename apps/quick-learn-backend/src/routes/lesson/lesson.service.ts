@@ -18,6 +18,7 @@ import {
   DataSource,
   ILike,
   MoreThan,
+  FindOptionsWhere,
   FindManyOptions,
 } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
@@ -316,16 +317,40 @@ export class LessonService extends PaginationService<LessonEntity> {
    * Retrieves all unapproved lessons
    * @returns A promise that resolves to a list of LessonEntity
    */
-  async getUnapprovedLessons(): Promise<LessonEntity[]> {
-    const queryBuilder = this.repository
-      .createQueryBuilder('lesson')
-      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
-      .innerJoin('lesson.course', 'course')
-      .where('course.archived = :courseArchived', { courseArchived: false })
-      .andWhere('lesson.archived = :archived', { archived: false })
-      .andWhere('lesson.approved = :approved', { approved: false });
+  async getUnapprovedLessons(page = 1, limit = 10, q = '') {
+    let options:
+      | FindOptionsWhere<LessonEntity>
+      | FindOptionsWhere<LessonEntity>[] = {
+      archived: false,
+      approved: false,
+      course: {
+        archived: false,
+      },
+    };
 
-    return await queryBuilder.getMany();
+    if (q) {
+      options = [
+        {
+          ...options,
+          name: ILike(`%${q}%`),
+        },
+        {
+          ...options,
+          created_by_user: {
+            full_name: ILike(`%${q}%`),
+          },
+        },
+      ];
+    }
+
+    return await this.paginate(
+      {
+        page,
+        limit,
+      },
+      options,
+      ['created_by_user', 'course'],
+    );
   }
 
   async validateLessionToken(
@@ -406,6 +431,7 @@ export class LessonService extends PaginationService<LessonEntity> {
         'lesson.id AS id',
         'lesson.name AS name',
         'course.id AS course_id',
+        'course.name AS course_name',
       ])
       .groupBy('lesson.id')
       .addGroupBy('lesson.name')

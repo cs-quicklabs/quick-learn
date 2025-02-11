@@ -1,19 +1,24 @@
 'use client';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import { format } from 'date-fns';
-import { useEffect } from 'react';
-import ApprovalListSkeleton from './ApprovalListSkeleton';
 import {
   fetchUnapprovedLessons,
   getApprovalLessionListLoading,
   getApprovalLessionList,
   getApprovalLessionListInitialLoad,
+  selectPagination,
 } from '@src/store/features/approvalSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
 import { SuperLink } from '@src/utils/HiLink';
+import { debounce } from '@src/utils/helpers';
+import {
+  ApprovalListDataSkeleton,
+  ApprovalListSkeleton,
+} from './ApprovalListSkeleton';
 
 const columns = [
   en.common.lesson,
@@ -27,23 +32,67 @@ function ApprovalList() {
   const lessons = useAppSelector(getApprovalLessionList);
   const isLoading = useAppSelector(getApprovalLessionListLoading);
   const isInitialLoad = useAppSelector(getApprovalLessionListInitialLoad);
+  const { page, totalPages, total } = useAppSelector(selectPagination);
+  const [limit] = useState(10);
+  const [search, setSearch] = useState('');
+  const observerRef = useRef<HTMLDivElement | null>(null);
+
+  const fetchLessons = useCallback(
+    (pageNum: number, searchTerm: string) => {
+      dispatch(fetchUnapprovedLessons({ page: pageNum, limit, q: searchTerm }));
+    },
+    [dispatch, limit],
+  );
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((searchTerm: string) => {
+        fetchLessons(1, searchTerm);
+      }, 500),
+    [fetchLessons],
+  );
 
   useEffect(() => {
-    dispatch(fetchUnapprovedLessons());
-  }, [dispatch]);
+    fetchLessons(1, '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isInitialLoad) {
       dispatch(
         updateSystemPreferencesData({
-          unapproved_lessons: lessons?.length ?? 0,
+          unapproved_lessons: total,
         }),
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [dispatch, isInitialLoad]);
 
-  if (isInitialLoad && isLoading) return <ApprovalListSkeleton />;
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && page < totalPages && !isLoading) {
+          fetchLessons(page + 1, search);
+        }
+      },
+      { threshold: 1.0 },
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, page, totalPages, limit, isLoading, search]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+    setSearch(searchTerm);
+    debouncedSearch(searchTerm);
+  };
+
+  if (isInitialLoad && total === 0) return <ApprovalListSkeleton />;
 
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
@@ -56,9 +105,18 @@ function ApprovalList() {
               </h1>
               <p className="text-gray-500 text-sm">{en.approvals.subHeading}</p>
             </div>
+            <div className="w-full sm:w-auto">
+              <input
+                type="text"
+                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+                placeholder="Search lessons..."
+                value={search}
+                onChange={handleSearchChange}
+              />
+            </div>
           </div>
         </div>
-        <div className={`overflow-x-auto ${isLoading ? 'opacity-60' : ''}`}>
+        <div className={`overflow-x-auto ${isInitialLoad ? 'opacity-60' : ''}`}>
           <table className="w-full text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
@@ -114,19 +172,16 @@ function ApprovalList() {
                     colSpan={7}
                     className="px-4 py-2 font-medium text-gray-900 text-center"
                   >
-                    {en.common.noResultFound}
+                    {search ? en.common.noResultFound : ''}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+          {isLoading && !isInitialLoad && <ApprovalListDataSkeleton />}
         </div>
       </div>
-      {isLoading && !isInitialLoad && (
-        <div className="fixed top-4 right-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700" />
-        </div>
-      )}
+      <div ref={observerRef} className="h-10" />
     </div>
   );
 }

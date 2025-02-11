@@ -53,7 +53,7 @@ export class LessonController {
     return new SuccessResponse(en.getLessons, lessons);
   }
 
-  @ApiOperation({ summary: 'Get all unapproved the lessons.' })
+  @ApiOperation({ summary: 'Get all unapproved lessons.' })
   @Get('unapproved')
   @UseGuards(RolesGuard)
   @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
@@ -61,8 +61,14 @@ export class LessonController {
    * Retrieves all unapproved lessons.
    * @returns A list of lessons.
    */
-  async getUnapprovedLessons(): Promise<SuccessResponse> {
-    const lessons = await this.service.getUnapprovedLessons();
+  async getUnapprovedLessons(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<SuccessResponse> {
+    const lessons = await this.service.getUnapprovedLessons(
+      Number(paginationDto.page),
+      Number(paginationDto.limit),
+      String(paginationDto.q),
+    );
     return new SuccessResponse(en.getLessons, lessons);
   }
 

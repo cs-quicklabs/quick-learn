@@ -26,11 +26,23 @@ export const getArchivedLessons = async (): Promise<
   return response.data;
 };
 
-export const getUnapprovedLessons = async (): Promise<
-  AxiosSuccessResponse<TLesson[]>
-> => {
-  const response = await axiosInstance.get<AxiosSuccessResponse<TLesson[]>>(
-    ContentRepositoryApiEnum.LESSON_UNAPPROVED,
+export const getUnapprovedLessons = async ({
+  page = 1,
+  limit = 10,
+  q = '',
+}: {
+  page?: number;
+  limit?: number;
+  q?: string;
+}): Promise<AxiosSuccessResponse> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    q,
+  });
+
+  const response = await axiosInstance.get(
+    `${ContentRepositoryApiEnum.LESSON_UNAPPROVED}?${params.toString()}`,
   );
   return response.data;
 };
