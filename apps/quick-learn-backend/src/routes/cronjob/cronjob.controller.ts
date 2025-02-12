@@ -8,7 +8,10 @@ import { en } from '@src/lang/en';
 import { LessonEmailService } from './lesson-email-cron.service';
 import { JwtAuthGuard } from '../auth/guards';
 import { LeaderboardCronService } from './leaderboard-cron.service';
-import { CronjobQueryParamDto } from './dto/cronjob-query.dto';
+import {
+  CronjobQueryParamDto,
+  CronjobLeaderboardQueryParamDto,
+} from './dto/cronjob-query.dto';
 
 /**
  * Controller for cronjob routes
@@ -46,8 +49,10 @@ export class CronjobController {
     summary: 'Create new Ranking and send leaderboard email to the users.',
   })
   @Post('leaderboard-email')
-  async triggerLeaderboardEmail(): Promise<SuccessResponse> {
-    await this.leaderboardCronService.sendLeaderboardEmail();
+  async triggerLeaderboardEmail(
+    @Query() param: CronjobLeaderboardQueryParamDto,
+  ): Promise<SuccessResponse> {
+    await this.leaderboardCronService.sendLeaderboardEmail(param.type);
     return new SuccessResponse(en.triggeredLeaderboardEmail);
   }
 }

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
-import { previousMonday } from 'date-fns';
+import { previousMonday, startOfMonth, subMonths } from 'date-fns';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
@@ -17,8 +17,6 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     private courseRepository: Repository<CourseEntity>,
     @InjectRepository(LessonTokenEntity)
     private LessonTokenRepository: Repository<LessonTokenEntity>,
-    @InjectRepository(Leaderboard)
-    private leaderboardRepository: Repository<Leaderboard>,
   ) {
     super(userLessonProgressRepository);
   }
@@ -233,15 +231,24 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       .getRawMany();
   }
 
-  async getLeaderboardDataService() {
+  async getLeaderboardDataService(type: string = 'weekly') {
     const fromPreviousMonday = previousMonday(
       new Date(new Date().setHours(7, 0, 0, 0)),
     );
+    const firstDateOfPreviousMonth = startOfMonth(subMonths(new Date(), 1));
+    let dateToFindFrom;
+    if (type === 'monthly') {
+      dateToFindFrom = firstDateOfPreviousMonth;
+    } else {
+      dateToFindFrom = fromPreviousMonday;
+    }
+
+    console.log(firstDateOfPreviousMonth);
     //get all user with
-    const allUsers = await this.getAllUserProgressData(fromPreviousMonday);
+    const allUsers = await this.getAllUserProgressData(dateToFindFrom);
 
     const completedLessonsData = await this.getAllUserCompletedLessonData(
-      fromPreviousMonday,
+      dateToFindFrom,
     );
 
     // return formattedData;
@@ -270,8 +277,8 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
    * Retrieves the Leaderboard data for last week with .
    * @returns An array of User records with daily lessons.
    */
-  async calculateLeaderBoardPercentage() {
-    const getLeaderboardData = await this.getLeaderboardDataService();
+  async calculateLeaderBoardPercentage(type: string = 'weekly') {
+    const getLeaderboardData = await this.getLeaderboardDataService(type);
 
     const leaderBoardWithPercentage = await Promise.all(
       getLeaderboardData.map(async (entry) => {
@@ -332,48 +339,5 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     });
 
     return leaderBoardWithPercentage;
-  }
-  // create leaderboard entry once a week using cron job
-  async createLeaderboardRanking() {
-    await this.deleteLeaderboardData();
-    const LeaderboardData = await this.calculateLeaderBoardPercentage();
-    const leaderboardEntry = LeaderboardData.map((entry, index) =>
-      this.leaderboardRepository.create({
-        user_id: entry.user_id,
-        lessons_completed_count: entry.lesson_completed_count,
-        rank: index + 1,
-      }),
-    );
-
-    return this.leaderboardRepository.save(leaderboardEntry);
-  }
-
-  async getLeaderboardData(page = 1, limit = 10) {
-    const skip = (page - 1) * limit;
-
-    const [items, total] = await this.leaderboardRepository.findAndCount({
-      skip,
-      take: limit,
-      order: {
-        rank: 'ASC',
-      },
-      relations: ['user'],
-    });
-
-    return {
-      items,
-      total,
-      currentPage: page,
-      hasMore: skip + items.length < total,
-    };
-  }
-
-  async deleteLeaderboardData() {
-    try {
-      const result = await this.leaderboardRepository.delete({});
-      return result;
-    } catch (error) {
-      throw new Error('Failed to delete leaderboard data');
-    }
   }
 }

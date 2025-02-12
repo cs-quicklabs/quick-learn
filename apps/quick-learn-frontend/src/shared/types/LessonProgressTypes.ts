@@ -27,7 +27,10 @@ export type UserLessonProgress = {
 
 export type LeaderboardData = {
   user_id: number;
-  lessons_completed_count: number;
-  rank: number;
+  lessons_completed_count?: number;
+  rank?: number;
+  lessons_completed_count_monthly?: number;
+  rank_monthly?: number;
   user: TUser;
+  created_at: string;
 };

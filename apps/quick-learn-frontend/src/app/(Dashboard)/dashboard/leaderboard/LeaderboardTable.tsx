@@ -5,12 +5,15 @@ import { getLeaderBoardStatus } from '@src/apiServices/lessonsService';
 import { useAppSelector } from '@src/store/hooks';
 import { selectUser } from '@src/store/features/userSlice';
 import { TUser } from '@src/shared/types/userTypes';
-
+import { getRecords } from '@src/utils/helpers';
 interface LeaderboardData {
   user_id: number;
-  lessons_completed_count: number;
-  rank: number;
+  lessons_completed_count?: number;
+  rank?: number;
+  lessons_completed_count_monthly?: number;
+  rank_monthly?: number;
   user: TUser;
+  created_at: string;
 }
 const getMedalEmoji = (index: number) => {
   if (index === 1) return <span className="text-yellow-500">🥇</span>;
@@ -23,10 +26,12 @@ const LeaderboardTable = () => {
   const [leaderBoardRanking, setLeaderBoardRanking] = useState<
     LeaderboardData[]
   >([]);
+  const [records, setRecords] = useState<string>('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const currentUser = useAppSelector(selectUser);
+  const [type, setType] = useState('weekly');
   const observer = useRef<IntersectionObserver>();
   const lastElementRef = useCallback(
     (node: HTMLElement | null) => {
@@ -47,7 +52,7 @@ const LeaderboardTable = () => {
   const fetchLeaderboardData = async (currentPage: number) => {
     try {
       setIsLoading(true);
-      const response = await getLeaderBoardStatus(currentPage, 10);
+      const response = await getLeaderBoardStatus(currentPage, 10, type);
       const newData = response.data.items;
 
       setLeaderBoardRanking((prev) =>
@@ -61,14 +66,59 @@ const LeaderboardTable = () => {
     }
   };
 
+  const handleTypeChange = (currentType: string) => {
+    if (currentType === type) return;
+    setType(currentType);
+    setPage(1);
+    setLeaderBoardRanking([]);
+    setHasMore(true);
+  };
+  const handleRecords = () => {
+    if (leaderBoardRanking.length === 0) {
+      setRecords('');
+      return;
+    }
+    setRecords(leaderBoardRanking[leaderBoardRanking.length - 1].created_at);
+  };
+
   useEffect(() => {
     fetchLeaderboardData(page);
-  }, [page]);
+    handleRecords();
+  }, [page, type]);
 
   return (
-    <div className="relative overflow-x-auto border-t border-gray-200 shadow-md max-h-[595px] overflow-y-auto sm:rounded-lg">
+    <div className="relative overflow-x-auto border-t border-gray-200 shadow-md  overflow-y-auto sm:rounded-lg">
+      <div className=" text-xs font-bold flex space-x-1 rounded-lg  p-0.5 justify-between items-center">
+        <div className="text-sm  ml-3 text-gray-700">
+          {records === ''
+            ? 'No records found'
+            : `Records from ${getRecords(type, records)}`}
+        </div>
+        <div className="flex space-x-1">
+          <button
+            className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
+              type === 'weekly'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+            }`}
+            onClick={() => handleTypeChange('weekly')}
+          >
+            {en.leaderboard.weekly}
+          </button>
+          <button
+            className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
+              type === 'monthly'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+            }`}
+            onClick={() => handleTypeChange('monthly')}
+          >
+            {en.leaderboard.monthly}
+          </button>
+        </div>
+      </div>
       <table className="w-full text-sm text-left text-gray-500 ">
-        <thead className="text-xs text-gray-700 border-b border-gray-200 uppercase bg-gray-50">
+        <thead className="text-xs text-gray-700 border-t border-gray-200 uppercase bg-gray-50">
           <tr>
             <th className="px-4 py-3">{en.leaderboard.leaderboardUser}</th>
             <th className="px-4 py-3">{en.leaderboard.leaderboardRank}</th>
@@ -98,10 +148,12 @@ const LeaderboardTable = () => {
                   {user.user.first_name} {user.user.last_name}
                 </td>
                 <td className="pl-6 py-2">
-                  {user.rank} {getMedalEmoji(user.rank)}
+                  {user.rank ?? user.rank_monthly}{' '}
+                  {getMedalEmoji(user.rank ?? user.rank_monthly ?? 0)}
                 </td>
                 <td className="pl-10 md:pl-16 py-2">
-                  {user.lessons_completed_count}
+                  {user.lessons_completed_count ??
+                    user.lessons_completed_count_monthly}
                 </td>
               </tr>
             ))}

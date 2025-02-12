@@ -11,6 +11,8 @@ import {
   TUserRoadmap,
   TUserCourse,
 } from '@src/shared/types/contentRepository';
+import { subDays, startOfMonth, subMonths, format } from 'date-fns';
+import { DateFormats } from '@src/constants/dateFormats';
 
 export function showErrorMessage(error: unknown) {
   if (error instanceof AxiosError) {
@@ -183,4 +185,17 @@ export const calculateCourseProgress = (
   return totalLessons > 0
     ? Math.round((completedCount / totalLessons) * 100)
     : 0;
+};
+
+export const getRecords = (type: string, lastRecord: string) => {
+  const lastRecordDate = new Date(lastRecord);
+  const recordDate =
+    type === 'weekly'
+      ? subDays(lastRecordDate, 7)
+      : startOfMonth(subMonths(lastRecordDate, 1));
+  const recordDateFormatted = format(recordDate, DateFormats.shortDate);
+
+  return (
+    recordDateFormatted + ' to ' + format(lastRecordDate, DateFormats.shortDate)
+  );
 };

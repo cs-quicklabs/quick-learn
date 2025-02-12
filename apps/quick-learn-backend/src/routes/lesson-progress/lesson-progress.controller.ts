@@ -134,15 +134,4 @@ export class LessonProgressController {
     );
     return new SuccessResponse(en.lessonStatus, data);
   }
-
-  @Get('leaderboard/list')
-  async getLeaderboardDataTable(
-    @Query() paginationDto: BasePaginationDto,
-  ): Promise<SuccessResponse> {
-    const leaderboardData = await this.lessonProgressService.getLeaderboardData(
-      Number(paginationDto.page),
-      Number(paginationDto.limit),
-    );
-    return new SuccessResponse(en.successLeaderboardData, leaderboardData);
-  }
 }

@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
-import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import { Cron } from '@nestjs/schedule';
 import { CRON_TIMEZONE } from '@src/common/enum/daily_lesson.enum';
 import { EnvironmentEnum } from '@src/common/constants/constants';
@@ -10,6 +9,7 @@ import { UserEntity } from '@src/entities/user.entity';
 import { UsersService } from '@src/routes/users/users.service';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from '@src/common/modules/email/email.service';
+import { LeaderboardService } from '../leaderboard/leaderboard.service';
 @Injectable()
 export class LeaderboardCronService {
   private frontendURL: string;
@@ -18,7 +18,7 @@ export class LeaderboardCronService {
   constructor(
     @InjectRepository(Leaderboard)
     private readonly leaderboardRepository: Repository<Leaderboard>,
-    private readonly lessonProgressService: LessonProgressService,
+    private readonly leaderboardService: LeaderboardService,
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
@@ -33,11 +33,11 @@ export class LeaderboardCronService {
     timeZone: CRON_TIMEZONE,
     disabled: process.env.ENV !== EnvironmentEnum.Production,
   })
-  async sendLeaderboardEmail() {
+  async sendLeaderboardEmail(type: string = 'weekly') {
     let skip = 0;
     let processedCount = 0;
 
-    await this.lessonProgressService.createLeaderboardRanking();
+    await this.leaderboardService.createLeaderboardRanking(type);
 
     this.logger.log('Created new leaderboard entries');
 
@@ -58,7 +58,9 @@ export class LeaderboardCronService {
         );
         if (userBatch.length > 0) {
           await Promise.all(
-            userBatch.map((user) => this.leaderboardEmail(user, totalMembers)),
+            userBatch.map((user) =>
+              this.leaderboardEmail(user, totalMembers, type),
+            ),
           );
           processedCount += userBatch.length;
           this.logger.log(`Processed ${processedCount} users`);
@@ -71,7 +73,11 @@ export class LeaderboardCronService {
     }
   }
 
-  async leaderboardEmail(user: UserEntity, totalMembers: number) {
+  async leaderboardEmail(
+    user: UserEntity,
+    totalMembers: number,
+    type: string = 'weekly',
+  ) {
     try {
       const userLeaderboardData = await this.leaderboardRepository.findOne({
         where: {
@@ -81,6 +87,7 @@ export class LeaderboardCronService {
 
       if (userLeaderboardData) {
         const leaderboardData = {
+          type: type === 'weekly' ? 'Weekly' : 'Monthly',
           fullName: user.display_name,
           rank: userLeaderboardData.rank,
           totalMembers: totalMembers,

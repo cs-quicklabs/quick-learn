@@ -21,6 +21,7 @@ interface IMailBody {
   userEmail: string;
 }
 interface ILeaderboardData {
+  type: string;
   fullName: string;
   rank: number;
   totalMembers: number;
@@ -124,13 +125,13 @@ export class EmailService {
   async leaderboardEmail(leaderboardData: ILeaderboardData, email: string) {
     const emailBody = await this.compileMjmlTemplate(
       leaderboardData as unknown as Record<string, string>,
-      'weekly-Leaderboard',
+      'leaderboard-template',
     );
     try {
       await this.emailService.send({
         recipients: [email],
         body: emailBody,
-        subject: emailSubjects.LEADERBOARD,
+        subject: `${leaderboardData.type} Leaderboard`,
       });
     } catch (err) {
       this.logger.error('Something went wrong:', JSON.stringify(err));

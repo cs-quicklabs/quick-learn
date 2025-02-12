@@ -12,3 +12,15 @@ export class CronjobQueryParamDto {
   @IsString()
   greeting: string;
 }
+
+export class CronjobLeaderboardQueryParamDto {
+  @ApiProperty({
+    name: 'type',
+    required: true,
+    type: String,
+    description: 'Get what is the type of the leaderboard',
+  })
+  @IsNotEmpty()
+  @IsString()
+  type: string;
+}
