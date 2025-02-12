@@ -61,7 +61,7 @@ function ApprovalList() {
     if (!isInitialLoad) {
       dispatch(
         updateSystemPreferencesData({
-          unapproved_lessons: total,
+          unapproved_lessons: total - 1,
         }),
       );
     }
