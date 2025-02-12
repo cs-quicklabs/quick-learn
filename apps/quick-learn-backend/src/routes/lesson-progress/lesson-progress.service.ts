@@ -5,7 +5,6 @@ import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.ent
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { previousMonday, startOfMonth, subMonths } from 'date-fns';
-import { Leaderboard } from '@src/entities/leaderboard.entity';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
@@ -231,7 +230,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       .getRawMany();
   }
 
-  async getLeaderboardDataService(type: string = 'weekly') {
+  async getLeaderboardDataService(type: string) {
     const fromPreviousMonday = previousMonday(
       new Date(new Date().setHours(7, 0, 0, 0)),
     );
@@ -242,8 +241,6 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     } else {
       dateToFindFrom = fromPreviousMonday;
     }
-
-    console.log(firstDateOfPreviousMonth);
     //get all user with
     const allUsers = await this.getAllUserProgressData(dateToFindFrom);
 
@@ -277,7 +274,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
    * Retrieves the Leaderboard data for last week with .
    * @returns An array of User records with daily lessons.
    */
-  async calculateLeaderBoardPercentage(type: string = 'weekly') {
+  async calculateLeaderBoardPercentage(type: string) {
     const getLeaderboardData = await this.getLeaderboardDataService(type);
 
     const leaderBoardWithPercentage = await Promise.all(

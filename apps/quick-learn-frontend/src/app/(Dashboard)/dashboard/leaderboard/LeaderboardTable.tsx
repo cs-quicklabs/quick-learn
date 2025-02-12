@@ -6,6 +6,7 @@ import { useAppSelector } from '@src/store/hooks';
 import { selectUser } from '@src/store/features/userSlice';
 import { TUser } from '@src/shared/types/userTypes';
 import { getRecords } from '@src/utils/helpers';
+
 interface LeaderboardData {
   user_id: number;
   lessons_completed_count?: number;
@@ -84,6 +85,7 @@ const LeaderboardTable = () => {
   useEffect(() => {
     fetchLeaderboardData(page);
     handleRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, type]);
 
   return (
@@ -96,6 +98,7 @@ const LeaderboardTable = () => {
         </div>
         <div className="flex space-x-1">
           <button
+            type="button"
             className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
               type === 'weekly'
                 ? 'bg-blue-500 text-white'
@@ -106,6 +109,7 @@ const LeaderboardTable = () => {
             {en.leaderboard.weekly}
           </button>
           <button
+            type="button"
             className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
               type === 'monthly'
                 ? 'bg-blue-500 text-white'

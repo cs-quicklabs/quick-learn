@@ -17,7 +17,7 @@ export class LeaderboardService {
 
   async getLeaderboardData(type: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
-    let items: any[] = [];
+    let items: Leaderboard[] | MonthlyLeaderboard[] = [];
     let total = 0;
 
     if (type === 'monthly') {
@@ -48,7 +48,7 @@ export class LeaderboardService {
     };
   }
 
-  async createLeaderboardRanking(type: string = 'weekly') {
+  async createLeaderboardRanking(type: string) {
     await this.deleteLeaderboardData(type);
     const LeaderboardData =
       await this.lessonProgressService.calculateLeaderBoardPercentage(type);
@@ -71,7 +71,7 @@ export class LeaderboardService {
       );
     }
   }
-  async deleteLeaderboardData(type: string = 'weekly') {
+  async deleteLeaderboardData(type: string) {
     try {
       let result;
       if (type === 'monthly') {

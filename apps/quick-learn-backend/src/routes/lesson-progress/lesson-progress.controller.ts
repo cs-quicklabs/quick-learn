@@ -1,4 +1,4 @@
-import { BasePaginationDto, SuccessResponse } from '@src/common/dto';
+import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { LessonProgressService } from './lesson-progress.service';
 import {
@@ -9,7 +9,6 @@ import {
   Request,
   Get,
   UseGuards,
-  Query,
 } from '@nestjs/common';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam, ApiTags } from '@nestjs/swagger';

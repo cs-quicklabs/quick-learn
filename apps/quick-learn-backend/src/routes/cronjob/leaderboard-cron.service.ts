@@ -33,7 +33,7 @@ export class LeaderboardCronService {
     timeZone: CRON_TIMEZONE,
     disabled: process.env.ENV !== EnvironmentEnum.Production,
   })
-  async sendLeaderboardEmail(type: string = 'weekly') {
+  async sendLeaderboardEmail(type: string) {
     let skip = 0;
     let processedCount = 0;
 
@@ -73,11 +73,7 @@ export class LeaderboardCronService {
     }
   }
 
-  async leaderboardEmail(
-    user: UserEntity,
-    totalMembers: number,
-    type: string = 'weekly',
-  ) {
+  async leaderboardEmail(user: UserEntity, totalMembers: number, type: string) {
     try {
       const userLeaderboardData = await this.leaderboardRepository.findOne({
         where: {
