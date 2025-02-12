@@ -14,20 +14,18 @@ import { BaseLoadingState, RootState } from '../types/base.types';
 
 interface ApprovalState extends BaseLoadingState {
   lessons: TLesson[];
-  page: number;
+  currentPage: number;
   limit: number;
   total: number;
   totalPages: number;
-  hasMore: boolean; // New property to track if more pages exist
 }
 
 const initialState: ApprovalState = {
   lessons: [],
-  page: 1,
+  currentPage: 1,
   limit: 10,
   total: 0,
   totalPages: 0,
-  hasMore: true,
   isLoading: true,
   isInitialLoad: true,
   error: null,
@@ -40,7 +38,7 @@ export const fetchUnapprovedLessons = createAsyncThunk(
       page = 1,
       limit = 10,
       q = '',
-    }: { page: number; limit: number; q: string },
+    }: { page: number; limit?: number; q: string },
     { rejectWithValue },
   ) => {
     try {
@@ -69,7 +67,11 @@ export const approveLessonThunk = createAsyncThunk(
 const approvalSlice = createSlice({
   name: 'approval',
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUnapprovedLessons.pending, (state) => {
@@ -81,15 +83,11 @@ const approvalSlice = createSlice({
         state.isInitialLoad = false;
         const { items, page, limit, total, total_pages } = action.payload;
 
-        state.page = page;
+        state.currentPage = page;
         state.limit = limit;
         state.total = total;
         state.totalPages = total_pages;
-        // Append lessons if not on the first page, otherwise replace them
-        state.lessons = page === 1 ? items : [...state.lessons, ...items];
-
-        // Determine if there are more pages to fetch
-        state.hasMore = page < total_pages;
+        state.lessons = items;
       })
       .addCase(fetchUnapprovedLessons.rejected, (state, action) => {
         state.isLoading = false;
@@ -107,29 +105,18 @@ const approvalSlice = createSlice({
 
 const selectApproval = (state: RootState) => state.approval;
 
-export const getApprovalLessionList = createSelector(
-  [selectApproval],
-  (approval) => approval.lessons,
-);
-export const getApprovalLessionListInitialLoad = createSelector(
-  [selectApproval],
-  (approval) => approval.isInitialLoad,
-);
-export const getApprovalLessionListLoading = createSelector(
-  [selectApproval],
-  (approval) => approval.isLoading,
-);
-export const getApprovalLessonCount = createSelector(
-  [selectApproval],
-  (approval) => approval.lessons.length,
-);
+export const selectPaginationApprovalList = createSelector([selectApproval], (data) => ({
+  lessons: data.lessons || [],
+  total: data.total || 0,
+  currentPage: data.currentPage || 1,
+  limit: data.limit || 10,
+  totalPages: data.totalPages || 0,
+  isInitialLoad: data.isInitialLoad,
+  isLoading: data.isLoading,
+}))
 
-export const selectPagination = (state: RootState) => ({
-  page: state.approval.page,
-  limit: state.approval.limit,
-  total: state.approval.total,
-  totalPages: state.approval.totalPages,
-  hasMore: state.approval.hasMore,
-});
+export const {
+  setCurrentPage: setCurrentPageApprovalList,
+} = approvalSlice.actions;
 
 export default approvalSlice.reducer;
