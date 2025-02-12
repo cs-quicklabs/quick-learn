@@ -199,3 +199,8 @@ export const getRecords = (type: string, lastRecord: string) => {
     recordDateFormatted + ' to ' + format(lastRecordDate, DateFormats.shortDate)
   );
 };
+
+export const firstLetterCapital = (text: string | undefined) => {
+  if (typeof text !== 'string' || text.length === 0) return '';
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};

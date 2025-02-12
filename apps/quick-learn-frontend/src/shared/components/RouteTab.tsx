@@ -1,5 +1,6 @@
 import { SuperLink } from '@src/utils/HiLink';
 import React from 'react';
+import { firstLetterCapital } from '@src/utils/helpers';
 
 interface RouteTabProps {
   id: number;
@@ -35,13 +36,15 @@ const RouteTab: React.FC<RouteTabProps> = ({
         onClick={onClick}
         className="cursor-pointer flex justify-between items-center text-slate-600 font-normal hover:bg-slate-200 px-3 py-2 active:bg-slate-500 w-full text-left"
       >
-        <span className="capitalize text-sm line-clamp-2 mr-4">{name}</span>
+        <span className=" text-sm line-clamp-2 mr-4">
+          {firstLetterCapital(name)}
+        </span>
         {type === 'lesson' && (
           <span
             id="badge-dismiss-dark"
             className="inline-flex items-center px-2 py-1 me-2 text-sm font-medium text-gray-800 bg-gray-100 rounded-sm dark:bg-gray-700 dark:text-gray-300"
           >
-            {course_name}
+            {firstLetterCapital(course_name)}
           </span>
         )}
       </button>
