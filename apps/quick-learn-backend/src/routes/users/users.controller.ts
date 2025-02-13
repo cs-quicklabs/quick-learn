@@ -48,69 +48,6 @@ export class UsersController {
     return new SuccessResponse(en.successUserMetadata, metadata);
   }
 
-  @Get('my-roadmaps')
-  @ApiOperation({ summary: "Get current user's assigned roadmaps" })
-  @ApiQuery({
-    name: 'include_courses',
-    required: false,
-    type: Boolean,
-    description: 'Include associated courses in the response',
-  })
-  async getCurrentUserRoadmaps(
-    @CurrentUser() user: UserEntity,
-    @Query('include_courses') includeCourses?: boolean,
-  ): Promise<SuccessResponse> {
-    const roadmaps = await this.usersService.getUserRoadmaps(
-      user.id,
-      includeCourses,
-    );
-    return new SuccessResponse(en.successGotUserRoadmaps, roadmaps);
-  }
-
-  @Get('my-roadmaps/:id/:userId?')
-  @ApiOperation({ summary: "Get current user's roadmap by id" })
-  async getCurrentUserRoadmapsById(
-    @CurrentUser() user: UserEntity,
-    @Param() param: UserRoadmapParamDto,
-  ): Promise<SuccessResponse> {
-    const roadmaps = await this.usersService.getRoadmapDetails(
-      !isNaN(param.userId) ? param.userId : user.id,
-      +param.id,
-    );
-    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
-  }
-
-  @Get('myroadmaps/courses/:id/:userId?')
-  @ApiOperation({ summary: "Get current user's course by id" })
-  async getCurrentUserCoursesById(
-    @CurrentUser() user: UserEntity,
-    @Param() param: UsercourseParamDto,
-    @Query('roadmapId') roadmapId?: string,
-  ): Promise<SuccessResponse> {
-    const roadmaps = await this.usersService.getCourseDetails(
-      !isNaN(param.userId) ? param.userId : user.id,
-      +param.id,
-      roadmapId ? +roadmapId : undefined,
-    );
-    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
-  }
-
-  @Get('myroadmaps/lessons/:id/:userId?')
-  @ApiOperation({ summary: "Get current user's lesson by id" })
-  async getCurrentUserLessonsById(
-    @CurrentUser() user: UserEntity,
-    @Param() param: UserLessonParamDto,
-    @Query() query: GetLessonByIdQueryDto,
-  ): Promise<SuccessResponse> {
-    const roadmaps = await this.usersService.getLessonDetails(
-      !isNaN(param.userId) ? param.userId : user.id,
-      +param.id,
-      +query.courseId,
-      query.roadmapId ? +query.roadmapId : undefined,
-    );
-    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
-  }
-
   @Get('search')
   @ApiOperation({ summary: 'Get search queries' })
   async getSearchQuery(
@@ -124,21 +61,6 @@ export class UsersController {
     );
 
     return new SuccessResponse(en.searchResults, searchedQueryResult);
-  }
-
-  @UseGuards(RolesGuard)
-  @Roles(UserTypeIdEnum.SUPERADMIN)
-  @Post()
-  @ApiOperation({ summary: 'Create new user' })
-  async create(
-    @CurrentUser() loggedInUser: UserEntity,
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<SuccessResponse> {
-    const user = await this.usersService.create({
-      ...createUserDto,
-      team_id: loggedInUser.team_id,
-    });
-    return new SuccessResponse(en.successUserCreate, user);
   }
 
   @Get('list')
@@ -181,16 +103,67 @@ export class UsersController {
     return new SuccessResponse(en.successGotUsers, users);
   }
 
-  @Post('activate')
-  @UseGuards(RolesGuard)
-  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
-  @ApiOperation({ summary: 'Activate or deactivate user' })
-  async activateUser(
-    @Body() body: { userId: number; active: boolean },
+  @Get('my-roadmaps')
+  @ApiOperation({ summary: "Get current user's assigned roadmaps" })
+  @ApiQuery({
+    name: 'include_courses',
+    required: false,
+    type: Boolean,
+    description: 'Include associated courses in the response',
+  })
+  async getCurrentUserRoadmaps(
+    @CurrentUser() user: UserEntity,
+    @Query('include_courses') includeCourses?: boolean,
   ): Promise<SuccessResponse> {
-    const { active, userId } = body;
-    const updatedUser = await this.usersService.updateUser(userId, { active });
-    return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
+    const roadmaps = await this.usersService.getUserRoadmaps(
+      user.id,
+      includeCourses,
+    );
+    return new SuccessResponse(en.successGotUserRoadmaps, roadmaps);
+  }
+
+  @Get('my-roadmaps/:id{/:userId}')
+  @ApiOperation({ summary: "Get current user's roadmap by id" })
+  async getCurrentUserRoadmapsById(
+    @CurrentUser() user: UserEntity,
+    @Param() param: UserRoadmapParamDto,
+  ): Promise<SuccessResponse> {
+    const roadmaps = await this.usersService.getRoadmapDetails(
+      !isNaN(param.userId) ? param.userId : user.id,
+      +param.id,
+    );
+    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
+  }
+
+  @Get('myroadmaps/courses/:id{/:userId}')
+  @ApiOperation({ summary: "Get current user's course by id" })
+  async getCurrentUserCoursesById(
+    @CurrentUser() user: UserEntity,
+    @Param() param: UsercourseParamDto,
+    @Query('roadmapId') roadmapId?: string,
+  ): Promise<SuccessResponse> {
+    const roadmaps = await this.usersService.getCourseDetails(
+      !isNaN(param.userId) ? param.userId : user.id,
+      +param.id,
+      roadmapId ? +roadmapId : undefined,
+    );
+    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
+  }
+
+  @Get('myroadmaps/lessons/:id{/:userId}')
+  @ApiOperation({ summary: "Get current user's lesson by id" })
+  async getCurrentUserLessonsById(
+    @Param() param: UserLessonParamDto,
+    @Query() query: GetLessonByIdQueryDto,
+    @CurrentUser() user: UserEntity,
+  ): Promise<SuccessResponse> {
+    const roadmaps = await this.usersService.getLessonDetails(
+      !isNaN(param.userId) ? param.userId : user.id,
+      +param.id,
+      +query.courseId,
+      query.roadmapId ? +query.roadmapId : undefined,
+    );
+    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
   // This should come AFTER all the specific routes
@@ -218,6 +191,33 @@ export class UsersController {
       relations,
     );
     return new SuccessResponse(en.successGotUser, user);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
+  @Post()
+  @ApiOperation({ summary: 'Create new user' })
+  async create(
+    @CurrentUser() loggedInUser: UserEntity,
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<SuccessResponse> {
+    const user = await this.usersService.create({
+      ...createUserDto,
+      team_id: loggedInUser.team_id,
+    });
+    return new SuccessResponse(en.successUserCreate, user);
+  }
+
+  @Post('activate')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
+  @ApiOperation({ summary: 'Activate or deactivate user' })
+  async activateUser(
+    @Body() body: { userId: number; active: boolean },
+  ): Promise<SuccessResponse> {
+    const { active, userId } = body;
+    const updatedUser = await this.usersService.updateUser(userId, { active });
+    return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
   }
 
   @Patch(':userId')

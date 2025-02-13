@@ -294,7 +294,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
       .leftJoinAndSelect('lesson.course', 'course')
-      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
+      .leftJoinAndSelect('lesson.created_by_user', 'created_by_user')
       .leftJoin('course.roadmaps', 'roadmaps')
       .innerJoin('roadmaps.users', 'users')
       .where('lesson.id = :id', { id })
