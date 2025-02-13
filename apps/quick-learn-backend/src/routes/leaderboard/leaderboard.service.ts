@@ -4,82 +4,53 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import { MonthlyLeaderboard } from '@src/entities/monthly-leaderboard.entity';
+import { PaginationService } from '@src/common/services';
+import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 
 @Injectable()
-export class LeaderboardService {
+export class LeaderboardService extends PaginationService<Leaderboard> {
   constructor(
     @InjectRepository(Leaderboard)
-    private readonly leaderboardRepository: Repository<Leaderboard>,
+    repo: Repository<Leaderboard>,
     @InjectRepository(MonthlyLeaderboard)
-    private readonly monthlyLeaderboardRepository: Repository<MonthlyLeaderboard>,
     private readonly lessonProgressService: LessonProgressService,
-  ) {}
-
-  async getLeaderboardData(type: string, page = 1, limit = 10) {
-    const skip = (page - 1) * limit;
-    let items: Leaderboard[] | MonthlyLeaderboard[] = [];
-    let total = 0;
-
-    if (type === 'monthly') {
-      [items, total] = await this.monthlyLeaderboardRepository.findAndCount({
-        skip,
-        take: limit,
-        order: {
-          rank_monthly: 'ASC',
-        },
-        relations: ['user'],
-      });
-    } else {
-      [items, total] = await this.leaderboardRepository.findAndCount({
-        skip,
-        take: limit,
-        order: {
-          rank: 'ASC',
-        },
-        relations: ['user'],
-      });
-    }
-
-    return {
-      items,
-      total,
-      currentPage: page,
-      hasMore: skip + items.length < total,
-    };
+  ) {
+    super(repo);
   }
 
-  async createLeaderboardRanking(type: string) {
+  async getLeaderboardData(type: LeaderboardTypeEnum, page = 1, limit = 10) {
+    return this.paginate(
+      {
+        limit,
+        page
+      },
+      {
+        type
+      },
+      ['user']
+    )
+  }
+
+  async createLeaderboardRanking(type: LeaderboardTypeEnum) {
     await this.deleteLeaderboardData(type);
     const LeaderboardData =
       await this.lessonProgressService.calculateLeaderBoardPercentage(type);
 
-    if (type === 'monthly') {
-      return this.monthlyLeaderboardRepository.save(
-        LeaderboardData.map((entry, index) => ({
-          user_id: entry.user_id,
-          lessons_completed_count_monthly: entry.lesson_completed_count,
-          rank_monthly: index + 1,
-        })),
-      );
-    } else {
-      return this.leaderboardRepository.save(
-        LeaderboardData.map((entry, index) => ({
-          user_id: entry.user_id,
-          lessons_completed_count: entry.lesson_completed_count,
-          rank: index + 1,
-        })),
-      );
-    }
+    return this.repository.save(
+      LeaderboardData.map((entry, index) => ({
+        user_id: entry.user_id,
+        lessons_completed_count: entry.lesson_completed_count,
+        rank: index + 1,
+        type
+      })),
+    );
   }
-  async deleteLeaderboardData(type: string) {
+
+  async deleteLeaderboardData(type: LeaderboardTypeEnum) {
     try {
-      let result;
-      if (type === 'monthly') {
-        result = await this.monthlyLeaderboardRepository.delete({});
-      } else {
-        result = await this.leaderboardRepository.delete({});
-      }
-      return result;
+      return await this.delete({
+        type,
+      });
     } catch (error) {
       throw new Error('Failed to delete leaderboard data');
     }

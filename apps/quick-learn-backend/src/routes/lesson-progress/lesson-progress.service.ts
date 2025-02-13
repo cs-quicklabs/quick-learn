@@ -260,9 +260,9 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
         ...user,
         lessonIds: completedData
           ? completedData.lessonIds.map((lessonId, index) => [
-              lessonId.toString(),
-              completedData.createdAtArray[index],
-            ])
+            lessonId.toString(),
+            completedData.createdAtArray[index],
+          ])
           : [],
       };
     });
