@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import {
   fetchUnapprovedLessons,
@@ -19,6 +18,7 @@ import { SuperLink } from '@src/utils/HiLink';
 import { debounce } from '@src/utils/helpers';
 import ApprovalListSkeleton from './ApprovalListSkeleton';
 import { SystemPreferencesKey } from '@src/shared/types/contentRepository';
+import BasicPagination from '@src/shared/components/BasicPagination';
 
 const columns = [
   en.common.lesson,
@@ -74,12 +74,6 @@ function ApprovalList() {
     setSearch(searchTerm);
     debouncedSearch(searchTerm);
   };
-
-  function showRange() {
-    const initial = total === 0 ? 0 : (currentPage - 1) * 10 + 1;
-    const end = Math.min(currentPage * 10, total);
-    return `${initial} ${en.teams.to} ${end} ${en.teams.of} ${total}`;
-  }
 
   function renderTableData() {
     if (lessons.length === 0)
@@ -179,53 +173,16 @@ function ApprovalList() {
         </div>
       </div>
 
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between my-5">
-        <div>
-          <p className="text-sm text-gray-700">
-            {en.teams.showing}{' '}
-            <span className="font-medium">{showRange()}</span>{' '}
-            {en.teams.results}
-          </p>
-        </div>
-        <div>
-          <div className="flex">
-            {currentPage > 1 && (
-              <button
-                type="button"
-                id="prev"
-                onClick={() => {
-                  const newPage = currentPage - 1;
-                  dispatch(setCurrentPageApprovalList(newPage));
-                  dispatch(
-                    fetchUnapprovedLessons({ page: newPage, q: search }),
-                  );
-                }}
-                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
-              >
-                <ArrowLeftIcon height={20} width={32} />
-                {en.teams.previous}
-              </button>
-            )}
-            {currentPage < totalPages && (
-              <button
-                type="button"
-                id="next"
-                onClick={() => {
-                  const newPage = currentPage + 1;
-                  dispatch(setCurrentPageApprovalList(newPage));
-                  dispatch(
-                    fetchUnapprovedLessons({ page: newPage, q: search }),
-                  );
-                }}
-                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
-              >
-                {en.teams.next}
-                <ArrowRightIcon height={20} width={32} />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      <BasicPagination
+        total={total}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onChange={(pageIndex: number) => {
+          const newPage = pageIndex || 1;
+          dispatch(setCurrentPageApprovalList(newPage));
+          dispatch(fetchUnapprovedLessons({ page: newPage, q: search }));
+        }}
+      />
     </div>
   );
 }
