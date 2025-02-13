@@ -1,7 +1,6 @@
 'use client';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useMemo, useState } from 'react';
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { TUserType } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
 import TeamTable from './TeamTable';
@@ -15,6 +14,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { en } from '@src/constants/lang/en';
 import { SuperLink } from '@src/utils/HiLink';
+import BasicPagination from '@src/shared/components/BasicPagination';
 
 function TeamMemberListing() {
   const dispatch = useAppDispatch();
@@ -24,6 +24,7 @@ function TeamMemberListing() {
     currentUserType,
     filteredTotal,
     searchQuery,
+    totalPages,
   } = useAppSelector(selectTeamListingData);
 
   const [searchInputValue, setSearchInputValue] = useState(searchQuery || ''); // Local state for input value
@@ -60,12 +61,6 @@ function TeamMemberListing() {
     setSearchInputValue(value); // Update local state immediately
     debouncedSearch(value); // Debounce the Redux update and API call
   };
-
-  function showRange() {
-    const initial = filteredTotal === 0 ? 0 : (currentPage - 1) * 10 + 1;
-    const end = Math.min(currentPage * 10, filteredTotal);
-    return `${initial} ${en.teams.to} ${end} ${en.teams.of} ${filteredTotal}`;
-  }
 
   return (
     <>
@@ -134,61 +129,22 @@ function TeamMemberListing() {
         <TeamTable />
       </section>
 
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between my-5">
-        <div>
-          <p className="text-sm text-gray-700">
-            {en.teams.showing}{' '}
-            <span className="font-medium">{showRange()}</span>{' '}
-            {en.teams.results}
-          </p>
-        </div>
-        <div>
-          <div className="flex">
-            {currentPage > 1 && (
-              <button
-                type="button"
-                id="prev"
-                onClick={() => {
-                  const newPage = currentPage - 1;
-                  dispatch(setCurrentPage(newPage));
-                  dispatch(
-                    fetchTeamMembers({
-                      page: newPage,
-                      userTypeCode: currentUserType,
-                      query: searchInputValue,
-                    }),
-                  );
-                }}
-                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
-              >
-                <ArrowLeftIcon height={20} width={32} />
-                {en.teams.previous}
-              </button>
-            )}
-            {currentPage * 10 < filteredTotal && (
-              <button
-                type="button"
-                id="next"
-                onClick={() => {
-                  const newPage = currentPage + 1;
-                  dispatch(setCurrentPage(newPage));
-                  dispatch(
-                    fetchTeamMembers({
-                      page: newPage,
-                      userTypeCode: currentUserType,
-                      query: searchInputValue,
-                    }),
-                  );
-                }}
-                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
-              >
-                {en.teams.next}
-                <ArrowRightIcon height={20} width={32} />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      <BasicPagination
+        total={filteredTotal}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onChange={(pageIndex: number) => {
+          const newPage = pageIndex || 1;
+          dispatch(setCurrentPage(newPage));
+          dispatch(
+            fetchTeamMembers({
+              page: newPage,
+              userTypeCode: currentUserType,
+              query: searchInputValue,
+            }),
+          );
+        }}
+      />
     </>
   );
 }

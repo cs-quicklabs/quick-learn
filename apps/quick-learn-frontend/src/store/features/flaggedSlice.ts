@@ -3,21 +3,21 @@ import {
   createAsyncThunk,
   createSelector,
 } from '@reduxjs/toolkit';
-import { TLesson } from '@src/shared/types/contentRepository';
-import { getUnapprovedLessons } from '@src/apiServices/lessonsService';
+import { TFlaggedLesson } from '@src/shared/types/contentRepository';
+import { getFlaggedLessons } from '@src/apiServices/lessonsService';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 import { BaseLoadingState, RootState } from '../types/base.types';
 
-interface ApprovalState extends BaseLoadingState {
-  lessons: TLesson[];
+interface FlaggedState extends BaseLoadingState {
+  lessons: TFlaggedLesson[];
   currentPage: number;
   limit: number;
   total: number;
   totalPages: number;
 }
 
-const initialState: ApprovalState = {
+const initialState: FlaggedState = {
   lessons: [],
   currentPage: 1,
   limit: 10,
@@ -28,8 +28,8 @@ const initialState: ApprovalState = {
   error: null,
 };
 
-export const fetchUnapprovedLessons = createAsyncThunk(
-  'approval/fetchUnapproved',
+export const fetchFlaggedLessons = createAsyncThunk(
+  'flagged/fetchUnapproved',
   async (
     {
       page = 1,
@@ -39,7 +39,7 @@ export const fetchUnapprovedLessons = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await getUnapprovedLessons({ page, limit, q });
+      const response = await getFlaggedLessons(page, limit, q);
       return response.data;
     } catch (error) {
       showApiErrorInToast(error as AxiosErrorObject);
@@ -48,8 +48,8 @@ export const fetchUnapprovedLessons = createAsyncThunk(
   },
 );
 
-const approvalSlice = createSlice({
-  name: 'approval',
+const flaggedSlice = createSlice({
+  name: 'unflagged',
   initialState,
   reducers: {
     setCurrentPage: (state, action) => {
@@ -58,11 +58,11 @@ const approvalSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUnapprovedLessons.pending, (state) => {
+      .addCase(fetchFlaggedLessons.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchUnapprovedLessons.fulfilled, (state, action) => {
+      .addCase(fetchFlaggedLessons.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isInitialLoad = false;
         const { items, page, limit, total, total_pages } = action.payload;
@@ -73,7 +73,7 @@ const approvalSlice = createSlice({
         state.totalPages = total_pages;
         state.lessons = items;
       })
-      .addCase(fetchUnapprovedLessons.rejected, (state, action) => {
+      .addCase(fetchFlaggedLessons.rejected, (state, action) => {
         state.isLoading = false;
         state.isInitialLoad = false;
         state.error = action.error?.message ?? 'Failed to fetch lessons';
@@ -81,10 +81,10 @@ const approvalSlice = createSlice({
   },
 });
 
-const selectApproval = (state: RootState) => state.approval;
+const selectUnflagged = (state: RootState) => state.flagged;
 
-export const selectPaginationApprovalList = createSelector(
-  [selectApproval],
+export const selectPaginationFlaggedList = createSelector(
+  [selectUnflagged],
   (data) => ({
     lessons: data.lessons || [],
     total: data.total || 0,
@@ -96,7 +96,7 @@ export const selectPaginationApprovalList = createSelector(
   }),
 );
 
-export const { setCurrentPage: setCurrentPageApprovalList } =
-  approvalSlice.actions;
+export const { setCurrentPage: setCurrentPageFlaggedList } =
+  flaggedSlice.actions;
 
-export default approvalSlice.reducer;
+export default flaggedSlice.reducer;
