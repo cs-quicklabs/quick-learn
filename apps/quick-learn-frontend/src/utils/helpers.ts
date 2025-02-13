@@ -12,7 +12,6 @@ import {
   TUserCourse,
 } from '@src/shared/types/contentRepository';
 import {
-  subDays,
   startOfMonth,
   subMonths,
   format,
@@ -24,6 +23,7 @@ import {
 import { DateFormats } from '@src/constants/dateFormats';
 import { toZonedTime } from 'date-fns-tz';
 import { TIMEZONE } from 'lib/shared/src/lib/constant';
+
 export function showErrorMessage(error: unknown) {
   if (error instanceof AxiosError) {
     showApiErrorInToast(error as AxiosErrorObject);
@@ -197,7 +197,7 @@ export const calculateCourseProgress = (
     : 0;
 };
 
-export const getRecords = (type: string, lastRecord: string) => {
+export const getRecords = (type: string) => {
   const { start, end } =
     type === 'weekly' ? getLastWeekRange() : getLastMonthRange();
 
