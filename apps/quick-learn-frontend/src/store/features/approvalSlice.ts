@@ -105,18 +105,20 @@ const approvalSlice = createSlice({
 
 const selectApproval = (state: RootState) => state.approval;
 
-export const selectPaginationApprovalList = createSelector([selectApproval], (data) => ({
-  lessons: data.lessons || [],
-  total: data.total || 0,
-  currentPage: data.currentPage || 1,
-  limit: data.limit || 10,
-  totalPages: data.totalPages || 0,
-  isInitialLoad: data.isInitialLoad,
-  isLoading: data.isLoading,
-}))
+export const selectPaginationApprovalList = createSelector(
+  [selectApproval],
+  (data) => ({
+    lessons: data.lessons || [],
+    total: data.total || 0,
+    currentPage: data.currentPage || 1,
+    limit: data.limit || 10,
+    totalPages: data.totalPages || 0,
+    isInitialLoad: data.isInitialLoad,
+    isLoading: data.isLoading,
+  }),
+);
 
-export const {
-  setCurrentPage: setCurrentPageApprovalList,
-} = approvalSlice.actions;
+export const { setCurrentPage: setCurrentPageApprovalList } =
+  approvalSlice.actions;
 
 export default approvalSlice.reducer;

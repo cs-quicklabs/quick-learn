@@ -11,10 +11,14 @@ import {
   setCurrentPageApprovalList,
 } from '@src/store/features/approvalSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
+import {
+  getSystemPreferencesState,
+  updateSystemPreferencesData,
+} from '@src/store/features/systemPreferenceSlice';
 import { SuperLink } from '@src/utils/HiLink';
 import { debounce } from '@src/utils/helpers';
 import ApprovalListSkeleton from './ApprovalListSkeleton';
+import { SystemPreferencesKey } from '@src/shared/types/contentRepository';
 
 const columns = [
   en.common.lesson,
@@ -25,6 +29,9 @@ const columns = [
 
 function ApprovalList() {
   const dispatch = useAppDispatch();
+  const { metadata } = useAppSelector(getSystemPreferencesState);
+  const unAprrovedDataTotal = metadata[SystemPreferencesKey.UNAPPROVED_LESSONS];
+
   const { lessons, total, totalPages, isInitialLoad, isLoading, currentPage } =
     useAppSelector(selectPaginationApprovalList);
 
@@ -52,7 +59,7 @@ function ApprovalList() {
   }, []);
 
   useEffect(() => {
-    if (!isInitialLoad) {
+    if (!isLoading && search === '' && unAprrovedDataTotal !== total) {
       dispatch(
         updateSystemPreferencesData({
           unapproved_lessons: total,
@@ -60,7 +67,7 @@ function ApprovalList() {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, isInitialLoad]);
+  }, [dispatch, isLoading]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
