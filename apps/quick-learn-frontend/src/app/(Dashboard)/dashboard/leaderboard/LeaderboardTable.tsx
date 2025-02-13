@@ -11,7 +11,7 @@ const getMedalEmoji = (rank: number, lessonsCount: number) => {
   if (rank === 1) return <span className="text-yellow-500">🥇</span>;
   if (rank === 2) return <span className="text-gray-500">🥈</span>;
   if (rank === 3) return <span className="text-red-500">🥉</span>;
-  if (lessonsCount <= 3) {
+  if (lessonsCount === 0) {
     return (
       <span
         className="text-gray-500 cursor-help relative group"
@@ -92,6 +92,14 @@ const LeaderboardTable = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, type]);
 
+  if (leaderBoardRanking.length === 0) {
+    return (
+      <div className="relative my-4 overflow-x-auto border-t border-gray-200 shadow-md  overflow-y-auto sm:rounded-lg">
+        <div className="text-center text-gray-500">No data found</div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative overflow-x-auto border-t border-gray-200 shadow-md  overflow-y-auto sm:rounded-lg">
       <div className=" text-xs font-bold flex space-x-1 rounded-lg  p-0.5 justify-between items-center">
@@ -100,13 +108,13 @@ const LeaderboardTable = () => {
             ? 'No records found'
             : `Records from ${getRecords(type, records)}`}
         </div>
-        <div className="flex space-x-1">
+        <div className="flex space-x-1 bg-slate-200 p-1 rounded-lg">
           <button
             type="button"
             className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
               type === 'weekly'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+                ? 'bg-blue-400 text-white'
+                : 'bg-gray-200 text-gray-500'
             }`}
             onClick={() => handleTypeChange('weekly')}
           >
@@ -116,8 +124,8 @@ const LeaderboardTable = () => {
             type="button"
             className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
               type === 'monthly'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+                ? 'bg-blue-400 text-white'
+                : 'bg-gray-200 text-gray-500 '
             }`}
             onClick={() => handleTypeChange('monthly')}
           >
