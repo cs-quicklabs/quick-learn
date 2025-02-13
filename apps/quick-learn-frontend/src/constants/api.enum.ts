@@ -70,8 +70,8 @@ export enum LearningPathAPIEnum {
   GET_USER_SEARCH = '/users/search',
   GET_LEARNING_PATHS = '/users/my-roadmaps',
   GET_LEARNING_PATH_ROADMAP = '/users/my-roadmaps/:id',
-  GET_LEARNING_PATH_COURSE = '/users/myroadmaps/courses/:id',
-  GET_LEARNING_PATH_LESSON = '/users/myroadmaps/lessons/:id',
+  GET_LEARNING_PATH_COURSE = '/users/my-roadmaps/courses/:id',
+  GET_LEARNING_PATH_LESSON = '/users/my-roadmaps/lessons/:id',
 }
 
 export enum DailyLessionEnum {

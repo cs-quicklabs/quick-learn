@@ -21,6 +21,7 @@ import archivedReducer from './features/archivedSlice';
 import userProgressReducer from './features/userProgressSlice';
 import userReducer from './features/userSlice';
 import systemPreferencesReducer from './features/systemPreferenceSlice';
+import flaggedReducer from './features/flaggedSlice';
 
 // Function to create a no-op storage
 const createNoopStorage = () => {
@@ -96,7 +97,8 @@ export const makeStore = () => {
       team: teamReducer,
       approval: approvalReducer,
       archived: archivedReducer,
-      userProgress: persistedUserProgressReducer, // persisted
+      userProgress: persistedUserProgressReducer,
+      flagged: flaggedReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

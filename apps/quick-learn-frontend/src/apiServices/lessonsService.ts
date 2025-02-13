@@ -140,7 +140,7 @@ export const getCourseProgress = async (
 ): Promise<AxiosSuccessResponse<LessonProgress[]>> => {
   const response = await axiosInstance.get<
     AxiosSuccessResponse<LessonProgress[]>
-  >(`${ContentRepositoryApiEnum.LESSON_PROGRESS}/${courseId}/progress`);
+  >(`${ContentRepositoryApiEnum.LESSON_PROGRESS}/progress/${courseId}`);
   return response.data;
 };
 

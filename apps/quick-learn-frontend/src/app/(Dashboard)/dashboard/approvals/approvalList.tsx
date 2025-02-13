@@ -1,24 +1,24 @@
 'use client';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import { format } from 'date-fns';
 import {
   fetchUnapprovedLessons,
-  getApprovalLessionListLoading,
-  getApprovalLessionList,
-  getApprovalLessionListInitialLoad,
-  selectPagination,
+  selectPaginationApprovalList,
+  setCurrentPageApprovalList,
 } from '@src/store/features/approvalSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
-import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
+import {
+  getSystemPreferencesState,
+  updateSystemPreferencesData,
+} from '@src/store/features/systemPreferenceSlice';
 import { SuperLink } from '@src/utils/HiLink';
 import { debounce } from '@src/utils/helpers';
-import {
-  ApprovalListDataSkeleton,
-  ApprovalListSkeleton,
-} from './ApprovalListSkeleton';
+import ApprovalListSkeleton from './ApprovalListSkeleton';
+import { SystemPreferencesKey } from '@src/shared/types/contentRepository';
+import BasicPagination from '@src/shared/components/BasicPagination';
 
 const columns = [
   en.common.lesson,
@@ -29,27 +29,28 @@ const columns = [
 
 function ApprovalList() {
   const dispatch = useAppDispatch();
-  const lessons = useAppSelector(getApprovalLessionList);
-  const isLoading = useAppSelector(getApprovalLessionListLoading);
-  const isInitialLoad = useAppSelector(getApprovalLessionListInitialLoad);
-  const { page, totalPages, total } = useAppSelector(selectPagination);
-  const [limit] = useState(10);
+  const { metadata } = useAppSelector(getSystemPreferencesState);
+  const unAprrovedDataTotal = metadata[SystemPreferencesKey.UNAPPROVED_LESSONS];
+
+  const { lessons, total, totalPages, isInitialLoad, isLoading, currentPage } =
+    useAppSelector(selectPaginationApprovalList);
+
   const [search, setSearch] = useState('');
-  const observerRef = useRef<HTMLDivElement | null>(null);
 
   const fetchLessons = useCallback(
     (pageNum: number, searchTerm: string) => {
-      dispatch(fetchUnapprovedLessons({ page: pageNum, limit, q: searchTerm }));
+      dispatch(fetchUnapprovedLessons({ page: pageNum, q: searchTerm }));
     },
-    [dispatch, limit],
+    [dispatch],
   );
 
   const debouncedSearch = useMemo(
     () =>
       debounce((searchTerm: string) => {
+        dispatch(setCurrentPageApprovalList(1));
         fetchLessons(1, searchTerm);
       }, 500),
-    [fetchLessons],
+    [dispatch, fetchLessons],
   );
 
   useEffect(() => {
@@ -58,7 +59,7 @@ function ApprovalList() {
   }, []);
 
   useEffect(() => {
-    if (!isInitialLoad) {
+    if (!isLoading && search === '' && unAprrovedDataTotal !== total) {
       dispatch(
         updateSystemPreferencesData({
           unapproved_lessons: total,
@@ -66,25 +67,7 @@ function ApprovalList() {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, isInitialLoad]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && page < totalPages && !isLoading) {
-          fetchLessons(page + 1, search);
-        }
-      },
-      { threshold: 1.0 },
-    );
-
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
-
-    return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, page, totalPages, limit, isLoading, search]);
+  }, [dispatch, isLoading]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
@@ -92,7 +75,54 @@ function ApprovalList() {
     debouncedSearch(searchTerm);
   };
 
-  if (isInitialLoad && total === 0) return <ApprovalListSkeleton />;
+  function renderTableData() {
+    if (lessons.length === 0)
+      return (
+        <tr>
+          <td
+            colSpan={7}
+            className="px-4 py-2 font-medium text-gray-900 text-center"
+          >
+            {en.common.noResultFound}
+          </td>
+        </tr>
+      );
+
+    return lessons.map((lesson, index) => (
+      <tr
+        id={`row${index}`}
+        key={lesson.id}
+        className="border-b border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        <th
+          scope="row"
+          className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+        >
+          <div className="flex items-center">
+            <SuperLink
+              className="ml-2 hover:underline"
+              href={`${RouteEnum.APPROVALS}/${lesson.id}`}
+            >
+              {lesson.name}
+            </SuperLink>
+          </div>
+        </th>
+        <td className="px-4 py-2">
+          {format(lesson.updated_at, DateFormats.shortDate)}
+        </td>
+        <td className="px-4 py-2">
+          {format(lesson.created_at, DateFormats.shortDate)}
+        </td>
+        <td className="px-4 py-2">
+          {lesson.created_by_user.first_name +
+            ' ' +
+            lesson.created_by_user.last_name || '-'}
+        </td>
+      </tr>
+    ));
+  }
+
+  if (isInitialLoad) return <ApprovalListSkeleton />;
 
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
@@ -116,7 +146,7 @@ function ApprovalList() {
             </div>
           </div>
         </div>
-        <div className={`overflow-x-auto ${isInitialLoad ? 'opacity-60' : ''}`}>
+        <div className={`overflow-x-auto ${isLoading ? 'opacity-60' : ''}`}>
           <table className="w-full text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
@@ -133,55 +163,26 @@ function ApprovalList() {
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {lessons.map((lesson, index) => (
-                <tr
-                  id={`row${index}`}
-                  key={lesson.id}
-                  className="border-b border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <th
-                    scope="row"
-                    className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                  >
-                    <div className="flex items-center">
-                      <SuperLink
-                        className="ml-2 hover:underline"
-                        href={`${RouteEnum.APPROVALS}/${lesson.id}`}
-                      >
-                        {lesson.name}
-                      </SuperLink>
-                    </div>
-                  </th>
-                  <td className="px-4 py-2">
-                    {format(lesson.updated_at, DateFormats.shortDate)}
-                  </td>
-                  <td className="px-4 py-2">
-                    {format(lesson.created_at, DateFormats.shortDate)}
-                  </td>
-                  <td className="px-4 py-2">
-                    {lesson.created_by_user.first_name +
-                      ' ' +
-                      lesson.created_by_user.last_name || '-'}
-                  </td>
-                </tr>
-              ))}
-              {lessons.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-4 py-2 font-medium text-gray-900 text-center"
-                  >
-                    {search ? en.common.noResultFound : ''}
-                  </td>
-                </tr>
-              )}
-            </tbody>
+            <tbody>{renderTableData()}</tbody>
           </table>
-          {isLoading && !isInitialLoad && <ApprovalListDataSkeleton />}
+          {isLoading && !isInitialLoad && (
+            <div className="fixed top-4 right-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700" />
+            </div>
+          )}
         </div>
       </div>
-      <div ref={observerRef} className="h-10" />
+
+      <BasicPagination
+        total={total}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onChange={(pageIndex: number) => {
+          const newPage = pageIndex || 1;
+          dispatch(setCurrentPageApprovalList(newPage));
+          dispatch(fetchUnapprovedLessons({ page: newPage, q: search }));
+        }}
+      />
     </div>
   );
 }
