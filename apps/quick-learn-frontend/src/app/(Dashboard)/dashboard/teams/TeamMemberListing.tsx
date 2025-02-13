@@ -18,10 +18,15 @@ import { SuperLink } from '@src/utils/HiLink';
 
 function TeamMemberListing() {
   const dispatch = useAppDispatch();
-  const [searchInputValue, setSearchInputValue] = useState(''); // Local state for input value
+  const {
+    totalUsers,
+    currentPage,
+    currentUserType,
+    filteredTotal,
+    searchQuery,
+  } = useAppSelector(selectTeamListingData);
 
-  const { totalUsers, currentPage, currentUserType, filteredTotal } =
-    useAppSelector(selectTeamListingData);
+  const [searchInputValue, setSearchInputValue] = useState(searchQuery || ''); // Local state for input value
 
   const userTypes: TUserType[] = [
     { name: 'Admin', code: 'admin' },
