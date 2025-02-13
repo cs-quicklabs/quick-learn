@@ -15,10 +15,10 @@ export class CronjobQueryParamDto {
 
 export class CronjobLeaderboardQueryParamDto {
   @ApiProperty({
-    name: 'type',
-    required: true,
-    type: LeaderboardTypeEnum,
+    enum: LeaderboardTypeEnum,
+    enumName: 'LeaderboardTypeEnum',
     description: 'Get what is the type of the leaderboard',
+    required: true,
   })
   @IsNotEmpty()
   @IsEnum(LeaderboardTypeEnum)
