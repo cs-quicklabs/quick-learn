@@ -4,10 +4,7 @@ import {
   createSelector,
 } from '@reduxjs/toolkit';
 import { TLesson } from '@src/shared/types/contentRepository';
-import {
-  getUnapprovedLessons,
-  approveLesson,
-} from '@src/apiServices/lessonsService';
+import { getUnapprovedLessons } from '@src/apiServices/lessonsService';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 import { BaseLoadingState, RootState } from '../types/base.types';
@@ -51,19 +48,6 @@ export const fetchUnapprovedLessons = createAsyncThunk(
   },
 );
 
-export const approveLessonThunk = createAsyncThunk(
-  'approval/approveLesson',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await approveLesson(id);
-      return id;
-    } catch (error) {
-      showApiErrorInToast(error as AxiosErrorObject);
-      return rejectWithValue(error);
-    }
-  },
-);
-
 const approvalSlice = createSlice({
   name: 'approval',
   initialState,
@@ -93,12 +77,6 @@ const approvalSlice = createSlice({
         state.isLoading = false;
         state.isInitialLoad = false;
         state.error = action.error?.message ?? 'Failed to fetch lessons';
-      })
-      .addCase(approveLessonThunk.fulfilled, (state, action) => {
-        state.lessons = state.lessons.filter(
-          (lesson) => lesson.id.toString() !== action.payload,
-        );
-        state.total -= 1;
       });
   },
 });
