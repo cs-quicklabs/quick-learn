@@ -38,6 +38,13 @@ export class Migration1738908226095 implements MigrationInterface {
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
+          {
+            name: 'type',
+            type: 'varchar',
+            length: '10',
+            isNullable: false,
+            default: "'weekly'",
+          },
         ],
       }),
       true,

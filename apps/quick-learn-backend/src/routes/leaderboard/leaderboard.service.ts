@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import { PaginationService } from '@src/common/services';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
+import { en } from '@src/lang/en';
 
 @Injectable()
 export class LeaderboardService extends PaginationService<Leaderboard> {
@@ -51,7 +52,7 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
         type,
       });
     } catch (error) {
-      throw new Error('Failed to delete leaderboard data');
+      throw new HttpException(en.leaderboardDeleteError, 500);
     }
   }
 }

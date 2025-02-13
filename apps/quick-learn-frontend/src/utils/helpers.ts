@@ -11,9 +11,19 @@ import {
   TUserRoadmap,
   TUserCourse,
 } from '@src/shared/types/contentRepository';
-import { subDays, startOfMonth, subMonths, format } from 'date-fns';
+import {
+  subDays,
+  startOfMonth,
+  subMonths,
+  format,
+  endOfMonth,
+  endOfWeek,
+  startOfWeek,
+  subWeeks,
+} from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
-
+import { toZonedTime } from 'date-fns-tz';
+import { TIMEZONE } from 'lib/shared/src/lib/constant';
 export function showErrorMessage(error: unknown) {
   if (error instanceof AxiosError) {
     showApiErrorInToast(error as AxiosErrorObject);
@@ -188,16 +198,44 @@ export const calculateCourseProgress = (
 };
 
 export const getRecords = (type: string, lastRecord: string) => {
-  const lastRecordDate = new Date(lastRecord);
-  const recordDate =
-    type === 'weekly'
-      ? subDays(lastRecordDate, 7)
-      : startOfMonth(subMonths(lastRecordDate, 1));
-  const recordDateFormatted = format(recordDate, DateFormats.shortDate);
+  const { start, end } =
+    type === 'weekly' ? getLastWeekRange() : getLastMonthRange();
 
-  return (
-    recordDateFormatted + ' to ' + format(lastRecordDate, DateFormats.shortDate)
-  );
+  return `${format(start, DateFormats.shortDate)} to ${format(
+    end,
+    DateFormats.shortDate,
+  )}`;
+};
+
+export const getLastMonthRange = () => {
+  const timeZone = TIMEZONE;
+  const now = new Date();
+  const zonedNow = toZonedTime(now, timeZone);
+  const start = startOfMonth(subMonths(zonedNow, 1));
+  const end = endOfMonth(subMonths(zonedNow, 1));
+
+  const utcStart = toZonedTime(start, timeZone);
+  const utcEnd = toZonedTime(end, timeZone);
+
+  return {
+    start: format(utcStart, 'yyyy-MM-dd HH:mm:ss'),
+    end: format(utcEnd, 'yyyy-MM-dd HH:mm:ss'),
+  };
+};
+export const getLastWeekRange = () => {
+  const timeZone = TIMEZONE;
+  const now = new Date();
+  const zonedNow = toZonedTime(now, timeZone);
+  const start = startOfWeek(subWeeks(zonedNow, 1), { weekStartsOn: 1 }); // Assuming week starts on Monday
+  const end = endOfWeek(subWeeks(zonedNow, 1), { weekStartsOn: 1 });
+
+  const utcStart = toZonedTime(start, timeZone);
+  const utcEnd = toZonedTime(end, timeZone);
+
+  return {
+    start: format(utcStart, 'yyyy-MM-dd HH:mm:ss'),
+    end: format(utcEnd, 'yyyy-MM-dd HH:mm:ss'),
+  };
 };
 
 export const firstLetterCapital = (text: string | undefined) => {

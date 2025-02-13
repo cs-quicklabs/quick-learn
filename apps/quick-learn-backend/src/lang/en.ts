@@ -79,6 +79,7 @@ export const en = {
   triggeredDailyLessonMails: 'Successfully triggered daily lesson mails',
   triggeredLeaderboardEmail: 'Successfully triggered leaderboard email',
   succcessLessonFlagged: 'Lesson flagged successfully',
+  leaderboardDeleteError: 'Failed to delete leaderboard data',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',

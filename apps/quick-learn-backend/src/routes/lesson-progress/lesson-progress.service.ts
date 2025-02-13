@@ -6,6 +6,7 @@ import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { previousMonday, startOfMonth, subMonths } from 'date-fns';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
+import Helpers from '@src/common/utils/helper';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
@@ -201,11 +202,15 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     return userDailyLessonProgress;
   }
 
-  async getAllUserProgressData(thisDate: Date) {
+  async getAllUserProgressData(thisDate: { start: string; end: string }) {
     return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-      .where('lesson_token.created_at >= :fromPreviousMonday', {
-        fromPreviousMonday: thisDate.toISOString(),
-      })
+      .where(
+        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
+        {
+          startDate: thisDate.start,
+          endDate: thisDate.end,
+        },
+      )
       .leftJoinAndSelect('lesson_token.user', 'user')
       .select([
         'user.id AS user_id',
@@ -218,11 +223,18 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       .getRawMany();
   }
 
-  async getAllUserCompletedLessonData(thisDate: Date) {
+  async getAllUserCompletedLessonData(thisDate: {
+    start: string;
+    end: string;
+  }) {
     return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-      .where('lesson_token.created_at >= :fromPreviousMonday ', {
-        fromPreviousMonday: thisDate.toISOString(),
-      })
+      .where(
+        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
+        {
+          startDate: thisDate.start,
+          endDate: thisDate.end,
+        },
+      )
       .andWhere('lesson_token.status = :status', { status: 'COMPLETED' })
       .select('lesson_token.user_id', 'userId')
       .addSelect('ARRAY_AGG(lesson_token.lesson_id)', 'lessonIds')
@@ -232,15 +244,11 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   }
 
   async getLeaderboardDataService(type: LeaderboardTypeEnum) {
-    const fromPreviousMonday = previousMonday(
-      new Date(new Date().setHours(7, 0, 0, 0)),
-    );
-    const firstDateOfPreviousMonth = startOfMonth(subMonths(new Date(), 1));
     let dateToFindFrom;
     if (type === LeaderboardTypeEnum.MONTHLY) {
-      dateToFindFrom = firstDateOfPreviousMonth;
+      dateToFindFrom = Helpers.getLastMonthRange();
     } else {
-      dateToFindFrom = fromPreviousMonday;
+      dateToFindFrom = Helpers.getLastWeekRange();
     }
     //get all user with
     const allUsers = await this.getAllUserProgressData(dateToFindFrom);
