@@ -12,7 +12,6 @@ import {
   CronjobQueryParamDto,
   CronjobLeaderboardQueryParamDto,
 } from './dto/cronjob-query.dto';
-
 /**
  * Controller for cronjob routes
  */

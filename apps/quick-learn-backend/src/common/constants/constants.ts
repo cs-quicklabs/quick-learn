@@ -5,6 +5,6 @@ export enum EnvironmentEnum {
 }
 
 export enum LeaderboardTypeEnum {
-  WEEKLY = "weekly",
-  MONTHLY = "monthly"
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
 }

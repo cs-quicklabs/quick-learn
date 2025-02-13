@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
-
+import { IsNotEmpty, IsString, IsEnum } from 'class-validator';
+import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 export class CronjobQueryParamDto {
   @ApiProperty({
     name: 'greeting',
@@ -17,10 +17,10 @@ export class CronjobLeaderboardQueryParamDto {
   @ApiProperty({
     name: 'type',
     required: true,
-    type: String,
+    type: LeaderboardTypeEnum,
     description: 'Get what is the type of the leaderboard',
   })
   @IsNotEmpty()
-  @IsString()
-  type: string;
+  @IsEnum(LeaderboardTypeEnum)
+  type: LeaderboardTypeEnum;
 }

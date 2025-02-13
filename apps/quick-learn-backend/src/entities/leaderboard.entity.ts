@@ -23,7 +23,11 @@ export class Leaderboard {
   @Column({ nullable: false })
   rank: number;
 
-  @Column({ enum: LeaderboardTypeEnum, default: LeaderboardTypeEnum.WEEKLY, nullable: false })
+  @Column({
+    enum: LeaderboardTypeEnum,
+    default: LeaderboardTypeEnum.WEEKLY,
+    nullable: false,
+  })
   type: string;
 
   @CreateDateColumn({

@@ -3,7 +3,6 @@ import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
-import { MonthlyLeaderboard } from '@src/entities/monthly-leaderboard.entity';
 import { PaginationService } from '@src/common/services';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 
@@ -12,7 +11,6 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
   constructor(
     @InjectRepository(Leaderboard)
     repo: Repository<Leaderboard>,
-    @InjectRepository(MonthlyLeaderboard)
     private readonly lessonProgressService: LessonProgressService,
   ) {
     super(repo);
@@ -22,13 +20,14 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
     return this.paginate(
       {
         limit,
-        page
+        page,
       },
       {
-        type
+        type,
       },
-      ['user']
-    )
+      ['user'],
+      { rank: 'ASC' },
+    );
   }
 
   async createLeaderboardRanking(type: LeaderboardTypeEnum) {
@@ -41,7 +40,7 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
         user_id: entry.user_id,
         lessons_completed_count: entry.lesson_completed_count,
         rank: index + 1,
-        type
+        type,
       })),
     );
   }

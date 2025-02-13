@@ -4,14 +4,10 @@ import { LeaderboardService } from './leaderboard.service';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LessonProgressModule } from '../lesson-progress/lesson-progress.module';
-import { MonthlyLeaderboard } from '@src/entities/monthly-leaderboard.entity';
 @Module({
   controllers: [LeaderboardController],
   providers: [LeaderboardService],
   exports: [LeaderboardService],
-  imports: [
-    TypeOrmModule.forFeature([Leaderboard, MonthlyLeaderboard]),
-    LessonProgressModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Leaderboard]), LessonProgressModule],
 })
 export class LeaderboardModule {}

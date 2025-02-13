@@ -5,6 +5,7 @@ import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.ent
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { previousMonday, startOfMonth, subMonths } from 'date-fns';
+import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
@@ -230,13 +231,13 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       .getRawMany();
   }
 
-  async getLeaderboardDataService(type: string) {
+  async getLeaderboardDataService(type: LeaderboardTypeEnum) {
     const fromPreviousMonday = previousMonday(
       new Date(new Date().setHours(7, 0, 0, 0)),
     );
     const firstDateOfPreviousMonth = startOfMonth(subMonths(new Date(), 1));
     let dateToFindFrom;
-    if (type === 'monthly') {
+    if (type === LeaderboardTypeEnum.MONTHLY) {
       dateToFindFrom = firstDateOfPreviousMonth;
     } else {
       dateToFindFrom = fromPreviousMonday;
@@ -260,9 +261,9 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
         ...user,
         lessonIds: completedData
           ? completedData.lessonIds.map((lessonId, index) => [
-            lessonId.toString(),
-            completedData.createdAtArray[index],
-          ])
+              lessonId.toString(),
+              completedData.createdAtArray[index],
+            ])
           : [],
       };
     });
@@ -274,7 +275,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
    * Retrieves the Leaderboard data for last week with .
    * @returns An array of User records with daily lessons.
    */
-  async calculateLeaderBoardPercentage(type: string) {
+  async calculateLeaderBoardPercentage(type: LeaderboardTypeEnum) {
     const getLeaderboardData = await this.getLeaderboardDataService(type);
 
     const leaderBoardWithPercentage = await Promise.all(

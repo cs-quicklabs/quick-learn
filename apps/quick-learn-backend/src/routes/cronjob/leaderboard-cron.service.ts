@@ -4,7 +4,10 @@ import { Repository } from 'typeorm';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { Cron } from '@nestjs/schedule';
 import { CRON_TIMEZONE } from '@src/common/enum/daily_lesson.enum';
-import { EnvironmentEnum } from '@src/common/constants/constants';
+import {
+  EnvironmentEnum,
+  LeaderboardTypeEnum,
+} from '@src/common/constants/constants';
 import { UserEntity } from '@src/entities/user.entity';
 import { UsersService } from '@src/routes/users/users.service';
 import { ConfigService } from '@nestjs/config';
@@ -29,11 +32,24 @@ export class LeaderboardCronService {
   }
 
   @Cron('0 8 * * 1', {
-    name: 'sendLeaderboardEmail',
+    name: 'sendWeeklyLeaderboardEmail',
     timeZone: CRON_TIMEZONE,
     disabled: process.env.ENV !== EnvironmentEnum.Production,
   })
-  async sendLeaderboardEmail(type: string) {
+  async sendWeeklyLeaderboardEmail() {
+    await this.sendLeaderboardEmail(LeaderboardTypeEnum.WEEKLY);
+  }
+
+  @Cron('0 6 1 * *', {
+    name: 'sendMonthlyLeaderboardEmail',
+    timeZone: CRON_TIMEZONE,
+    disabled: process.env.ENV !== EnvironmentEnum.Production,
+  })
+  async sendMonthlyLeaderboardEmail() {
+    await this.sendLeaderboardEmail(LeaderboardTypeEnum.MONTHLY);
+  }
+
+  async sendLeaderboardEmail(type: LeaderboardTypeEnum) {
     let skip = 0;
     let processedCount = 0;
 
@@ -41,7 +57,11 @@ export class LeaderboardCronService {
 
     this.logger.log('Created new leaderboard entries');
 
-    const totalMembers = await this.leaderboardRepository.count();
+    const totalMembers = await this.leaderboardRepository.count({
+      where: {
+        type: type,
+      },
+    });
     try {
       this.logger.log('Starting leaderboard email...');
       let userBatch: UserEntity[];
@@ -73,7 +93,11 @@ export class LeaderboardCronService {
     }
   }
 
-  async leaderboardEmail(user: UserEntity, totalMembers: number, type: string) {
+  async leaderboardEmail(
+    user: UserEntity,
+    totalMembers: number,
+    type: LeaderboardTypeEnum,
+  ) {
     try {
       const userLeaderboardData = await this.leaderboardRepository.findOne({
         where: {
