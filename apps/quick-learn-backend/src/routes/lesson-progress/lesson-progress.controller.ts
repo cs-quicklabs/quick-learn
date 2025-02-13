@@ -25,7 +25,7 @@ import { LessonProgressCheckDto } from './dto/lesson-progress-check.dto';
 export class LessonProgressController {
   constructor(private readonly lessonProgressService: LessonProgressService) {}
 
-  @Get(':courseId/progress')
+  @Get('progress/:courseId')
   async getLessonProgress(@Param('courseId') courseId: number, @Request() req) {
     const data = await this.lessonProgressService.getLessonProgressArray(
       req.user.id,
@@ -33,6 +33,7 @@ export class LessonProgressController {
     );
     return new SuccessResponse(en.courseCompletedLessons, data);
   }
+
   @Get('leaderboard/list')
   async getLeaderboardDataTable(
     @Query() paginationDto: BasePaginationDto,

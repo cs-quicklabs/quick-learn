@@ -122,20 +122,7 @@ export class UsersController {
     return new SuccessResponse(en.successGotUserRoadmaps, roadmaps);
   }
 
-  @Get('my-roadmaps/:id{/:userId}')
-  @ApiOperation({ summary: "Get current user's roadmap by id" })
-  async getCurrentUserRoadmapsById(
-    @CurrentUser() user: UserEntity,
-    @Param() param: UserRoadmapParamDto,
-  ): Promise<SuccessResponse> {
-    const roadmaps = await this.usersService.getRoadmapDetails(
-      !isNaN(param.userId) ? param.userId : user.id,
-      +param.id,
-    );
-    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
-  }
-
-  @Get('myroadmaps/courses/:id{/:userId}')
+  @Get('my-roadmaps/courses/:id{/:userId}')
   @ApiOperation({ summary: "Get current user's course by id" })
   async getCurrentUserCoursesById(
     @CurrentUser() user: UserEntity,
@@ -150,7 +137,7 @@ export class UsersController {
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
-  @Get('myroadmaps/lessons/:id{/:userId}')
+  @Get('my-roadmaps/lessons/:id{/:userId}')
   @ApiOperation({ summary: "Get current user's lesson by id" })
   async getCurrentUserLessonsById(
     @Param() param: UserLessonParamDto,
@@ -166,7 +153,19 @@ export class UsersController {
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
 
-  // This should come AFTER all the specific routes
+  @Get('my-roadmaps/:id{/:userId}')
+  @ApiOperation({ summary: "Get current user's roadmap by id" })
+  async getCurrentUserRoadmapsById(
+    @CurrentUser() user: UserEntity,
+    @Param() param: UserRoadmapParamDto,
+  ): Promise<SuccessResponse> {
+    const roadmaps = await this.usersService.getRoadmapDetails(
+      !isNaN(param.userId) ? param.userId : user.id,
+      +param.id,
+    );
+    return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get specific user by uuid' })
   @ApiParam({

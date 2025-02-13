@@ -94,8 +94,7 @@ export const markAsDone = async (
   userId?: number,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId}${
-      userId ? `/${userId}` : ''
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete/${lessonId}${userId ? `/${userId}` : ''
     }`,
     {
       courseId: parseInt(courseId, 10),
@@ -140,7 +139,7 @@ export const getCourseProgress = async (
 ): Promise<AxiosSuccessResponse<LessonProgress[]>> => {
   const response = await axiosInstance.get<
     AxiosSuccessResponse<LessonProgress[]>
-  >(`${ContentRepositoryApiEnum.LESSON_PROGRESS}/${courseId}/progress`);
+  >(`${ContentRepositoryApiEnum.LESSON_PROGRESS}/progress/${courseId}`);
   return response.data;
 };
 
@@ -149,8 +148,7 @@ export const getLessonStatus = async (
   userId?: number,
 ): Promise<AxiosSuccessResponse<LessonStatus>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<LessonStatus>>(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/check/${LessonId} ${
-      userId ? `/${userId}` : ''
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/check/${LessonId} ${userId ? `/${userId}` : ''
     }`,
   );
   return response.data;
@@ -172,8 +170,7 @@ export const getUserProgress = async (
   const response = await axiosInstance.get<
     AxiosSuccessResponse<UserLessonProgress[]>
   >(
-    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/user-progress${
-      userId ? `/${userId}` : ''
+    `${ContentRepositoryApiEnum.LESSON_PROGRESS}/user-progress${userId ? `/${userId}` : ''
     }`,
   );
   return response.data;
