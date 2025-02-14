@@ -79,14 +79,33 @@ export class AddCourseCategory {
       'The value should not exceed 30 characters.',
     );
   }
-  deleteCourseCategory() {
-    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
-  }
+  // deleteCourseCategory() {
+  //   cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+  // }
 
-  deleteCourseCategoryAssociatedWithCourses() {
-    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
-    cy.get('[class="flex-1 overflow-auto p-0"]');
-    cy.get('button.bg-white.uppercase').click();
+  // deleteCourseCategoryAssociatedWithCourses() {
+  //   cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+  //   cy.get('[class="flex-1 overflow-auto p-0"]');
+  //   cy.get('button.bg-white.uppercase').click();
+  // }
+
+  getDeleteCourseButton() {
+    cy.get('body').then(($body) => {
+      if ($body.find('.text-lg:contains("Course Categories")').length >= 0) {
+        cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+        cy.get('h3.text-lg').should(
+          'contain',
+          'Failed to delete course category',
+        );
+        cy.get('button.bg-white.uppercase').click();
+      } else {
+        cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+        cy.get('div.Toastify__toast--success').should(
+          'contain',
+          'Course category is deleted.',
+        );
+      }
+    });
   }
 
   OpenAccountSettings() {

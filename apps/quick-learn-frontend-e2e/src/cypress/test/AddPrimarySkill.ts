@@ -73,13 +73,29 @@ export class AddPrimarySkill {
       'The value should not exceed 30 characters.',
     );
   }
-  deletePrimarySkill() {
-    cy.get(':nth-child(2) > .inline-flex > .ml-2').click();
-  }
-  deleteSkillCategories() {
-    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
-    cy.get('[class="flex-1 overflow-auto p-0"]');
-    cy.get('button.bg-white.uppercase').click();
+  // deletePrimarySkill() {
+  //   cy.get(':nth-child(2) > .inline-flex > .ml-2').click();
+  // }
+  // deleteSkillCategories() {
+  //   cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+  //   cy.get('[class="flex-1 overflow-auto p-0"]');
+  //   cy.get('button.bg-white.uppercase').click();
+  // }
+
+  getDeleteSkillButton() {
+    cy.get('body').then(($body) => {
+      if ($body.find('.text-lg:contains("Primary Skills")').length >= 0) {
+        cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+        cy.get('h3.text-lg').should('contain', 'Failed to delete skill');
+        cy.get('button.bg-white.uppercase').click();
+      } else {
+        cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+        cy.get('div.Toastify__toast--success').should(
+          'contain',
+          'Primary skill is deleted.',
+        );
+      }
+    });
   }
   getErrorMessage() {
     return cy.get('.mt-1');

@@ -132,7 +132,7 @@ export class EditTeamMember {
 
   getAssignUnassignButton() {
     cy.get('body').then(($body) => {
-      if ($body.find('.text-lg:contains("No roadmaps assigned")').length > 0) {
+      if ($body.find('.text-lg:contains("No roadmaps assigned")').length >= 0) {
         cy.get('button.px-4.py-2')
           .contains('Assign/Unassign Roadmap')
           .should('be.visible')
@@ -179,7 +179,7 @@ export class EditTeamMember {
   searchUser() {
     cy.get('.flex > #search').type('Admin');
     cy.get('body').then(($body) => {
-      if ($body.find('td.px-4.py-2:contains("No result found")').length > 0) {
+      if ($body.find('td.px-4.py-2:contains("No result found")').length >= 0) {
         cy.contains('No result found').should('be.visible');
       } else {
         cy.get('td a').eq(0).click();

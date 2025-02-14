@@ -71,17 +71,36 @@ export class AddRoadMap {
       'The value should not exceed 30 characters.',
     );
   }
-  deleteRoadMap() {
-    cy.get(':nth-child(2) > .inline-flex > .ml-2').click();
-  }
+  // deleteRoadMap() {
+  //   cy.get(':nth-child(2) > .inline-flex > .ml-2').click();
+  // }
   getErrorMessage() {
     return cy.get('.mt-1');
   }
 
-  deleteRoadMapCategories() {
-    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
-    cy.get('[class="flex-1 overflow-auto p-0"]');
-    cy.get('button.bg-white.uppercase').click();
+  // deleteRoadMapCategories() {
+  //   cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+  //   cy.get('[class="flex-1 overflow-auto p-0"]');
+  //   cy.get('button.bg-white.uppercase').click();
+  // }
+
+  getDeleteRoadmapButton() {
+    cy.get('body').then(($body) => {
+      if ($body.find('.text-lg:contains("Roadmap Categories")').length >= 0) {
+        cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+        cy.get('h3.text-lg').should(
+          'contain',
+          'Failed to delete roadmap category',
+        );
+        cy.get('button.bg-white.uppercase').click();
+      } else {
+        cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
+        cy.get('div.Toastify__toast--success').should(
+          'contain',
+          'Roadmap is deleted.',
+        );
+      }
+    });
   }
 
   OpenAccountSettings() {

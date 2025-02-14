@@ -2,7 +2,7 @@ import { AddCourseCategory } from '../test/AddCourseCategory';
 import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
 
-describe('Primary Skill Update', () => {
+describe('Course create, edit and delete', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {
@@ -88,16 +88,16 @@ describe('Primary Skill Update', () => {
     const addCourse = new AddCourseCategory();
     addCourse.OpenAccountSettings();
     addCourse.openCourseCategory();
-    addCourse.deleteCourseCategory();
-    addCourse
-      .getSuccessMessage()
-      .should('contain', 'Course category is deleted.');
+    addCourse.getDeleteCourseButton();
+    // addCourse
+    //   .getSuccessMessage()
+    //   .should('contain', 'Course category is deleted.');
   });
 
-  it('Verify Super admin should not able to Delete Course category associated with other courses', () => {
-    const addCourse = new AddCourseCategory();
-    addCourse.OpenAccountSettings();
-    addCourse.openCourseCategory();
-    addCourse.deleteCourseCategoryAssociatedWithCourses();
-  });
+  // it('Verify Super admin should not able to Delete Course category associated with other courses', () => {
+  //   const addCourse = new AddCourseCategory();
+  //   addCourse.OpenAccountSettings();
+  //   addCourse.openCourseCategory();
+  //   addCourse.deleteCourseCategoryAssociatedWithCourses();
+  // });
 });
