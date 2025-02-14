@@ -7,3 +7,4 @@ export * from './teamSlice';
 export * from './uiSlice';
 export * from './userProgressSlice';
 export * from './userSlice';
+export * from './flaggedSlice';

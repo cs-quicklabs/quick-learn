@@ -1,17 +1,24 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { en } from '@src/constants/lang/en';
 import { DateFormats } from '@src/constants/dateFormats';
 import { RouteEnum } from '@src/constants/route.enum';
-import { getFlaggedLessons } from '@src/apiServices/lessonsService';
-import { showApiErrorInToast } from '@src/utils/toastUtils';
 import FlaggedListSkeleton from './flaggedSkeleton';
-import { TFlaggedLesson } from '@src/shared/types/contentRepository';
-import { useAppDispatch } from '@src/store/hooks';
-import { updateSystemPreferencesData } from '@src/store/features/systemPreferenceSlice';
+import { SystemPreferencesKey } from '@src/shared/types/contentRepository';
+import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import {
+  getSystemPreferencesState,
+  updateSystemPreferencesData,
+} from '@src/store/features/systemPreferenceSlice';
 import { SuperLink } from '@src/utils/HiLink';
+import {
+  fetchFlaggedLessons,
+  selectPaginationFlaggedList,
+  setCurrentPageFlaggedList,
+} from '@src/store/features';
+import { debounce } from '@src/utils/helpers';
+import BasicPagination from '@src/shared/components/BasicPagination';
 
 const columns = [
   en.common.lesson,
@@ -21,66 +28,41 @@ const columns = [
   en.common.flaggedBy,
 ];
 
-const ITEMS_PER_PAGE = 10;
-
 function FlaggedList() {
   const dispatch = useAppDispatch();
-  const [flaggedLessons, setFlaggedLessons] = useState<TFlaggedLesson[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalLessons, setTotalLessons] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [searchInputValue, setSearchInputValue] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const { metadata } = useAppSelector(getSystemPreferencesState);
+  const flaggedTotal = metadata[SystemPreferencesKey.FLAGGED_LESSONS];
+  const { lessons, total, totalPages, isInitialLoad, isLoading, currentPage } =
+    useAppSelector(selectPaginationFlaggedList);
+
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
-    if (!isInitialLoad) {
+    if (!isLoading && search === '' && flaggedTotal !== total) {
       dispatch(
         updateSystemPreferencesData({
-          flagged_lessons: totalLessons,
+          flagged_lessons: total,
         }),
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInitialLoad]);
+  }, [isLoading]);
 
-  // Debounce search input to reduce unnecessary API calls
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(searchInputValue);
-    }, 500);
+  const fetchLessons = useCallback(
+    (pageNum: number, searchTerm: string) => {
+      dispatch(fetchFlaggedLessons({ page: pageNum, q: searchTerm }));
+    },
+    [dispatch],
+  );
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchInputValue]);
-
-  useEffect(() => {
-    const fetchFlaggedLessons = async () => {
-      setIsLoading(true);
-      await getFlaggedLessons(currentPage, ITEMS_PER_PAGE, debouncedSearch)
-        .then(({ data }) => {
-          setFlaggedLessons(data.items || []);
-          setTotalLessons(data.total || 0);
-          setTotalPages(data.total_pages || 0);
-        })
-        .catch((err) => showApiErrorInToast(err))
-        .finally(() => {
-          setIsLoading(false);
-          setIsInitialLoad(false);
-        });
-    };
-
-    fetchFlaggedLessons();
-  }, [currentPage, debouncedSearch]);
-
-  // Handle search input changes
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setSearchInputValue(value);
-    setCurrentPage(1); // Reset to first page when searching
-  };
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((searchTerm: string) => {
+        dispatch(setCurrentPageFlaggedList(1));
+        fetchLessons(1, searchTerm);
+      }, 500),
+    [dispatch, fetchLessons],
+  );
 
   const formatDate = (date: string | Date) => {
     if (!date) return '-';
@@ -91,7 +73,18 @@ function FlaggedList() {
     }
   };
 
-  if (isInitialLoad && isLoading) return <FlaggedListSkeleton />;
+  useEffect(() => {
+    fetchLessons(1, '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+    setSearch(searchTerm);
+    debouncedSearch(searchTerm);
+  };
+
+  if (isInitialLoad) return <FlaggedListSkeleton />;
 
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
@@ -110,7 +103,7 @@ function FlaggedList() {
               type="text"
               className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
               placeholder="Search Lessons"
-              value={searchInputValue}
+              value={search}
               onChange={handleSearchChange}
               id="search"
             />
@@ -134,7 +127,7 @@ function FlaggedList() {
               </tr>
             </thead>
             <tbody>
-              {flaggedLessons.map((flaggedLesson, index) => (
+              {lessons.map((flaggedLesson, index) => (
                 <tr
                   id={`row${index}`}
                   key={flaggedLesson.id}
@@ -173,7 +166,7 @@ function FlaggedList() {
                   </td>
                 </tr>
               ))}
-              {flaggedLessons.length === 0 && !isLoading && (
+              {lessons.length === 0 && !isLoading && (
                 <tr>
                   <td
                     colSpan={columns.length}
@@ -194,46 +187,16 @@ function FlaggedList() {
         </div>
       )}
 
-      {/* Pagination */}
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between my-5">
-        <div>
-          <p className="text-sm text-gray-700">
-            {en.teams.showing}{' '}
-            <span className="font-medium">
-              {totalLessons === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1}
-            </span>{' '}
-            {en.teams.to}{' '}
-            <span className="font-medium">
-              {Math.min(currentPage * ITEMS_PER_PAGE, totalLessons)}
-            </span>{' '}
-            {en.teams.of} <span className="font-medium">{totalLessons}</span>{' '}
-            {en.teams.results}
-          </p>
-        </div>
-        <div>
-          <div className="flex">
-            {currentPage > 1 && (
-              <button
-                type="button"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
-              >
-                <ArrowLeftIcon height={20} width={32} /> {en.teams.previous}
-              </button>
-            )}
-            {currentPage < totalPages && (
-              <button
-                type="button"
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
-              >
-                {en.teams.next}
-                <ArrowRightIcon height={20} width={32} />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      <BasicPagination
+        total={total}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onChange={(index: number) => {
+          const newPage = index || 1;
+          dispatch(setCurrentPageFlaggedList(newPage));
+          dispatch(fetchFlaggedLessons({ page: newPage, q: search }));
+        }}
+      />
     </div>
   );
 }
