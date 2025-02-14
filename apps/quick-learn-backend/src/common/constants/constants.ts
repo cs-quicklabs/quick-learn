@@ -3,3 +3,8 @@ export enum EnvironmentEnum {
   QA = 'qa',
   Production = 'prod',
 }
+
+export enum LeaderboardTypeEnum {
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+}

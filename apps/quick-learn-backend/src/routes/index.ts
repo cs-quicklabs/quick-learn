@@ -12,3 +12,4 @@ export * from './lesson/lesson.module';
 export * from './cronjob/cronjob.module';
 export * from './metadata/metadata.module';
 export * from './lesson-progress/lesson-progress.module';
+export * from './leaderboard/leaderboard.module';

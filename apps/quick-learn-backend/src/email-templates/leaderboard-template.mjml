@@ -4,12 +4,12 @@
       <mj-column width="100%">
         <mj-text padding="0">
           Hello, <b>{{fullName}}</b><br /><br />
-          Our weekly leaderboard has beeen published and stood at {{rank}} place
-          among {{totalMembers}} team members.<br /><br />
+          Our {{type}} leaderboard has beeen published and stood at {{rank}}
+          place among {{totalMembers}} team members.<br /><br />
           Please check the full leaderboard by clicking the link below.<br /><br />
         </mj-text>
         <mj-text padding="0">
-          <a target="_blank" href="{{leaderboardLink}}">Weekly Leaderboard</a>
+          <a target="_blank" href="{{leaderboardLink}}">{{type}} Leaderboard</a>
         </mj-text>
 
         <mj-text
