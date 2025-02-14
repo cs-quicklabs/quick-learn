@@ -4,9 +4,8 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
-import { previousMonday, startOfMonth, subMonths } from 'date-fns';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
-import Helpers from '@src/common/utils/helper';
+import { getLastMonthRange, getLastWeekRange } from '@quick-learn/shared';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
@@ -246,9 +245,9 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   async getLeaderboardDataService(type: LeaderboardTypeEnum) {
     let dateToFindFrom;
     if (type === LeaderboardTypeEnum.MONTHLY) {
-      dateToFindFrom = Helpers.getLastMonthRange();
+      dateToFindFrom = getLastMonthRange();
     } else {
-      dateToFindFrom = Helpers.getLastWeekRange();
+      dateToFindFrom = getLastWeekRange();
     }
     //get all user with
     const allUsers = await this.getAllUserProgressData(dateToFindFrom);

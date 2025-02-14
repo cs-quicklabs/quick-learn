@@ -11,18 +11,9 @@ import {
   TUserRoadmap,
   TUserCourse,
 } from '@src/shared/types/contentRepository';
-import {
-  startOfMonth,
-  subMonths,
-  format,
-  endOfMonth,
-  endOfWeek,
-  startOfWeek,
-  subWeeks,
-} from 'date-fns';
+import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
-import { toZonedTime } from 'date-fns-tz';
-import { TIMEZONE } from 'lib/shared/src/lib/constant';
+import { getLastMonthRange, getLastWeekRange } from 'lib/shared/src';
 
 export function showErrorMessage(error: unknown) {
   if (error instanceof AxiosError) {
@@ -190,7 +181,7 @@ export const calculateCourseProgress = (
         completedLessonIds.includes(lesson.id),
       ).length || 0
     : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
-        .length || 0;
+        .length ?? 0;
 
   return totalLessons > 0
     ? Math.round((completedCount / totalLessons) * 100)
@@ -205,37 +196,6 @@ export const getRecords = (type: string) => {
     end,
     DateFormats.shortDate,
   )}`;
-};
-
-export const getLastMonthRange = () => {
-  const timeZone = TIMEZONE;
-  const now = new Date();
-  const zonedNow = toZonedTime(now, timeZone);
-  const start = startOfMonth(subMonths(zonedNow, 1));
-  const end = endOfMonth(subMonths(zonedNow, 1));
-
-  const utcStart = toZonedTime(start, timeZone);
-  const utcEnd = toZonedTime(end, timeZone);
-
-  return {
-    start: format(utcStart, 'yyyy-MM-dd HH:mm:ss'),
-    end: format(utcEnd, 'yyyy-MM-dd HH:mm:ss'),
-  };
-};
-export const getLastWeekRange = () => {
-  const timeZone = TIMEZONE;
-  const now = new Date();
-  const zonedNow = toZonedTime(now, timeZone);
-  const start = startOfWeek(subWeeks(zonedNow, 1), { weekStartsOn: 1 }); // Assuming week starts on Monday
-  const end = endOfWeek(subWeeks(zonedNow, 1), { weekStartsOn: 1 });
-
-  const utcStart = toZonedTime(start, timeZone);
-  const utcEnd = toZonedTime(end, timeZone);
-
-  return {
-    start: format(utcStart, 'yyyy-MM-dd HH:mm:ss'),
-    end: format(utcEnd, 'yyyy-MM-dd HH:mm:ss'),
-  };
 };
 
 export const firstLetterCapital = (text: string | undefined) => {

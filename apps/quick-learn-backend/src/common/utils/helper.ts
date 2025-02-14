@@ -1,17 +1,6 @@
 import { Response } from 'express';
 import sanitizeHtml from 'sanitize-html';
 import { EnvironmentEnum } from '../constants/constants';
-import {
-  endOfWeek,
-  startOfWeek,
-  format,
-  subWeeks,
-  subMonths,
-  startOfMonth,
-  endOfMonth,
-} from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';
-import { CRON_TIMEZONE } from '../enum/daily_lesson.enum';
 export default class Helpers {
   static clearCookies(res: Response) {
     res.clearCookie('refresh_token');
@@ -102,36 +91,5 @@ export default class Helpers {
     }
 
     return urls;
-  }
-
-  static getLastWeekRange() {
-    const timeZone = CRON_TIMEZONE;
-    const now = new Date();
-    const zonedNow = toZonedTime(now, timeZone);
-    const start = startOfWeek(subWeeks(zonedNow, 1), { weekStartsOn: 1 }); // Assuming week starts on Monday
-    const end = endOfWeek(subWeeks(zonedNow, 1), { weekStartsOn: 1 });
-
-    const utcStart = toZonedTime(start, timeZone);
-    const utcEnd = toZonedTime(end, timeZone);
-
-    return {
-      start: format(utcStart, 'yyyy-MM-dd HH:mm:ss'),
-      end: format(utcEnd, 'yyyy-MM-dd HH:mm:ss'),
-    };
-  }
-  static getLastMonthRange() {
-    const timeZone = CRON_TIMEZONE;
-    const now = new Date();
-    const zonedNow = toZonedTime(now, timeZone);
-    const start = startOfMonth(subMonths(zonedNow, 1));
-    const end = endOfMonth(subMonths(zonedNow, 1));
-
-    const utcStart = toZonedTime(start, timeZone);
-    const utcEnd = toZonedTime(end, timeZone);
-
-    return {
-      start: format(utcStart, 'yyyy-MM-dd HH:mm:ss'),
-      end: format(utcEnd, 'yyyy-MM-dd HH:mm:ss'),
-    };
   }
 }
