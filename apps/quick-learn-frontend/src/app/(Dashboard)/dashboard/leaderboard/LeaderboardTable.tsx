@@ -6,6 +6,13 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from 'react';
 import { en } from '@src/constants/lang/en';
 import { getLeaderBoardStatus } from '@src/apiServices/lessonsService';
 import { useAppSelector } from '@src/store/hooks';
@@ -57,7 +64,31 @@ const SkeletonLoader = () => {
   );
 };
 
+const SkeletonLoader = () => {
+  return (
+    <tbody className="animate-pulse">
+      {[...Array(20)].map((_, index) => (
+        <tr key={+index} className="border-b border-gray-200">
+          <td className="px-4 py-2">
+            <div className="h-5 bg-gray-200 rounded w-64" />
+          </td>
+          <td className="px-4 py-2">
+            <div className="h-5 bg-gray-200 rounded w-16" />
+          </td>
+          <td className="px-4 py-2">
+            <div className="h-5 bg-gray-200 rounded w-20" />
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  );
+};
+
 const LeaderboardTable = () => {
+  const [weeklyLeaderboard, setWeeklyLeaderboard] = useState<LeaderboardData[]>(
+    [],
+  );
+  const [monthlyLeaderboard, setMonthlyLeaderboard] = useState<
   const [weeklyLeaderboard, setWeeklyLeaderboard] = useState<LeaderboardData[]>(
     [],
   );
@@ -68,6 +99,7 @@ const LeaderboardTable = () => {
   const [type, setType] = useState(timeSpan.get('type') ?? 'weekly');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const currentUser = useAppSelector(selectUser);
   const observer = useRef<IntersectionObserver>();
@@ -92,12 +124,28 @@ const LeaderboardTable = () => {
     return type === 'weekly' ? weeklyLeaderboard : monthlyLeaderboard;
   }, [type, weeklyLeaderboard, monthlyLeaderboard]);
 
+  // Memoize the current leaderboard based on type
+  const currentLeaderboard = useMemo(() => {
+    return type === 'weekly' ? weeklyLeaderboard : monthlyLeaderboard;
+  }, [type, weeklyLeaderboard, monthlyLeaderboard]);
+
   const fetchLeaderboardData = async (currentPage: number) => {
+    setIsLoading(true);
     setIsLoading(true);
     try {
       const response = await getLeaderBoardStatus(currentPage, 25, type);
+      const response = await getLeaderBoardStatus(currentPage, 25, type);
       const newData = response.data.items;
 
+      if (type === 'weekly') {
+        setWeeklyLeaderboard((prev) =>
+          currentPage === 1 ? newData : [...prev, ...newData],
+        );
+      } else {
+        setMonthlyLeaderboard((prev) =>
+          currentPage === 1 ? newData : [...prev, ...newData],
+        );
+      }
       if (type === 'weekly') {
         setWeeklyLeaderboard((prev) =>
           currentPage === 1 ? newData : [...prev, ...newData],
@@ -118,8 +166,18 @@ const LeaderboardTable = () => {
   const handleTypeChange = (newType: string) => {
     if (newType === type) return;
     setType(newType);
+  const handleTypeChange = (newType: string) => {
+    if (newType === type) return;
+    setType(newType);
     setPage(1);
     setHasMore(true);
+    // Only fetch if we don't have data for this type
+    if (
+      (newType === 'weekly' && weeklyLeaderboard.length === 0) ||
+      (newType === 'monthly' && monthlyLeaderboard.length === 0)
+    ) {
+      fetchLeaderboardData(1);
+    }
     // Only fetch if we don't have data for this type
     if (
       (newType === 'weekly' && weeklyLeaderboard.length === 0) ||
@@ -162,11 +220,40 @@ const LeaderboardTable = () => {
       );
     });
   };
+  const renderLeaderboard = () => {
+    return currentLeaderboard.map((user) => {
+      const isCurrentUser = currentUser?.id === user?.user?.id;
+      return (
+        <tr
+          key={user.user_id}
+          ref={
+            currentLeaderboard.length - 1 === user.user_id
+              ? lastElementRef
+              : null
+          }
+          className={`bg-white border-b border-gray-200 hover:bg-gray-50 ${
+            isCurrentUser ? 'bg-yellow-200 hover:bg-yellow-100' : ''
+          }`}
+        >
+          <td className="px-4 py-2 font-medium text-slate-900 capitalize">
+            {user.user.first_name} {user.user.last_name}
+          </td>
+          <td className="pl-6 py-2">
+            {user.rank} {getMedalEmoji(user.rank, user.lessons_completed_count)}
+          </td>
+          <td className="pl-10 md:pl-16 py-2">
+            {user.lessons_completed_count}
+          </td>
+        </tr>
+      );
+    });
+  };
 
   return (
     <div className="relative overflow-x-auto border-t border-gray-200 shadow-md  overflow-y-auto sm:rounded-lg">
       <div className=" text-xs font-bold flex space-x-1 rounded-lg  p-0.5 justify-between items-center">
         <div className="text-sm  ml-3 text-gray-700">
+          Records from {getRecords(type)}
           Records from {getRecords(type)}
         </div>
         <div className="flex space-x-1 bg-slate-200 p-1 rounded-lg">
@@ -195,9 +282,17 @@ const LeaderboardTable = () => {
         </div>
       </div>
 
+
       <table className="w-full text-sm text-left text-gray-500 ">
         <thead className="text-xs text-gray-700 border-t border-gray-200 uppercase bg-gray-50">
           <tr>
+            <th className="px-4 py-3 w-1/2">
+              {en.leaderboard.leaderboardUser}
+            </th>
+            <th className="px-4 py-3 w-1/4">
+              {en.leaderboard.leaderboardRank}
+            </th>
+            <th className="px-4 py-3 w-1/4">
             <th className="px-4 py-3 w-1/2">
               {en.leaderboard.leaderboardUser}
             </th>
@@ -209,6 +304,18 @@ const LeaderboardTable = () => {
             </th>
           </tr>
         </thead>
+        {isLoading && currentLeaderboard.length === 0 ? (
+          <SkeletonLoader />
+        ) : (
+          renderLeaderboard()
+        )}
+        {currentLeaderboard.length === 0 && !isLoading && (
+          <tr>
+            <td colSpan={3} className="px-4 py-3 text-center text-gray-500">
+              No data found
+            </td>
+          </tr>
+        )}
         {isLoading && currentLeaderboard.length === 0 ? (
           <SkeletonLoader />
         ) : (
