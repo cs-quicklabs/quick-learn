@@ -11,13 +11,13 @@ const getMedalEmoji = (rank: number, lessonsCount: number) => {
   if (rank === 1) return <span className="text-yellow-500">🥇</span>;
   if (rank === 2) return <span className="text-gray-500">🥈</span>;
   if (rank === 3) return <span className="text-red-500">🥉</span>;
-  if (lessonsCount === 0) {
+  if (lessonsCount <= 3) {
     return (
       <span
         className="text-gray-500 cursor-help relative group"
         data-tooltip="Complete more than 3 lessons to remove this badge"
       >
-        👎
+        <span>👎</span>
         <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white px-2 py-1 text-sm text-gray-700 opacity-0 shadow-md transition-opacity group-hover:opacity-100 border border-gray-200">
           Complete more than 3 lessons to remove this badge
         </span>

@@ -1,3 +1,4 @@
+import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 import {
   MigrationInterface,
   QueryRunner,
@@ -40,10 +41,10 @@ export class Migration1738908226095 implements MigrationInterface {
           },
           {
             name: 'type',
-            type: 'varchar',
-            length: '10',
+            type: 'enum',
+            enum: Object.values(LeaderboardTypeEnum),
             isNullable: false,
-            default: "'weekly'",
+            default: `'${LeaderboardTypeEnum.WEEKLY}'`,
           },
         ],
       }),
