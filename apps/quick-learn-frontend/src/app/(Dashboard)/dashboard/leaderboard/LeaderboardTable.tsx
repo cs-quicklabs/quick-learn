@@ -64,14 +64,13 @@ const LeaderboardTable = () => {
   const [monthlyLeaderboard, setMonthlyLeaderboard] = useState<
     LeaderboardData[]
   >([]);
-  const timeSpan = useSearchParams();
-  const [type, setType] = useState(timeSpan.get('type') ?? 'weekly');
+  const params = useSearchParams();
+  const [type, setType] = useState(params.get('type') ?? 'weekly');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const currentUser = useAppSelector(selectUser);
   const observer = useRef<IntersectionObserver>();
-  console.log(timeSpan.get('type'));
   const lastElementRef = useCallback(
     (node: HTMLElement | null) => {
       if (isLoading) return;
