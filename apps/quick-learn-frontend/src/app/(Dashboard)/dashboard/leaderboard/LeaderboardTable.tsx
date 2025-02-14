@@ -215,11 +215,13 @@ const LeaderboardTable = () => {
           renderLeaderboard()
         )}
         {currentLeaderboard.length === 0 && !isLoading && (
-          <tr>
-            <td colSpan={3} className="px-4 py-3 text-center text-gray-500">
-              No data found
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td colSpan={3} className="px-4 py-3 text-center text-gray-500">
+                No data found
+              </td>
+            </tr>
+          </tbody>
         )}
       </table>
     </div>
