@@ -65,7 +65,8 @@ const LeaderboardTable = () => {
     LeaderboardData[]
   >([]);
   const params = useSearchParams();
-  const [type, setType] = useState(params.get('type') ?? 'weekly');
+  const timespan = params.get('type');
+  const [type, setType] = useState(timespan ?? 'weekly');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
