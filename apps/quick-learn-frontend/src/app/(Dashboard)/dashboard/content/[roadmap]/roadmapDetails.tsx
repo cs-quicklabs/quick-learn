@@ -136,7 +136,6 @@ function RoadmapDetails() {
         })),
       }));
     setCourseCategoriesData(data);
-    console.log('data', data);
   }, [allCourseCategories]);
 
   const onEdit = async (data: TCreateRoadmap) => {

@@ -455,6 +455,7 @@ export const en = {
     // asssign data model
 
     noDataFound: 'No data found',
+    orphanCourse: 'Orphan Course',
   },
 
   Search: {

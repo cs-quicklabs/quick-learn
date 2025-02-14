@@ -7,7 +7,6 @@ import { CloseIcon, Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
 import { firstLetterCapital } from '@src/utils/helpers';
-import { StarIcon } from '@heroicons/react/24/outline';
 import { StarIcon as SolidStarIcon } from '@heroicons/react/24/solid';
 interface Props {
   show: boolean;
@@ -44,6 +43,7 @@ const AssignDataModal: FC<Props> = ({
   const [initialSelectedRoadmaps, setInitialSelectedRoadmaps] = useState<
     string[]
   >([]);
+
   const {
     register,
     handleSubmit,
@@ -57,44 +57,55 @@ const AssignDataModal: FC<Props> = ({
     defaultValues: initialValues,
     mode: 'onChange',
   });
+
   const sortedData = useMemo(
     () => [...data].sort((a, b) => a.name.localeCompare(b.name)),
     [data],
   );
-  useEffect(() => {
-    const selectedRoadmaps = initialValues?.selected || [];
-    setInitialSelectedRoadmaps(selectedRoadmaps);
-  }, [initialValues]);
 
+  // Initialize form and accordion state
   useEffect(() => {
     if (show) {
-      // When the modal is opened, expand all accordions
+      // When the modal is opened
       const allAccordionIds = sortedData.map((ele) => ele.name);
       setOpenAccordions(allAccordionIds);
       setIsAllExpanded(true);
-      if (initialValues?.selected && !isLoading) {
-        setValue('selected', initialValues.selected);
-        setInitialSelectedRoadmaps(initialValues.selected);
-      }
+
+      // Set initial values
+      const initialSelected = initialValues?.selected || [];
+      setValue('selected', initialSelected);
+      setInitialSelectedRoadmaps(initialSelected);
+      setIsFormDirty(false);
     } else {
-      // Reset the state when the modal is closed
+      // Reset when modal is closed
       reset();
       setIsFormDirty(false);
-      setOpenAccordions([]); // Collapse all when modal is closed
+      setOpenAccordions([]);
       setIsAllExpanded(false);
+      setInitialSelectedRoadmaps([]);
     }
-    if (initialValues?.selected && show && !isLoading) {
-      setValue('selected', initialValues.selected);
-    }
-  }, [initialValues, show, isLoading, reset, setValue, sortedData]);
+  }, [show, initialValues, setValue, reset, sortedData]);
 
+  // Watch for form changes
   useEffect(() => {
     if (show) {
-      const subscription = watch(() => handleCheckFormDirty());
+      const subscription = watch((value, { name, type }) => {
+        const currentSelected = getValues('selected') || [];
+
+        // Only check if form is dirty when the 'selected' field changes
+        if (name === 'selected' || type === 'change') {
+          const isDirty =
+            currentSelected.length !== initialSelectedRoadmaps.length ||
+            !currentSelected.every((value) =>
+              initialSelectedRoadmaps.includes(value),
+            );
+
+          setIsFormDirty(isDirty);
+        }
+      });
       return () => subscription.unsubscribe();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, watch]);
+  }, [show, watch, getValues, initialSelectedRoadmaps]);
 
   function onFormSubmit(formData: schemaType) {
     onSubmit(formData?.selected ?? []);
@@ -126,16 +137,6 @@ const AssignDataModal: FC<Props> = ({
       newOpenAccordions.length === allAccordionIds.length;
 
     setIsAllExpanded(newIsAllExpanded);
-  };
-  const handleCheckFormDirty = () => {
-    const currentSelected = getValues('selected') || [];
-    const isDirty =
-      currentSelected.length !== initialSelectedRoadmaps.length ||
-      !currentSelected.every((value) =>
-        initialSelectedRoadmaps.includes(value),
-      );
-
-    setIsFormDirty(isDirty);
   };
 
   return (
@@ -252,7 +253,7 @@ const AssignDataModal: FC<Props> = ({
                                       {firstLetterCapital(item.name)}
                                       {item.roadmap_count === 0 && (
                                         <span className="text-gray-500 text-xs pl-2 flex items-center gap-2">
-                                          (Orphan course)
+                                          {en.modals.orphanCourse}
                                           <SolidStarIcon className="w-4 h-4 text-yellow-500" />
                                         </span>
                                       )}
