@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
-import { previousMonday } from 'date-fns';
-import { Leaderboard } from '@src/entities/leaderboard.entity';
+import { LeaderboardTypeEnum } from '@src/common/constants/constants';
+import { getLastMonthRange, getLastWeekRange } from '@quick-learn/shared';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
@@ -17,8 +17,6 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     private courseRepository: Repository<CourseEntity>,
     @InjectRepository(LessonTokenEntity)
     private LessonTokenRepository: Repository<LessonTokenEntity>,
-    @InjectRepository(Leaderboard)
-    private leaderboardRepository: Repository<Leaderboard>,
   ) {
     super(userLessonProgressRepository);
   }
@@ -203,11 +201,15 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     return userDailyLessonProgress;
   }
 
-  async getAllUserProgressData(thisDate: Date) {
+  async getAllUserProgressData(thisDate: { start: string; end: string }) {
     return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-      .where('lesson_token.created_at >= :fromPreviousMonday', {
-        fromPreviousMonday: thisDate.toISOString(),
-      })
+      .where(
+        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
+        {
+          startDate: thisDate.start,
+          endDate: thisDate.end,
+        },
+      )
       .leftJoinAndSelect('lesson_token.user', 'user')
       .select([
         'user.id AS user_id',
@@ -220,11 +222,18 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       .getRawMany();
   }
 
-  async getAllUserCompletedLessonData(thisDate: Date) {
+  async getAllUserCompletedLessonData(thisDate: {
+    start: string;
+    end: string;
+  }) {
     return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-      .where('lesson_token.created_at >= :fromPreviousMonday ', {
-        fromPreviousMonday: thisDate.toISOString(),
-      })
+      .where(
+        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
+        {
+          startDate: thisDate.start,
+          endDate: thisDate.end,
+        },
+      )
       .andWhere('lesson_token.status = :status', { status: 'COMPLETED' })
       .select('lesson_token.user_id', 'userId')
       .addSelect('ARRAY_AGG(lesson_token.lesson_id)', 'lessonIds')
@@ -233,15 +242,18 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       .getRawMany();
   }
 
-  async getLeaderboardDataService() {
-    const fromPreviousMonday = previousMonday(
-      new Date(new Date().setHours(7, 0, 0, 0)),
-    );
+  async getLeaderboardDataService(type: LeaderboardTypeEnum) {
+    let dateToFindFrom;
+    if (type === LeaderboardTypeEnum.MONTHLY) {
+      dateToFindFrom = getLastMonthRange();
+    } else {
+      dateToFindFrom = getLastWeekRange();
+    }
     //get all user with
-    const allUsers = await this.getAllUserProgressData(fromPreviousMonday);
+    const allUsers = await this.getAllUserProgressData(dateToFindFrom);
 
     const completedLessonsData = await this.getAllUserCompletedLessonData(
-      fromPreviousMonday,
+      dateToFindFrom,
     );
 
     // return formattedData;
@@ -270,8 +282,8 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
    * Retrieves the Leaderboard data for last week with .
    * @returns An array of User records with daily lessons.
    */
-  async calculateLeaderBoardPercentage() {
-    const getLeaderboardData = await this.getLeaderboardDataService();
+  async calculateLeaderBoardPercentage(type: LeaderboardTypeEnum) {
+    const getLeaderboardData = await this.getLeaderboardDataService(type);
 
     const leaderBoardWithPercentage = await Promise.all(
       getLeaderboardData.map(async (entry) => {
@@ -332,48 +344,5 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     });
 
     return leaderBoardWithPercentage;
-  }
-  // create leaderboard entry once a week using cron job
-  async createLeaderboardRanking() {
-    await this.deleteLeaderboardData();
-    const LeaderboardData = await this.calculateLeaderBoardPercentage();
-    const leaderboardEntry = LeaderboardData.map((entry, index) =>
-      this.leaderboardRepository.create({
-        user_id: entry.user_id,
-        lessons_completed_count: entry.lesson_completed_count,
-        rank: index + 1,
-      }),
-    );
-
-    return this.leaderboardRepository.save(leaderboardEntry);
-  }
-
-  async getLeaderboardData(page = 1, limit = 10) {
-    const skip = (page - 1) * limit;
-
-    const [items, total] = await this.leaderboardRepository.findAndCount({
-      skip,
-      take: limit,
-      order: {
-        rank: 'ASC',
-      },
-      relations: ['user'],
-    });
-
-    return {
-      items,
-      total,
-      currentPage: page,
-      hasMore: skip + items.length < total,
-    };
-  }
-
-  async deleteLeaderboardData() {
-    try {
-      const result = await this.leaderboardRepository.delete({});
-      return result;
-    } catch (error) {
-      throw new Error('Failed to delete leaderboard data');
-    }
   }
 }

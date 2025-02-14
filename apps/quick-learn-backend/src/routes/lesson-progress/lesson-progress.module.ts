@@ -7,7 +7,6 @@ import {
   LessonTokenEntity,
   UserEntity,
 } from '@src/entities';
-import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { LessonProgressController } from './lesson-progress.controller';
 import { LessonProgressService } from './lesson-progress.service';
 @Module({
@@ -18,7 +17,6 @@ import { LessonProgressService } from './lesson-progress.service';
       LessonEntity,
       CourseEntity,
       UserEntity,
-      Leaderboard,
     ]),
   ],
   controllers: [LessonProgressController],
