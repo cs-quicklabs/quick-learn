@@ -212,7 +212,7 @@ const LeaderboardTable = () => {
         {isLoading && currentLeaderboard.length === 0 ? (
           <SkeletonLoader />
         ) : (
-          renderLeaderboard()
+          <tbody>{renderLeaderboard()}</tbody>
         )}
         {currentLeaderboard.length === 0 && !isLoading && (
           <tbody>
