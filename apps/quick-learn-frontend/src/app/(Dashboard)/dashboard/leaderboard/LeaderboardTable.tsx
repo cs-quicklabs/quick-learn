@@ -106,7 +106,7 @@ const LeaderboardTable = () => {
         <div className="text-sm  ml-3 text-gray-700">
           {records === ''
             ? 'No records found'
-            : `Records from ${getRecords(type, records)}`}
+            : `Records from ${getRecords(type)}`}
         </div>
         <div className="flex space-x-1 bg-slate-200 p-1 rounded-lg">
           <button
