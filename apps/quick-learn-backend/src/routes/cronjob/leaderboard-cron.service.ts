@@ -111,7 +111,7 @@ export class LeaderboardCronService {
           fullName: user.display_name,
           rank: userLeaderboardData.rank,
           totalMembers: totalMembers,
-          leaderboardLink: `${this.frontendURL}/dashboard/leaderboard?type=${type}`,
+          leaderboardLink: `${this.frontendURL}/dashboard/leaderboard`,
         };
         await this.emailService.leaderboardEmail(leaderboardData, user.email);
       }

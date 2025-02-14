@@ -12,15 +12,11 @@ import { useAppSelector } from '@src/store/hooks';
 import { selectUser } from '@src/store/features/userSlice';
 import { getRecords } from '@src/utils/helpers';
 import { LeaderboardData } from '@src/shared/types/LessonProgressTypes';
-import { useSearchParams } from 'next/navigation';
 
 const getMedalEmoji = (rank: number, lessonsCount: number) => {
-  if (rank === 1 && lessonsCount > 0)
-    return <span className="text-yellow-500">🥇</span>;
-  if (rank === 2 && lessonsCount > 0)
-    return <span className="text-gray-500">🥈</span>;
-  if (rank === 3 && lessonsCount > 0)
-    return <span className="text-red-500">🥉</span>;
+  if (rank === 1) return <span className="text-yellow-500">🥇</span>;
+  if (rank === 2) return <span className="text-gray-500">🥈</span>;
+  if (rank === 3) return <span className="text-red-500">🥉</span>;
   if (lessonsCount <= 3) {
     return (
       <span
@@ -64,8 +60,7 @@ const LeaderboardTable = () => {
   const [monthlyLeaderboard, setMonthlyLeaderboard] = useState<
     LeaderboardData[]
   >([]);
-  const params = useSearchParams();
-  const [type, setType] = useState(params.get('type') ?? 'weekly');
+  const [type, setType] = useState('weekly');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);

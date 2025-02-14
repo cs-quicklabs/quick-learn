@@ -203,7 +203,7 @@ export const en = {
    * Approvals section
    */
   approvals: {
-    lessonsApprovals: 'Lesson Approvals',
+    lessonsApprovals: 'Lessons Approvals',
     subHeading:
       'Following lessons are waiting for approval after being created or updated by the team.',
     approveThisLesson: 'Approve this lesson',
