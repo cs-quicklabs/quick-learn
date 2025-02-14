@@ -22,8 +22,9 @@ const ADMIN_AND_SUPERADMIN_ROUTES = [
   RouteEnum.ARCHIVED_USERS,
   RouteEnum.TEAM,
   RouteEnum.APPROVALS,
+  RouteEnum.FLAGGED,
 ];
-const EDITOR_ROUTES = [RouteEnum.CONTENT];
+const EDITOR_ROUTES = [RouteEnum.CONTENT, RouteEnum.FLAGGED];
 
 // Helper functions
 const isPublicRoute = (path: string) => PUBLIC_ROUTES.includes(path);
@@ -38,7 +39,7 @@ export async function middleware(request: NextRequest) {
   const { pathname, search, origin } = request.nextUrl;
   const authToken = request.cookies.get('refresh_token')?.value;
   const userRole = request.cookies.get('user_role')?.value;
-  const userRoleNum = userRole ? parseInt(userRole) : null;
+  const userRoleNum = userRole ? parseInt(userRole, 10) : null;
   // Public routes
   if (isPublicRoute(pathname)) {
     return authToken

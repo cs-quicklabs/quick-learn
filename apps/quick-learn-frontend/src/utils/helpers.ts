@@ -11,6 +11,9 @@ import {
   TUserRoadmap,
   TUserCourse,
 } from '@src/shared/types/contentRepository';
+import { format } from 'date-fns';
+import { DateFormats } from '@src/constants/dateFormats';
+import { getLastMonthRange, getLastWeekRange } from 'lib/shared/src';
 
 export function showErrorMessage(error: unknown) {
   if (error instanceof AxiosError) {
@@ -107,10 +110,9 @@ export function mapQueryParams(
 ) {
   return (
     (Object.keys(params).length > 0 &&
-      '?' +
-        Object.entries(params)
-          .map(([key, value]) => `${key}=${value}`)
-          .join('&')) ||
+      `?${Object.entries(params)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&')}`) ||
     ''
   );
 }
@@ -179,9 +181,24 @@ export const calculateCourseProgress = (
         completedLessonIds.includes(lesson.id),
       ).length || 0
     : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
-        .length || 0;
+        .length ?? 0;
 
   return totalLessons > 0
     ? Math.round((completedCount / totalLessons) * 100)
     : 0;
+};
+
+export const getRecords = (type: string) => {
+  const { start, end } =
+    type === 'weekly' ? getLastWeekRange() : getLastMonthRange();
+
+  return `${format(start, DateFormats.shortDate)} to ${format(
+    end,
+    DateFormats.shortDate,
+  )}`;
+};
+
+export const firstLetterCapital = (text: string | undefined) => {
+  if (typeof text !== 'string' || text.length === 0) return '';
+  return text.charAt(0).toUpperCase() + text.slice(1);
 };

@@ -11,10 +11,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LessonService } from './lesson.service';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { SuccessResponse } from '@src/common/dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { BasePaginationDto, SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
-import { CreateLessonDto, UpdateLessonDto } from './dto';
+import { CreateLessonDto, GetLessonDto, UpdateLessonDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities';
@@ -24,6 +24,11 @@ import { Public } from '@src/common/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
+import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
+import { MoreThan } from 'typeorm';
+import { LessonParamDto } from './dto/lesson-param.dto';
+import { TokenValidationDto } from './dto/token-validation.dto';
+import { UserTypeIdEnum } from '@quick-learn/shared';
 
 @ApiTags('Lessons')
 @Controller({
@@ -32,7 +37,10 @@ import { UserTypeId } from '@src/common/enum/user_role.enum';
 })
 @UseGuards(JwtAuthGuard)
 export class LessonController {
-  constructor(private readonly service: LessonService) {}
+  constructor(
+    private readonly service: LessonService,
+    private readonly lessonProgressService: LessonProgressService,
+  ) {}
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()
@@ -45,19 +53,29 @@ export class LessonController {
     return new SuccessResponse(en.getLessons, lessons);
   }
 
-  @ApiOperation({ summary: 'Get all unapproved the lessons.' })
+  @ApiOperation({ summary: 'Get all unapproved lessons.' })
   @Get('unapproved')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   /**
    * Retrieves all unapproved lessons.
    * @returns A list of lessons.
    */
-  async getUnapprovedLessons(): Promise<SuccessResponse> {
-    const lessons = await this.service.getUnapprovedLessons();
+  async getUnapprovedLessons(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<SuccessResponse> {
+    const lessons = await this.service.getUnapprovedLessons(
+      Number(paginationDto.page),
+      Number(paginationDto.limit),
+      String(paginationDto.q),
+    );
     return new SuccessResponse(en.getLessons, lessons);
   }
 
   @ApiOperation({ summary: 'Get all archived lessons.' })
   @Get('archived')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   async findAllArchivedLessons(
     @Query() paginationDto: PaginationDto,
   ): Promise<SuccessResponse> {
@@ -67,6 +85,21 @@ export class LessonController {
       'archive_by_user',
       'approved_by_user',
     ]);
+    return new SuccessResponse(en.getLessons, lessons);
+  }
+
+  @ApiOperation({ summary: 'Get all flagged lessons with optional search.' })
+  @Get('flagged')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
+  async findAllFlaggedLessons(
+    @Query() paginationDto: BasePaginationDto,
+  ): Promise<SuccessResponse> {
+    const lessons = await this.service.findAllFlaggedLesson(
+      Number(paginationDto.page),
+      Number(paginationDto.limit),
+      paginationDto.q,
+    );
     return new SuccessResponse(en.getLessons, lessons);
   }
 
@@ -95,13 +128,22 @@ export class LessonController {
    * @returns A promise that resolves to a success response containing the lesson entity.
    */
   async get(
-    @Param('id') id: string,
-    @Query('approved') approved: string,
+    @Param() param: LessonParamDto,
+    @Query() getLessonDto: GetLessonDto,
   ): Promise<SuccessResponse> {
-    const lesson = await this.service.get(
-      { id: +id, approved: approved == 'true' },
-      ['created_by_user', 'course'],
-    );
+    const conditions = { id: +param.id };
+    const relations = ['created_by_user', 'course'];
+    if (getLessonDto.approved)
+      conditions['approved'] = getLessonDto.approved == 'true';
+    if (getLessonDto.flagged) {
+      conditions['flagged_lesson'] = {
+        id: MoreThan(0),
+      };
+      relations.push('flagged_lesson');
+      relations.push('flagged_lesson.user');
+    }
+
+    const lesson = await this.service.get(conditions, relations);
     if (!lesson) {
       throw new BadRequestException(en.lessonNotFound);
     }
@@ -110,6 +152,8 @@ export class LessonController {
 
   @ApiOperation({ summary: 'Update an existing lesson.' })
   @Patch('/:id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   /**
    * Updates an existing lesson.
    * @param id The id of the lesson that needs to be updated.
@@ -118,11 +162,11 @@ export class LessonController {
    * @returns A promise that resolves to a success response.
    */
   async update(
-    @Param('id') id: string,
+    @Param() param: LessonParamDto,
     @Body() updateLessonDto: UpdateLessonDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    await this.service.updateLesson(user, +id, updateLessonDto);
+    await this.service.updateLesson(user, +param.id, updateLessonDto);
     return new SuccessResponse(en.updateLesson);
   }
 
@@ -138,11 +182,27 @@ export class LessonController {
    * @returns A promise that resolves to a success response.
    */
   async approve(
-    @Param('id') id: string,
+    @Param() param: LessonParamDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    await this.service.approveLesson(+id, user.id);
+    await this.service.approveLesson(+param.id, user.id);
     return new SuccessResponse(en.approveLesson);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeId.SUPER_ADMIN, UserTypeId.ADMIN)
+  @ApiOperation({ summary: 'Unflag an lessons.' })
+  @Patch('/:id/unflag')
+  /**
+   * Approves an existing lesson.
+   * @param id The id of the lesson that needs to be approved.
+   * @param user The user approving the lesson.
+   * @throws BadRequestException if the lesson doesn't exist
+   * @returns A promise that resolves to a success response.
+   */
+  async unFlag(@Param() param: LessonParamDto): Promise<SuccessResponse> {
+    await this.service.unFlagLesson(+param.id);
+    return new SuccessResponse(en.successUnflagLesson);
   }
 
   @ApiOperation({ summary: 'Archive an lessons.' })
@@ -155,10 +215,10 @@ export class LessonController {
    * @returns A promise that resolves to a success response.
    */
   async archive(
-    @Param('id') id: string,
+    @Param() param: LessonParamDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    await this.service.archiveLesson(+id, user.id);
+    await this.service.archiveLesson(+param.id, user.id);
     return new SuccessResponse(en.archiveLesson);
   }
 
@@ -178,14 +238,11 @@ export class LessonController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   @ApiOperation({ summary: 'Permanently delete a lesson' })
-  @ApiParam({
-    name: 'id',
-    description: 'The ID of the lesson to delete',
-    required: true,
-  })
-  async deleteLesson(@Param('id') id: string): Promise<SuccessResponse> {
-    await this.service.deleteLesson(+id);
+  async deleteLesson(@Param() param: LessonParamDto): Promise<SuccessResponse> {
+    await this.service.deleteLesson(+param.id);
     return new SuccessResponse(en.lessonDeleted);
   }
 
@@ -201,39 +258,41 @@ export class LessonController {
   @Get(':lessonId/:courseId/:token')
   @Public()
   @ApiOperation({ summary: "Get current user's lesson by id and course id" })
-  @ApiParam({
-    name: 'lessonId',
-    required: true,
-    type: String,
-    description: 'Get the lesson by id',
-  })
-  @ApiParam({
-    name: 'courseId',
-    required: true,
-    type: String,
-    description: 'Get lesson by course id',
-  })
-  @ApiParam({
-    name: 'token',
-    required: true,
-    type: String,
-    description: 'validate lesson url using token',
-  })
   async getCurrentUserLessonsByIdAndCourseId(
-    @Param('lessonId') lessonId: string,
-    @Param('courseId') courseId: string,
-    @Param('token') token: string,
+    @Param() param: TokenValidationDto,
   ): Promise<SuccessResponse> {
-    const userTokenDetal = await this.service.validateLessionToken(
-      token,
-      +courseId,
-      +lessonId,
+    const [userTokenDetail, lessonDetail] = await Promise.all([
+      await this.service.validateLessionToken(
+        param.token,
+        +param.courseId,
+        +param.lessonId,
+      ),
+      await this.service.fetchLesson(+param.lessonId, +param.courseId),
+    ]);
+
+    const userLessonReadInfo = await this.lessonProgressService.checkLessonRead(
+      userTokenDetail.user.id,
+      +param.lessonId,
     );
-    const lessonDetail = await this.service.fetchLesson(+lessonId, +courseId);
-    await this.service.updateDailyLessonToken(token, +courseId, +lessonId);
+
+    await this.service.updateDailyLessonToken(
+      param.token,
+      +param.courseId,
+      +param.lessonId,
+    );
+
     return new SuccessResponse(en.lessonForTheDay, {
-      lessonDetail: lessonDetail,
-      userDetail: userTokenDetal.user,
+      lesson_detail: lessonDetail,
+      user_detail: userTokenDetail.user,
+      user_lesson_read_info: userLessonReadInfo,
     });
+  }
+
+  @ApiOperation({ summary: 'Flag a lesson for review' })
+  @Post('flag/:token')
+  @UseGuards(JwtAuthGuard)
+  async flagLesson(@Param('token') token: string): Promise<SuccessResponse> {
+    await this.service.flagLesson(token);
+    return new SuccessResponse(en.succcessLessonFlagged);
   }
 }

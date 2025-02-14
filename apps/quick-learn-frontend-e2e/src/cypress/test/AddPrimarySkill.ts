@@ -1,10 +1,10 @@
 export class AddPrimarySkill {
-  visitProfilePage() {
-    return cy.get('button[class="flex items-center"]').click();
+  visitAccountsPage() {
+    return cy.get('[id="headerProfileImage"]').click();
   }
 
   getAccountSettings() {
-    cy.get('button[class="flex items-center"]').click();
+    cy.get('[id="headerProfileImage"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();
   }
   openPrimarySkill() {
@@ -40,7 +40,7 @@ export class AddPrimarySkill {
     cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
     cy.get('#primary_skills_name_edit').clear();
     cy.get('#primary_skills_name_edit').type('    ');
-    cy.get('.ml-5').click();
+    cy.get('.ml-5').should('be.disabled');
     cy.get('td > .px-2').should('contain', 'This field is mandatory');
   }
 
@@ -48,7 +48,7 @@ export class AddPrimarySkill {
     cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
   }
   deleteSkillCategories() {
-    cy.get(':nth-child(3) > .inline-flex > .ml-2').click();
+    cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
     cy.get('[class="flex-1 overflow-auto p-0"]');
     cy.get('button.bg-white.uppercase').click();
   }

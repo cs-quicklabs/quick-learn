@@ -7,6 +7,7 @@ export type PaginateWrapper<T> = {
   limit: number;
   total_pages: number;
 };
+
 export type FileUploadResponse = {
   file: string;
   type: string;

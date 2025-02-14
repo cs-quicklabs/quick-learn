@@ -21,6 +21,7 @@ import {
   MetadataModule,
   LessonProgressModule,
   CronjobModule,
+  LeaderboardModule,
 } from './routes';
 import { FileModule } from './file/file.module';
 import fileConfig from './file/config/file.config';
@@ -54,6 +55,7 @@ import authConfig from './routes/auth/config/auth.config';
     CourseModule,
     LessonModule,
     LessonProgressModule,
+    LeaderboardModule,
   ],
 })
 export class AppModule {}

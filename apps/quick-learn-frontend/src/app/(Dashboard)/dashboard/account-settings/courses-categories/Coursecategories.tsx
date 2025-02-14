@@ -23,7 +23,7 @@ type formOutput = {
   name: string;
 };
 
-const Coursecategories = () => {
+function Coursecategories() {
   const user = useSelector(selectUser);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -77,7 +77,7 @@ const Coursecategories = () => {
     setIsEditLoading(true);
     updateCourseCategory(id, data)
       .then((res) => {
-        const name = data.name;
+        const { name } = data;
         const updateData = courseCategories.map((item) => {
           if (item.id === id) {
             return { ...item, name };
@@ -91,8 +91,8 @@ const Coursecategories = () => {
       .finally(() => setIsEditLoading(false));
   };
 
-  const heading = en.courseCategories.heading;
-  const subHeading = en.courseCategories.subHeading;
+  const { heading } = en.courseCategories;
+  const { subHeading } = en.courseCategories;
   const inputPlaceHolder = {
     label: en.courseCategories.inputlabel,
     placeholder: en.courseCategories.inputPlaceHolder,
@@ -126,6 +126,6 @@ const Coursecategories = () => {
       />
     </>
   );
-};
+}
 
 export default Coursecategories;

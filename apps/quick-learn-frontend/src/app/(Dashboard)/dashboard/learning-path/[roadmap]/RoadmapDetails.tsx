@@ -7,8 +7,7 @@ import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import ProgressCard from '@src/shared/components/ProgressCard';
 import RoadmapCourseSkeleton from '@src/shared/components/roadmapCourseSkeleton';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
-import { TRoadmap } from '@src/shared/types/contentRepository';
-import { TUserRoadmap } from '@src/shared/types/contentRepository';
+import { TRoadmap, TUserRoadmap } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -60,7 +59,7 @@ const headerVariants = {
   },
 };
 
-const RoadmapDetails = () => {
+function RoadmapDetails() {
   const { member, roadmap } = useParams<{ member: string; roadmap: string }>();
   const baseLink = useMemo(() => {
     return member !== undefined
@@ -168,7 +167,7 @@ const RoadmapDetails = () => {
       </motion.div>
 
       <motion.div className="items-baseline mb-8" variants={headerVariants}>
-        <h1 className="text-center text-5xl font-extrabold leading-tight capitalize">
+        <h1 className="text-center text-5xl font-extrabold leading-tight first-letter:uppercase">
           {roadmapData.name}
         </h1>
         <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
@@ -243,6 +242,6 @@ const RoadmapDetails = () => {
       </div>
     </motion.div>
   );
-};
+}
 
 export default RoadmapDetails;

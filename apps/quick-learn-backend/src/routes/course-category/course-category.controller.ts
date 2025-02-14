@@ -9,12 +9,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateCourseCategoryDto } from './dto/create-course-category.dto';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { CourseCategoryService } from './course-category.service';
 import { UpdateCourseCategoryDto } from './dto/update-course-category.dto';
 import { en } from '@src/lang/en';
+import { CourseCategoryParamDto } from './dto/course-category-param.dto';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '@src/common/decorators/roles.decorator';
+import { UserTypeIdEnum } from '@quick-learn/shared';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/course-categories
 @ApiTags('Course Categories')
@@ -27,6 +31,8 @@ export class CourseCategoryController {
   constructor(private readonly courseCategoryService: CourseCategoryService) {}
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'Create course category.' })
   async create(
     @Body() createCourseCategoryDto: CreateCourseCategoryDto,
@@ -55,28 +61,31 @@ export class CourseCategoryController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get the course category details.' })
-  findOne(@Param('id') id: string) {
-    return this.courseCategoryService.get({ id: +id });
+  findOne(@Param() param: CourseCategoryParamDto) {
+    return this.courseCategoryService.get({ id: +param.id });
   }
 
   @Patch(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'Update the course category.' })
-  @ApiParam({ name: 'id', type: 'string' })
   async update(
-    @Param('id') id: string,
+    @Param() param: CourseCategoryParamDto,
     @Body() updateCourseCategoryDto: UpdateCourseCategoryDto,
   ) {
     await this.courseCategoryService.createCourseCategory(
-      +id,
+      +param.id,
       updateCourseCategoryDto,
     );
     return new SuccessResponse(en.successUpdateCourse);
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'Delete the course category.' })
-  async remove(@Param('id') id: string) {
-    await this.courseCategoryService.deleteCourseCategory(+id);
+  async remove(@Param() param: CourseCategoryParamDto) {
+    await this.courseCategoryService.deleteCourseCategory(+param.id);
     return new SuccessResponse(en.successDeleteCourse);
   }
 }

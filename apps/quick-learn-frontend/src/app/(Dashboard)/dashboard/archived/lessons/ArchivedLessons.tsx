@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
 
-const ArchivedLessons = () => {
+function ArchivedLessons() {
   const dispatch = useAppDispatch();
   const {
     items: lessonsList,
@@ -84,11 +84,15 @@ const ArchivedLessons = () => {
   const handleQueryChange = useMemo(
     () =>
       debounce(async (value: string) => {
-        const _value = value || '';
+        const searchTerm = value || '';
         try {
-          dispatch(setLessonsSearchValue(_value));
+          dispatch(setLessonsSearchValue(searchTerm));
           dispatch(
-            fetchArchivedLessons({ page: 1, search: _value, resetList: true }),
+            fetchArchivedLessons({
+              page: 1,
+              search: searchTerm,
+              resetList: true,
+            }),
           );
         } catch (err) {
           toast.error(en.common.somethingWentWrong);
@@ -171,6 +175,6 @@ const ArchivedLessons = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ArchivedLessons;

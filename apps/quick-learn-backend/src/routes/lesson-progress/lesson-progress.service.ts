@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
-
+import { LeaderboardTypeEnum } from '@src/common/constants/constants';
+import { getLastMonthRange, getLastWeekRange } from '@quick-learn/shared';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
@@ -198,5 +199,150 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
         .select(['lesson_tokens', 'lesson.name'])
         .getMany();
     return userDailyLessonProgress;
+  }
+
+  async getAllUserProgressData(thisDate: { start: string; end: string }) {
+    return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
+      .where(
+        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
+        {
+          startDate: thisDate.start,
+          endDate: thisDate.end,
+        },
+      )
+      .leftJoinAndSelect('lesson_token.user', 'user')
+      .select([
+        'user.id AS user_id',
+        'COUNT(lesson_token.id) AS lesson_count',
+        'user.first_name AS first_name',
+        'user.last_name AS last_name',
+        'user.email AS email',
+      ])
+      .groupBy('user.id')
+      .getRawMany();
+  }
+
+  async getAllUserCompletedLessonData(thisDate: {
+    start: string;
+    end: string;
+  }) {
+    return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
+      .where(
+        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
+        {
+          startDate: thisDate.start,
+          endDate: thisDate.end,
+        },
+      )
+      .andWhere('lesson_token.status = :status', { status: 'COMPLETED' })
+      .select('lesson_token.user_id', 'userId')
+      .addSelect('ARRAY_AGG(lesson_token.lesson_id)', 'lessonIds')
+      .addSelect('ARRAY_AGG(lesson_token.created_at)', 'createdAtArray')
+      .groupBy('lesson_token.user_id')
+      .getRawMany();
+  }
+
+  async getLeaderboardDataService(type: LeaderboardTypeEnum) {
+    let dateToFindFrom;
+    if (type === LeaderboardTypeEnum.MONTHLY) {
+      dateToFindFrom = getLastMonthRange();
+    } else {
+      dateToFindFrom = getLastWeekRange();
+    }
+    //get all user with
+    const allUsers = await this.getAllUserProgressData(dateToFindFrom);
+
+    const completedLessonsData = await this.getAllUserCompletedLessonData(
+      dateToFindFrom,
+    );
+
+    // return formattedData;
+    const completedLessonsMap = new Map(
+      completedLessonsData.map((data) => [data.userId, data]),
+    );
+
+    const formattedData = allUsers.map((user) => {
+      const completedData = completedLessonsMap.get(user.user_id);
+
+      return {
+        ...user,
+        lessonIds: completedData
+          ? completedData.lessonIds.map((lessonId, index) => [
+              lessonId.toString(),
+              completedData.createdAtArray[index],
+            ])
+          : [],
+      };
+    });
+
+    return formattedData;
+  }
+
+  /**
+   * Retrieves the Leaderboard data for last week with .
+   * @returns An array of User records with daily lessons.
+   */
+  async calculateLeaderBoardPercentage(type: LeaderboardTypeEnum) {
+    const getLeaderboardData = await this.getLeaderboardDataService(type);
+
+    const leaderBoardWithPercentage = await Promise.all(
+      getLeaderboardData.map(async (entry) => {
+        if (entry.lessonIds.length === 0) {
+          return {
+            ...entry,
+            lesson_completed_count: 0,
+            average_completion_time: 0,
+          };
+        }
+
+        const lessonIdsIndex = entry.lessonIds.map((item) => item[0]);
+
+        const completedLessons = await this.userLessonProgressRepository
+          .createQueryBuilder('userLessonProgress')
+          .where('userLessonProgress.user_id =:userId', {
+            userId: entry.user_id,
+          })
+          .andWhere('userLessonProgress.lesson_id IN (:...lessonIds)', {
+            lessonIds: lessonIdsIndex,
+          })
+          .getMany();
+        const totalOpeningTime = completedLessons
+          .map((completedLesson) => {
+            const lessonIndex = entry.lessonIds.find(
+              (item) => item[0] === String(completedLesson.lesson_id),
+            );
+            if (!lessonIndex) return 0;
+
+            const LessonOpeningTime = new Date(lessonIndex[1]).getTime();
+            const completionTime = new Date(
+              completedLesson.completed_date,
+            ).getTime();
+            return completionTime - LessonOpeningTime;
+          })
+          .reduce((acc, openTime) => acc + openTime, 0);
+
+        const averageCompletionTime =
+          completedLessons.length > 0
+            ? totalOpeningTime / completedLessons.length / 1000 / 60
+            : 0;
+
+        return {
+          ...entry,
+          lesson_completed_count: completedLessons.length,
+          average_completion_time: +averageCompletionTime.toFixed(2),
+        };
+      }),
+    );
+
+    leaderBoardWithPercentage.sort((a, b) => {
+      // Sort by lessonCompleted (higher is better)
+      if (b.lesson_completed_count !== a.lesson_completed_count) {
+        return b.lesson_completed_count - a.lesson_completed_count;
+      }
+      // If lessonCompleted is the same, sort by average_completion_time (lower is better)
+      return a.average_completion_time - b.average_completion_time;
+    });
+
+    return leaderBoardWithPercentage;
   }
 }

@@ -1,6 +1,5 @@
 'use client';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import {
   CursorArrowRippleIcon,
@@ -31,7 +30,6 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { Tooltip } from 'flowbite-react';
-import { useRouter } from 'next/navigation';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import TeamMemberDetailsSkeleton from './TeamMemberDetailsSkeleton';
 import {
@@ -47,10 +45,11 @@ import {
 import ActivityGraph, { Course } from '@src/shared/modals/ActivityGraph';
 import { useDispatch } from 'react-redux';
 import { decrementTotalUsers } from '@src/store/features/teamSlice';
+import { SuperLink } from '@src/utils/HiLink';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
-const TeamMemberDetails = () => {
+function TeamMemberDetails() {
   const dispatch = useDispatch();
   const router = useRouter();
   const param = useParams<{ member: string }>();
@@ -65,9 +64,8 @@ const TeamMemberDetails = () => {
     TRoadmapCategories[]
   >([]);
   const [userProgress, setUserProgress] = useState<UserLessonProgress[]>([]);
-  const [userDailyLessonProgressData, setUserDalyLessonProgressData] = useState<
-    TUserDailyProgress[]
-  >([]);
+  const [userDailyLessonProgressData, setUserDailyLessonProgressData] =
+    useState<TUserDailyProgress[]>([]);
   const [allCourses, setAllCourses] = useState<TUserCourse[]>([]);
   const [userActivityModal, setUserActivityModal] = useState(false);
 
@@ -101,7 +99,7 @@ const TeamMemberDetails = () => {
 
         // Set the user's daily lesson progress data
         getUserDailyLessonProgress(Number(userId))
-          .then((res) => setUserDalyLessonProgressData(res.data))
+          .then((res) => setUserDailyLessonProgressData(res.data))
           .catch((e) => showApiErrorInToast(e));
 
         setLinks([
@@ -217,19 +215,19 @@ const TeamMemberDetails = () => {
             {member?.first_name} {member?.last_name}
           </h1>
           <p className="text-sm text-gray-500">
-            ({member?.assigned_roadmaps?.length || 0} {en.common.roadmaps},{' '}
+            ({member?.assigned_roadmaps?.length ?? 0} {en.common.roadmaps},{' '}
             {allCourses.length} {en.common.courses})
           </p>
 
           {/* Action Buttons */}
           <div className="flex items-center justify-center gap-2 mt-4">
             <Tooltip content="Edit User">
-              <Link
+              <SuperLink
                 href={`${RouteEnum.TEAM_EDIT}/${userId}`}
                 className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
               >
                 <PencilIcon className="h-4 w-4" />
-              </Link>
+              </SuperLink>
             </Tooltip>
 
             <Tooltip content="Deactivate User">
@@ -262,7 +260,7 @@ const TeamMemberDetails = () => {
         {/* Roadmaps Section */}
         <section className="mb-12">
           <div className="flex items-baseline mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold capitalize">
+            <h2 className="text-2xl md:text-3xl font-bold ">
               {en.common.roadmaps}
             </h2>
             <p className="ml-2 text-sm text-gray-500">
@@ -318,7 +316,7 @@ const TeamMemberDetails = () => {
         {/* Courses Section */}
         <section>
           <div className="flex items-baseline mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold capitalize">
+            <h2 className="text-2xl md:text-3xl font-bold ">
               {en.common.courses}
             </h2>
             <p className="ml-2 text-sm text-gray-500">
@@ -375,6 +373,6 @@ const TeamMemberDetails = () => {
       </div>
     </>
   );
-};
+}
 
 export default TeamMemberDetails;

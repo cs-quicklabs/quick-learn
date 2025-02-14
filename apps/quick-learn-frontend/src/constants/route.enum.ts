@@ -16,6 +16,7 @@ export enum RouteEnum {
   COURSES_CATEGORIES = '/dashboard/account-settings/courses-categories',
   CONTENT = '/dashboard/content',
   APPROVALS = '/dashboard/approvals',
+  FLAGGED = '/dashboard/flagged',
   COMMUNITY = '/dashboard/community',
   ARCHIVED_USERS = '/dashboard/archived/users',
   ARCHIVED_ROADMAPS = '/dashboard/archived/roadmaps',
@@ -23,4 +24,5 @@ export enum RouteEnum {
   ARCHIVED_LESSONS = '/dashboard/archived/lessons',
   CHANGE_LOGS = 'https://release.quicklabs.in/quick-learn/changelogs',
   FEATURE_LOGS = 'https://release.quicklabs.in/quick-learn/roadmap',
+  LEADERBOARD = '/dashboard/leaderboard',
 }

@@ -380,7 +380,10 @@ export class UsersService extends PaginationService<UserEntity> {
       .where('user.id = :userId', { userId })
       .andWhere('roadmap.archived = :archived', { archived: false })
       .andWhere('course.archived = :courseArchived', { courseArchived: false })
-      .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
+      .andWhere(
+        'lesson.archived = :lessonArchived AND lesson.approved = :lessonApproved',
+        { lessonArchived: false, lessonApproved: true },
+      )
       .andWhere((qb) => {
         const subQuery = qb
           .subQuery()

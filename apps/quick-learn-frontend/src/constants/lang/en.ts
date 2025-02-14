@@ -76,6 +76,10 @@ export const en = {
     updatedOn: 'Updated on',
     createdOn: 'Created on',
     createdBy: 'Created by',
+    flaggedBy: 'Flagged by',
+    flaggedOn: 'Flagged on',
+    flaggedLessons: 'Flagged Lessons',
+    flaggedDesc: 'Following lessons have been flagged for review by admins.',
 
     // Confirmation dialogs
     logoutConformation: 'Are you sure you want to Log out?',
@@ -203,6 +207,7 @@ export const en = {
     subHeading:
       'Following lessons are waiting for approval after being created or updated by the team.',
     approveThisLesson: 'Approve this lesson',
+    unFlagThisLesson: 'Unflag this lesson',
     approvalPendingExclamation: 'Approval pending!',
     approvalPendingInfo:
       'This lesson is awaiting approval from the team. After approval this will be available to all the team members.',
@@ -456,5 +461,18 @@ export const en = {
     default_text: 'Enter atleast 3 characters to search',
     no_search_result_found: 'No Lessons, Courses, or Roadmaps found',
     Loading: 'Loading....',
+  },
+  leaderboard: {
+    smallLeaderboard: 'Leaderboard',
+    leaderboard: 'LEADERBOARD',
+    leaderboardDescription:
+      'This is the leaderboard of the users past records.',
+    leaderboardRank: 'Rank',
+    leaderboardLessonsCompleted: 'Lessons Completed',
+    leaderboardUser: 'User',
+    leaderboardNoMoreData: 'No more data to show',
+    leaderboardLoading: 'Loading...',
+    weekly: 'Last Week',
+    monthly: 'Last Month',
   },
 };

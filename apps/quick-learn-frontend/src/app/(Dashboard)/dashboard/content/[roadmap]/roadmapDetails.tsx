@@ -35,7 +35,7 @@ import {
   selectRoadmapById,
   updateRoadmap as updateStoreRoadmap,
 } from '@src/store/features/roadmapsSlice';
-import { AppDispatch, RootState } from '@src/store/store';
+import { AppDispatch } from '@src/store/store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -52,14 +52,14 @@ const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
-const RoadmapDetails = () => {
+function RoadmapDetails() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { roadmap: roadmapId } = useParams<{ roadmap: string }>();
 
   // Get roadmap from store
-  const roadmapFromStore = useSelector((state: RootState) =>
-    selectRoadmapById(state, parseInt(roadmapId)),
+  const roadmapFromStore = useSelector(
+    selectRoadmapById(parseInt(roadmapId, 10)),
   );
   const contentRepositoryMetadata = useSelector(
     selectContentRepositoryMetadata,
@@ -116,7 +116,7 @@ const RoadmapDetails = () => {
       }
     };
 
-    if (!parseInt(roadmapId)) {
+    if (!parseInt(roadmapId, 10)) {
       router.replace(RouteEnum.CONTENT);
       return;
     }
@@ -249,7 +249,7 @@ const RoadmapDetails = () => {
       <AddEditCourseModal
         open={openAddCourseModal}
         setOpen={setOpenAddCourseModal}
-        isAdd={true}
+        isAdd
         onSubmit={onAddCourse}
         isloading={isLoading}
       />
@@ -281,7 +281,7 @@ const RoadmapDetails = () => {
 
         {/* Roadmap Header */}
         <div className="flex flex-col items-center justify-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold first-letter:uppercase mb-2">
             {roadmapData.name}
           </h1>
           <p className="text-sm text-gray-500 text-center">
@@ -382,6 +382,6 @@ const RoadmapDetails = () => {
       </div>
     </>
   );
-};
+}
 
 export default RoadmapDetails;

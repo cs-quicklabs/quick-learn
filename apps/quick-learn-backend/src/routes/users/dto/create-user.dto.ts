@@ -37,7 +37,7 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Password should not be empty' })
   @IsString()
   @MinLength(8)
-  @MaxLength(32, { message: 'Password must be less than 32 character' })
+  @MaxLength(32, { message: 'Password must be less than 32 characters' })
   @IsStrongPassword({
     minLength: 8,
     minLowercase: 1,

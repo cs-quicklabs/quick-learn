@@ -1,12 +1,14 @@
-import { getSystemPreferences } from './../../apiServices/contentRepositoryService';
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../store';
 import { REHYDRATE } from 'redux-persist';
 import type { PersistedState } from 'redux-persist';
-
-export type SystemPreferences = {
-  unapprovedLessons: number;
-};
+import { RootState } from '../types/base.types';
+import { getSystemPreferences } from '../../apiServices/contentRepositoryService';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector,
+} from '@reduxjs/toolkit';
+import { SystemPreferences } from '@src/shared/types/contentRepository';
 
 interface SystemPreferencesState {
   metadata: SystemPreferences;
@@ -25,7 +27,8 @@ interface RehydrateAction {
 
 const initialState: SystemPreferencesState = {
   metadata: {
-    unapprovedLessons: 0,
+    unapproved_lessons: 0,
+    flagged_lessons: 0,
   },
   status: 'idle',
   error: null,
@@ -52,9 +55,9 @@ const systemPreferenceSlice = createSlice({
   reducers: {
     updateSystemPreferencesData: (
       state,
-      action: PayloadAction<SystemPreferences>,
+      action: PayloadAction<Partial<SystemPreferences>>,
     ) => {
-      state.metadata.unapprovedLessons = action.payload.unapprovedLessons;
+      state.metadata = { ...state.metadata, ...action.payload };
     },
   },
   extraReducers: (builder) => {
@@ -87,7 +90,13 @@ const systemPreferenceSlice = createSlice({
 export const { updateSystemPreferencesData } = systemPreferenceSlice.actions;
 export default systemPreferenceSlice.reducer;
 
-export const getUnapprovedLessonCount = (state: RootState) =>
-  state?.systemPreference?.metadata?.unapprovedLessons;
-export const getSystemPreferencesState = (state: RootState) =>
-  state?.systemPreference?.status;
+const baseSelector = (state: RootState) => state.systemPreference;
+
+export const getSystemPreferencesState = createSelector(
+  [baseSelector],
+  (data) => ({
+    metadata: data.metadata,
+    status: data.status,
+    error: data.error,
+  }),
+);

@@ -11,7 +11,7 @@ import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 
-const CommunityCourseRepository = () => {
+function CommunityCourseRepository() {
   const [allCourses, setAllCourses] = useState<TCourse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -89,6 +89,6 @@ const CommunityCourseRepository = () => {
       )}
     </div>
   );
-};
+}
 
 export default CommunityCourseRepository;

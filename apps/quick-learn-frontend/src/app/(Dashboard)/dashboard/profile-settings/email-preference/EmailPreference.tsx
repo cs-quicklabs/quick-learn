@@ -10,7 +10,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import EmailPreferenceSkeleton from './EmailPreferenceSkeleton';
 import { en } from '@src/constants/lang/en';
-const EmailPreference = () => {
+
+function EmailPreference() {
   const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
@@ -88,6 +89,6 @@ const EmailPreference = () => {
       )}
     </div>
   );
-};
+}
 
 export default EmailPreference;

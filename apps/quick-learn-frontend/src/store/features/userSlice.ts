@@ -1,7 +1,12 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../types/base.types';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector,
+} from '@reduxjs/toolkit';
 import { getUser } from '@src/apiServices/authService';
 import { TUser } from '@src/shared/types/userTypes';
-// import { useFetchContentRepositoryMetadata } from './contextHelperService';
 
 interface UserState {
   user: TUser | null;
@@ -55,7 +60,7 @@ const userSlice = createSlice({
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch user';
+        state.error = action.error.message ?? 'Failed to fetch user';
       });
   },
 });
@@ -63,9 +68,17 @@ const userSlice = createSlice({
 export const { setUser, clearUser } = userSlice.actions;
 export default userSlice.reducer;
 
-// Type-safe selectors
-export const selectUser = (state: { user: UserState }) => state?.user?.user;
-export const selectUserStatus = (state: { user: UserState }) =>
-  state?.user?.status;
-export const selectUserError = (state: { user: UserState }) =>
-  state?.user?.error;
+const baseSelector = (state: RootState) => state.user;
+
+export const selectUser = createSelector(
+  [baseSelector],
+  (data) => data?.user || null,
+);
+export const selectUserStatus = createSelector(
+  [baseSelector],
+  (data) => data.status,
+);
+export const selectUserError = createSelector(
+  [baseSelector],
+  (data) => data.error,
+);

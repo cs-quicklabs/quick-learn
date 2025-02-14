@@ -114,6 +114,7 @@ npm run build:backend:production
 Now using pm2, run both the apps:
 
 ```bash
+chmod +x start-backend.sh
 pm start ecosystem.config.js
 ```
 

@@ -35,7 +35,7 @@ import {
   selectContentRepositoryMetadata,
   updateContentRepository,
 } from '@src/store/features/metadataSlice';
-import { AppDispatch, RootState } from '@src/store/store';
+import { AppDispatch } from '@src/store/store';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
@@ -53,7 +53,7 @@ const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
 ];
 
-const CourseDetails = () => {
+function CourseDetails() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const params = useParams<{ roadmap: string; course: string }>();
@@ -63,8 +63,8 @@ const CourseDetails = () => {
   // Selectors
   const allCourses = useSelector(selectAllCourses);
   const courseFromStore = allCourses.find((course) => course.id === +courseId);
-  const roadmapFromStore = useSelector((state: RootState) =>
-    roadmapId ? selectRoadmapById(state, parseInt(roadmapId)) : undefined,
+  const roadmapFromStore = useSelector(
+    selectRoadmapById(parseInt(roadmapId, 10)),
   );
   const contentRepositoryMetadata = useSelector(
     selectContentRepositoryMetadata,
@@ -121,10 +121,10 @@ const CourseDetails = () => {
     if (
       courseData.roadmaps?.length &&
       courseData.roadmaps?.length > 0 &&
-      parseInt(roadmapId)
+      parseInt(roadmapId, 10)
     ) {
       const roadmap = courseData.roadmaps.find(
-        (ele) => ele.id === parseInt(roadmapId),
+        (ele) => ele.id === parseInt(roadmapId, 10),
       );
       if (!roadmap) return;
       setLinks([
@@ -283,7 +283,7 @@ const CourseDetails = () => {
 
         {/* Course Header */}
         <div className="flex flex-col items-center justify-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold first-letter:uppercase mb-2">
             {courseData.name}
           </h1>
           <p className="text-sm text-gray-500 text-center">
@@ -399,6 +399,6 @@ const CourseDetails = () => {
       </div>
     </>
   );
-};
+}
 
 export default CourseDetails;

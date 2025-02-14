@@ -40,7 +40,10 @@ export enum ContentRepositoryApiEnum {
   COMMUNITY_COURSES = 'course/community-course', // to fetch only community courses is true
   COMMUNITY = 'course/community', //to fetch courses which are community course , unarchived, unapproved
   GET_USER_ROADMAPS = '/users/my-roadmaps',
-  LESSON_PROGRESS = '/lessonprogress',
+  LEADERBOARD_STATUS = '/leaderboard/list',
+  LESSON_PROGRESS = '/lesson-progress',
+  LESSON_FLAGGED = '/lesson/flag',
+  GET_FLAGGED_LESSON = '/lesson/flagged',
 }
 
 export enum ArchivedApiEnum {
@@ -67,8 +70,8 @@ export enum LearningPathAPIEnum {
   GET_USER_SEARCH = '/users/search',
   GET_LEARNING_PATHS = '/users/my-roadmaps',
   GET_LEARNING_PATH_ROADMAP = '/users/my-roadmaps/:id',
-  GET_LEARNING_PATH_COURSE = '/users/myroadmaps/courses/:id',
-  GET_LEARNING_PATH_LESSON = '/users/myroadmaps/lessons/:id',
+  GET_LEARNING_PATH_COURSE = '/users/my-roadmaps/courses/:id',
+  GET_LEARNING_PATH_LESSON = '/users/my-roadmaps/lessons/:id',
 }
 
 export enum DailyLessionEnum {

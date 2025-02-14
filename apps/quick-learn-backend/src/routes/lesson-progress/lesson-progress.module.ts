@@ -7,10 +7,8 @@ import {
   LessonTokenEntity,
   UserEntity,
 } from '@src/entities';
-
 import { LessonProgressController } from './lesson-progress.controller';
 import { LessonProgressService } from './lesson-progress.service';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([

@@ -1,3 +1,4 @@
+import { firstLetterCapital } from '@src/utils/helpers';
 import { ChangeEvent, useEffect, useRef } from 'react';
 
 interface AutoResizingTextareaProps {
@@ -9,14 +10,14 @@ interface AutoResizingTextareaProps {
   maxLength?: number;
 }
 
-const AutoResizingTextarea = ({
+function AutoResizingTextarea({
   value,
   onChange,
   isEditing,
   placeholder,
   className = '',
   maxLength = 80,
-}: AutoResizingTextareaProps) => {
+}: AutoResizingTextareaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const adjustHeight = () => {
@@ -43,9 +44,9 @@ const AutoResizingTextarea = ({
   return (
     <textarea
       ref={textareaRef}
-      value={value}
+      value={firstLetterCapital(value)}
       onChange={handleChange}
-      className={`w-full capitalize text-3xl md:text-5xl font-bold text-center border-none overflow-hidden resize-none focus:outline-none min-h-[2.5rem] md:min-h-[3.5rem] transition-all ${
+      className={`w-full text-3xl md:text-5xl font-bold text-center border-none overflow-hidden resize-none focus:outline-none min-h-[2.5rem] md:min-h-[3.5rem] transition-all ${
         !isEditing ? 'focus:ring-0' : ''
       } ${className}`}
       placeholder={placeholder}
@@ -56,6 +57,6 @@ const AutoResizingTextarea = ({
       aria-label="Lesson title"
     />
   );
-};
+}
 
 export default AutoResizingTextarea;

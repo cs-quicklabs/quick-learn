@@ -13,7 +13,7 @@ import { RoadmapService } from './roadmap.service';
 import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { JwtAuthGuard } from '../auth/guards';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateRoadmapDto } from './dto/create-roadmap.dto';
 import { UpdateRoadmapDto } from './dto/update-roadmap.dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
@@ -21,6 +21,7 @@ import { UserEntity } from '@src/entities';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
 import { PaginationDto } from '../users/dto';
 import { ActivateRoadmapDto } from './dto/activate-roadmap.dto';
+import { RoadmapParamDto } from './dto/roadmap-param.dto';
 
 @ApiTags('Roadmap')
 @Controller({
@@ -71,30 +72,28 @@ export class RoadmapController {
   }
 
   @Get(':id')
-  @ApiParam({ name: 'id', description: 'Roadmap ID', required: true })
   @ApiOperation({ summary: 'Get roadmap details' })
   async getRoadmapDetails(
-    @Param('id') id: string,
+    @Param() param: RoadmapParamDto,
     @Query('courseId') courseId?: string,
   ) {
     const roadmaps =
       await this.service.getRoadmapDetailsWithCourseAndLessonsCount(
-        +id,
+        +param.id,
         courseId ? +courseId : undefined,
       );
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
 
   @Patch(':id')
-  @ApiParam({ name: 'id', description: 'Roadmap ID', required: true })
   @ApiOperation({ summary: 'Update a roadmap' })
   async updateRoadmap(
-    @Param('id') id: string,
+    @Param() param: RoadmapParamDto,
     @Body() updateRoadmapDto: UpdateRoadmapDto,
     @CurrentUser('id') userID: number,
   ) {
     const roadmap = await this.service.updateRoadmap(
-      +id,
+      +param.id,
       updateRoadmapDto,
       userID,
     );
@@ -102,21 +101,19 @@ export class RoadmapController {
   }
 
   @Patch(':id/assign')
-  @ApiParam({ name: 'id', description: 'Roadmap ID', required: true })
   @ApiOperation({ summary: 'Assign courses to roadmap' })
   async assignCoursesRoadmap(
-    @Param('id') id: string,
+    @Param() param: RoadmapParamDto,
     @Body() assignCoursesToRoadmapDto: AssignCoursesToRoadmapDto,
   ) {
-    await this.service.assignRoadmap(+id, assignCoursesToRoadmapDto);
+    await this.service.assignRoadmap(+param.id, assignCoursesToRoadmapDto);
     return new SuccessResponse(en.RoadmapCoursesAssigned);
   }
 
   @Delete(':id')
-  @ApiParam({ name: 'id', description: 'Roadmap id', required: true })
   @ApiOperation({ summary: 'Permanently delete roadmap' })
-  async deleteRoadmap(@Param('id') id: string) {
-    await this.service.delete({ id: +id });
+  async deleteRoadmap(@Param() param: RoadmapParamDto) {
+    await this.service.delete({ id: +param.id });
     return new SuccessResponse(en.successDeleteRoadmap);
   }
 }
