@@ -102,6 +102,7 @@ export class LeaderboardCronService {
       const userLeaderboardData = await this.leaderboardRepository.findOne({
         where: {
           user_id: user.id,
+          type: type,
         },
       });
 
