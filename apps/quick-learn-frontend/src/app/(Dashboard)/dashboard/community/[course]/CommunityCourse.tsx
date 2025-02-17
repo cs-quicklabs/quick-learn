@@ -48,10 +48,14 @@ function CommunityCourse() {
     <div className="container mx-auto px-4">
       {/* Heading */}
       <div className="flex flex-col gap-4 text-center mb-10">
-        <h1 className="text-4xl md:text-5xl font-bold">{courseData.name}</h1>
+        <h1 className="text-4xl md:text-5xl font-bold first-letter:uppercase">
+          {courseData.name}
+        </h1>
         {hasLessons && (
           <>
-            <p className="text-sm text-gray-500">{courseData.description}</p>
+            <p className="text-sm text-gray-500 first-letter:uppercase">
+              {courseData.description}
+            </p>
             <p className="text-sm text-gray-500">
               ({courseData.lessons?.length} {en.lesson.lesson})
             </p>

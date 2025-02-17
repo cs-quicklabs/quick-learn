@@ -26,7 +26,9 @@ const LessonHeader = memo(
   }) => (
     <div className="px-4 mb-8 text-center sm:px-6 lg:px-8">
       <div className="items-baseline">
-        <h1 className="text-5xl font-extrabold leading-tight">{name}</h1>
+        <h1 className="text-5xl font-extrabold first-letter:uppercase leading-tight">
+          {name}
+        </h1>
         {showCreatedBy && (
           <p className="mt-1 ml-1 text-sm text-gray-500">
             {firstName} {lastName} {en.component.addLessonOn}{' '}
@@ -168,9 +170,10 @@ const ViewLesson: FC<Props> = ({
             <div className="h-5 w-5">
               <FlagIcon />
             </div>
-            {`The Lesson is flagged by ${
-              lesson?.flagged_lesson?.user?.display_name ?? 'Unknown'
-            } on ${format(
+            {`${en.approvals.lessonFlaggedBy} ${
+              lesson?.flagged_lesson?.user?.display_name ??
+              `${en.common.unknown}`
+            } ${en.common.on} ${format(
               lesson?.flagged_lesson?.flagged_on ?? Date.now(),
               DateFormats.shortDate,
             )}`}

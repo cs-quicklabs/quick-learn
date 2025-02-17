@@ -47,7 +47,7 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
         <aside className="px-2 py-4 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
           <Sidebar navLinks={navLinks} />
         </aside>
-        <main className="max-w-xl px-4 pb-12 lg:col-span-8">
+        <main className="max-w-[45rem] px-4 pb-12 lg:col-span-8">
           <div className="overflow-hidden bg-white">{children}</div>
         </main>
       </div>

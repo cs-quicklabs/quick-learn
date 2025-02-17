@@ -69,7 +69,7 @@ const ArchivedCell: FC<Props> = ({
             <p className="truncate ml-1.5">
               {en.common.deactivatedOn}{' '}
               {format(deactivationDate, DateFormats.shortDate)} {en.common.by}{' '}
-              <span className="max-w-[150px] inline-block truncate align-bottom">
+              <span className="max-w-64 inline-block truncate align-bottom">
                 {deactivatedBy}
               </span>
             </p>

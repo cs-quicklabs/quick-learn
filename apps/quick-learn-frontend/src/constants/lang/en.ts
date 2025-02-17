@@ -25,6 +25,8 @@ export const en = {
     select: 'Select',
     quickLearn: 'Quick Learn',
     add: 'Add New',
+    unknown: 'Unknown',
+    on: 'on',
 
     //dashboard
     loading: 'Loading...',
@@ -207,7 +209,8 @@ export const en = {
     subHeading:
       'Following lessons are waiting for approval after being created or updated by the team.',
     approveThisLesson: 'Approve this lesson',
-    unFlagThisLesson: 'Unflag this lesson',
+    unFlagThisLesson: 'Resolve this lesson',
+    lessonFlaggedBy: 'The Lesson has been flagged by',
     approvalPendingExclamation: 'Approval pending!',
     approvalPendingInfo:
       'This lesson is awaiting approval from the team. After approval this will be available to all the team members.',

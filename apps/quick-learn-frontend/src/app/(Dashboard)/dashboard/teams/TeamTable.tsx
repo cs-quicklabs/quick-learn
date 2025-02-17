@@ -89,7 +89,7 @@ function TeamTable() {
                   key={user.uuid}
                   className="border-b border-gray-200 hover:bg-gray-100"
                 >
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap capitalize">
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap capitalize hover:underline">
                     <SuperLink href={`${RouteEnum.TEAM}/${user.id}`}>
                       {user.first_name} {user.last_name}
                     </SuperLink>
