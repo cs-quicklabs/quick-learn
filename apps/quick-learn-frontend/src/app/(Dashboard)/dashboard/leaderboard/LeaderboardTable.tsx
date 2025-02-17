@@ -12,20 +12,26 @@ import { useAppSelector } from '@src/store/hooks';
 import { selectUser } from '@src/store/features/userSlice';
 import { getRecords } from '@src/utils/helpers';
 import { LeaderboardData } from '@src/shared/types/LessonProgressTypes';
+import { useSearchParams } from 'next/navigation';
 
-const getMedalEmoji = (rank: number, lessonsCount: number) => {
+const getMedalEmoji = (
+  rank: number,
+  totalUser: number,
+  lessons_completed_count: number,
+) => {
   if (rank === 1) return <span className="text-yellow-500">🥇</span>;
   if (rank === 2) return <span className="text-gray-500">🥈</span>;
   if (rank === 3) return <span className="text-red-500">🥉</span>;
-  if (lessonsCount <= 3) {
+  if (totalUser - rank < 5) {
+    //this will display the :thumbs down to approx. bottom 10% of user.
     return (
       <span
         className="text-gray-500 cursor-help relative group"
         data-tooltip="Complete more than 3 lessons to remove this badge"
       >
         <span>👎</span>
-        <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white px-2 py-1 text-sm text-gray-700 opacity-0 shadow-md transition-opacity group-hover:opacity-100 border border-gray-200">
-          Complete more than 3 lessons to remove this badge
+        <span className="pointer-events-none  absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white px-2 py-1 text-sm text-gray-700 opacity-0 shadow-md transition-opacity group-hover:opacity-100 border border-gray-200">
+          {en.leaderboard.tooltipsText}
         </span>
       </span>
     );
@@ -60,7 +66,10 @@ const LeaderboardTable = () => {
   const [monthlyLeaderboard, setMonthlyLeaderboard] = useState<
     LeaderboardData[]
   >([]);
-  const [type, setType] = useState('weekly');
+  const params = useSearchParams();
+  const initalType = params.get('type');
+  console.log(initalType);
+  const [type, setType] = useState(initalType ?? 'weekly');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -144,7 +153,8 @@ const LeaderboardTable = () => {
             {user.user.first_name} {user.user.last_name}
           </td>
           <td className="pl-6 py-2">
-            {user.rank} {getMedalEmoji(user.rank, user.lessons_completed_count)}
+            {user.rank}{' '}
+            {getMedalEmoji(user.rank, total, user.lessons_completed_count)}
           </td>
           <td className="pl-10 md:pl-16 py-2">
             {user.lessons_completed_count}
@@ -203,14 +213,16 @@ const LeaderboardTable = () => {
         {isLoading && currentLeaderboard.length === 0 ? (
           <SkeletonLoader />
         ) : (
-          renderLeaderboard()
+          <tbody>{renderLeaderboard()}</tbody>
         )}
         {currentLeaderboard.length === 0 && !isLoading && (
-          <tr>
-            <td colSpan={3} className="px-4 py-3 text-center text-gray-500">
-              No data found
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td colSpan={3} className="px-4 py-3 text-center text-gray-500">
+                {en.leaderboard.noDataFound}
+              </td>
+            </tr>
+          </tbody>
         )}
       </table>
     </div>
