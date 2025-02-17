@@ -7,15 +7,13 @@ import {
 import { teamListApiCall } from '@src/apiServices/teamService';
 import { en } from '@src/constants/lang/en';
 import { TUser } from '@src/shared/types/userTypes';
-import { RootState } from '../types/base.types';
+import { BaseLoadingState, RootState } from '../types/base.types';
 
-interface TeamState {
+interface TeamState extends BaseLoadingState {
   users: TUser[];
   totalUsers: number;
   filteredTotal: number;
-  isLoading: boolean;
-  isInitialLoad: boolean; // New flag for initial load
-  error: string | null;
+  totalPages: number;
   currentPage: number;
   currentUserType: string;
   searchQuery: string;
@@ -31,6 +29,7 @@ const initialState: TeamState = {
   currentPage: 1,
   currentUserType: '',
   searchQuery: '',
+  totalPages: 0,
 };
 
 export const fetchTeamMembers = createAsyncThunk(
@@ -82,6 +81,7 @@ const teamSlice = createSlice({
         state.isLoading = false;
         state.users = action.payload?.items || [];
         state.filteredTotal = action.payload?.total || 0;
+        state.totalPages = action.payload?.total_pages || 0;
 
         if (state.isInitialLoad || state.totalUsers < state.filteredTotal) {
           state.totalUsers = state.filteredTotal;
@@ -120,6 +120,7 @@ export const selectTeamListingData = createSelector([selectTeam], (data) => ({
   currentPage: data.currentPage,
   currentUserType: data.currentUserType,
   searchQuery: data.searchQuery,
+  totalPages: data.totalPages,
 }));
 
 export default teamSlice.reducer;

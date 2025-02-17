@@ -8,7 +8,7 @@ import { LessonTokenEntity } from '@src/entities';
 import { EmailModule } from '@src/common/modules';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { LeaderboardCronService } from './leaderboard-cron.service';
-
+import { LeaderboardModule } from '../leaderboard/leaderboard.module';
 @Module({
   // TODO: Remove lesson token repository from here to use module
   imports: [
@@ -16,6 +16,7 @@ import { LeaderboardCronService } from './leaderboard-cron.service';
     LessonProgressModule,
     EmailModule,
     TypeOrmModule.forFeature([LessonTokenEntity, Leaderboard]),
+    LeaderboardModule,
   ],
   providers: [LessonEmailService, LeaderboardCronService],
   controllers: [CronjobController],

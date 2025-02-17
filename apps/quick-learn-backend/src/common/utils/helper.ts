@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import sanitizeHtml from 'sanitize-html';
 import { EnvironmentEnum } from '../constants/constants';
-
 export default class Helpers {
   static clearCookies(res: Response) {
     res.clearCookie('refresh_token');
