@@ -45,22 +45,6 @@ const ImageInput: FC<Props> = ({
 
   const watchProfileImage = watch(name);
 
-  const handleImageClick = () => {
-    if (isLoading) return;
-    if (!imagePreview) {
-      fileInputRef.current?.click();
-    } else {
-      setIsLoading(true);
-      setValue(name, '', {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-      setImagePreview(null);
-      setIsLoading(false);
-    }
-  };
-
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -108,9 +92,12 @@ const ImageInput: FC<Props> = ({
 
   // Handle Trash Icon Click - Open the confirmation modal
   const handleImagedeletion = (e: React.MouseEvent) => {
+    if (isLoading) return;
     if (imagePreview) {
       e.stopPropagation(); // Prevent triggering `handleImageClick`
       setIsDeleteModalOpen(true); // Open the confirmation modal
+    } else {
+      fileInputRef.current?.click();
     }
   };
 
@@ -122,7 +109,11 @@ const ImageInput: FC<Props> = ({
         onChangeImage(undefined);
       }
       // Update form value
-      setValue(name, '');
+      setValue(name, '', {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
       // Clear image preview
       setImagePreview(null);
     } finally {
@@ -152,11 +143,7 @@ const ImageInput: FC<Props> = ({
       </label>
 
       <div className="mt-2 flex justify-left">
-        <button
-          type="button"
-          className="relative w-20 h-20 rounded-full overflow-hidden cursor-pointer"
-          onClick={handleImageClick}
-        >
+        <div className="relative w-20 h-20 rounded-full overflow-hidden cursor-pointer">
           {imagePreview ? (
             <Image
               src={imagePreview}
@@ -174,6 +161,7 @@ const ImageInput: FC<Props> = ({
           )}
           <button
             type="button"
+            aria-label="Change image"
             className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity ${
               isLoading ? 'opacity-100' : ''
             }`}
@@ -181,7 +169,7 @@ const ImageInput: FC<Props> = ({
           >
             {showIcon()}
           </button>
-        </button>
+        </div>
         <input
           type="file"
           ref={fileInputRef}
