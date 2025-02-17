@@ -174,8 +174,15 @@ function RoadmapDetails() {
       setIsLoading(false);
     }
   };
+  const handleUpdateContentRepo_Roadmap_count = (data: string[]) => {
+    const courseToUpdate = roadmapData?.courses.filter(
+      (course) => !data.includes(String(course.id)),
+    );
+    console.log(courseToUpdate);
+  };
 
   const assignCourses = async (data: string[]) => {
+    console.log(data);
     setIsLoading(true);
     try {
       const res = await assignCoursesToRoadmap(roadmapId, data);
@@ -184,6 +191,7 @@ function RoadmapDetails() {
       setCourses(updatedRoadmap.data.courses || []);
       dispatch(updateStoreRoadmap(updatedRoadmap.data));
       setOpenAssignModal(false);
+      handleUpdateContentRepo_Roadmap_count(data);
       showApiMessageInToast(res);
     } catch (err) {
       showApiErrorInToast(err as AxiosErrorObject);

@@ -49,6 +49,10 @@ const metadataSlice = createSlice({
         ...action.payload,
       };
     },
+    updateContentRepositoryRoadmapCount: (
+      state,
+      action: PayloadAction<Partial<TContentRepositoryMetadata>>,
+    ) => {},
   },
   extraReducers: (builder) => {
     builder
