@@ -253,7 +253,9 @@ const AssignDataModal: FC<Props> = ({
                                       {firstLetterCapital(item.name)}
                                       {item.roadmap_count === 0 && (
                                         <span className="text-gray-500 text-xs pl-2 flex items-center gap-2">
-                                          {en.modals.orphanCourse}
+                                          <span className="hidden sm:flex">
+                                            {en.modals.orphanCourse}
+                                          </span>
                                           <SolidStarIcon className="w-4 h-4 text-yellow-500" />
                                         </span>
                                       )}
