@@ -18,6 +18,7 @@ export class CreateNewRoadMap {
       }
     });
   }
+
   EnterRoadMapName() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     return cy.get('#addRoadmapForm_input_text').type('RoadMap ' + Numeric);
@@ -66,6 +67,7 @@ export class CreateNewRoadMap {
     cy.contains('Roadmap Category').should('be.visible');
     cy.get('#addRoadmapForm_select_roadmap_category_id').select(2);
   }
+
   getEditRoadmapbutton() {
     cy.get('p.text-sm').contains('created this roadmap on');
     cy.get('button.text-black').eq(0).click();
@@ -116,6 +118,7 @@ export class CreateNewRoadMap {
         }
       });
   }
+
   clickExistingCourseCheckbox() {
     cy.get('[type="checkbox"]').eq(0).check();
   }
@@ -127,10 +130,10 @@ export class CreateNewRoadMap {
   }
 
   getArchiveRoadmapButton() {
-    cy.get('p.text-sm').contains('created this roadmap on');
-    cy.get('button.text-black').eq(2).click();
+    cy.get('button#archiveRoadmap').click();
     cy.contains("Yes, I'm sure").click();
   }
+
   getArchiveSuccessMessage() {
     return cy
       .get('div.Toastify__toast')
@@ -257,5 +260,12 @@ export class CreateNewRoadMap {
     this.getCreateNewCourseButton();
     this.EnterCourseName();
     this.SelectCourseCategory();
+  }
+
+  archiveRoadmap() {
+    this.visitContentPage();
+    cy.get('.text-2xl').contains('All Roadmaps');
+    this.getRoadMapsList();
+    this.getArchiveRoadmapButton();
   }
 }

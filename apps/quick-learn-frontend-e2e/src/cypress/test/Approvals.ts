@@ -49,10 +49,7 @@ export class Approvals {
   }
 
   getCreateNewCourseButton() {
-    cy.get('button')
-      .contains('Create New Course')
-      .should('be.visible')
-      .click();
+    cy.get('button').contains('Create New Course').should('be.visible').click();
   }
 
   EnterCourseName() {
@@ -87,10 +84,7 @@ export class Approvals {
   }
 
   getCreateNewLessonButton() {
-    cy.get('button')
-      .contains('Create New Lesson')
-      .should('be.visible')
-      .click();
+    cy.get('button').contains('Create New Lesson').should('be.visible').click();
   }
 
   getLessonListToEdit() {

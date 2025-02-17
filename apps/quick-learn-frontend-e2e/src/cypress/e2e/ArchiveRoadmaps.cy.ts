@@ -1,6 +1,7 @@
 import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
 import { ArchiveRoadmaps } from '../test/ArchiveRoadmaps';
+import { CreateNewRoadMap } from '../test/CreateRoadMap';
 
 describe('Activate and Delete Roadmaps', () => {
   const loginPage = new LoginPage();
@@ -13,6 +14,7 @@ describe('Activate and Delete Roadmaps', () => {
     cy.url().should('include', '/dashboard');
     loginPage.getWelcomeMessage();
   });
+
   it('Verify Super admin should able to search roadmaps', () => {
     const ArchiveRoadmap = new ArchiveRoadmaps();
     ArchiveRoadmap.SearchRoadmap();
@@ -22,7 +24,13 @@ describe('Activate and Delete Roadmaps', () => {
     const ArchiveRoadmap = new ArchiveRoadmaps();
     ArchiveRoadmap.ActivateRoadmap();
   });
+
   it('Verify Super Admin should able to Delete roadmaps', () => {
+    // create new roadmap and archive roadmap
+    const roadmap = new CreateNewRoadMap();
+    roadmap.archiveRoadmap();
+
+    // delete archive course
     const ArchiveRoadmap = new ArchiveRoadmaps();
     ArchiveRoadmap.DeleteRoadmap();
   });
