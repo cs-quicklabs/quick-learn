@@ -8,8 +8,10 @@ import { en } from '@src/lang/en';
 import { LessonEmailService } from './lesson-email-cron.service';
 import { JwtAuthGuard } from '../auth/guards';
 import { LeaderboardCronService } from './leaderboard-cron.service';
-import { CronjobQueryParamDto } from './dto/cronjob-query.dto';
-
+import {
+  CronjobQueryParamDto,
+  CronjobLeaderboardQueryParamDto,
+} from './dto/cronjob-query.dto';
 /**
  * Controller for cronjob routes
  */
@@ -26,11 +28,6 @@ export class CronjobController {
     private readonly leaderboardCronService: LeaderboardCronService,
   ) {}
 
-  /**
-   *@ApiQueryParam greeting
-   *@returns success response
-   */
-
   @Post('daily-lessons')
   @ApiOperation({ summary: 'Send daily lessons to the users.' })
   async triggerCronJobmaunually(
@@ -40,14 +37,14 @@ export class CronjobController {
     return new SuccessResponse(en.triggeredDailyLessonMails);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeId.SUPER_ADMIN)
   @ApiOperation({
     summary: 'Create new Ranking and send leaderboard email to the users.',
   })
   @Post('leaderboard-email')
-  async triggerLeaderboardEmail(): Promise<SuccessResponse> {
-    await this.leaderboardCronService.sendLeaderboardEmail();
+  async triggerLeaderboardEmail(
+    @Query() param: CronjobLeaderboardQueryParamDto,
+  ): Promise<SuccessResponse> {
+    await this.leaderboardCronService.sendLeaderboardEmail(param.type);
     return new SuccessResponse(en.triggeredLeaderboardEmail);
   }
 }

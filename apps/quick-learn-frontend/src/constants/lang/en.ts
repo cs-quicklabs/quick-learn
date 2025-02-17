@@ -465,11 +465,14 @@ export const en = {
   leaderboard: {
     smallLeaderboard: 'Leaderboard',
     leaderboard: 'LEADERBOARD',
-    leaderboardDescription: 'Weekly Records Of Last Week',
+    leaderboardDescription:
+      'This is the leaderboard of the users past records.',
     leaderboardRank: 'Rank',
     leaderboardLessonsCompleted: 'Lessons Completed',
     leaderboardUser: 'User',
     leaderboardNoMoreData: 'No more data to show',
     leaderboardLoading: 'Loading...',
+    weekly: 'Last Week',
+    monthly: 'Last Month',
   },
 };

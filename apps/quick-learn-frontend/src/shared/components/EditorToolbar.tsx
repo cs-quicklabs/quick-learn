@@ -48,6 +48,7 @@ const EditorToolbar: FC<Props> = ({
         <label
           htmlFor="toggle"
           className="inline-flex items-center cursor-pointer"
+          aria-label="Toggle editing mode"
         >
           <input
             id="toggle"

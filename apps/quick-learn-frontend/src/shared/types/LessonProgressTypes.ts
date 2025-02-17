@@ -30,4 +30,5 @@ export type LeaderboardData = {
   lessons_completed_count: number;
   rank: number;
   user: TUser;
+  created_at: string;
 };
