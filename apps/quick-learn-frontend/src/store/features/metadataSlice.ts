@@ -51,8 +51,30 @@ const metadataSlice = createSlice({
     },
     updateContentRepositoryRoadmapCount: (
       state,
-      action: PayloadAction<Partial<TContentRepositoryMetadata>>,
-    ) => {},
+      action: PayloadAction<{ id: string; action: number }[]>,
+    ) => {
+      const updates = action.payload;
+      if (!updates) return;
+      updates.forEach(({ id, action }) => {
+        state.metadata.contentRepository.course_categories.forEach(
+          (category) => {
+            const course = category.courses.find(
+              (course) => String(course.id) === id,
+            );
+            if (!course) return;
+
+            if (action === 1) {
+              course.roadmaps_count = (course.roadmaps_count || 0) + 1; // Increment count
+            } else if (action === -1) {
+              course.roadmaps_count = Math.max(
+                (course.roadmaps_count || 0) - 1,
+                0,
+              ); // Decrement but not below 0
+            }
+          },
+        );
+      });
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -72,7 +94,8 @@ const metadataSlice = createSlice({
   },
 });
 
-export const { updateContentRepository } = metadataSlice.actions;
+export const { updateContentRepository, updateContentRepositoryRoadmapCount } =
+  metadataSlice.actions;
 
 const metadataSelector = (state: RootState) => state.metadata;
 

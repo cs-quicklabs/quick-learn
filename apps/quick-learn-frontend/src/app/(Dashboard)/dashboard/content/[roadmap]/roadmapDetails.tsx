@@ -30,7 +30,10 @@ import {
   TRoadmap,
 } from '@src/shared/types/contentRepository';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectContentRepositoryMetadata } from '@src/store/features/metadataSlice';
+import {
+  selectContentRepositoryMetadata,
+  updateContentRepositoryRoadmapCount,
+} from '@src/store/features/metadataSlice';
 import {
   selectRoadmapById,
   updateRoadmap as updateStoreRoadmap,
@@ -175,14 +178,28 @@ function RoadmapDetails() {
     }
   };
   const handleUpdateContentRepo_Roadmap_count = (data: string[]) => {
-    const courseToUpdate = roadmapData?.courses.filter(
-      (course) => !data.includes(String(course.id)),
-    );
-    console.log(courseToUpdate);
+    const initiallyAssignedCourse =
+      roadmapData?.courses.map((item) => String(item.id)) || [];
+    const newSet = [...new Set([...initiallyAssignedCourse, ...data])];
+    console.log('newset', newSet);
+    const dataToUpdate = newSet
+      .map((idx) => {
+        const isInInitial = initiallyAssignedCourse.includes(idx);
+        const isInData = data.includes(idx);
+
+        if (isInInitial && !isInData) {
+          return { id: idx, action: -1 }; // Removed from data
+        }
+        if (!isInInitial && isInData) {
+          return { id: idx, action: +1 }; // Newly added in data
+        }
+        return null;
+      })
+      .filter((item): item is { id: string; action: number } => item !== null);
+    dispatch(updateContentRepositoryRoadmapCount(dataToUpdate));
   };
 
   const assignCourses = async (data: string[]) => {
-    console.log(data);
     setIsLoading(true);
     try {
       const res = await assignCoursesToRoadmap(roadmapId, data);
