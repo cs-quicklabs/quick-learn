@@ -14,11 +14,7 @@ import { getRecords } from '@src/utils/helpers';
 import { LeaderboardData } from '@src/shared/types/LessonProgressTypes';
 import { useSearchParams } from 'next/navigation';
 
-const getMedalEmoji = (
-  rank: number,
-  totalUser: number,
-  lessons_completed_count: number,
-) => {
+const getMedalEmoji = (rank: number, totalUser: number) => {
   if (rank === 1) return <span className="text-yellow-500">🥇</span>;
   if (rank === 2) return <span className="text-gray-500">🥈</span>;
   if (rank === 3) return <span className="text-red-500">🥉</span>;
@@ -153,8 +149,7 @@ const LeaderboardTable = () => {
             {user.user.first_name} {user.user.last_name}
           </td>
           <td className="pl-6 py-2">
-            {user.rank}{' '}
-            {getMedalEmoji(user.rank, total, user.lessons_completed_count)}
+            {user.rank} {getMedalEmoji(user.rank, total)}
           </td>
           <td className="pl-10 md:pl-16 py-2">
             {user.lessons_completed_count}
