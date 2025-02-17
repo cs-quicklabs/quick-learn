@@ -6,13 +6,9 @@ describe('Activate and Delete Course', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {
-    loginPage.visit();
-    cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(validCredentials.mail, validCredentials.password);
-
-    cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
+    loginPage.initialize(validCredentials.mail, validCredentials.password);
   });
+
   it('Verify Super admin should able to search course', () => {
     const ArchiveCourse = new ArchiveCourses();
     ArchiveCourse.SearchCourse();

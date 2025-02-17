@@ -6,13 +6,9 @@ describe('Primary Skill create, edit and delete', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {
-    loginPage.visit();
-    cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(validCredentials.mail, validCredentials.password);
-
-    cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
+    loginPage.initialize(validCredentials.mail, validCredentials.password);
   });
+
   it('Verify Super Admin should able to add Skill', () => {
     const addSkill = new AddPrimarySkill();
     addSkill.OpenAccountSettings();
@@ -88,13 +84,5 @@ describe('Primary Skill create, edit and delete', () => {
     addSkill.OpenAccountSettings();
     addSkill.openPrimarySkill();
     addSkill.getDeleteSkillButton();
-    // addSkill.getSuccessMessage().should('contain', 'Primary skill is deleted.');
   });
-
-  // it('Verify Super admin should not able to Delete Skill associated to team members', () => {
-  //   const addSkill = new AddPrimarySkill();
-  //   addSkill.OpenAccountSettings();
-  //   addSkill.openPrimarySkill();
-  //   addSkill.deleteSkillCategories();
-  // });
 });

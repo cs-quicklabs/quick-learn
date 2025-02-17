@@ -21,12 +21,17 @@ describe('Activate and Delete Roadmaps', () => {
   });
 
   it('Verify Super admin should able to Activate roadmaps', () => {
+    // archive roadmap
+    const roadmap = new CreateNewRoadMap();
+    roadmap.archiveRoadmap();
+
+    // activate roadmap
     const ArchiveRoadmap = new ArchiveRoadmaps();
     ArchiveRoadmap.ActivateRoadmap();
   });
 
   it('Verify Super Admin should able to Delete roadmaps', () => {
-    // create new roadmap and archive roadmap
+    // archive roadmap
     const roadmap = new CreateNewRoadMap();
     roadmap.archiveRoadmap();
 

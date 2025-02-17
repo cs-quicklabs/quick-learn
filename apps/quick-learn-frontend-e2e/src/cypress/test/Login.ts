@@ -1,4 +1,12 @@
 export class LoginPage {
+  initialize(email: string, password: string) {
+    this.visit();
+    cy.get('.text-xl').contains('Sign in to your account');
+    this.login(email, password);
+    cy.url().should('include', '/dashboard');
+    this.getWelcomeMessage();
+  }
+
   visit() {
     cy.visit('/');
   }
@@ -10,6 +18,7 @@ export class LoginPage {
   getPasswordInput() {
     return cy.get('#loginForm_input_passwordpassword');
   }
+
   ensureRememberMeUnchecked() {
     cy.get('input[type="checkbox"]').then(($checkbox) => {
       if ($checkbox.is(':checked')) {
@@ -17,9 +26,11 @@ export class LoginPage {
       }
     });
   }
+
   clickRememberMeCheckbox() {
     cy.get('input[type="checkbox"]').check(); // Check after entering credentials
   }
+
   getSubmitButton() {
     return cy.get('button[type="submit"]');
   }
@@ -46,6 +57,7 @@ export class LoginPage {
     this.getSubmitButton().click();
     this.getWelcomeMessage();
   }
+
   loginWithInvalidCredential(username, password) {
     this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
     this.getUsernameInput().type(username);
@@ -53,6 +65,7 @@ export class LoginPage {
     this.clickRememberMeCheckbox(); // Check after filling credentials
     this.getSubmitButton().click();
   }
+
   loginWithEmptyValue() {
     this.getUsernameInput().type(' ');
     this.getError().should('contain', 'This field is required');
@@ -83,33 +96,5 @@ export class LoginPage {
       'contain',
       'No user is linked to the provided email.',
     );
-  }
-
-  loginAsEditor(EditorMail, EditorPassword) {
-    cy.get('.text-xl').contains('Sign in to your account');
-    this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
-    this.getUsernameInput().type(EditorMail);
-    this.getPasswordInput().type(EditorPassword);
-    this.clickRememberMeCheckbox(); // Check after filling credentials
-    this.getSubmitButton().click();
-    this.getWelcomeMessage();
-  }
-
-  loginAsAdmin(Admin1Mail, Admin1Password) {
-    this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
-    this.getUsernameInput().type(Admin1Mail);
-    this.getPasswordInput().type(Admin1Password);
-    this.clickRememberMeCheckbox(); // Check after filling credentials
-    this.getSubmitButton().click();
-    this.getWelcomeMessage();
-  }
-
-  loginAsMember(MemberMail, MemberPassword) {
-    this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
-    this.getUsernameInput().type(MemberMail);
-    this.getPasswordInput().type(MemberPassword);
-    this.clickRememberMeCheckbox(); // Check after filling credentials
-    this.getSubmitButton().click();
-    this.getWelcomeMessage();
   }
 }

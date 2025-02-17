@@ -6,13 +6,9 @@ describe('Course create, edit and delete', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {
-    loginPage.visit();
-    cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(validCredentials.mail, validCredentials.password);
-
-    cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
+    loginPage.initialize(validCredentials.mail, validCredentials.password);
   });
+
   it('Verify Super Admin should able to add Courses', () => {
     const addCourse = new AddCourseCategory();
     addCourse.OpenAccountSettings();
@@ -24,6 +20,7 @@ describe('Course create, edit and delete', () => {
       .getSuccessMessage()
       .should('contain', 'Successfully added course category');
   });
+
   it('Verify Super Admin should not able to add empty courses', () => {
     const addCourse = new AddCourseCategory();
     addCourse.OpenAccountSettings();
@@ -89,15 +86,5 @@ describe('Course create, edit and delete', () => {
     addCourse.OpenAccountSettings();
     addCourse.openCourseCategory();
     addCourse.getDeleteCourseButton();
-    // addCourse
-    //   .getSuccessMessage()
-    //   .should('contain', 'Course category is deleted.');
   });
-
-  // it('Verify Super admin should not able to Delete Course category associated with other courses', () => {
-  //   const addCourse = new AddCourseCategory();
-  //   addCourse.OpenAccountSettings();
-  //   addCourse.openCourseCategory();
-  //   addCourse.deleteCourseCategoryAssociatedWithCourses();
-  // });
 });

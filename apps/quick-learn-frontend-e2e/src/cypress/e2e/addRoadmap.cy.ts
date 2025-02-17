@@ -6,13 +6,9 @@ describe('Roadmap create, edit and delete', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {
-    loginPage.visit();
-    cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(validCredentials.mail, validCredentials.password);
-
-    cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
+    loginPage.initialize(validCredentials.mail, validCredentials.password);
   });
+
   it('Verify Super Admin should able to add Roadmap categories', () => {
     const AddRoadMaps = new AddRoadMap();
     AddRoadMaps.OpenAccountSettings();
@@ -54,6 +50,7 @@ describe('Roadmap create, edit and delete', () => {
       'The value should not exceed 30 characters.',
     );
   });
+
   it('Verify Super admin able to edit Roadmap Categories', () => {
     const AddRoadMaps = new AddRoadMap();
     AddRoadMaps.OpenAccountSettings();
@@ -92,13 +89,5 @@ describe('Roadmap create, edit and delete', () => {
     AddRoadMaps.OpenAccountSettings();
     AddRoadMaps.openRoadMap();
     AddRoadMaps.getDeleteRoadmapButton();
-    // AddRoadMaps.getSuccessMessage().should('contain', 'Roadmap is deleted.');
   });
-
-  // it('Verify Super admin should not able to Delete Roadmap category associated with other Roadmaps', () => {
-  //   const AddRoadMaps = new AddRoadMap();
-  //   AddRoadMaps.OpenAccountSettings();
-  //   AddRoadMaps.openRoadMap();
-  //   AddRoadMaps.deleteRoadMapCategories();
-  // });
 });

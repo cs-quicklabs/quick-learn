@@ -6,15 +6,10 @@ describe('Change Password', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {
-    loginPage.visit();
-    cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(
+    loginPage.initialize(
       AdminValidCredentials.AdminMail,
-      AdminValidCredentials.AdminPassword,
+      AdminValidCredentials.AdminMail,
     );
-
-    cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
   });
 
   it('Verify User not able to update password when old and new passwords are duplicate', () => {

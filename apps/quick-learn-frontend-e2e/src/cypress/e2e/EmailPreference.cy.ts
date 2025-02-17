@@ -6,15 +6,10 @@ describe('Email Preference', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {
-    loginPage.visit();
-    cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(
+    loginPage.initialize(
       EditorValidCredentials.EditorMail,
       EditorValidCredentials.EditorPassword,
     );
-
-    cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
   });
 
   it('Verify that user able to navigate to Email preference page', () => {

@@ -5,17 +5,14 @@ import { faker } from '@faker-js/faker';
 
 describe('New Lesson Creation', () => {
   const loginPage = new LoginPage();
+
   const generateRandomLesson = () => ({
     title: faker.lorem.sentence(8),
     content: faker.lorem.paragraphs(1),
   });
-  beforeEach(() => {
-    loginPage.visit();
-    cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(validCredentials.mail, validCredentials.password);
 
-    cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
+  beforeEach(() => {
+    loginPage.initialize(validCredentials.mail, validCredentials.password);
   });
 
   it('Verify user able to create New Lesson', () => {
