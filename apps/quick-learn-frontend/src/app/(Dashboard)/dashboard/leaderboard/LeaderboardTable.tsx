@@ -62,7 +62,7 @@ const LeaderboardTable = () => {
   >([]);
   const [type, setType] = useState('weekly');
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const currentUser = useAppSelector(selectUser);
   const observer = useRef<IntersectionObserver>();
@@ -72,14 +72,14 @@ const LeaderboardTable = () => {
       if (observer.current) observer.current.disconnect();
 
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
+        if (entries[0].isIntersecting && page * 25 < total) {
           setPage((prevPage) => prevPage + 1);
         }
       });
 
       if (node) observer.current.observe(node);
     },
-    [isLoading, hasMore],
+    [isLoading, page, total],
   );
 
   // Memoize the current leaderboard based on type
@@ -92,6 +92,7 @@ const LeaderboardTable = () => {
     try {
       const response = await getLeaderBoardStatus(currentPage, 25, type);
       const newData = response.data.items;
+      setTotal(response.data.total);
 
       if (type === 'weekly') {
         setWeeklyLeaderboard((prev) =>
@@ -102,7 +103,6 @@ const LeaderboardTable = () => {
           currentPage === 1 ? newData : [...prev, ...newData],
         );
       }
-      setHasMore(newData.length > 0);
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
     } finally {
@@ -114,7 +114,6 @@ const LeaderboardTable = () => {
     if (newType === type) return;
     setType(newType);
     setPage(1);
-    setHasMore(true);
     // Only fetch if we don't have data for this type
     if (
       (newType === 'weekly' && weeklyLeaderboard.length === 0) ||
@@ -130,16 +129,13 @@ const LeaderboardTable = () => {
   }, [page, type]);
 
   const renderLeaderboard = () => {
-    return currentLeaderboard.map((user) => {
+    return currentLeaderboard.map((user, index) => {
       const isCurrentUser = currentUser?.id === user?.user?.id;
+      const isLastElement = index === currentLeaderboard.length - 1;
       return (
         <tr
           key={user.user_id}
-          ref={
-            currentLeaderboard.length - 1 === user.user_id
-              ? lastElementRef
-              : null
-          }
+          ref={isLastElement ? lastElementRef : null}
           className={`bg-white border-b border-gray-200 hover:bg-gray-50 ${
             isCurrentUser ? 'bg-yellow-200 hover:bg-yellow-100' : ''
           }`}
