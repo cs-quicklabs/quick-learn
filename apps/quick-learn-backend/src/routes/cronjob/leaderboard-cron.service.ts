@@ -79,7 +79,7 @@ export class LeaderboardCronService {
         if (userBatch.length > 0) {
           await Promise.all(
             userBatch.map((user) =>
-              this.leaderboardEmail(user, totalMembers, type),
+              this.generateLeaderboardEmail(user, totalMembers, type),
             ),
           );
           processedCount += userBatch.length;
@@ -93,7 +93,7 @@ export class LeaderboardCronService {
     }
   }
 
-  async leaderboardEmail(
+  async generateLeaderboardEmail(
     user: UserEntity,
     totalMembers: number,
     type: LeaderboardTypeEnum,
@@ -102,6 +102,7 @@ export class LeaderboardCronService {
       const userLeaderboardData = await this.leaderboardRepository.findOne({
         where: {
           user_id: user.id,
+          type: type,
         },
       });
 

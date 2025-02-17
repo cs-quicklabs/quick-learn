@@ -28,11 +28,6 @@ export class CronjobController {
     private readonly leaderboardCronService: LeaderboardCronService,
   ) {}
 
-  /**
-   *@ApiQueryParam greeting
-   *@returns success response
-   */
-
   @Post('daily-lessons')
   @ApiOperation({ summary: 'Send daily lessons to the users.' })
   async triggerCronJobmaunually(
@@ -42,8 +37,6 @@ export class CronjobController {
     return new SuccessResponse(en.triggeredDailyLessonMails);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeId.SUPER_ADMIN)
   @ApiOperation({
     summary: 'Create new Ranking and send leaderboard email to the users.',
   })
