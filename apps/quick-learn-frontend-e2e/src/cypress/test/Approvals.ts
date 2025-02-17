@@ -49,19 +49,10 @@ export class Approvals {
   }
 
   getCreateNewCourseButton() {
-    cy.get('body').then(($body) => {
-      if ($body.find('.text-lg:contains("No courses available")').length > 0) {
-        cy.get('button.inline-flex')
-          .contains('Create New Course')
-          .should('be.visible')
-          .click();
-      } else {
-        cy.get('button.inline-block')
-          .contains('Create New Course')
-          .should('be.visible')
-          .click();
-      }
-    });
+    cy.get('button')
+      .contains('Create New Course')
+      .should('be.visible')
+      .click();
   }
 
   EnterCourseName() {
@@ -96,19 +87,10 @@ export class Approvals {
   }
 
   getCreateNewLessonButton() {
-    cy.get('body').then(($body) => {
-      if ($body.find('.text-lg:contains("No Lessons found")').length > 0) {
-        cy.get('button.inline-flex')
-          .contains('Create New Lesson')
-          .should('be.visible')
-          .click();
-      } else {
-        cy.get('button.inline-block')
-          .contains('Create New Lesson')
-          .should('be.visible')
-          .click();
-      }
-    });
+    cy.get('button')
+      .contains('Create New Lesson')
+      .should('be.visible')
+      .click();
   }
 
   getLessonListToEdit() {
