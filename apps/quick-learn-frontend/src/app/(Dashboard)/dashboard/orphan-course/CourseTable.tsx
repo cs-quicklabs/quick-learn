@@ -45,7 +45,7 @@ const CourseTable = () => {
           key={course.id}
           className="border-b w-full border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
         >
-          <td
+          <th
             scope="row"
             className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
@@ -57,7 +57,7 @@ const CourseTable = () => {
                 {course.name}
               </SuperLink>
             </div>
-          </td>
+          </th>
           <td className="px-4 py-2">
             {format(course.updated_at, DateFormats.shortDate)}
           </td>
@@ -81,6 +81,7 @@ const CourseTable = () => {
 
   useEffect(() => {
     filterOrphanCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [course_categories]);
 
   if (!isInitialsed) return <Skeleton />;

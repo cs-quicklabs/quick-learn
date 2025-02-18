@@ -90,7 +90,7 @@ const AssignDataModal: FC<Props> = ({
   // Watch for form changes
   useEffect(() => {
     if (show) {
-      const subscription = watch((value, { name, type }) => {
+      const subscription = watch((_value, { name, type }) => {
         const currentSelected = getValues('selected') || [];
 
         // Only check if form is dirty when the 'selected' field changes
