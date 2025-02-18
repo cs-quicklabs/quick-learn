@@ -463,6 +463,7 @@ export const en = {
     Loading: 'Loading....',
   },
   leaderboard: {
+    pageLoading: 'Page is Loading....',
     smallLeaderboard: 'Leaderboard',
     leaderboard: 'LEADERBOARD',
     leaderboardDescription:
@@ -474,5 +475,7 @@ export const en = {
     leaderboardLoading: 'Loading...',
     weekly: 'Last Week',
     monthly: 'Last Month',
+    noDataFound: 'No data found',
+    tooltipsText: 'Complete more than 3 lessons to remove this badge.',
   },
 };

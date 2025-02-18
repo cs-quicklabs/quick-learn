@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { en } from '@src/constants/lang/en';
 import LeaderboardTable from './LeaderboardTable';
 
@@ -22,7 +22,9 @@ const page = () => {
       </div>
       {/* table */}
       <div className="mt-4">
-        <LeaderboardTable />
+        <Suspense fallback={<div>{en.leaderboard.pageLoading}</div>}>
+          <LeaderboardTable />
+        </Suspense>
       </div>
     </section>
   );
