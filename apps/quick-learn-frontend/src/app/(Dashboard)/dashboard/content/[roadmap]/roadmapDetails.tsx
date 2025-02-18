@@ -32,6 +32,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectContentRepositoryMetadata,
+  updateContentRepositoryCourse,
   updateContentRepositoryRoadmapCount,
 } from '@src/store/features/metadataSlice';
 import {
@@ -163,6 +164,7 @@ function RoadmapDetails() {
     try {
       const res = await createCourse({ ...data, roadmap_id: +roadmapId });
       setOpenAddCourseModal(false);
+      dispatch(updateContentRepositoryCourse(res.data));
       const updatedCourses = [...courses, res.data];
       setCourses(updatedCourses);
       if (roadmapData) {

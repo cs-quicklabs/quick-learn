@@ -39,7 +39,7 @@ export interface TCourse extends TCreateCourse {
   id: number;
   archived: boolean;
   roadmaps?: TRoadmap[];
-  course_category: TCourseCategories;
+  course_category?: TCourseCategories;
   created_by_user_id: number;
   lessons_count?: number;
   roadmaps_count?: number;

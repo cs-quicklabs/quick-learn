@@ -6,7 +6,11 @@ import {
 } from '@reduxjs/toolkit';
 import { BaseAsyncState, RootState } from '../types/base.types';
 import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
-import { TContentRepositoryMetadata } from '@src/shared/types/contentRepository';
+import {
+  TContentRepositoryMetadata,
+  TCourse,
+  TRoadmap,
+} from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 
@@ -49,6 +53,42 @@ const metadataSlice = createSlice({
         ...action.payload,
       };
     },
+    updateContentRepositoryRoadmap: (
+      state,
+      action: PayloadAction<TRoadmap>,
+    ) => {
+      const roadmap = action.payload;
+      const roadmap_category =
+        state.metadata.contentRepository.roadmap_categories.find(
+          (category) => category.id === +roadmap.roadmap_category_id,
+        );
+      if (!roadmap_category) return;
+      roadmap_category.roadmaps = [...roadmap_category.roadmaps, roadmap];
+    },
+    updateContentRepositoryCourse: (state, action: PayloadAction<TCourse>) => {
+      const course = action.payload;
+      const course_category =
+        state.metadata.contentRepository.course_categories.find(
+          (category) => category.id === +course.course_category_id,
+        );
+      if (!course_category) return;
+
+      const formattedCourse = {
+        id: course.id,
+        name: course.name,
+        description: course.description,
+        course_category_id: course.course_category_id,
+        archived: course.archived,
+        is_community_available: course.is_community_available,
+        created_by_user_id: course.created_by_user_id,
+        updated_by_id: course.updated_by?.id,
+        created_at: course.created_at,
+        updated_at: course.updated_at,
+        lessons_count: course.lessons_count ?? 0, // Default to 0 if missing
+        roadmaps_count: course.roadmaps ? course.roadmaps.length : 0, // Count roadmaps
+      };
+      course_category.courses = [...course_category.courses, formattedCourse];
+    },
     updateContentRepositoryRoadmapCount: (
       state,
       action: PayloadAction<{ id: string; action: number }[]>,
@@ -64,10 +104,10 @@ const metadataSlice = createSlice({
             if (!course) return;
 
             if (action === 1) {
-              course.roadmaps_count = (course.roadmaps_count || 0) + 1; // Increment count
+              course.roadmaps_count = (course.roadmaps_count ?? 0) + 1; // Increment count
             } else if (action === -1) {
               course.roadmaps_count = Math.max(
-                (course.roadmaps_count || 0) - 1,
+                (course.roadmaps_count ?? 0) - 1,
                 0,
               ); // Decrement but not below 0
             }
@@ -94,8 +134,12 @@ const metadataSlice = createSlice({
   },
 });
 
-export const { updateContentRepository, updateContentRepositoryRoadmapCount } =
-  metadataSlice.actions;
+export const {
+  updateContentRepository,
+  updateContentRepositoryRoadmap,
+  updateContentRepositoryCourse,
+  updateContentRepositoryRoadmapCount,
+} = metadataSlice.actions;
 
 const metadataSelector = (state: RootState) => state.metadata;
 

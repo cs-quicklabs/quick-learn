@@ -8,6 +8,7 @@ import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
 import { firstLetterCapital } from '@src/utils/helpers';
 import { StarIcon as SolidStarIcon } from '@heroicons/react/24/solid';
+
 interface Props {
   show: boolean;
   setShow: (value: boolean) => void;
