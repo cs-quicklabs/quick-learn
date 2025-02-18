@@ -104,11 +104,11 @@ const metadataSlice = createSlice({
             );
             if (!course) return;
 
-            if (action === 1) {
-              course.roadmaps_count = (course.roadmaps_count ?? 0) + 1; // Increment count
-            } else if (action === -1) {
+            if (action >= 1) {
+              course.roadmaps_count = (course.roadmaps_count ?? 0) + action; // Increment count
+            } else if (action <= 0) {
               course.roadmaps_count = Math.max(
-                (course.roadmaps_count ?? 0) - 1,
+                (course.roadmaps_count ?? 0) + action,
                 0,
               ); // Decrement but not below 0
             }

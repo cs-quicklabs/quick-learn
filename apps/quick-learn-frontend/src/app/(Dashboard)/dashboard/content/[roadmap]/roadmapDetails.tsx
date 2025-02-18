@@ -179,11 +179,10 @@ function RoadmapDetails() {
       setIsLoading(false);
     }
   };
-  const handleUpdateContentRepo_Roadmap_count = (data: string[]) => {
+  const handleUpdateContentRepoRoadmapcount = (data: string[]) => {
     const initiallyAssignedCourse =
       roadmapData?.courses.map((item) => String(item.id)) || [];
     const newSet = [...new Set([...initiallyAssignedCourse, ...data])];
-    console.log('newset', newSet);
     const dataToUpdate = newSet
       .map((idx) => {
         const isInInitial = initiallyAssignedCourse.includes(idx);
@@ -210,7 +209,7 @@ function RoadmapDetails() {
       setCourses(updatedRoadmap.data.courses || []);
       dispatch(updateStoreRoadmap(updatedRoadmap.data));
       setOpenAssignModal(false);
-      handleUpdateContentRepo_Roadmap_count(data);
+      handleUpdateContentRepoRoadmapcount(data);
       showApiMessageInToast(res);
     } catch (err) {
       showApiErrorInToast(err as AxiosErrorObject);
