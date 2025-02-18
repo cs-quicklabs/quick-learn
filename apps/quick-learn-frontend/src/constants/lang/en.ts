@@ -208,6 +208,7 @@ export const en = {
       'Following lessons are waiting for approval after being created or updated by the team.',
     approveThisLesson: 'Approve this lesson',
     unFlagThisLesson: 'Unflag this lesson',
+    flagLesson: 'Flag lesson for editing',
     approvalPendingExclamation: 'Approval pending!',
     approvalPendingInfo:
       'This lesson is awaiting approval from the team. After approval this will be available to all the team members.',

@@ -291,7 +291,6 @@ export class LessonController {
   @ApiOperation({ summary: 'Flag a lesson for review' })
   @Post('flag/:token')
   @Public()
-  @UseGuards(JwtAuthGuard)
   async flagLesson(@Param('token') token: string): Promise<SuccessResponse> {
     await this.service.flagLesson(token);
     return new SuccessResponse(en.succcessLessonFlagged);
