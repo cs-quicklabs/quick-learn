@@ -124,6 +124,35 @@ TODO: Add a well docs for using nginx for the reverse proxy.
 
 ## Testing
 
+System assumes that following user are available in the testing database/enviornment
+
+1. Super Admin
+```
+  mail: super.admin@yopmail.com
+  password: password@123P
+```
+
+2. Admin
+```
+  mail: admin.auto@yopmail.com
+  password: Password@123P
+
+  mail: auto.admin@yopmail.com
+  Admin1Password: Password@123
+```
+
+3. Editor
+```
+  mail: editor.auto@yopmail.com
+  password: Password@123
+```
+
+3. Member
+```
+  mail: member.test@yopmail.com
+  password: Password@123
+```
+
 For running tests locally, you can use the following commands:
 
 There are two ways to run Cypress tests:

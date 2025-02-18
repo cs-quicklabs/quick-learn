@@ -211,6 +211,7 @@ export const en = {
     approveThisLesson: 'Approve this lesson',
     unFlagThisLesson: 'Resolve this lesson',
     lessonFlaggedBy: 'The Lesson has been flagged by',
+    flagLesson: 'Flag lesson for editing',
     approvalPendingExclamation: 'Approval pending!',
     approvalPendingInfo:
       'This lesson is awaiting approval from the team. After approval this will be available to all the team members.',
@@ -466,6 +467,7 @@ export const en = {
     Loading: 'Loading....',
   },
   leaderboard: {
+    pageLoading: 'Page is Loading....',
     smallLeaderboard: 'Leaderboard',
     leaderboard: 'LEADERBOARD',
     leaderboardDescription:
@@ -477,5 +479,7 @@ export const en = {
     leaderboardLoading: 'Loading...',
     weekly: 'Last Week',
     monthly: 'Last Month',
+    noDataFound: 'No data found',
+    tooltipsText: 'Complete more than 3 lessons to remove this badge.',
   },
 };

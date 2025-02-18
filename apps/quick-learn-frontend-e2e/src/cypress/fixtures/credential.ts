@@ -5,7 +5,12 @@ export const validCredentials = {
 
 export const AdminValidCredentials = {
   AdminMail: 'admin.auto@yopmail.com',
-  AdminPassword: 'Password@123p',
+  AdminPassword: 'Password@123P',
+};
+
+export const Admin1ValidCredentials = {
+  Admin1Mail: 'auto.admin@yopmail.com',
+  Admin1Password: 'Password@123',
 };
 
 export const EditorValidCredentials = {

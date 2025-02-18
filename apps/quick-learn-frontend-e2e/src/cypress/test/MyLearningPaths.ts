@@ -10,7 +10,7 @@ export class MyLearningPaths {
     cy.get('[tabindex="0"]').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('[tabindex="0"]').eq(0).click();
+    cy.get('h3.font-medium').eq(0).click();
     cy.get('li.text-gray-700')
       .contains('My Learning Path')
       .should('be.visible');
@@ -70,6 +70,7 @@ export class MyLearningPaths {
     cy.get('.cursor-pointer').click();
     cy.contains('This lesson has been marked as unread').should('be.visible');
   }
+
   NavigateViaRoadMap() {
     this.visitMyLearningPathsPage().click();
     this.getMyRoadmapsList();
@@ -80,17 +81,8 @@ export class MyLearningPaths {
     this.clickMarkAsUnread();
     this.ensureMarkAsReadUnchecked();
   }
-  NavigateViaCourses() {
-    this.visitMyLearningPathsPage();
-    this.getMyCoursesList();
-    this.getMyLessonsList();
-    this.ensureMarkAsReadUnchecked();
-    this.clickMarkAsReadCheckbox();
-    this.clickMarkAsUnread();
-    this.ensureMarkAsReadUnchecked();
-  }
 
-  MarkAsReadUnread() {
+  NavigateViaCourses() {
     this.visitMyLearningPathsPage();
     this.getMyCoursesList();
     this.getMyLessonsList();

@@ -20,7 +20,7 @@ export class AddTeam {
     return cy.get('#user_type_id').select('Admin');
   }
   getUserTypeEditor() {
-    return cy.get('#user_type_id').select('Admin');
+    return cy.get('#user_type_id').select('Editor');
   }
 
   generateRandomEmail() {
@@ -29,7 +29,7 @@ export class AddTeam {
   }
 
   getUserTypeMember() {
-    return cy.get('#user_type_id').select('Admin');
+    return cy.get('#user_type_id').select('Member');
   }
 
   getPassword() {
@@ -47,18 +47,8 @@ export class AddTeam {
     return cy.get('#submit').click();
   }
 
-  addTeam() {
-    const mail = this.generateRandomEmail();
-    this.visitTeamPage().click();
-    this.getAddTeamButton().click();
-    this.getFirstName().type('User');
-    this.getLastName().type('Automation');
-    this.getEmail().type(mail);
-    this.getUserTypeAdmin();
-    this.getPassword().type('Password@123');
-    this.getConfirmPassword().type('Password@123');
-    this.getSkillID();
-    this.submitAddTeamButton();
+  getErrorMessage() {
+    return cy.get('p.mt-1');
   }
 
   fieldNameRequired() {
@@ -83,11 +73,91 @@ export class AddTeam {
     this.getAddTeamButton().click();
     this.getFirstName().type('    ');
     this.getLastName().type('   ');
-    this.getEmail().type('   ');
-    this.getEmail().clear(); //clear the email field
+    this.getEmail().type('email');
+    this.getEmail().clear();
+    this.getEmail().type('  ');
     this.getUserTypeAdmin();
     this.getPassword().type('   ');
     this.getConfirmPassword().type('   ');
     this.getSkillID();
+    cy.get('#submit').should('be.disabled');
+  }
+  InvalidDataTest() {
+    this.visitTeamPage().click();
+    this.getAddTeamButton().click();
+    this.getFirstName().type('42435');
+    this.getErrorMessage().should(
+      'contain',
+      'First name should only contain alphabetic characters',
+    );
+    this.getFirstName().clear();
+    this.getFirstName().type('$#@$#@@');
+    this.getErrorMessage().should(
+      'contain',
+      'First name should only contain alphabetic characters',
+    );
+    this.getLastName().type('43245356');
+    this.getErrorMessage().should(
+      'contain',
+      'Last name should only contain alphabetic characters',
+    );
+    this.getLastName().clear();
+    this.getLastName().type('@#@$#@@@');
+    this.getErrorMessage().should(
+      'contain',
+      'Last name should only contain alphabetic characters',
+    );
+    cy.get('#submit').should('be.disabled');
+  }
+
+  SetInvalidPassword() {
+    this.visitTeamPage().click();
+    this.getAddTeamButton().click();
+    this.getPassword().type('pass@12w');
+    this.getConfirmPassword().type('pass@12w');
+    this.getErrorMessage().contains(
+      'Password must contain at least one uppercase letter',
+    );
+    this.getPassword().clear();
+    this.getPassword().type('PASSWORD');
+    this.getErrorMessage().contains(
+      'Password must contain at least one lowercase letter',
+    );
+    this.getPassword().clear();
+    this.getPassword().type('Pass@word');
+    this.getErrorMessage().contains(
+      'Password must contain at least one number',
+    );
+    this.getPassword().clear();
+    this.getPassword().type('Pass1234');
+    this.getErrorMessage().contains(
+      'Password must contain at least one special character',
+    );
+    this.getPassword().clear();
+    this.getPassword().type('Password@123PasswordPasswordPassword');
+    this.getErrorMessage().contains(
+      'The value should not exceed 32 characters',
+    );
+    cy.get('#submit').should('be.disabled');
+  }
+
+  EnterPasswordWithDifferentNewAndConfirmPassword() {
+    this.visitTeamPage().click();
+    this.getAddTeamButton().click();
+    this.getPassword().type('Password@123');
+    this.getConfirmPassword().type('Password@923P');
+    this.getErrorMessage().contains("Passwords don't match");
+    cy.get('#submit').should('be.disabled');
+  }
+
+  UpdatePasswordWithLesserLength() {
+    this.visitTeamPage().click();
+    this.getAddTeamButton().click();
+    this.getPassword().type('P@1s');
+    this.getConfirmPassword().type('P@1s');
+    this.getErrorMessage().contains(
+      'Password must be at least 8 characters long',
+    );
+    cy.get('#submit').should('be.disabled');
   }
 }

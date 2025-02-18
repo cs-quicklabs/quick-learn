@@ -6,15 +6,10 @@ describe('Change Password', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {
-    loginPage.visit();
-    cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(
+    loginPage.initialize(
       AdminValidCredentials.AdminMail,
-      AdminValidCredentials.AdminPassword,
+      AdminValidCredentials.AdminMail,
     );
-
-    cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
   });
 
   it('Verify User not able to update password when old and new passwords are duplicate', () => {
@@ -27,6 +22,18 @@ describe('Change Password', () => {
     const changePassword = new ChangePassword();
     changePassword.getChangePassword();
     changePassword.UpdatePasswordWithDifferentNewAndConfirmPassword();
+  });
+
+  it('Verify user not able to update password when length is small', () => {
+    const changePassword = new ChangePassword();
+    changePassword.getChangePassword();
+    changePassword.UpdatePasswordWithLesserLength();
+  });
+
+  it('Verify user not able to update password when password is lengthy', () => {
+    const changePassword = new ChangePassword();
+    changePassword.getChangePassword();
+    changePassword.UpdatePasswordWithLimitExceed();
   });
 
   it('Verify User should not able to update password with invalid data', () => {

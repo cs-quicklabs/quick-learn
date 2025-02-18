@@ -230,7 +230,7 @@ function DailyLessonDetail() {
           onClick={handleFlagLesson}
           disabled={isFlagged ?? isFlagging}
         >
-          Flag lesson for editing
+          {en.approvals.flagLesson}
         </button>
       );
     }

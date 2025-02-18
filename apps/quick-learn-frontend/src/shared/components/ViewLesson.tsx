@@ -26,7 +26,7 @@ const LessonHeader = memo(
   }) => (
     <div className="px-4 mb-8 text-center sm:px-6 lg:px-8">
       <div className="items-baseline">
-        <h1 className="text-5xl font-extrabold first-letter:uppercase leading-tight">
+        <h1 className="text-5xl font-extrabold leading-tight first-letter:uppercase">
           {name}
         </h1>
         {showCreatedBy && (

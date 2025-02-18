@@ -4,22 +4,16 @@
       <mj-column width="100%">
         <mj-text padding="0">
           Hello, <b>{{fullName}}</b><br /><br />
-          Our {{type}} leaderboard has beeen published and stood at {{rank}}
-          place among {{totalMembers}} team members.<br /><br />
+          Our {{type}} leaderboard has been published, and you achieved position
+          {{rank}} out of {{totalMembers}} team members.<br /><br />
           Please check the full leaderboard by clicking the link below.<br /><br />
         </mj-text>
         <mj-text padding="0">
           <a target="_blank" href="{{leaderboardLink}}">{{type}} Leaderboard</a>
+          <br /><br />
         </mj-text>
 
-        <mj-text
-          padding="0"
-          padding-top="10px"
-          color="#666666"
-          font-size="12px"
-        >
-          Thanks
-        </mj-text>
+        <mj-text padding="0"> Thank you. </mj-text>
       </mj-column>
     </mj-section>
   </mj-body>
