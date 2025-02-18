@@ -84,6 +84,10 @@ const menuItems: TLink[] = [
     link: RouteEnum.LEADERBOARD,
   },
   {
+    name: 'Orphan Courses',
+    link: RouteEnum.ORPHANCOURSES,
+  },
+  {
     name: 'Change-Logs',
     link: RouteEnum.CHANGE_LOGS,
     isExtended: true,

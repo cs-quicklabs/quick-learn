@@ -52,6 +52,7 @@ const metadataSlice = createSlice({
         ...state.metadata.contentRepository,
         ...action.payload,
       };
+      state.isInitialized = true;
     },
     updateContentRepositoryRoadmap: (
       state,
@@ -128,7 +129,7 @@ const metadataSlice = createSlice({
       })
       .addCase(fetchMetadata.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || null;
+        state.error = action.error.message ?? null;
         showApiErrorInToast(action.error as AxiosErrorObject);
       });
   },
@@ -158,6 +159,11 @@ export const selectContentRepositoryMetadata = createSelector(
 export const selectIsMetadataInitialized = createSelector(
   [metadataSelector],
   (data) => data.isInitialized,
+);
+
+export const selectContentRepositoryCourseCategory = createSelector(
+  [metadataSelector],
+  (data) => data?.metadata?.contentRepository.course_categories,
 );
 
 export default metadataSlice.reducer;

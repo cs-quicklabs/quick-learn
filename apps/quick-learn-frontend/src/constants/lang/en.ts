@@ -476,4 +476,8 @@ export const en = {
     weekly: 'Last Week',
     monthly: 'Last Month',
   },
+  orphanCourse: {
+    heading: 'Orphan Courses',
+    subHeading: 'This the list of Orphan Courses.',
+  },
 };
