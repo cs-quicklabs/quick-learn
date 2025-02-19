@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { SuccessResponse } from '@src/common/dto';
+import { BasePaginationDto, SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { JwtAuthGuard } from '../auth/guards';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -60,14 +60,26 @@ export class CourseController {
     return new SuccessResponse(en.successGotArchivedCourses, courses);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new course' })
-  async createRoadmap(
-    @Body() createCourseDto: CreateCourseDto,
-    @CurrentUser() user: UserEntity,
-  ) {
-    const data = await this.service.createCourse(user, createCourseDto);
-    return new SuccessResponse(en.CreateCourse, data);
+  @Get('orphan')
+  @ApiOperation({ summary: 'Get Orphan courses' })
+  async orphanCourse(@Query() params: BasePaginationDto) {
+    const response = await this.service.getOrphanCourses(
+      params.page,
+      params.limit,
+      params.q,
+    );
+    return new SuccessResponse('Successfully got Orphan courses', response);
+  }
+
+  @Get('/community/:id')
+  @ApiOperation({ summary: 'Get course details' })
+  async getcourseDetails(@Param() param: CourseParamDto) {
+    const data = await this.service.getCourseDetails(
+      { id: +param.id, is_community_available: true },
+      ['lessons', 'lessons.created_by_user'],
+      { isCommunity: true },
+    );
+    return new SuccessResponse(en.GetCourseDetails, data);
   }
 
   @Get(':id')
@@ -81,15 +93,14 @@ export class CourseController {
     return new SuccessResponse(en.GetCourseDetails, data);
   }
 
-  @Get('/community/:id')
-  @ApiOperation({ summary: 'Get course details' })
-  async getcourseDetails(@Param() param: CourseParamDto) {
-    const data = await this.service.getCourseDetails(
-      { id: +param.id, is_community_available: true },
-      ['lessons', 'lessons.created_by_user'],
-      { isCommunity: true },
-    );
-    return new SuccessResponse(en.GetCourseDetails, data);
+  @Post()
+  @ApiOperation({ summary: 'Create a new course' })
+  async createRoadmap(
+    @Body() createCourseDto: CreateCourseDto,
+    @CurrentUser() user: UserEntity,
+  ) {
+    const data = await this.service.createCourse(user, createCourseDto);
+    return new SuccessResponse(en.CreateCourse, data);
   }
 
   @Patch(':id')

@@ -5,8 +5,14 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsOrder, FindOptionsWhere, ILike, In } from 'typeorm';
-import { BasicCrudService } from '@src/common/services';
+import {
+  Brackets,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ILike,
+  In,
+} from 'typeorm';
+import { BasicCrudService, PaginationService } from '@src/common/services';
 import { CourseEntity, UserEntity, LessonEntity } from '@src/entities';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CourseCategoryService } from '../course-category/course-category.service';
@@ -21,7 +27,7 @@ import { FileService } from '@src/file/file.service';
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
 @Injectable()
-export class CourseService extends BasicCrudService<CourseEntity> {
+export class CourseService extends PaginationService<CourseEntity> {
   constructor(
     @InjectRepository(CourseEntity) repo,
     @Inject(forwardRef(() => RoadmapService))
@@ -503,5 +509,28 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
 
     return queryBuilder.select(['course.id', 'course.name']).limit(3).getMany();
+  }
+
+  async getOrphanCourses(page = 1, limit = 10, q = '') {
+    const queryBuilder = this.repository
+      .createQueryBuilder('course')
+      .where('course.archived = :courseArchived', { courseArchived: false })
+      .leftJoin('course.roadmaps', 'roadmap')
+      .andWhere('roadmap.id IS NULL')
+      .leftJoinAndSelect('course.created_by', 'created_by')
+      .leftJoinAndSelect('course.course_category', 'course_category');
+
+    if (q) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('course.name ILIKE :q', { q: `%${q}%` }).orWhere(
+            'course_category.name ILIKE :q',
+            { q: `%${q}%` },
+          );
+        }),
+      );
+    }
+
+    return this.queryBuilderPaginate(queryBuilder, page, limit);
   }
 }
