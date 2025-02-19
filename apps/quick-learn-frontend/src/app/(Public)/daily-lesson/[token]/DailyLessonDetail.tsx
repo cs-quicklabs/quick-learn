@@ -106,7 +106,6 @@ function DailyLessonDetail() {
 
   useEffect(() => {
     if (!token) return;
-    console.log('called');
     getDailyLessionDetail(token)
       .then(({ data }) => {
         const { lesson_detail, user_detail, user_lesson_read_info } = data;
