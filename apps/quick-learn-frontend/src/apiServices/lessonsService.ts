@@ -119,15 +119,15 @@ export const getFlaggedLessons = async (
 };
 
 export const markAsDonePublic = async (
-  lessonId: string,
-  courseId: string,
+  lessonId: number,
+  courseId: number,
   isCompleted: boolean,
   userId: number,
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     `${ContentRepositoryApiEnum.LESSON_PROGRESS}/complete-public/${lessonId}/${userId}`,
     {
-      courseId: parseInt(courseId, 10),
+      courseId,
       isCompleted,
     },
   );
@@ -188,22 +188,12 @@ export const getUserDailyLessonProgress = async (
   return response.data;
 };
 
-export const getDailyLessionDetail = async ({
-  lessonId,
-  courseId,
-  token,
-}: {
-  lessonId: string;
-  courseId: string;
-  token: string;
-}): Promise<AxiosSuccessResponse<TDailyLessonResponse>> => {
+export const getDailyLessionDetail = async (
+  token: string,
+): Promise<AxiosSuccessResponse<TDailyLessonResponse>> => {
   const response = await axiosInstance.get<
     AxiosSuccessResponse<TDailyLessonResponse>
-  >(
-    `${DailyLessionEnum.GET_DAILY_LESSON_DETAILS.replace(':lesson', lessonId)
-      .replace(':course', courseId)
-      .replace(':token', token)}`,
-  );
+  >(`${DailyLessionEnum.GET_DAILY_LESSON_DETAILS.replace(':token', token)}`);
   return response.data;
 };
 
@@ -225,9 +215,6 @@ export const flagLesson = async (
 ): Promise<AxiosSuccessResponse> => {
   const response = await axiosInstance.post<AxiosSuccessResponse>(
     `${ContentRepositoryApiEnum.LESSON_FLAGGED}/${token}`,
-    {
-      token,
-    },
   );
   return response.data;
 };

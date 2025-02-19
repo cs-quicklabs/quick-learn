@@ -3,13 +3,13 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { SessionService } from '../session.service';
 import Helpers from '@src/common/utils/helper';
 import { en } from '@src/lang/en';
+import { SessionService } from '@src/common/modules/session/session.service';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private sessionService: SessionService,
+    private readonly sessionService: SessionService,
     configService: ConfigService,
   ) {
     super({
