@@ -4,9 +4,9 @@ import crypto from 'crypto';
 import { EnvironmentEnum } from '../constants/constants';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 export default class Helpers {
-  static generateRandomhash(length = 64): string {
+  static generateRandomhash(): string {
     return crypto
-      .createHash('sha256', { outputLength: length })
+      .createHash('sha256')
       .update(randomStringGenerator())
       .digest('hex');
   }

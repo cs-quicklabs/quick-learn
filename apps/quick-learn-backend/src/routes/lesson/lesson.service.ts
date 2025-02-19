@@ -507,6 +507,7 @@ export class LessonService extends PaginationService<LessonEntity> {
       { page, limit },
       findOptions,
       ['user', 'lesson', 'course'],
+      { id: 'DESC' },
     );
   }
 
