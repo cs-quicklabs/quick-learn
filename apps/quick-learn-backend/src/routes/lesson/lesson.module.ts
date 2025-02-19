@@ -14,6 +14,7 @@ import { FileModule } from '@src/file/file.module';
 import { UsersModule } from '../users/users.module';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { LessonProgressModule } from '../lesson-progress/lesson-progress.module';
+import { FlaggedLessonService } from './flagged-lesson.service';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { LessonProgressModule } from '../lesson-progress/lesson-progress.module'
     FileModule,
     LessonProgressModule,
   ],
-  providers: [LessonService, EmailService],
+  providers: [LessonService, EmailService, FlaggedLessonService],
   controllers: [LessonController],
   exports: [LessonService],
 })

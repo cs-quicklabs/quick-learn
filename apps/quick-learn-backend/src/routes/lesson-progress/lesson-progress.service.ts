@@ -2,23 +2,23 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
-import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
+import { LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 import { getLastMonthRange, getLastWeekRange } from '@quick-learn/shared';
+import { CourseService } from '../course/course.service';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
     @InjectRepository(UserLessonProgressEntity)
-    private userLessonProgressRepository: Repository<UserLessonProgressEntity>,
+    repo: Repository<UserLessonProgressEntity>,
     @InjectRepository(LessonEntity)
     private lessonRepository: Repository<LessonEntity>,
-    @InjectRepository(CourseEntity)
-    private courseRepository: Repository<CourseEntity>,
     @InjectRepository(LessonTokenEntity)
     private LessonTokenRepository: Repository<LessonTokenEntity>,
+    private readonly courseService: CourseService,
   ) {
-    super(userLessonProgressRepository);
+    super(repo);
   }
 
   private async validateLesson(lessonId: number, courseId: number) {
@@ -33,9 +33,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   }
 
   private async validateCourse(courseId: number) {
-    const course = await this.courseRepository.findOne({
-      where: { id: courseId },
-    });
+    const course = await this.courseService.get({ id: courseId });
 
     if (!course) {
       throw new NotFoundException('Course not found');
@@ -58,25 +56,21 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   ): Promise<UserLessonProgressEntity> {
     await this.validateLesson(lessonId, courseId);
 
-    const existingProgress = await this.userLessonProgressRepository.findOne({
-      where: {
-        user_id: userId,
-        lesson_id: lessonId,
-        course_id: courseId,
-      },
+    const existingProgress = await this.get({
+      user_id: userId,
+      lesson_id: lessonId,
+      course_id: courseId,
     });
 
     if (existingProgress) {
-      await this.userLessonProgressRepository.delete(existingProgress.id);
+      await this.delete({ id: existingProgress.id });
     } else {
-      const newProgressEntry = this.userLessonProgressRepository.create({
+      return await this.create({
         user_id: userId,
         lesson_id: lessonId,
         course_id: courseId,
         completed_date: new Date(),
       });
-
-      return await this.userLessonProgressRepository.save(newProgressEntry);
     }
   }
 
@@ -92,7 +86,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   ): Promise<{ lesson_id: number; completed_date: Date | null }[]> {
     await this.validateCourse(courseId);
 
-    const completedLessons = await this.userLessonProgressRepository.find({
+    const completedLessons = await this.repository.find({
       where: {
         user_id: userId,
         course_id: courseId,
@@ -105,13 +99,14 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       completed_date,
     }));
   }
+
   async getUserLessonProgressViaCourse(userId: number): Promise<
     {
       course_id: number;
       lessons: { lesson_id: number; completed_date: Date | null }[];
     }[]
   > {
-    const completedLessons = await this.userLessonProgressRepository
+    const completedLessons = await this.repository
       .createQueryBuilder('userLessonProgress')
       .innerJoinAndSelect(
         'lesson',
@@ -170,7 +165,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     userId: number,
     lessonId: number,
   ): Promise<{ isRead: boolean; completed_date: Date | null }> {
-    const checkLessonExist = await this.userLessonProgressRepository.findOne({
+    const checkLessonExist = await this.repository.findOne({
       where: {
         user_id: userId,
         lesson_id: lessonId,
@@ -297,7 +292,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
         const lessonIdsIndex = entry.lessonIds.map((item) => item[0]);
 
-        const completedLessons = await this.userLessonProgressRepository
+        const completedLessons = await this.repository
           .createQueryBuilder('userLessonProgress')
           .where('userLessonProgress.user_id =:userId', {
             userId: entry.user_id,

@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LessonTokenEntity, UserEntity } from '@src/entities';
 import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
-import { nanoid } from 'nanoid';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { Cron } from '@nestjs/schedule';
 import {
@@ -13,6 +12,7 @@ import {
 import { EnvironmentEnum } from '@src/common/constants/constants';
 import { ConfigService } from '@nestjs/config';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
+import Helpers from '@src/common/utils/helper';
 
 @Injectable()
 export class LessonEmailService {
@@ -219,7 +219,7 @@ export class LessonEmailService {
   private async generateLessonToken() {
     const expiryTime = new Date();
     expiryTime.setHours(expiryTime.getHours() + this.TOKEN_EXPIRY);
-    const token = nanoid(64);
+    const token = Helpers.generateRandomhash();
     return {
       expiryTime,
       token,

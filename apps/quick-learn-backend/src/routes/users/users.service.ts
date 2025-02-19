@@ -10,6 +10,7 @@ import {
   DeleteResult,
   FindOptionsOrder,
 } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { SkillEntity } from '@src/entities/skill.entity';
@@ -30,6 +31,7 @@ import { CourseService } from '../course/course.service';
 import { LessonService } from '../lesson/lesson.service';
 import { FileService } from '@src/file/file.service';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
+import { SkillsService } from '../skills/skills.service';
 
 const userRelations = ['user_type', 'skill', 'team'];
 interface CourseWithLessonIds extends CourseEntity {
@@ -38,13 +40,13 @@ interface CourseWithLessonIds extends CourseEntity {
 
 @Injectable()
 export class UsersService extends PaginationService<UserEntity> {
+  private readonly hashSalt = 10;
   constructor(
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    userRepository: Repository<UserEntity>,
     @InjectRepository(UserTypeEntity)
-    private userTypeRepository: Repository<UserTypeEntity>,
-    @InjectRepository(SkillEntity)
-    private readonly skillRepository: Repository<SkillEntity>,
+    private readonly userTypeRepository: Repository<UserTypeEntity>,
+    private readonly skillService: SkillsService,
     private readonly emailService: EmailService,
     private readonly sessionService: SessionService,
     private readonly roadmapService: RoadmapService,
@@ -66,29 +68,38 @@ export class UsersService extends PaginationService<UserEntity> {
     return metadata;
   }
 
-  async create(createUserDto: CreateUserDto & { team_id: number }) {
-    const foundUser = await this.userRepository.findOne({
-      where: { email: createUserDto.email },
-    });
+  async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, this.hashSalt);
+  }
 
-    const skill = await this.skillRepository.findOne({
-      where: { id: createUserDto.skill_id },
+  async comparePassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(password, hashedPassword);
+  }
+
+  async create(createUserDto: CreateUserDto & { team_id: number }) {
+    const foundUser = await this.get({ email: createUserDto.email });
+
+    const skill = await this.skillService.get({
+      id: createUserDto.skill_id,
     });
 
     if (!skill) {
       throw new BadRequestException(en.invalidSkill);
     }
 
-    if (foundUser && foundUser.active) {
-      throw new BadRequestException('Email already exists.');
+    if (foundUser?.active) {
+      throw new BadRequestException(en.emailAlreadyExists);
     }
 
     if (foundUser && !foundUser.active) {
       throw new BadRequestException(en.deactiveUserAddError);
     }
 
-    let user = this.userRepository.create(createUserDto);
-    user = await this.userRepository.save(user);
+    let user = this.repository.create(createUserDto);
+    user = await this.repository.save(user);
 
     this.emailService.welcomeEmail(user.email);
 
@@ -152,7 +163,7 @@ export class UsersService extends PaginationService<UserEntity> {
       );
       results = paginatedResults.items;
     } else {
-      results = await this.userRepository.find({
+      results = await this.repository.find({
         where: conditions,
         relations,
         order: sort,
@@ -169,7 +180,7 @@ export class UsersService extends PaginationService<UserEntity> {
   }
 
   async getUserRoadmaps(userId: number, includeCourses = false) {
-    const queryBuilder = this.userRepository
+    const queryBuilder = this.repository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.assigned_roadmaps', 'roadmap')
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
@@ -297,7 +308,7 @@ export class UsersService extends PaginationService<UserEntity> {
     options: FindOptionsWhere<UserEntity>,
     relations: string[] = [],
   ): Promise<UserEntity> {
-    return await this.userRepository.findOne({
+    return await this.repository.findOne({
       where: { ...options },
       relations,
     });
@@ -307,7 +318,7 @@ export class UsersService extends PaginationService<UserEntity> {
     options: FindOptionsWhere<UserEntity>,
     relations: string[] = [],
   ): Promise<UserEntity> {
-    const queryBuilder = this.userRepository
+    const queryBuilder = this.repository
       .createQueryBuilder('user')
       .where({ ...options });
 
@@ -371,7 +382,7 @@ export class UsersService extends PaginationService<UserEntity> {
   }
 
   async getUnreadUserLessons(userId: number) {
-    const user = await this.userRepository
+    const user = await this.repository
       .createQueryBuilder('user')
       .leftJoin('user.assigned_roadmaps', 'roadmap')
       .leftJoin('roadmap.courses', 'course')
@@ -474,7 +485,7 @@ export class UsersService extends PaginationService<UserEntity> {
       await this.sessionService.delete({ user: { id: user.id } });
     }
 
-    return this.userRepository.update({ id: userId }, payload);
+    return this.repository.update({ id: userId }, payload);
   }
 
   async assignRoadmaps(
@@ -499,7 +510,7 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     // Assign roadmaps to the user and save
-    await this.userRepository.save({ ...user, assigned_roadmaps: roadmaps });
+    await this.repository.save({ ...user, assigned_roadmaps: roadmaps });
   }
 
   async delete(condition: FindOptionsWhere<UserEntity>): Promise<DeleteResult> {
@@ -513,11 +524,11 @@ export class UsersService extends PaginationService<UserEntity> {
     await this.sessionService.delete({ user: { id: user.id } });
 
     // Delete the user
-    return this.userRepository.delete(condition);
+    return this.repository.delete(condition);
   }
 
   async findByEmailOrUUID(email: string, uuid: string): Promise<UserEntity[]> {
-    return await this.userRepository.find({
+    return await this.repository.find({
       where: [{ email }, { uuid }],
       relations: [...userRelations],
     });
@@ -528,6 +539,6 @@ export class UsersService extends PaginationService<UserEntity> {
   }
 
   async getSkills(team_id: number): Promise<SkillEntity[]> {
-    return await this.skillRepository.find({ where: { team_id } });
+    return await this.skillService.getMany({ team_id });
   }
 }

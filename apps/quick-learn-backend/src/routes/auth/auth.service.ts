@@ -5,27 +5,23 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { ConfigService } from '@nestjs/config';
+import { LessThan, MoreThan } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '@src/entities/user.entity';
-import * as bcrypt from 'bcryptjs';
-import crypto from 'crypto';
 import ms from 'ms';
 
-import { nanoid } from 'nanoid';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ResetTokenEntity } from '@src/entities/reset-token.entity';
-import { LessThan, MoreThan, Repository } from 'typeorm';
+import { UsersService } from '../users/users.service';
+import { SessionService } from './session.service';
 import { SuccessResponse } from '@src/common/dto';
-import { ConfigService } from '@nestjs/config';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { emailSubjects } from '@src/common/constants/email-subject';
-import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
-import { SessionService } from './session.service';
 import { SessionEntity } from '@src/entities';
 import { LoginDto } from './dto';
 import { ITokenData } from '@src/common/interfaces';
 import { en } from '@src/lang/en';
+import Helpers from '@src/common/utils/helper';
+import { ResetTokenService } from './reset-token.service';
 
 interface IRefreshTokenPayload {
   sessionId: number;
@@ -46,15 +42,12 @@ export class AuthService {
   private authSecret: string;
   private authRefreshSecret: string;
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-    @InjectRepository(ResetTokenEntity)
-    private resetTokenRepository: Repository<ResetTokenEntity>,
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-    private configService: ConfigService,
-    private emailService: EmailService,
-    private sessionService: SessionService,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly resetTokenService: ResetTokenService,
+    private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
+    private readonly sessionService: SessionService,
   ) {
     this.accessTokenExpiresIn =
       this.getTokenExpiresInMilliSeconds('auth.expires');
@@ -84,7 +77,10 @@ export class AuthService {
     }
 
     // Comparing password
-    const isVerified = await bcrypt.compare(password, user.password);
+    const isVerified = await this.usersService.comparePassword(
+      password,
+      user.password,
+    );
     if (isVerified) {
       await this.usersService.updateUser(user.id, {
         last_login_timestamp: new Date(),
@@ -98,10 +94,7 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<ITokenData> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
 
-    const hash = crypto
-      .createHash('sha256')
-      .update(randomStringGenerator())
-      .digest('hex');
+    const hash = Helpers.generateRandomhash();
 
     const refreshTokenExpires = ms(
       loginDto.rememberMe
@@ -145,9 +138,9 @@ export class AuthService {
 
       const expiryDate = new Date();
       expiryDate.setMinutes(expiryDate.getMinutes() + 15);
-      const generateResetToken = nanoid(64);
+      const generateResetToken = Helpers.generateRandomhash();
 
-      await this.resetTokenRepository.save({
+      await this.resetTokenService.create({
         token: generateResetToken,
         user_id: checkUserExists.uuid,
         expiry_date: expiryDate,
@@ -166,12 +159,10 @@ export class AuthService {
 
   // TODO: reset password > get token from email, decode token, update password & delete token from db
   async resetPassword(resetToken: string, newPassword: string) {
-    const findValidToken = await this.resetTokenRepository.findOne({
-      where: {
-        token: resetToken,
-        active: true,
-        expiry_date: MoreThan(new Date()),
-      },
+    const findValidToken = await this.resetTokenService.get({
+      token: resetToken,
+      active: true,
+      expiry_date: MoreThan(new Date()),
     });
 
     if (!findValidToken) {
@@ -188,7 +179,7 @@ export class AuthService {
       throw new InternalServerErrorException();
     }
 
-    const validateNewOldPassword = await bcrypt.compare(
+    const validateNewOldPassword = await this.usersService.comparePassword(
       newPassword,
       user.password,
     );
@@ -197,22 +188,18 @@ export class AuthService {
     }
 
     // TODO: delete expired tokens using cronjobs
-    await this.resetTokenRepository.delete({
+    await this.resetTokenService.delete({
       token: resetToken,
       active: true,
     });
 
     // TODO: delete expired tokens using cronjobs
-    await this.resetTokenRepository.delete({
+    await this.resetTokenService.delete({
       expiry_date: LessThan(new Date()),
     });
 
-    user.password = await bcrypt.hash(newPassword, 10);
-    // Todo: update the below to use update function rather than save method
-    await this.userRepository.create({
-      password: user.password,
-    });
-    await this.userRepository.save(user);
+    user.password = await this.usersService.hashPassword(newPassword);
+    await this.usersService.save(user);
 
     const emailData = {
       body: '<p>Your password has been reset successfully.</p>',
@@ -238,7 +225,7 @@ export class AuthService {
       this.accessTokenExpiresIn,
     );
 
-    await this.userRepository.update(
+    await this.usersService.update(
       { id: session.user.id },
       { last_login_timestamp: new Date() },
     );
