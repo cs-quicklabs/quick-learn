@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -12,16 +14,16 @@ import { UserEntity } from '@src/entities/user.entity';
 import ms from 'ms';
 
 import { UsersService } from '../users/users.service';
-import { SessionService } from './session.service';
 import { SuccessResponse } from '@src/common/dto';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { emailSubjects } from '@src/common/constants/email-subject';
 import { SessionEntity } from '@src/entities';
 import { LoginDto } from './dto';
-import { ITokenData } from '@src/common/interfaces';
+import { IDailyLessonTokenData, ITokenData } from '@src/common/interfaces';
 import { en } from '@src/lang/en';
 import Helpers from '@src/common/utils/helper';
 import { ResetTokenService } from './reset-token.service';
+import { SessionService } from '@src/common/modules/session/session.service';
 
 interface IRefreshTokenPayload {
   sessionId: number;
@@ -42,6 +44,7 @@ export class AuthService {
   private authSecret: string;
   private authRefreshSecret: string;
   constructor(
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly resetTokenService: ResetTokenService,
@@ -234,6 +237,18 @@ export class AuthService {
       token,
       expires: this.accessTokenExpiresIn,
     };
+  }
+
+  getTokenDetails(
+    token: string,
+  ): IRefreshTokenPayload | IAccessTokenPayload | IDailyLessonTokenData {
+    return this.jwtService.decode(token);
+  }
+
+  generateDailyLessonToken(payload: IDailyLessonTokenData): Promise<string> {
+    return this.jwtService.signAsync(payload, {
+      secret: this.authSecret,
+    });
   }
 
   private async getTokensData(data: {

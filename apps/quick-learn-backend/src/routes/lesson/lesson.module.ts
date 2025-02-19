@@ -10,6 +10,7 @@ import { EmailService } from '@src/common/modules/email/email.service';
 import { LessonProgressModule } from '../lesson-progress/lesson-progress.module';
 import { FlaggedLessonService } from './flagged-lesson.service';
 import { LessonTokenModule } from '@src/common/modules';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { LessonTokenModule } from '@src/common/modules';
     FileModule,
     LessonProgressModule,
     LessonTokenModule,
+    AuthModule,
   ],
   providers: [LessonService, EmailService, FlaggedLessonService],
   controllers: [LessonController],

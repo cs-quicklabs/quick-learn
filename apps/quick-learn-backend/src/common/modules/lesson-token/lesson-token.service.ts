@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IDailyLessonTokenData } from '@src/common/interfaces';
 import { BasicCrudService } from '@src/common/services';
 import { LessonTokenEntity } from '@src/entities';
+import { en } from '@src/lang/en';
 
 @Injectable()
 export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
@@ -61,5 +63,38 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
       ])
       .groupBy('user.id')
       .getRawMany();
+  }
+
+  async validateLessionToken({
+    token,
+    course_id,
+    lesson_id,
+    user_id,
+  }: IDailyLessonTokenData): Promise<LessonTokenEntity> {
+    // VALIDATE TOKEN
+    if (!token) {
+      throw new BadRequestException(en.lessonTokenRequired);
+    }
+
+    const tokenEntity = await this.get(
+      {
+        user_id,
+        token,
+        course_id,
+        lesson_id,
+      },
+      ['user'],
+    );
+
+    if (!tokenEntity) {
+      throw new BadRequestException(en.invalidLessonToken);
+    }
+
+    // CHECK IF TOKEN HAS EXPIRED
+    if (tokenEntity.expiresAt < new Date()) {
+      throw new BadRequestException(en.lessonTokenExpired);
+    }
+
+    return tokenEntity;
   }
 }

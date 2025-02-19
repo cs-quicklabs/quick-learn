@@ -12,6 +12,8 @@ import { ConfigService } from '@nestjs/config';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import Helpers from '@src/common/utils/helper';
 import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
+import { IDailyLessonTokenData } from '@src/common/interfaces';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class LessonEmailService {
@@ -27,6 +29,7 @@ export class LessonEmailService {
     private readonly configService: ConfigService,
     private readonly lessonProgressService: LessonProgressService,
     private readonly lessonTokenService: LessonTokenService,
+    private readonly authService: AuthService,
   ) {
     this.frontendURL = this.configService.getOrThrow('app.frontendDomain', {
       infer: true,
@@ -143,11 +146,12 @@ export class LessonEmailService {
         randomLesson.course_id,
       );
 
-      const lessonURL = this.generateURL(
-        randomLesson.lesson_id,
-        randomLesson.course_id,
-        userMailTokenRecord.token,
-      );
+      const lessonURL = await this.generateURL({
+        token: userMailTokenRecord.token,
+        lesson_id: randomLesson.lesson_id,
+        course_id: randomLesson.course_id,
+        user_id: user.id,
+      });
 
       const mailBody = {
         greetings: greeting,
@@ -249,11 +253,8 @@ export class LessonEmailService {
     }
   }
 
-  private readonly generateURL = (
-    lesson_id: number,
-    course_id: number,
-    token: string,
-  ) => {
-    return `${this.frontendURL}/daily-lesson/${lesson_id}?course_id=${course_id}&token=${token}`;
-  };
+  private async generateURL(data: IDailyLessonTokenData) {
+    const token = await this.authService.generateDailyLessonToken(data);
+    return `${this.frontendURL}/daily-lesson/${token}`;
+  }
 }

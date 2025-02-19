@@ -7,19 +7,30 @@ import { CourseService } from '../course/course.service';
 import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
-import { PaginatedResult } from '@src/common/interfaces';
+import { IDailyLessonTokenData, PaginatedResult } from '@src/common/interfaces';
 import { Repository, ILike, MoreThan, FindOptionsWhere } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
 import { FlaggedLessonService } from './flagged-lesson.service';
 import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
+import { AuthService } from '../auth/auth.service';
+import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
+
+interface IDailyLessonDetails {
+  lesson_detail: LessonEntity;
+  user_detail: UserEntity;
+  user_lesson_read_info: { isRead: boolean; completed_date: Date | null };
+}
+
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
   constructor(
     @InjectRepository(LessonEntity)
     repo: Repository<LessonEntity>,
+    private readonly authService: AuthService,
     private readonly lessonTokenService: LessonTokenService,
+    private readonly lessonProgressService: LessonProgressService,
     private readonly flaggedLessionService: FlaggedLessonService,
     private readonly courseService: CourseService,
     private readonly FileService: FileService,
@@ -337,41 +348,6 @@ export class LessonService extends PaginationService<LessonEntity> {
     );
   }
 
-  async validateLessionToken(
-    token: string,
-    course_id: number,
-    lesson_id: number,
-  ) {
-    // VALIDATE TOKEN
-    if (!token) {
-      throw new BadRequestException(en.lessonTokenRequired);
-    }
-
-    const tokenEntity = await this.lessonTokenService.get(
-      {
-        token,
-        course_id,
-        lesson_id,
-      },
-      ['user'],
-    );
-    if (!tokenEntity) {
-      throw new BadRequestException(en.invalidLessonToken);
-    }
-
-    // CHECK IF TOKEN IS VALID
-    if (token !== tokenEntity.token) {
-      throw new BadRequestException(en.invalidLessonToken);
-    }
-
-    // CHECK IF TOKEN HAS EXPIRED
-    if (tokenEntity.expiresAt < new Date()) {
-      throw new BadRequestException(en.lessonTokenExpired);
-    }
-
-    return tokenEntity;
-  }
-
   async updateDailyLessonToken(
     token: string,
     course_id: number,
@@ -425,7 +401,7 @@ export class LessonService extends PaginationService<LessonEntity> {
   }
 
   async fetchLesson(lessonId: number, courseId: number) {
-    const lessonDetail = await this.repository
+    return await this.repository
       .createQueryBuilder('lesson')
       .leftJoinAndSelect('lesson.course', 'course')
       .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
@@ -439,16 +415,13 @@ export class LessonService extends PaginationService<LessonEntity> {
       .andWhere('lesson.approved = :approved', { approved: true })
       .andWhere('course.archived = :courseArchived', { courseArchived: false })
       .getOne();
-
-    return {
-      ...lessonDetail,
-    };
   }
 
   async flagLesson(token: string) {
+    const data = await this.authService.getTokenDetails(token);
     // Find the lesson token entry using the token
     const lessonToken = await this.lessonTokenService.get(
-      { token },
+      { token: (data as IDailyLessonTokenData).token },
       ['user'], // Include relations if needed
     );
 
@@ -504,6 +477,32 @@ export class LessonService extends PaginationService<LessonEntity> {
       ['user', 'lesson', 'course'],
       { id: 'DESC' },
     );
+  }
+
+  async getDailyLessonFromToken(token: string): Promise<IDailyLessonDetails> {
+    const data = await this.authService.getTokenDetails(token);
+    const userTokenDetail = await this.lessonTokenService.validateLessionToken(
+      data as unknown as IDailyLessonTokenData,
+    );
+    const {
+      lesson_id,
+      course_id,
+      token: hashedToken,
+    } = data as IDailyLessonTokenData;
+    const [userLessonReadInfo, lessonDetail] = await Promise.all([
+      await this.lessonProgressService.checkLessonRead(
+        userTokenDetail.user.id,
+        +lesson_id,
+      ),
+      await this.fetchLesson(+lesson_id, +course_id),
+      await this.updateDailyLessonToken(hashedToken, +course_id, +lesson_id),
+    ]);
+
+    return {
+      lesson_detail: lessonDetail,
+      user_lesson_read_info: userLessonReadInfo,
+      user_detail: userTokenDetail.user,
+    };
   }
 
   async unFlagLesson(id: number): Promise<void> {

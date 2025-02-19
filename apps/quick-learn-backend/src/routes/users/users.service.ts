@@ -23,7 +23,6 @@ import {
   UserLessonProgressEntity,
   UserTypeEntity,
 } from '@src/entities';
-import { SessionService } from '../auth/session.service';
 import { en } from '@src/lang/en';
 import { RoadmapService } from '../roadmap/roadmap.service';
 import { AssignRoadmapsToUserDto } from './dto/assign-roadmap.dto';
@@ -33,6 +32,7 @@ import { FileService } from '@src/file/file.service';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
 import { SkillsService } from '../skills/skills.service';
 import { UserTypeService } from './user-type.service';
+import { SessionService } from '@src/common/modules/session/session.service';
 
 const userRelations = ['user_type', 'skill', 'team'];
 interface CourseWithLessonIds extends CourseEntity {
