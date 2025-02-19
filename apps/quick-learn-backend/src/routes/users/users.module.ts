@@ -10,10 +10,11 @@ import { CourseModule } from '../course/course.module';
 import { LessonModule } from '../lesson/lesson.module';
 import { FileModule } from '@src/file/file.module';
 import { SkillsModule } from '../skills/skills.module';
+import { UserTypeService } from './user-type.service';
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UserTypeService, UsersService],
   imports: [
     TypeOrmModule.forFeature([UserEntity, UserTypeEntity]),
     EmailModule,

@@ -1,19 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
-import { LessonEntity, LessonTokenEntity, UserEntity } from '@src/entities';
+import { UserLessonProgressEntity } from '@src/entities';
 import { LessonProgressController } from './lesson-progress.controller';
 import { LessonProgressService } from './lesson-progress.service';
 import { CourseModule } from '../course/course.module';
+import { LessonTokenModule } from '@src/common/modules';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      UserLessonProgressEntity,
-      LessonTokenEntity,
-      LessonEntity,
-      UserEntity,
-    ]),
+    TypeOrmModule.forFeature([UserLessonProgressEntity]),
     CourseModule,
+    LessonTokenModule,
   ],
   controllers: [LessonProgressController],
   providers: [LessonProgressService],

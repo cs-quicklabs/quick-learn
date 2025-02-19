@@ -1,12 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  FlaggedLessonEntity,
-  LessonEntity,
-  LessonTokenEntity,
-  UserEntity,
-  UserLessonProgressEntity,
-} from '@src/entities';
+import { LessonEntity, FlaggedLessonEntity } from '@src/entities';
 import { LessonController } from './lesson.controller';
 import { LessonService } from './lesson.service';
 import { CourseModule } from '../course/course.module';
@@ -15,20 +9,16 @@ import { UsersModule } from '../users/users.module';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { LessonProgressModule } from '../lesson-progress/lesson-progress.module';
 import { FlaggedLessonService } from './flagged-lesson.service';
+import { LessonTokenModule } from '@src/common/modules';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      LessonEntity,
-      UserEntity,
-      UserLessonProgressEntity,
-      LessonTokenEntity,
-      FlaggedLessonEntity,
-    ]),
+    TypeOrmModule.forFeature([LessonEntity, FlaggedLessonEntity]),
     CourseModule,
     forwardRef(() => UsersModule),
     FileModule,
     LessonProgressModule,
+    LessonTokenModule,
   ],
   providers: [LessonService, EmailService, FlaggedLessonService],
   controllers: [LessonController],

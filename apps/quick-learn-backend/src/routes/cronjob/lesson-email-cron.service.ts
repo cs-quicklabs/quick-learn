@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { LessonTokenEntity, UserEntity } from '@src/entities';
-import { Repository } from 'typeorm';
+import { UserEntity } from '@src/entities';
 import { UsersService } from '../users/users.service';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { Cron } from '@nestjs/schedule';
@@ -13,6 +11,7 @@ import { EnvironmentEnum } from '@src/common/constants/constants';
 import { ConfigService } from '@nestjs/config';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import Helpers from '@src/common/utils/helper';
+import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
 
 @Injectable()
 export class LessonEmailService {
@@ -26,9 +25,8 @@ export class LessonEmailService {
     private readonly usersService: UsersService,
     private readonly emailService: EmailService,
     private readonly configService: ConfigService,
-    private readonly lessonProgresssService: LessonProgressService,
-    @InjectRepository(LessonTokenEntity)
-    private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
+    private readonly lessonProgressService: LessonProgressService,
+    private readonly lessonTokenService: LessonTokenService,
   ) {
     this.frontendURL = this.configService.getOrThrow('app.frontendDomain', {
       infer: true,
@@ -207,7 +205,7 @@ export class LessonEmailService {
 
   private async resetUserReadingHistory(userID: number) {
     try {
-      await this.lessonProgresssService.delete({
+      await this.lessonProgressService.delete({
         user_id: userID,
       });
     } catch (error) {
@@ -235,7 +233,7 @@ export class LessonEmailService {
       const token = await this.generateLessonToken();
       // TODO: Update this table rather than storing token for each lesson
       // TODO: Need a better way to handle this
-      return await this.LessonTokenRepository.save({
+      return await this.lessonTokenService.save({
         user_id,
         lesson_id,
         course_id,

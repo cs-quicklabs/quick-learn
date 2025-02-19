@@ -2,34 +2,34 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
-import { LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 import { getLastMonthRange, getLastWeekRange } from '@quick-learn/shared';
 import { CourseService } from '../course/course.service';
+import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
     @InjectRepository(UserLessonProgressEntity)
     repo: Repository<UserLessonProgressEntity>,
-    @InjectRepository(LessonEntity)
-    private lessonRepository: Repository<LessonEntity>,
-    @InjectRepository(LessonTokenEntity)
-    private LessonTokenRepository: Repository<LessonTokenEntity>,
+    private readonly lessonTokenService: LessonTokenService,
     private readonly courseService: CourseService,
   ) {
     super(repo);
   }
 
   private async validateLesson(lessonId: number, courseId: number) {
-    const lesson = await this.lessonRepository.findOne({
-      where: { id: lessonId, course_id: courseId },
-    });
+    // Checking this through course to avoid circular dependencies
+    const course = await this.courseService.get(
+      { lessons: { id: lessonId }, id: courseId },
+      ['lessons'],
+    );
 
-    if (!lesson) {
+    if (!course) {
       throw new NotFoundException('Lesson not found in this course');
     }
-    return lesson;
+    // if lesson is there then it will be always at 0th index
+    return course.lessons[0];
   }
 
   private async validateCourse(courseId: number) {
@@ -180,61 +180,22 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
         : null,
     };
   }
+
   /**
    * Retrieves the daily lesson progress for a user, including associated lesson details.
    * @param userId - The ID of the user.
    * @returns An array of daily lesson progress records with lesson details.
    */
-
   async getDailyLessonProgress(userId: number) {
-    const userDailyLessonProgress =
-      await this.LessonTokenRepository.createQueryBuilder('lesson_tokens')
-        .leftJoinAndSelect('lesson_tokens.lesson', 'lesson')
-        .where('lesson_tokens.user_id = :userId', { userId })
-        .select(['lesson_tokens', 'lesson.name'])
-        .getMany();
-    return userDailyLessonProgress;
+    return await this.lessonTokenService.getAllTokenByUserId(userId);
   }
 
-  async getAllUserProgressData(thisDate: { start: string; end: string }) {
-    return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-      .where(
-        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
-        {
-          startDate: thisDate.start,
-          endDate: thisDate.end,
-        },
-      )
-      .leftJoinAndSelect('lesson_token.user', 'user')
-      .select([
-        'user.id AS user_id',
-        'COUNT(lesson_token.id) AS lesson_count',
-        'user.first_name AS first_name',
-        'user.last_name AS last_name',
-        'user.email AS email',
-      ])
-      .groupBy('user.id')
-      .getRawMany();
+  async getAllUserProgressData(range: { start: string; end: string }) {
+    return await this.lessonTokenService.getUsersTokenBetweenDates(range);
   }
 
-  async getAllUserCompletedLessonData(thisDate: {
-    start: string;
-    end: string;
-  }) {
-    return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-      .where(
-        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
-        {
-          startDate: thisDate.start,
-          endDate: thisDate.end,
-        },
-      )
-      .andWhere('lesson_token.status = :status', { status: 'COMPLETED' })
-      .select('lesson_token.user_id', 'userId')
-      .addSelect('ARRAY_AGG(lesson_token.lesson_id)', 'lessonIds')
-      .addSelect('ARRAY_AGG(lesson_token.created_at)', 'createdAtArray')
-      .groupBy('lesson_token.user_id')
-      .getRawMany();
+  async getAllUserCompletedLessonData(range: { start: string; end: string }) {
+    return await this.lessonTokenService.getCompletedToken(range);
   }
 
   async getLeaderboardDataService(type: LeaderboardTypeEnum) {

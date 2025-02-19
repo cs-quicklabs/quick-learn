@@ -1,12 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from '@src/common/services';
-import {
-  FlaggedLessonEntity,
-  LessonEntity,
-  LessonTokenEntity,
-  UserEntity,
-} from '@src/entities';
+import { FlaggedLessonEntity, LessonEntity, UserEntity } from '@src/entities';
 import { CreateLessonDto, UpdateLessonDto } from './dto';
 import { CourseService } from '../course/course.service';
 import { en } from '@src/lang/en';
@@ -18,13 +13,13 @@ import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
 import { DailyLessonEnum } from '@src/common/enum/daily_lesson.enum';
 import { FlaggedLessonService } from './flagged-lesson.service';
+import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
   constructor(
     @InjectRepository(LessonEntity)
     repo: Repository<LessonEntity>,
-    @InjectRepository(LessonTokenEntity)
-    private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
+    private readonly lessonTokenService: LessonTokenService,
     private readonly flaggedLessionService: FlaggedLessonService,
     private readonly courseService: CourseService,
     private readonly FileService: FileService,
@@ -352,14 +347,14 @@ export class LessonService extends PaginationService<LessonEntity> {
       throw new BadRequestException(en.lessonTokenRequired);
     }
 
-    const tokenEntity = await this.LessonTokenRepository.findOne({
-      where: {
+    const tokenEntity = await this.lessonTokenService.get(
+      {
         token,
         course_id,
         lesson_id,
       },
-      relations: ['user'],
-    });
+      ['user'],
+    );
     if (!tokenEntity) {
       throw new BadRequestException(en.invalidLessonToken);
     }
@@ -382,7 +377,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     course_id: number,
     lesson_id: number,
   ) {
-    await this.LessonTokenRepository.update(
+    await this.lessonTokenService.update(
       {
         course_id: course_id,
         lesson_id: lesson_id,
@@ -452,10 +447,10 @@ export class LessonService extends PaginationService<LessonEntity> {
 
   async flagLesson(token: string) {
     // Find the lesson token entry using the token
-    const lessonToken = await this.LessonTokenRepository.findOne({
-      where: { token },
-      relations: ['user'], // Include relations if needed
-    });
+    const lessonToken = await this.lessonTokenService.get(
+      { token },
+      ['user'], // Include relations if needed
+    );
 
     if (!lessonToken) {
       throw new Error('Lesson token not found');

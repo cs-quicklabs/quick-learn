@@ -32,6 +32,7 @@ import { LessonService } from '../lesson/lesson.service';
 import { FileService } from '@src/file/file.service';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
 import { SkillsService } from '../skills/skills.service';
+import { UserTypeService } from './user-type.service';
 
 const userRelations = ['user_type', 'skill', 'team'];
 interface CourseWithLessonIds extends CourseEntity {
@@ -44,8 +45,7 @@ export class UsersService extends PaginationService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
     userRepository: Repository<UserEntity>,
-    @InjectRepository(UserTypeEntity)
-    private readonly userTypeRepository: Repository<UserTypeEntity>,
+    private readonly userTypeService: UserTypeService,
     private readonly skillService: SkillsService,
     private readonly emailService: EmailService,
     private readonly sessionService: SessionService,
@@ -535,7 +535,7 @@ export class UsersService extends PaginationService<UserEntity> {
   }
 
   async getUserTypes(): Promise<UserTypeEntity[]> {
-    return await this.userTypeRepository.find({ where: { active: true } });
+    return await this.userTypeService.getMany({ active: true });
   }
 
   async getSkills(team_id: number): Promise<SkillEntity[]> {
