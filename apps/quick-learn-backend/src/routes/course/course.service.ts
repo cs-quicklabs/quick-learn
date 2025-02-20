@@ -12,7 +12,7 @@ import {
   ILike,
   In,
 } from 'typeorm';
-import { BasicCrudService, PaginationService } from '@src/common/services';
+import { PaginationService } from '@src/common/services';
 import { CourseEntity, UserEntity, LessonEntity } from '@src/entities';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CourseCategoryService } from '../course-category/course-category.service';

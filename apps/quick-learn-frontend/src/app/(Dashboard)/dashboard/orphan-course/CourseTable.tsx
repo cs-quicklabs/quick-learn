@@ -26,7 +26,7 @@ const columns = [
 
 const CourseTable = () => {
   const dispatch = useAppDispatch();
-  const { course, total, totalPages, isInitialLoad, isLoading, currentPage } =
+  const { course, total, totalPages, isInitialLoad, currentPage } =
     useAppSelector(selectPaginationOrphanList);
 
   const [search, setSearch] = useState('');
@@ -35,6 +35,7 @@ const CourseTable = () => {
 
   useEffect(() => {
     dispatch(fetchOrphanCourses({ page: 1, q: '' }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,6 +51,7 @@ const CourseTable = () => {
         dispatch(setCurrentPageOrphanList(1));
         dispatch(fetchOrphanCourses({ page: 1, q: searchTerm }));
       }, 500),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch, fetchOrphanCourses],
   );
 
@@ -82,7 +84,9 @@ const CourseTable = () => {
             <td className="px-4 py-2">
               {format(course.created_at, DateFormats.shortDate)}
             </td>
-            <td className="px-4 py-2">{course.created_by?.first_name}</td>
+            <td className="px-4 py-2">
+              {course.created_by?.display_name ?? 'Super Admin'}
+            </td>
           </tr>
         ))}
       </tbody>
@@ -105,10 +109,10 @@ const CourseTable = () => {
   return (
     <div>
       <div className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
-        <div className="px-4 mx-auto max-w-screen-2xl lg:px-8 overflow-auto">
+        <div className=" mx-auto max-w-screen-2xl overflow-auto">
           <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
             <div>
-              <h1 className="mr-3 text-lg font-semibold">
+              <h1 className=" text-lg font-semibold">
                 {en.orphanCourse.heading}
               </h1>
               <p className="text-gray-500 text-sm">
@@ -120,7 +124,7 @@ const CourseTable = () => {
               <input
                 type="text"
                 className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
-                placeholder="Search lessons..."
+                placeholder="Search Courses..."
                 value={search}
                 onChange={handleSearchChange}
               />
