@@ -169,8 +169,36 @@ const Editor: FC<Props> = ({
     };
   }, []);
 
+  const handleRefChange = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (isEditing && handleRefChange.current) {
+      const preventScroll = () => {
+        // Save the current scroll position before format change
+        const scrollPosition = window.scrollY;
+
+        // Use setTimeout to restore position after the format change
+        setTimeout(() => {
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'auto', // Use 'auto' to avoid smooth scrolling animation
+          });
+        }, 0);
+      };
+      const quilEditorContainer = document.querySelector('.quillHeader');
+
+      if (quilEditorContainer) {
+        quilEditorContainer.addEventListener('click', preventScroll);
+      }
+
+      // Clean up event listener
+      return () => {
+        quilEditorContainer?.removeEventListener('click', preventScroll);
+      };
+    }
+  }, [isEditing]);
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="quillHeader flex flex-col h-full" ref={handleRefChange}>
       <EditorToolbar
         isEditing={isEditing}
         setIsEditing={setIsEditing}
