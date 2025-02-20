@@ -49,6 +49,9 @@ const SkeletonLoader = () => {
           <td className="px-4 py-2">
             <div className="h-5 bg-gray-200 rounded w-20" />
           </td>
+          <td className="px-4 py-2">
+            <div className="h-5 bg-gray-200 rounded w-20" />
+          </td>
         </tr>
       ))}
     </tbody>
@@ -153,6 +156,9 @@ const LeaderboardTable = () => {
           <td className="pl-10 md:pl-16 py-2">
             {user.lessons_completed_count}
           </td>
+          <td className="pl-10 md:pl-16 py-2">
+            {10 - Math.floor((user.rank - 1) / 5)}
+          </td>
         </tr>
       );
     });
@@ -193,14 +199,17 @@ const LeaderboardTable = () => {
       <table className="w-full text-sm text-left text-gray-500 ">
         <thead className="text-xs text-gray-700 border-t border-gray-200 uppercase bg-gray-50">
           <tr>
-            <th className="px-4 py-3 w-1/2">
+            <th className="px-4 py-3 w-[40%]">
               {en.leaderboard.leaderboardUser}
             </th>
-            <th className="px-4 py-3 w-1/4">
+            <th className="px-4 py-3 w-[20%]">
               {en.leaderboard.leaderboardRank}
             </th>
-            <th className="px-4 py-3 w-1/4">
+            <th className="px-4 py-3 w-[20%]">
               {en.leaderboard.leaderboardLessonsCompleted}
+            </th>
+            <th className="px-4 py-3 w-[20%]">
+              {en.leaderboard.learningScore}
             </th>
           </tr>
         </thead>

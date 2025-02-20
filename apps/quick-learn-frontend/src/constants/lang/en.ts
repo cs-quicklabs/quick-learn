@@ -478,5 +478,6 @@ export const en = {
     monthly: 'Last Month',
     noDataFound: 'No data found',
     tooltipsText: 'Complete more than 3 lessons to remove this badge.',
+    learningScore: 'Learning Score',
   },
 };
