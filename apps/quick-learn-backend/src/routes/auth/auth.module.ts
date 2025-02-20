@@ -6,19 +6,21 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResetTokenEntity } from '@src/entities/reset-token.entity';
-import { UserEntity } from '@src/entities/user.entity';
-import { EmailModule } from '@src/common/modules';
+import { EmailModule, SessionModule } from '@src/common/modules';
 import { JwtStrategy, LocalStrategy } from './strategies';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SessionEntity } from '@src/entities/session.entity';
-import { SessionService } from './session.service';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { ResetTokenService } from './reset-token.service';
 
 @Module({
   controllers: [AuthController],
   imports: [
+    TypeOrmModule.forFeature([ResetTokenEntity, SessionEntity]),
     forwardRef(() => UsersModule),
     PassportModule,
+    EmailModule,
+    SessionModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -29,16 +31,14 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([ResetTokenEntity, UserEntity, SessionEntity]),
-    EmailModule,
   ],
   providers: [
     AuthService,
     LocalStrategy,
     JwtStrategy,
     JwtRefreshStrategy,
-    SessionService,
+    ResetTokenService,
   ],
-  exports: [SessionService],
+  exports: [ResetTokenService, AuthService],
 })
 export class AuthModule {}

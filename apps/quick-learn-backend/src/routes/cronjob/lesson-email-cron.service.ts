@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { LessonTokenEntity, UserEntity } from '@src/entities';
-import { Repository } from 'typeorm';
+import { UserEntity } from '@src/entities';
 import { UsersService } from '../users/users.service';
-import { nanoid } from 'nanoid';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { Cron } from '@nestjs/schedule';
 import {
@@ -13,6 +10,10 @@ import {
 import { EnvironmentEnum } from '@src/common/constants/constants';
 import { ConfigService } from '@nestjs/config';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
+import Helpers from '@src/common/utils/helper';
+import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
+import { IDailyLessonTokenData } from '@src/common/interfaces';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class LessonEmailService {
@@ -26,9 +27,9 @@ export class LessonEmailService {
     private readonly usersService: UsersService,
     private readonly emailService: EmailService,
     private readonly configService: ConfigService,
-    private readonly lessonProgresssService: LessonProgressService,
-    @InjectRepository(LessonTokenEntity)
-    private readonly LessonTokenRepository: Repository<LessonTokenEntity>,
+    private readonly lessonProgressService: LessonProgressService,
+    private readonly lessonTokenService: LessonTokenService,
+    private readonly authService: AuthService,
   ) {
     this.frontendURL = this.configService.getOrThrow('app.frontendDomain', {
       infer: true,
@@ -145,11 +146,12 @@ export class LessonEmailService {
         randomLesson.course_id,
       );
 
-      const lessonURL = this.generateURL(
-        randomLesson.lesson_id,
-        randomLesson.course_id,
-        userMailTokenRecord.token,
-      );
+      const lessonURL = await this.generateURL({
+        token: userMailTokenRecord.token,
+        lesson_id: randomLesson.lesson_id,
+        course_id: randomLesson.course_id,
+        user_id: user.id,
+      });
 
       const mailBody = {
         greetings: greeting,
@@ -207,7 +209,7 @@ export class LessonEmailService {
 
   private async resetUserReadingHistory(userID: number) {
     try {
-      await this.lessonProgresssService.delete({
+      await this.lessonProgressService.delete({
         user_id: userID,
       });
     } catch (error) {
@@ -219,7 +221,7 @@ export class LessonEmailService {
   private async generateLessonToken() {
     const expiryTime = new Date();
     expiryTime.setHours(expiryTime.getHours() + this.TOKEN_EXPIRY);
-    const token = nanoid(64);
+    const token = Helpers.generateRandomhash();
     return {
       expiryTime,
       token,
@@ -235,7 +237,7 @@ export class LessonEmailService {
       const token = await this.generateLessonToken();
       // TODO: Update this table rather than storing token for each lesson
       // TODO: Need a better way to handle this
-      return await this.LessonTokenRepository.save({
+      return await this.lessonTokenService.save({
         user_id,
         lesson_id,
         course_id,
@@ -251,11 +253,8 @@ export class LessonEmailService {
     }
   }
 
-  private readonly generateURL = (
-    lesson_id: number,
-    course_id: number,
-    token: string,
-  ) => {
-    return `${this.frontendURL}/daily-lesson/${lesson_id}?course_id=${course_id}&token=${token}`;
-  };
+  private async generateURL(data: IDailyLessonTokenData) {
+    const token = await this.authService.generateDailyLessonToken(data);
+    return `${this.frontendURL}/daily-lesson/${token}`;
+  }
 }
