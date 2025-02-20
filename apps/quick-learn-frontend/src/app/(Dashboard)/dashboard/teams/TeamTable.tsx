@@ -6,13 +6,13 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import TeamMemberListingSkeleton from './TeamMemberListingSkeleton';
 import {
   fetchTeamMembers,
   selectTeamListingData,
 } from '@src/store/features/teamSlice';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import { SuperLink } from '@src/utils/HiLink';
+import TeamTableSkeleton from './TeamTableSkeleton';
 
 function TeamTable() {
   const dispatch = useAppDispatch();
@@ -45,7 +45,7 @@ function TeamTable() {
   }, [dispatch, currentPage, currentUserType]);
 
   // Only show skeleton loader on initial load
-  if (isInitialLoad && isLoading) return <TeamMemberListingSkeleton />;
+  if (isInitialLoad && isLoading) return <TeamTableSkeleton />;
 
   return (
     <div className="flow-root">
