@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { SuccessResponse } from '@src/common/dto';
+import { ErrorResponse, SuccessResponse } from '@src/common/dto';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { UserEntity } from '@src/entities/user.entity';
 import {
@@ -65,7 +65,7 @@ export class UsersController {
 
   @Get('list')
   @UseGuards(RolesGuard)
-  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   @ApiOperation({ summary: 'Filter users' })
   async findAll(
     @CurrentUser() user: UserEntity,
@@ -176,7 +176,13 @@ export class UsersController {
   async findOne(
     @Param('id') userId: number,
     @Query() getUserQueryDto: GetUserQueryDto,
+    @CurrentUser() currentUser: UserEntity,
   ): Promise<SuccessResponse> {
+    const fetchUserdetail = await this.usersService.findOne({ id: +userId });
+    if (currentUser.user_type_id > fetchUserdetail.user_type_id) {
+      return new ErrorResponse(en.userNotFound);
+    }
+
     const relations = [];
     if (getUserQueryDto.is_load_assigned_roadmaps) {
       relations.push('assigned_roadmaps');

@@ -46,6 +46,9 @@ import ActivityGraph, { Course } from '@src/shared/modals/ActivityGraph';
 import { useDispatch } from 'react-redux';
 import { decrementTotalUsers } from '@src/store/features/teamSlice';
 import { SuperLink } from '@src/utils/HiLink';
+import { useAppSelector } from '@src/store/hooks';
+import { selectUser } from '@src/store/features';
+import { UserTypeIdEnum } from 'lib/shared/src';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
@@ -54,6 +57,7 @@ function TeamMemberDetails() {
   const router = useRouter();
   const param = useParams<{ member: string }>();
   const userId = param.member;
+  const user = useAppSelector(selectUser);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [member, setMember] = useState<TUser>();
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
@@ -68,6 +72,16 @@ function TeamMemberDetails() {
     useState<TUserDailyProgress[]>([]);
   const [allCourses, setAllCourses] = useState<TUserCourse[]>([]);
   const [userActivityModal, setUserActivityModal] = useState(false);
+
+  // to show or hide icons based on roles
+  const [showIcon, setShowIcon] = useState(true);
+  const isEditorUser = user?.user_type_id === UserTypeIdEnum.EDITOR;
+
+  useEffect(() => {
+    if (isEditorUser) {
+      setShowIcon(false);
+    }
+  }, [isEditorUser]); //
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -129,8 +143,10 @@ function TeamMemberDetails() {
       })
       .catch((err) => {
         showApiErrorInToast(err);
+        router.push(RouteEnum.MY_LEARNING_PATH);
       })
       .finally(() => setIsPageLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   useEffect(() => {
@@ -221,29 +237,33 @@ function TeamMemberDetails() {
 
           {/* Action Buttons */}
           <div className="flex items-center justify-center gap-2 mt-4">
-            <Tooltip content="Edit User">
-              <SuperLink
-                href={`${RouteEnum.TEAM_EDIT}/${userId}`}
-                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-              >
-                <PencilIcon className="h-4 w-4" />
-              </SuperLink>
-            </Tooltip>
+            {showIcon && (
+              <Tooltip content="Edit User">
+                <SuperLink
+                  href={`${RouteEnum.TEAM_EDIT}/${userId}`}
+                  className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                >
+                  <PencilIcon className="h-4 w-4" />
+                </SuperLink>
+              </Tooltip>
+            )}
 
-            <Tooltip content="Deactivate User">
-              <button
-                type="button"
-                className={`text-black bg-gray-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center ${
-                  member?.active === false
-                    ? 'cursor-not-allowed'
-                    : 'hover:bg-red-800 hover:text-white'
-                }`}
-                onClick={() => setShowConformationModal(true)}
-                disabled={member?.active === false}
-              >
-                <TrashIcon className="h-4 w-4" />
-              </button>
-            </Tooltip>
+            {showIcon && (
+              <Tooltip content="Deactivate User">
+                <button
+                  type="button"
+                  className={`text-black bg-gray-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center ${
+                    member?.active === false
+                      ? 'cursor-not-allowed'
+                      : 'hover:bg-red-800 hover:text-white'
+                  }`}
+                  onClick={() => setShowConformationModal(true)}
+                  disabled={member?.active === false}
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </button>
+              </Tooltip>
+            )}
 
             <Tooltip content="User Activities">
               <button

@@ -63,7 +63,7 @@ const adminUserLinks: TLink[] = [
   flagged,
 ];
 const superAdminUserLinks: TLink[] = [...adminUserLinks, community];
-const editorUserLinks: TLink[] = [myLearningPath, content, flagged];
+const editorUserLinks: TLink[] = [team, myLearningPath, content, flagged];
 const memberUserLinks: TLink[] = [myLearningPath];
 
 const menuItems: TLink[] = [

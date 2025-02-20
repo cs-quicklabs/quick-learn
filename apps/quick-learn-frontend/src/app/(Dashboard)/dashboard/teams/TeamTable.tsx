@@ -1,51 +1,17 @@
 // components/TeamTable.tsx
-import { useEffect } from 'react';
 import { format } from 'date-fns';
-import { toast } from 'react-toastify';
 import { DateFormats } from '@src/constants/dateFormats';
 import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import TeamMemberListingSkeleton from './TeamMemberListingSkeleton';
-import {
-  fetchTeamMembers,
-  selectTeamListingData,
-} from '@src/store/features/teamSlice';
-import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import { selectTeamListingData } from '@src/store/features/teamSlice';
+import { useAppSelector } from '@src/store/hooks';
 import { SuperLink } from '@src/utils/HiLink';
 
 function TeamTable() {
-  const dispatch = useAppDispatch();
-  const {
-    isLoading,
-    isInitialLoad,
-    users,
-    currentPage,
-    currentUserType,
-    searchQuery,
-  } = useAppSelector(selectTeamListingData);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch(
-          fetchTeamMembers({
-            page: currentPage,
-            userTypeCode: currentUserType,
-            query: searchQuery,
-          }),
-        );
-      } catch (error) {
-        console.error('API call failed:', error);
-        toast.error('Something went wrong!');
-      }
-    };
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, currentPage, currentUserType]);
-
-  // Only show skeleton loader on initial load
-  if (isInitialLoad && isLoading) return <TeamMemberListingSkeleton />;
+  const { isLoading, isInitialLoad, users } = useAppSelector(
+    selectTeamListingData,
+  );
 
   return (
     <div className="flow-root">
