@@ -60,6 +60,8 @@ export class CourseController {
     return new SuccessResponse(en.successGotArchivedCourses, courses);
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeId.SUPER_ADMIN, UserTypeId.ADMIN, UserTypeId.EDITOR)
   @Get('orphan')
   @ApiOperation({ summary: 'Get Orphan courses' })
   async orphanCourse(@Query() params: BasePaginationDto) {

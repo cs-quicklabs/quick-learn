@@ -131,24 +131,27 @@ const CourseTable = () => {
             </div>
           </div>
         </div>
-        <table className="w-full text-sm text-left text-gray-500">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-            <tr>
-              {columns.map((column) => (
-                <th
-                  key={column}
-                  scope="col"
-                  className={`px-4 py-3 ${
-                    column === 'Courses' ? 'w-[35%]' : ''
-                  }`}
-                >
-                  {column}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          {renderTableData()}
-        </table>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                {columns.map((column) => (
+                  <th
+                    key={column}
+                    scope="col"
+                    className={`px-4 py-3 ${
+                      column === 'Courses' ? 'w-[35%]' : ''
+                    }`}
+                  >
+                    {column}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            {renderTableData()}
+          </table>
+        </div>
       </div>
 
       <BasicPagination

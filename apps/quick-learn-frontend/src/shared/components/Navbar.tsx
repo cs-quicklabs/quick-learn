@@ -33,6 +33,7 @@ type TLink = {
   isExtended?: boolean;
   showCount?: boolean;
   countKey?: SystemPreferencesKey;
+  exclude?: UserTypeIdEnum[];
 };
 
 const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
@@ -70,32 +71,47 @@ const menuItems: TLink[] = [
   {
     name: 'Account Settings',
     link: RouteEnum.ACCOUNT_SETTINGS,
+    exclude: [
+      UserTypeIdEnum.ADMIN,
+      UserTypeIdEnum.EDITOR,
+      UserTypeIdEnum.MEMBER,
+    ],
   },
   {
     name: 'My Profile',
     link: RouteEnum.PROFILE_SETTINGS,
+    exclude: [],
   },
   {
     name: 'Archive',
     link: RouteEnum.ARCHIVED_USERS,
+    exclude: [
+      UserTypeIdEnum.ADMIN,
+      UserTypeIdEnum.EDITOR,
+      UserTypeIdEnum.MEMBER,
+    ],
   },
   {
-    name: 'Leaderboard',
+    name: 'Leaderboard', //displayed to every user_type
     link: RouteEnum.LEADERBOARD,
+    exclude: [],
   },
   {
-    name: 'Orphan Courses',
+    name: 'Orphan Courses', // displayed to superAdmin, Admin, editor
     link: RouteEnum.ORPHANCOURSES,
+    exclude: [UserTypeIdEnum.MEMBER],
   },
   {
     name: 'Change-Logs',
     link: RouteEnum.CHANGE_LOGS,
     isExtended: true,
+    exclude: [],
   },
   {
     name: 'Feature Roadmaps',
     link: RouteEnum.FEATURE_LOGS,
     isExtended: true,
+    exclude: [],
   },
 ];
 
@@ -313,30 +329,14 @@ function Navbar() {
 
                     {/* Main Menu Items */}
                     <div className="py-1">
-                      {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
+                      {user &&
                         menuItems
                           .filter((item) => !item.isExtended)
-                          .map((item) => renderMenuItem(item))}
-                      {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN && (
-                        <div>
-                          <MenuItem>
-                            <SuperLink
-                              href={RouteEnum.PROFILE_SETTINGS}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            >
-                              {en.component.profile}
-                            </SuperLink>
-                          </MenuItem>
-                          <MenuItem>
-                            <SuperLink
-                              href={RouteEnum.LEADERBOARD}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            >
-                              {en.leaderboard.smallLeaderboard}
-                            </SuperLink>
-                          </MenuItem>
-                        </div>
-                      )}
+                          .map((item) =>
+                            !item.exclude?.includes(user?.user_type_id)
+                              ? renderMenuItem(item)
+                              : null,
+                          )}
                     </div>
 
                     {/* Extended Menu Items */}
@@ -431,11 +431,13 @@ function Navbar() {
                 <span className="sr-only">{en.component.viewNotification}</span>
               </button>
             </div>
+            {/* Menu Items */}
             <div className="mt-3 space-y-1 px-2">
-              {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
-                menuItems.map(
-                  (item, index) =>
-                    item.isExtended === undefined && (
+              {user &&
+                menuItems
+                  .filter((item) => !item.isExtended)
+                  .map((item, index) =>
+                    !item.exclude?.includes(user?.user_type_id) ? (
                       <DisclosureButton
                         as="a"
                         id={`profileMenuMobile${index}`}
@@ -445,20 +447,8 @@ function Navbar() {
                       >
                         {item.name}
                       </DisclosureButton>
-                    ),
-                )}
-              {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
-                <DisclosureButton
-                  as="a"
-                  href={RouteEnum.PROFILE_SETTINGS}
-                  id="myProfileMobile"
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  My Profile
-                </DisclosureButton>
-              ) : (
-                ''
-              )}
+                    ) : null,
+                  )}
               <div className="border-y border-gray-700">
                 {menuItems.map(
                   (item, index) =>
