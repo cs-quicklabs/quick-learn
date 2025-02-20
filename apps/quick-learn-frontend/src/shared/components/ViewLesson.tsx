@@ -170,9 +170,10 @@ const ViewLesson: FC<Props> = ({
             <div className="h-5 w-5">
               <FlagIcon />
             </div>
-            {`The Lesson is flagged by ${
-              lesson?.flagged_lesson?.user?.display_name ?? 'Unknown'
-            } on ${format(
+            {`${en.approvals.lessonFlaggedBy} ${
+              lesson?.flagged_lesson?.user?.display_name ??
+              `${en.common.unknown}`
+            } ${en.common.on} ${format(
               lesson?.flagged_lesson?.flagged_on ?? Date.now(),
               DateFormats.shortDate,
             )}`}

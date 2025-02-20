@@ -73,7 +73,9 @@ function CommunityCourseRepository() {
                 link={`${RouteEnum.COMMUNITY}/${course.id}`}
                 metadata={{
                   addedBy:
-                    `${course.created_by?.first_name} ${course.created_by?.last_name}`.trim(),
+                    `${course.created_by?.first_name || ''} ${
+                      course.created_by?.last_name || ''
+                    }`.trim() || 'Admin',
                   date: formattedDate,
                 }}
               />

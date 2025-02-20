@@ -106,7 +106,7 @@ function ArchivedRoadmaps() {
   }, [dispatch]);
 
   return (
-    <div className="max-w-xl px-4 pb-12 lg:col-span-8">
+    <div className="max-w-[43rem] px-4 pb-12 lg:col-span-8">
       <ConformationModal
         title={
           restoreId

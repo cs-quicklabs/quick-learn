@@ -54,11 +54,9 @@ const ArchivedCell: FC<Props> = ({
     <div className="flex items-center p-4">
       <div className="flex-1 min-w-0">
         <div className="flex text-sm font-medium text-gray-600">
-          <p className="truncate max-w-[200px] first-letter:uppercase">
-            {title}
-          </p>
+          <p className=" truncate first-letter:uppercase">{title}</p>
           {subtitle && (
-            <p className="ml-1 font-normal text-gray-500 truncate max-w-[150px] first-letter:uppercase">
+            <p className="ml-1 font-normal truncate text-gray-500 first-letter:uppercase">
               {subtitle}
             </p>
           )}
@@ -69,7 +67,7 @@ const ArchivedCell: FC<Props> = ({
             <p className="truncate ml-1.5">
               {en.common.deactivatedOn}{' '}
               {format(deactivationDate, DateFormats.shortDate)} {en.common.by}{' '}
-              <span className="max-w-[150px] inline-block truncate align-bottom">
+              <span className="max-w-64 inline-block truncate align-bottom">
                 {deactivatedBy}
               </span>
             </p>

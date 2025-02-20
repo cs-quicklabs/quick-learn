@@ -139,7 +139,7 @@ function FlaggedList() {
                   >
                     <div className="flex items-center">
                       <SuperLink
-                        className="ml-2 hover:underline"
+                        className="ml-2 hover:underline first-letter:uppercase"
                         href={`${RouteEnum.FLAGGED}/${flaggedLesson.lesson_id}`}
                       >
                         {flaggedLesson.lesson?.name ?? '-'}

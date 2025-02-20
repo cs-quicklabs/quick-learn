@@ -100,7 +100,7 @@ function ApprovalList() {
         >
           <div className="flex items-center">
             <SuperLink
-              className="ml-2 hover:underline"
+              className="ml-2 hover:underline first-letter:uppercase"
               href={`${RouteEnum.APPROVALS}/${lesson.id}`}
             >
               {lesson.name}
@@ -113,7 +113,7 @@ function ApprovalList() {
         <td className="px-4 py-2">
           {format(lesson.created_at, DateFormats.shortDate)}
         </td>
-        <td className="px-4 py-2">
+        <td className="px-4 py-2 first-letter:uppercase">
           {lesson.created_by_user.first_name +
             ' ' +
             lesson.created_by_user.last_name || '-'}

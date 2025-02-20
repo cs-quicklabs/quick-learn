@@ -202,9 +202,12 @@ function DailyLessonDetail() {
             <div className="h-5 w-5">
               <FlagIcon />
             </div>
-            {`The Lesson is flagged by ${
-              isFlagged?.user?.display_name ?? 'Unknown'
-            } on ${format(isFlagged.flagged_on, DateFormats.shortDate)}`}
+            {`${en.approvals.lessonFlaggedBy} ${
+              isFlagged?.user?.display_name ?? `${en.common.unknown}`
+            } ${en.common.on} ${format(
+              isFlagged.flagged_on,
+              DateFormats.shortDate,
+            )}`}
           </div>
         );
       }
