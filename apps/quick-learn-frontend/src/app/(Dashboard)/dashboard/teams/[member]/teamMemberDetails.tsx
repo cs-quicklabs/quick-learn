@@ -143,7 +143,7 @@ function TeamMemberDetails() {
         router.push(RouteEnum.MY_LEARNING_PATH);
       })
       .finally(() => setIsPageLoading(false));
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   useEffect(() => {
