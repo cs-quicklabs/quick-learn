@@ -1,7 +1,16 @@
 import { Response } from 'express';
 import sanitizeHtml from 'sanitize-html';
+import crypto from 'crypto';
 import { EnvironmentEnum } from '../constants/constants';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 export default class Helpers {
+  static generateRandomhash(): string {
+    return crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+  }
+
   static clearCookies(res: Response) {
     res.clearCookie('refresh_token');
     res.clearCookie('access_token');

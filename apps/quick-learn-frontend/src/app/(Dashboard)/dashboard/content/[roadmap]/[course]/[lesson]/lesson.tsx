@@ -132,7 +132,9 @@ function Lesson() {
   );
   const timeoutRef = useRef<NodeJS.Timeout>();
 
-  const [isEditing, setIsEditing] = useState<boolean>(lessonId === 'add');
+  const [isEditing, setIsEditing] = useState<boolean>(
+    lessonId === 'add' || path.includes('edit'),
+  );
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const [loading, setLoading] = useState<boolean>(false);

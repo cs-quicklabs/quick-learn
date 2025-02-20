@@ -279,11 +279,13 @@ function Navbar() {
                 {/* Updated Profile Menu */}
                 <Menu as="div" className="relative ml-4">
                   <MenuButton className="flex items-center">
-                    <div className="h-10 w-10 bg-gray-400 rounded-full flex items-center justify-center">
+                    <div
+                      className="h-10 w-10 bg-gray-400 rounded-full flex items-center justify-center"
+                      id="headerProfileImage"
+                    >
                       {user?.profile_image ? (
                         <Image
                           alt=""
-                          id="headerProfileImage"
                           src={user.profile_image}
                           className="h-10 w-10 rounded-full object-cover"
                           width={40}

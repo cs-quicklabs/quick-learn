@@ -15,7 +15,25 @@ export class Profile {
       force: true,
     });
 
-    cy.get('.Toastify').should('contain', 'Profile updated successfully');
+    cy.get('div.Toastify__toast').should(
+      'contain',
+      'Profile updated successfully',
+    );
+  }
+
+  uploadPicWithMoreMB() {
+    cy.contains('Upload avatar').should('be.visible');
+    cy.get('.mt-2 > .relative > .absolute').click();
+    cy.get('button.text-white.bg-red-600').contains("Yes, I'm sure").click();
+    cy.get('div.Toastify__toast--success').should(
+      'contain',
+      'Profile updated successfully',
+    );
+    cy.get('.mt-2 > .relative > .absolute').click();
+    cy.get('input[type="file"]').selectFile('cypress/fixtures/MoreMB.jpeg', {
+      force: true,
+    });
+    cy.get('p.mt-1').should('contain', 'File should be less than 1MB.');
   }
 
   UpdateFirstName() {
@@ -44,5 +62,42 @@ export class Profile {
     cy.get('#profileSettingsForm_input_text').clear();
     cy.get('#profileSettingsForm_input_text').type('    ');
     cy.get('.mt-1').should('contain', 'First name is required');
+  }
+
+  UpdateLastNameWithEmptySpaces() {
+    cy.contains('Last Name');
+    cy.get('[name="last_name"]').clear();
+    cy.get('[name="last_name"]').type('    ');
+    cy.get('.mt-1').should('contain', 'Last name is required');
+  }
+
+  UpdateNameFieldWithIncorrectData() {
+    cy.get('#profileSettingsForm_input_text').type('122112');
+    cy.get('p.mt-1').should(
+      'contain',
+      'First name should only contain alphabetic characters',
+    );
+    cy.get('[name="last_name"]').type('123425');
+    cy.get('p.mt-1').should(
+      'contain',
+      'Last name should only contain alphabetic characters',
+    );
+    cy.get('#profileSettingsForm_input_text').clear();
+    cy.get('#profileSettingsForm_input_text').type('@@#$@');
+    cy.get('p.mt-1').should(
+      'contain',
+      'First name should only contain alphabetic characters',
+    );
+    cy.get('[name="last_name"]').clear();
+    cy.get('[name="last_name"]').type('@@@#@@@');
+    cy.get('p.mt-1').should(
+      'contain',
+      'Last name should only contain alphabetic characters',
+    );
+    cy.get('[type="submit"]').should('be.disabled');
+  }
+
+  EmailFieldDisabled() {
+    cy.get('[name="email"]').should('be.disabled');
   }
 }

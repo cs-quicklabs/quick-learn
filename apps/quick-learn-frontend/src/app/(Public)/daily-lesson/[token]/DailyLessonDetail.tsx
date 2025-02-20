@@ -28,8 +28,6 @@ import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 function DailyLessonDetail() {
   const [link, setLink] = useState<TBreadcrumb[]>([]);
   const router = useRouter();
-  const [courseId, setCourseId] = useState('');
-  const [token, setToken] = useState('');
   const [lessonDetails, setLessonDetails] = useState<TLesson>();
   const [userDetail, setUserDetail] = useState<TUser>();
   const [isChecked, setIsChecked] = useState(false);
@@ -39,27 +37,20 @@ function DailyLessonDetail() {
   const [isFlagged, setIsFlagged] = useState<TFlaggedLesson | null>(null);
   const [isFlagging, setIsFlagging] = useState<boolean>(false);
 
-  const { lesson } = useParams<{
-    lesson: string;
+  const { token } = useParams<{
+    token: string;
   }>();
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      setCourseId(params.get('course_id') ?? '');
-      setToken(params.get('token') ?? '');
-    }
-  }, []);
 
   const handleCheckboxChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    if (!lessonDetails) return;
     const { checked } = event.target;
     setIsChecked(checked);
     try {
       const res = await markAsDonePublic(
-        lesson,
-        courseId,
+        lessonDetails.id,
+        lessonDetails?.course_id,
         true,
         Number(userDetail?.id),
       );
@@ -73,13 +64,11 @@ function DailyLessonDetail() {
   };
 
   const handleFlagLesson = async () => {
-    if (!token) {
+    if (!token || !lessonDetails) {
       showErrorMessage('Missing required information');
       return;
     }
-
     setIsFlagging(true);
-
     flagLesson(token)
       .then((res) => {
         showApiMessageInToast(res);
@@ -87,8 +76,8 @@ function DailyLessonDetail() {
           flagged_on: new Date(),
           user: userDetail,
           user_id: Number(userDetail?.id) || 1,
-          lesson_id: Number(lesson),
-          course_id: Number(courseId),
+          lesson_id: Number(lessonDetails.id),
+          course_id: Number(lessonDetails?.course_id),
           id: 1, // dummy id
         });
       })
@@ -97,7 +86,13 @@ function DailyLessonDetail() {
   };
 
   const markLessionAsUnread = async () => {
-    markAsDonePublic(lesson, courseId, false, Number(userDetail?.id))
+    if (!lessonDetails) return;
+    markAsDonePublic(
+      lessonDetails.id,
+      lessonDetails.course_id,
+      false,
+      Number(userDetail?.id),
+    )
       .then((res) => {
         showApiMessageInToast(res);
         setIsRead(false);
@@ -110,14 +105,8 @@ function DailyLessonDetail() {
   };
 
   useEffect(() => {
-    if (!courseId || !token || !lesson) {
-      return;
-    }
-    getDailyLessionDetail({
-      lessonId: lesson,
-      courseId,
-      token,
-    })
+    if (!token) return;
+    getDailyLessionDetail(token)
       .then(({ data }) => {
         const { lesson_detail, user_detail, user_lesson_read_info } = data;
         const { user_type_id } = user_detail;
@@ -154,7 +143,7 @@ function DailyLessonDetail() {
         showApiErrorInToast(err);
         router.replace(RouteEnum.LOGIN);
       });
-  }, [courseId, token, lesson, router]);
+  }, [token, router]);
 
   const navigateUserToLearningPath = () => {
     router.replace(RouteEnum.LOGIN);
@@ -227,7 +216,7 @@ function DailyLessonDetail() {
           onClick={handleFlagLesson}
           disabled={isFlagged ?? isFlagging}
         >
-          Flag lesson for editing
+          {en.approvals.flagLesson}
         </button>
       );
     }

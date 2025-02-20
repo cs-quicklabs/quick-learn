@@ -4,9 +4,9 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from '@src/config/config.type';
 import { Request } from 'express';
-import { SessionService } from '../session.service';
 import Helpers from '@src/common/utils/helper';
 import { en } from '@src/lang/en';
+import { SessionService } from '@src/common/modules/session/session.service';
 
 type JwtRefreshPayloadType = {
   sessionId: number;

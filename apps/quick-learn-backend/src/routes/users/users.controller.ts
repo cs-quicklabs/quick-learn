@@ -193,7 +193,7 @@ export class UsersController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles(UserTypeIdEnum.SUPERADMIN)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @Post()
   @ApiOperation({ summary: 'Create new user' })
   async create(

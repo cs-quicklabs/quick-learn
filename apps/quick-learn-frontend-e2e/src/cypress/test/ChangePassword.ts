@@ -1,9 +1,9 @@
 export class ChangePassword {
   visitProfilePage() {
-    return cy.get('[id="headerProfileImage"]').click();
+    return cy.get('button.flex.items-center').click();
   }
   getChangePassword() {
-    cy.get('[id="headerProfileImage"]').click();
+    cy.get('button.flex.items-center').click();
     cy.get('[href="/dashboard/profile-settings"]').click();
     cy.get('[href="/dashboard/profile-settings/change-password"]').click();
   }
@@ -34,6 +34,16 @@ export class ChangePassword {
     this.getErrorMessage().contains(
       'Current and new passwords cannot be the same.',
     );
+    this.getNewPassword().clear();
+    this.getNewPassword().type('Password@123');
+    this.getConfirmPassword().clear();
+    this.getConfirmPassword().type('Password@123');
+    this.getOldPassword().clear();
+    this.getOldPassword().type('Password@123');
+    this.getErrorMessage().contains(
+      'Current and new passwords cannot be the same.',
+    );
+    this.getSaveButton().should('be.disabled');
   }
   UpdatePasswordWithDifferentNewAndConfirmPassword() {
     cy.contains('Please change your password.').should('be.visible');
@@ -51,6 +61,15 @@ export class ChangePassword {
       'Password must be at least 8 characters long',
     );
   }
+
+  UpdatePasswordWithLimitExceed() {
+    cy.contains('Please change your password.').should('be.visible');
+    this.getOldPassword().type('password@123P');
+    this.getNewPassword().type('Password@123PasswordPasswordPassword');
+    this.getErrorMessage().contains('Password cannot exceed 32 characters');
+    this.getSaveButton().should('be.disabled');
+  }
+
   SetInvalidPassword() {
     cy.contains('Please change your password.').should('be.visible');
     this.getOldPassword().type('password@123P');
@@ -89,10 +108,11 @@ export class ChangePassword {
 
   UpdatePasswordWithValidData() {
     cy.contains('Change Password').should('be.visible');
-    this.getOldPassword().type('Password@123p');
-    this.getNewPassword().type('Password@123');
-    this.getConfirmPassword().type('Password@123');
+    this.getOldPassword().type('Password@123');
+    this.getNewPassword().type('Password@123P');
+    this.getConfirmPassword().type('Password@123P');
     this.getSaveButton().click();
     this.getSuccessMessage().contains('Password updated successfully');
+    //Update the new password under credential.ts file after running the script and update the Old password here too if you want to run the script again.
   }
 }

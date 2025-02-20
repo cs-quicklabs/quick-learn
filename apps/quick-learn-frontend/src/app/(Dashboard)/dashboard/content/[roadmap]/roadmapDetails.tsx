@@ -356,6 +356,7 @@ function RoadmapDetails() {
 
             <Tooltip content={en.contentRepository.archiveRoadmap}>
               <button
+                id="archiveRoadmap"
                 type="button"
                 className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setShowConformationModal(true)}

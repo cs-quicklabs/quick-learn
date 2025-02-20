@@ -2,40 +2,38 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
-import { CourseEntity, LessonEntity, LessonTokenEntity } from '@src/entities';
 import { BasicCrudService } from '@src/common/services';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 import { getLastMonthRange, getLastWeekRange } from '@quick-learn/shared';
+import { CourseService } from '../course/course.service';
+import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
 @Injectable()
 export class LessonProgressService extends BasicCrudService<UserLessonProgressEntity> {
   constructor(
     @InjectRepository(UserLessonProgressEntity)
-    private userLessonProgressRepository: Repository<UserLessonProgressEntity>,
-    @InjectRepository(LessonEntity)
-    private lessonRepository: Repository<LessonEntity>,
-    @InjectRepository(CourseEntity)
-    private courseRepository: Repository<CourseEntity>,
-    @InjectRepository(LessonTokenEntity)
-    private LessonTokenRepository: Repository<LessonTokenEntity>,
+    repo: Repository<UserLessonProgressEntity>,
+    private readonly lessonTokenService: LessonTokenService,
+    private readonly courseService: CourseService,
   ) {
-    super(userLessonProgressRepository);
+    super(repo);
   }
 
   private async validateLesson(lessonId: number, courseId: number) {
-    const lesson = await this.lessonRepository.findOne({
-      where: { id: lessonId, course_id: courseId },
-    });
+    // Checking this through course to avoid circular dependencies
+    const course = await this.courseService.get(
+      { lessons: { id: lessonId }, id: courseId },
+      ['lessons'],
+    );
 
-    if (!lesson) {
+    if (!course) {
       throw new NotFoundException('Lesson not found in this course');
     }
-    return lesson;
+    // if lesson is there then it will be always at 0th index
+    return course.lessons[0];
   }
 
   private async validateCourse(courseId: number) {
-    const course = await this.courseRepository.findOne({
-      where: { id: courseId },
-    });
+    const course = await this.courseService.get({ id: courseId });
 
     if (!course) {
       throw new NotFoundException('Course not found');
@@ -58,25 +56,21 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   ): Promise<UserLessonProgressEntity> {
     await this.validateLesson(lessonId, courseId);
 
-    const existingProgress = await this.userLessonProgressRepository.findOne({
-      where: {
-        user_id: userId,
-        lesson_id: lessonId,
-        course_id: courseId,
-      },
+    const existingProgress = await this.get({
+      user_id: userId,
+      lesson_id: lessonId,
+      course_id: courseId,
     });
 
     if (existingProgress) {
-      await this.userLessonProgressRepository.delete(existingProgress.id);
+      await this.delete({ id: existingProgress.id });
     } else {
-      const newProgressEntry = this.userLessonProgressRepository.create({
+      return await this.create({
         user_id: userId,
         lesson_id: lessonId,
         course_id: courseId,
         completed_date: new Date(),
       });
-
-      return await this.userLessonProgressRepository.save(newProgressEntry);
     }
   }
 
@@ -92,7 +86,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
   ): Promise<{ lesson_id: number; completed_date: Date | null }[]> {
     await this.validateCourse(courseId);
 
-    const completedLessons = await this.userLessonProgressRepository.find({
+    const completedLessons = await this.repository.find({
       where: {
         user_id: userId,
         course_id: courseId,
@@ -105,13 +99,14 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       completed_date,
     }));
   }
+
   async getUserLessonProgressViaCourse(userId: number): Promise<
     {
       course_id: number;
       lessons: { lesson_id: number; completed_date: Date | null }[];
     }[]
   > {
-    const completedLessons = await this.userLessonProgressRepository
+    const completedLessons = await this.repository
       .createQueryBuilder('userLessonProgress')
       .innerJoinAndSelect(
         'lesson',
@@ -170,7 +165,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     userId: number,
     lessonId: number,
   ): Promise<{ isRead: boolean; completed_date: Date | null }> {
-    const checkLessonExist = await this.userLessonProgressRepository.findOne({
+    const checkLessonExist = await this.repository.findOne({
       where: {
         user_id: userId,
         lesson_id: lessonId,
@@ -185,61 +180,22 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
         : null,
     };
   }
+
   /**
    * Retrieves the daily lesson progress for a user, including associated lesson details.
    * @param userId - The ID of the user.
    * @returns An array of daily lesson progress records with lesson details.
    */
-
   async getDailyLessonProgress(userId: number) {
-    const userDailyLessonProgress =
-      await this.LessonTokenRepository.createQueryBuilder('lesson_tokens')
-        .leftJoinAndSelect('lesson_tokens.lesson', 'lesson')
-        .where('lesson_tokens.user_id = :userId', { userId })
-        .select(['lesson_tokens', 'lesson.name'])
-        .getMany();
-    return userDailyLessonProgress;
+    return await this.lessonTokenService.getAllTokenByUserId(userId);
   }
 
-  async getAllUserProgressData(thisDate: { start: string; end: string }) {
-    return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-      .where(
-        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
-        {
-          startDate: thisDate.start,
-          endDate: thisDate.end,
-        },
-      )
-      .leftJoinAndSelect('lesson_token.user', 'user')
-      .select([
-        'user.id AS user_id',
-        'COUNT(lesson_token.id) AS lesson_count',
-        'user.first_name AS first_name',
-        'user.last_name AS last_name',
-        'user.email AS email',
-      ])
-      .groupBy('user.id')
-      .getRawMany();
+  async getAllUserProgressData(range: { start: string; end: string }) {
+    return await this.lessonTokenService.getUsersTokenBetweenDates(range);
   }
 
-  async getAllUserCompletedLessonData(thisDate: {
-    start: string;
-    end: string;
-  }) {
-    return await this.LessonTokenRepository.createQueryBuilder('lesson_token')
-      .where(
-        'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
-        {
-          startDate: thisDate.start,
-          endDate: thisDate.end,
-        },
-      )
-      .andWhere('lesson_token.status = :status', { status: 'COMPLETED' })
-      .select('lesson_token.user_id', 'userId')
-      .addSelect('ARRAY_AGG(lesson_token.lesson_id)', 'lessonIds')
-      .addSelect('ARRAY_AGG(lesson_token.created_at)', 'createdAtArray')
-      .groupBy('lesson_token.user_id')
-      .getRawMany();
+  async getAllUserCompletedLessonData(range: { start: string; end: string }) {
+    return await this.lessonTokenService.getCompletedToken(range);
   }
 
   async getLeaderboardDataService(type: LeaderboardTypeEnum) {
@@ -297,7 +253,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
         const lessonIdsIndex = entry.lessonIds.map((item) => item[0]);
 
-        const completedLessons = await this.userLessonProgressRepository
+        const completedLessons = await this.repository
           .createQueryBuilder('userLessonProgress')
           .where('userLessonProgress.user_id =:userId', {
             userId: entry.user_id,

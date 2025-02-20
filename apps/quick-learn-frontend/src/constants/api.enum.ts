@@ -76,5 +76,5 @@ export enum LearningPathAPIEnum {
 }
 
 export enum DailyLessionEnum {
-  GET_DAILY_LESSON_DETAILS = '/lesson/:lesson/:course/:token',
+  GET_DAILY_LESSON_DETAILS = '/lesson/daily/:token',
 }
