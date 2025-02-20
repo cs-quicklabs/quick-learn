@@ -17,6 +17,8 @@ import { SuperLink } from '@src/utils/HiLink';
 import BasicPagination from '@src/shared/components/BasicPagination';
 import { selectUser } from '@src/store/features';
 import TeamMemberListingSkeleton from './TeamMemberListingSkeleton';
+import { toast } from 'react-toastify';
+import { UserTypeIdEnum } from 'lib/shared/src';
 
 function TeamMemberListing() {
   const dispatch = useAppDispatch();
@@ -35,7 +37,8 @@ function TeamMemberListing() {
   const [visibleUserTypes, setVisibleUserTypes] = useState<TUserType[]>([]);
   const user = useAppSelector(selectUser);
 
-  const isEditorUser = user?.user_type?.code === 'editor';
+  const isEditorUser = user?.user_type_id === UserTypeIdEnum.EDITOR;
+  const showAddMemberButton = !isEditorUser;
 
   const userTypes: TUserType[] = [
     { name: 'Admin', code: 'admin' },
@@ -53,6 +56,25 @@ function TeamMemberListing() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isEditorUser]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch(
+          fetchTeamMembers({
+            page: currentPage,
+            userTypeCode: currentUserType,
+            query: searchQuery,
+          }),
+        );
+      } catch (error) {
+        console.error('API call failed:', error);
+        toast.error('Something went wrong!');
+      }
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, currentPage, currentUserType]);
 
   function filterByUserType(code: string) {
     dispatch(setCurrentUserType(code));
@@ -81,79 +103,75 @@ function TeamMemberListing() {
     debouncedSearch(value); // Debounce the Redux update and API call
   };
 
-  const showAddMemberButton = !isEditorUser;
+  if (isLoading && isInitialLoad) {
+    return <TeamMemberListingSkeleton />;
+  }
 
   return (
     <>
       <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
-        {isLoading && isInitialLoad ? (
-          <TeamMemberListingSkeleton />
-        ) : (
-          <>
-            <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
-              <div>
-                <h1 className="mr-3 text-lg font-semibold">{en.teams.team}</h1>
-                <p className="text-gray-500 text-sm">
-                  {en.teams.manageExisting}{' '}
-                  <span className="font-bond">{totalUsers}</span>{' '}
-                  {en.teams.addNewOne}
-                </p>
-              </div>
-              <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+        <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
+          <div>
+            <h1 className="mr-3 text-lg font-semibold">{en.teams.team}</h1>
+            <p className="text-gray-500 text-sm">
+              {en.teams.manageExisting}{' '}
+              <span className="font-bond">{totalUsers}</span>{' '}
+              {en.teams.addNewOne}
+            </p>
+          </div>
+          <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+            <input
+              type="text"
+              className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+              placeholder="Search Members"
+              value={searchInputValue} // Use local state for input value
+              onChange={handleSearchChange}
+              id="search"
+            />
+            {showAddMemberButton && (
+              <SuperLink
+                id="addNewMember"
+                href={`${RouteEnum.TEAM_EDIT}/add`}
+                className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
+              >
+                {en.teams.addNewMember}
+              </SuperLink>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-8 p-4 border-t border-b border-gray-300 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
+          <p className="items-center hidden text-sm font-medium text-gray-900 md:flex">
+            {en.teams.showRecordsOnly}
+          </p>
+          <div className="space-y-3 sm:flex sm:items-center sm:space-x-10 sm:space-y-0 md:space-x-4">
+            {visibleUserTypes.map((userType) => (
+              <div key={userType.code} className="flex items-center">
                 <input
-                  type="text"
-                  className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
-                  placeholder="Search Members"
-                  value={searchInputValue} // Use local state for input value
-                  onChange={handleSearchChange}
-                  id="search"
+                  id={userType.code}
+                  name="user_type_id"
+                  type="radio"
+                  onChange={() => filterByUserType(userType.code)}
+                  checked={currentUserType === userType.code}
+                  className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-2 cursor-pointer"
                 />
-                {showAddMemberButton && (
-                  <SuperLink
-                    id="addNewMember"
-                    href={`${RouteEnum.TEAM_EDIT}/add`}
-                    className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
-                  >
-                    {en.teams.addNewMember}
-                  </SuperLink>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-x-8 p-4 border-t border-b border-gray-300 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
-              <p className="items-center hidden text-sm font-medium text-gray-900 md:flex">
-                {en.teams.showRecordsOnly}
-              </p>
-              <div className="space-y-3 sm:flex sm:items-center sm:space-x-10 sm:space-y-0 md:space-x-4">
-                {visibleUserTypes.map((userType) => (
-                  <div key={userType.code} className="flex items-center">
-                    <input
-                      id={userType.code}
-                      name="user_type_id"
-                      type="radio"
-                      onChange={() => filterByUserType(userType.code)}
-                      checked={currentUserType === userType.code}
-                      className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-2 cursor-pointer"
-                    />
-                    <label
-                      htmlFor={userType.code}
-                      className="ml-2 block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      {userType.name}
-                    </label>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  id="showAll"
-                  className="underline font-medium text-blue-600 hover:underline text-sm"
-                  onClick={() => filterByUserType('')}
+                <label
+                  htmlFor={userType.code}
+                  className="ml-2 block text-sm font-medium leading-6 text-gray-900"
                 >
-                  {en.teams.showAll}
-                </button>
+                  {userType.name}
+                </label>
               </div>
-            </div>
-          </>
-        )}
+            ))}
+            <button
+              type="button"
+              id="showAll"
+              className="underline font-medium text-blue-600 hover:underline text-sm"
+              onClick={() => filterByUserType('')}
+            >
+              {en.teams.showAll}
+            </button>
+          </div>
+        </div>
         <TeamTable />
       </section>
 

@@ -48,6 +48,7 @@ import { decrementTotalUsers } from '@src/store/features/teamSlice';
 import { SuperLink } from '@src/utils/HiLink';
 import { useAppSelector } from '@src/store/hooks';
 import { selectUser } from '@src/store/features';
+import { UserTypeIdEnum } from 'lib/shared/src';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
@@ -56,6 +57,7 @@ function TeamMemberDetails() {
   const router = useRouter();
   const param = useParams<{ member: string }>();
   const userId = param.member;
+  const user = useAppSelector(selectUser);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [member, setMember] = useState<TUser>();
   const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
@@ -70,9 +72,10 @@ function TeamMemberDetails() {
     useState<TUserDailyProgress[]>([]);
   const [allCourses, setAllCourses] = useState<TUserCourse[]>([]);
   const [userActivityModal, setUserActivityModal] = useState(false);
+
+  // to show or hide icons based on roles
   const [showIcon, setShowIcon] = useState(true);
-  const user = useAppSelector(selectUser);
-  const isEditorUser = user?.user_type?.code === 'editor';
+  const isEditorUser = user?.user_type_id === UserTypeIdEnum.EDITOR;
 
   useEffect(() => {
     if (isEditorUser) {
