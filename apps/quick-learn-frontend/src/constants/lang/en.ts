@@ -456,7 +456,7 @@ export const en = {
     // asssign data model
 
     noDataFound: 'No data found',
-    orphanCourse: 'Orphan Course',
+    orphanCourse: 'Orphan',
   },
 
   Search: {
@@ -483,5 +483,6 @@ export const en = {
   orphanCourse: {
     heading: 'Orphan Courses',
     subHeading: 'This the list of Orphan Courses.',
+    noDataFound: 'No data found',
   },
 };

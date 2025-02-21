@@ -7,7 +7,6 @@ import { CloseIcon, Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
 import { firstLetterCapital } from '@src/utils/helpers';
-import { StarIcon as SolidStarIcon } from '@heroicons/react/24/solid';
 
 interface Props {
   show: boolean;
@@ -249,15 +248,19 @@ const AssignDataModal: FC<Props> = ({
                                     />
                                     <label
                                       htmlFor={item.name}
-                                      className="flex items-center gap-2 w-full ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                      className="flex items-center group gap-2 w-full ml-2 text-sm justify-between font-medium text-gray-900 dark:text-gray-300"
                                     >
-                                      {firstLetterCapital(item.name)}
+                                      <span>
+                                        {firstLetterCapital(item.name)}
+                                      </span>
                                       {item.roadmap_count === 0 && (
-                                        <span className="text-gray-500 text-xs pl-2 flex items-center gap-2">
-                                          <span className="hidden sm:flex">
-                                            {en.modals.orphanCourse}
+                                        <span className="flex">
+                                          <span className="hidden md:flex text-gray-500 text-xs italic">
+                                            orphan
                                           </span>
-                                          <SolidStarIcon className="w-4 h-4 text-yellow-500" />
+                                          <span className="text-red-500 text-md ml-1">
+                                            *
+                                          </span>
                                         </span>
                                       )}
                                     </label>

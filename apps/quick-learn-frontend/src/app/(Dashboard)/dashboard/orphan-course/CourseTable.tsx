@@ -97,7 +97,7 @@ const CourseTable = () => {
             colSpan={7}
             className="px-4 py-2 font-medium text-gray-900 text-center"
           >
-            no data found
+            {en.orphanCourse.noDataFound}
           </td>
         </tr>
       </tbody>

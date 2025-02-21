@@ -523,10 +523,12 @@ export class CourseService extends PaginationService<CourseEntity> {
     if (q) {
       queryBuilder.andWhere(
         new Brackets((qb) => {
-          qb.where('course.name ILIKE :q', { q: `%${q}%` }).orWhere(
-            'course_category.name ILIKE :q',
-            { q: `%${q}%` },
-          );
+          qb.where('course.name ILIKE :q', { q: `%${q}%` })
+            .orWhere('course_category.name ILIKE :q', { q: `%${q}%` })
+            .orWhere(
+              'created_by.first_name ILIKE :q OR created_by.last_name ILIKE :q',
+              { q: `%${q}%` },
+            );
         }),
       );
     }
