@@ -31,8 +31,6 @@ const CourseTable = () => {
 
   const [search, setSearch] = useState('');
 
-  // filter out the courses
-
   useEffect(() => {
     dispatch(fetchOrphanCourses({ page: 1, q: '' }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,7 +45,6 @@ const CourseTable = () => {
   const debouncedSearch = useMemo(
     () =>
       debounce((searchTerm: string) => {
-        console.log(searchTerm);
         dispatch(setCurrentPageOrphanList(1));
         dispatch(fetchOrphanCourses({ page: 1, q: searchTerm }));
       }, 500),
