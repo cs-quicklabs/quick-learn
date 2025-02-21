@@ -97,7 +97,7 @@ const metadataSlice = createSlice({
       if (!course_category) return;
 
       const { roadmaps, ...formattedCourse } = course;
-      formattedCourse['roadmaps_count'] = roadmaps?.length;
+      formattedCourse.roadmaps_count = roadmaps?.length;
       course_category.courses = [...course_category.courses, formattedCourse];
     },
     updateContentRepositoryRoadmapCount: (
