@@ -33,7 +33,7 @@ function ApprovalListSkeleton() {
 
               {/* Table Body */}
               <tbody className="divide-y divide-gray-200 bg-white">
-                {[1, 2, 3, 4, 5].map((row) => (
+                {[...Array(10)].map((row) => (
                   <tr key={row} className="border-b border-gray-200">
                     {/* Lesson Name */}
                     <td className="px-4 py-2">

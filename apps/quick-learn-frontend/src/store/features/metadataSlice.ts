@@ -6,10 +6,36 @@ import {
 } from '@reduxjs/toolkit';
 import { BaseAsyncState, RootState } from '../types/base.types';
 import { getContentRepositoryMetadata } from '@src/apiServices/contentRepositoryService';
-import { TContentRepositoryMetadata } from '@src/shared/types/contentRepository';
+import {
+  TContentRepositoryMetadata,
+  TCourse,
+  TRoadmap,
+} from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import { TCourseCategories } from '@src/shared/types/accountTypes';
 
+const updateCourseRoadmapCount = (course: TCourse, delta: number): void => {
+  const currentCount = course.roadmaps_count ?? 0;
+  course.roadmaps_count =
+    delta >= 1 ? currentCount + delta : Math.max(currentCount + delta, 0);
+};
+
+const findAndUpdateCourse = (
+  categories: TCourseCategories[],
+  courseId: string,
+  delta: number,
+): void => {
+  categories.forEach((category) => {
+    const course = category.courses.find(
+      (course) => String(course.id) === courseId,
+    );
+
+    if (course) {
+      updateCourseRoadmapCount(course, delta);
+    }
+  });
+};
 interface MetadataState extends BaseAsyncState {
   metadata: {
     contentRepository: TContentRepositoryMetadata;
@@ -48,6 +74,44 @@ const metadataSlice = createSlice({
         ...state.metadata.contentRepository,
         ...action.payload,
       };
+      state.isInitialized = true;
+    },
+    updateContentRepositoryRoadmap: (
+      state,
+      action: PayloadAction<TRoadmap>,
+    ) => {
+      const roadmap = action.payload;
+      const roadmap_category =
+        state.metadata.contentRepository.roadmap_categories.find(
+          (category) => category.id === +roadmap.roadmap_category_id,
+        );
+      if (!roadmap_category) return;
+      roadmap_category.roadmaps = [...roadmap_category.roadmaps, roadmap];
+    },
+    updateContentRepositoryCourse: (state, action: PayloadAction<TCourse>) => {
+      const course = action.payload;
+      const course_category =
+        state.metadata.contentRepository.course_categories.find(
+          (category) => category.id === +course.course_category_id,
+        );
+      if (!course_category) return;
+
+      const { roadmaps, ...formattedCourse } = course;
+      formattedCourse.roadmaps_count = roadmaps?.length;
+      course_category.courses = [...course_category.courses, formattedCourse];
+    },
+    updateContentRepositoryRoadmapCount: (
+      state,
+      action: PayloadAction<{ id: string; action: number }[]>,
+    ) => {
+      const updates = action.payload;
+      if (!updates?.length) return;
+
+      const { course_categories } = state.metadata.contentRepository;
+
+      updates.forEach(({ id, action: delta }) => {
+        findAndUpdateCourse(course_categories, id, delta);
+      });
     },
   },
   extraReducers: (builder) => {
@@ -62,13 +126,18 @@ const metadataSlice = createSlice({
       })
       .addCase(fetchMetadata.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || null;
+        state.error = action.error.message ?? null;
         showApiErrorInToast(action.error as AxiosErrorObject);
       });
   },
 });
 
-export const { updateContentRepository } = metadataSlice.actions;
+export const {
+  updateContentRepository,
+  updateContentRepositoryRoadmap,
+  updateContentRepositoryCourse,
+  updateContentRepositoryRoadmapCount,
+} = metadataSlice.actions;
 
 const metadataSelector = (state: RootState) => state.metadata;
 
@@ -87,6 +156,11 @@ export const selectContentRepositoryMetadata = createSelector(
 export const selectIsMetadataInitialized = createSelector(
   [metadataSelector],
   (data) => data.isInitialized,
+);
+
+export const selectContentRepositoryCourseCategory = createSelector(
+  [metadataSelector],
+  (data) => data?.metadata?.contentRepository.course_categories,
 );
 
 export default metadataSlice.reducer;

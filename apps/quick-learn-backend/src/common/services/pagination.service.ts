@@ -1,4 +1,8 @@
-import { FindOptionsOrder, FindOptionsWhere } from 'typeorm';
+import {
+  FindOptionsOrder,
+  FindOptionsWhere,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { BasePaginationDto } from '../dto';
 import { PaginatedResult } from '../interfaces';
 import { BasicCrudService } from './basic-crud.service';
@@ -30,6 +34,27 @@ export class PaginationService<T> extends BasicCrudService<T> {
       page,
       limit,
       total_pages: Math.ceil(total / limit),
+    };
+  }
+
+  async queryBuilderPaginate(
+    queryBuilder: SelectQueryBuilder<T>,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResult<T>> {
+    const skip = (page - 1) * limit;
+    const [items, total] = await queryBuilder
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    const total_pages = Math.ceil(total / limit);
+    return {
+      items,
+      total,
+      page,
+      limit,
+      total_pages,
     };
   }
 }

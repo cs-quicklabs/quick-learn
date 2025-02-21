@@ -205,7 +205,7 @@ export const en = {
    * Approvals section
    */
   approvals: {
-    lessonsApprovals: 'Lessons Approvals',
+    lessonsApprovals: 'Lesson Approvals',
     subHeading:
       'Following lessons are waiting for approval after being created or updated by the team.',
     approveThisLesson: 'Approve this lesson',
@@ -459,6 +459,7 @@ export const en = {
     // asssign data model
 
     noDataFound: 'No data found',
+    orphanCourse: 'Orphan',
   },
 
   Search: {
@@ -482,5 +483,10 @@ export const en = {
     noDataFound: 'No data found',
     tooltipsText: 'Complete more than 3 lessons to remove this badge.',
     learningScore: 'Learning Score',
+  },
+  orphanCourse: {
+    heading: 'Orphan Courses',
+    subHeading: 'This the list of Orphan Courses.',
+    noDataFound: 'No data found',
   },
 };
