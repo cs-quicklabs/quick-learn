@@ -179,25 +179,28 @@ function RoadmapDetails() {
       setIsLoading(false);
     }
   };
-  const handleUpdateContentRepoRoadmapcount = (data: string[]) => {
-    const initiallyAssignedCourse =
-      roadmapData?.courses.map((item) => String(item.id)) || [];
-    const newSet = [...new Set([...initiallyAssignedCourse, ...data])];
-    const dataToUpdate = newSet
-      .map((idx) => {
-        const isInInitial = initiallyAssignedCourse.includes(idx);
-        const isInData = data.includes(idx);
 
-        if (isInInitial && !isInData) {
-          return { id: idx, action: -1 }; // Removed from data
-        }
-        if (!isInInitial && isInData) {
-          return { id: idx, action: +1 }; // Newly added in data
-        }
-        return null;
-      })
-      .filter((item): item is { id: string; action: number } => item !== null);
-    dispatch(updateContentRepositoryRoadmapCount(dataToUpdate));
+  const handleUpdateContentRepoRoadmapcount = (data: string[]) => {
+    // Get initially assigned courses or empty array if roadmapData is undefined
+    const initialCourses =
+      roadmapData?.courses?.map((course) => String(course.id)) || [];
+
+    // Find courses that were removed (present in initial but not in selected)
+    const removedCourses = initialCourses
+      .filter((courseId) => !data.includes(courseId))
+      .map((courseId) => ({ id: courseId, action: -1 }));
+
+    // Find courses that were added (present in selected but not in initial)
+    const addedCourses = data
+      .filter((courseId) => !initialCourses.includes(courseId))
+      .map((courseId) => ({ id: courseId, action: 1 }));
+
+    // Combine added and removed courses
+    const updates: { id: string; action: number }[] = [
+      ...removedCourses,
+      ...addedCourses,
+    ];
+    dispatch(updateContentRepositoryRoadmapCount(updates));
   };
 
   const assignCourses = async (data: string[]) => {
