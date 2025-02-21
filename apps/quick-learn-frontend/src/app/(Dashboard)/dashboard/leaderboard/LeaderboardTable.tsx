@@ -13,6 +13,7 @@ import { selectUser } from '@src/store/features/userSlice';
 import { getRecords } from '@src/utils/helpers';
 import { LeaderboardData } from '@src/shared/types/LessonProgressTypes';
 import { useSearchParams } from 'next/navigation';
+import SkeletonLoader from './SkeletonLoader';
 
 const getMedalEmoji = (rank: number, totalUser: number) => {
   if (rank === 1) return <span className="text-yellow-500">🥇</span>;
@@ -35,25 +36,12 @@ const getMedalEmoji = (rank: number, totalUser: number) => {
   return '';
 };
 
-const SkeletonLoader = () => {
-  return (
-    <tbody className="animate-pulse">
-      {[...Array(20)].map((_, index) => (
-        <tr key={+index} className="border-b border-gray-200">
-          <td className="px-4 py-2">
-            <div className="h-5 bg-gray-200 rounded w-64" />
-          </td>
-          <td className="px-4 py-2">
-            <div className="h-5 bg-gray-200 rounded w-16" />
-          </td>
-          <td className="px-4 py-2">
-            <div className="h-5 bg-gray-200 rounded w-20" />
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  );
-};
+const tableHeader = [
+  en.leaderboard.leaderboardUser,
+  en.leaderboard.leaderboardRank,
+  en.leaderboard.leaderboardLessonsCompleted,
+  en.leaderboard.learningScore,
+];
 
 const LeaderboardTable = () => {
   const [weeklyLeaderboard, setWeeklyLeaderboard] = useState<LeaderboardData[]>(
@@ -133,9 +121,12 @@ const LeaderboardTable = () => {
   }, [page, type]);
 
   const renderLeaderboard = () => {
+    const totalDivident = Math.round(total / 10);
+
     return currentLeaderboard.map((user, index) => {
-      const isCurrentUser = currentUser?.id === user?.user?.id;
+      const isCurrentUser = currentUser?.id === user?.user?.id; // yellow line
       const isLastElement = index === currentLeaderboard.length - 1;
+      const learningScore = 10 - Math.floor((user.rank - 1) / totalDivident);
       return (
         <tr
           key={user.user_id}
@@ -152,6 +143,11 @@ const LeaderboardTable = () => {
           </td>
           <td className="pl-10 md:pl-16 py-2">
             {user.lessons_completed_count}
+          </td>
+          <td className="pl-10 md:pl-16 py-2">
+            {learningScore <= 0 || user.lessons_completed_count === 0
+              ? '-1'
+              : learningScore}
           </td>
         </tr>
       );
@@ -193,15 +189,18 @@ const LeaderboardTable = () => {
       <table className="w-full text-sm text-left text-gray-500 ">
         <thead className="text-xs text-gray-700 border-t border-gray-200 uppercase bg-gray-50">
           <tr>
-            <th className="px-4 py-3 w-1/2">
-              {en.leaderboard.leaderboardUser}
-            </th>
-            <th className="px-4 py-3 w-1/4">
-              {en.leaderboard.leaderboardRank}
-            </th>
-            <th className="px-4 py-3 w-1/4">
-              {en.leaderboard.leaderboardLessonsCompleted}
-            </th>
+            {tableHeader.map((item) => (
+              <th
+                key={item}
+                className={`px-4 py-3 ${
+                  item === en.leaderboard.leaderboardUser
+                    ? 'w-[40%]'
+                    : 'w-[20%]'
+                }`}
+              >
+                {item}
+              </th>
+            ))}
           </tr>
         </thead>
         {isLoading && currentLeaderboard.length === 0 ? (
