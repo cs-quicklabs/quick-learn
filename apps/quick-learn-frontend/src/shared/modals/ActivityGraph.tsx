@@ -315,7 +315,7 @@ const ActivityGraph: React.FC<Props> = ({
                   <h6 className="h-4 text-xs" />
                   <h6 className="h-4 text-xs">Sat</h6>
                 </div>
-                <div>
+                <div >
                   <div
                     className="flex items-center justify-between"
                     style={{ width: 600 }}

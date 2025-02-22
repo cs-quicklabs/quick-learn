@@ -140,7 +140,7 @@ function ArchivedCourses() {
           handleQueryChange(e.target.value)
         }
       />
-      <div className="flex flex-col w-full min-h-[200px]">
+      <div className="flex flex-col w-full">
         {isInitialLoad ? (
           <LoadingSkeleton />
         ) : coursesList.length === 0 ? (

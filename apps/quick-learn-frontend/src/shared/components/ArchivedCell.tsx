@@ -51,8 +51,8 @@ const ArchivedCell: FC<Props> = ({
   }
 
   return (
-    <div className="flex items-center p-4">
-      <div className="flex-1 min-w-0">
+    <div className="md:flex md:items-center p-4">
+      <div className="flex-1 min-w-0 mb-3 md:mb-0">
         <div className="flex text-sm font-medium text-gray-600">
           <p className=" truncate first-letter:uppercase">{title}</p>
           {subtitle && (
@@ -74,10 +74,10 @@ const ArchivedCell: FC<Props> = ({
           </div>
         </div>
       </div>
-      <div className="flex justify-end shrink-0">
+      <div className="flex md:justify-end shrink-0">
         <button
           type="button"
-          className="text-sm text-gray-500 hover:text-red-600 hover:underline"
+          className="text-sm text-blue-500 md:text-gray-500 hover:text-red-600 hover:underline"
           onClick={onClickRestore}
           disabled={isLoading}
         >
@@ -85,7 +85,7 @@ const ArchivedCell: FC<Props> = ({
         </button>
         <button
           type="button"
-          className="text-sm text-gray-500 hover:text-red-600 hover:underline ml-4"
+          className="text-sm text-red-500 md:text-gray-500 hover:text-red-600 hover:underline ml-4"
           onClick={onClickDelete}
           disabled={isLoading}
         >

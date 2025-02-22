@@ -191,7 +191,7 @@ function CourseDetails() {
       </motion.div>
 
       <motion.div className="items-baseline mb-8" variants={headerVariants}>
-        <h1 className="text-center text-5xl font-extrabold leading-tight first-letter:uppercase">
+        <h1 className="text-center text-4xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
           {courseData?.name}
         </h1>
         <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">
@@ -208,7 +208,7 @@ function CourseDetails() {
         variants={headerVariants}
       >
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <h1 className="text-3xl font-bold leading-tight">
+          <h1 className="text-2xl md:text-3xl font-bold leading-tight">
             {en.common.lessons}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">

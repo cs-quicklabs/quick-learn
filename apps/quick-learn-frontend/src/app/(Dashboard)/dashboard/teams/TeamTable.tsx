@@ -28,7 +28,7 @@ function TeamTable() {
                 <th scope="col" className="px-4 py-3">
                   {en.teams.User}
                 </th>
-                <th scope="col" className="px-4 py-3">
+                <th scope="col" className="px-4 py-3 text-nowrap">
                   {en.teams.Role}
                 </th>
                 <th scope="col" className="px-4 py-3">
@@ -60,14 +60,14 @@ function TeamTable() {
                       {user.first_name} {user.last_name}
                     </SuperLink>
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     <div className="inline-flex items-center bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded capitalize">
                       <CustomClipBoardIcon color="#1e40af" />
                       <span>{user.user_type.name || 'Role'}</span>
                     </div>
                   </td>
                   <td className="px-4 py-2 lowercase">{user.email}</td>
-                  <td className="px-4 py-2 capitalize">{user.skill.name}</td>
+                  <td className="px-4 py-2 capitalize whitespace-nowrap">{user.skill.name}</td>
                   <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                     <div className="inline-flex items-center">
                       <div
@@ -78,7 +78,7 @@ function TeamTable() {
                       {user.active ? 'Active' : 'Inactive'}
                     </div>
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {(user.last_login_timestamp &&
                       format(
                         user.last_login_timestamp,
@@ -86,7 +86,7 @@ function TeamTable() {
                       )) ||
                       'Not logged in.'}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {format(user.created_at, DateFormats.shortDate)}
                   </td>
                 </tr>

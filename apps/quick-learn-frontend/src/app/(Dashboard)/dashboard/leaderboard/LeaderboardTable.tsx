@@ -141,10 +141,10 @@ const LeaderboardTable = () => {
           <td className="pl-6 py-2">
             {user.rank} {getMedalEmoji(user.rank, total)}
           </td>
-          <td className="pl-10 md:pl-16 py-2">
+          <td className="pl-10 md:pl-16 py-2 whitespace-nowrap">
             {user.lessons_completed_count}
           </td>
-          <td className="pl-10 md:pl-16 py-2">
+          <td className="pl-10 md:pl-16 py-2 whitespace-nowrap">
             {learningScore <= 0 || user.lessons_completed_count === 0
               ? '-1'
               : learningScore}
@@ -156,7 +156,7 @@ const LeaderboardTable = () => {
 
   return (
     <div className="relative overflow-x-auto border-t border-gray-200 shadow-md  overflow-y-auto sm:rounded-lg">
-      <div className=" text-xs font-bold flex space-x-1 rounded-lg  p-0.5 justify-between items-center">
+      <div className=" text-xs font-bold md:flex space-x-1 rounded-lg  p-0.5 md:justify-between md:items-center ">
         <div className="text-sm  ml-3 text-gray-700">
           Records from {getRecords(type)}
         </div>

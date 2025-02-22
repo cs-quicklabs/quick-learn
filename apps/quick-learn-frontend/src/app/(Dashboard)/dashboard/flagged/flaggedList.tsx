@@ -97,7 +97,7 @@ function FlaggedList() {
               </h1>
               <p className="text-gray-500 text-sm">{en.common.flaggedDesc}</p>
             </div>
-          </div>
+          
           <div className="mr-6">
             <input
               type="text"
@@ -107,6 +107,7 @@ function FlaggedList() {
               onChange={handleSearchChange}
               id="search"
             />
+          </div>
           </div>
         </div>
         <div className={`overflow-x-auto ${isLoading ? 'opacity-60' : ''}`}>
@@ -146,20 +147,20 @@ function FlaggedList() {
                       </SuperLink>
                     </div>
                   </th>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {(flaggedLesson?.lesson?.updated_at &&
                       formatDate(flaggedLesson?.lesson?.updated_at)) ||
                       '-'}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {(flaggedLesson?.lesson?.created_at &&
                       formatDate(flaggedLesson.lesson.created_at)) ||
                       '-'}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {formatDate(flaggedLesson.flagged_on)}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {flaggedLesson.user
                       ? `${flaggedLesson.user.first_name} ${flaggedLesson.user.last_name}`
                       : '-'}

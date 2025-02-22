@@ -126,7 +126,7 @@ function ContentRepository() {
           {roadmaps.length > 0 ? (
             <div
               style={{ scrollbarWidth: 'thin' }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4  pr-2"
+              className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4  pr-2"
             >
               <CreateNewCard
                 title={en.contentRepository.createNewRoadmap}
@@ -174,7 +174,7 @@ function ContentRepository() {
           {courses.length > 0 ? (
             <div
               style={{ scrollbarWidth: 'thin' }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 pr-2"
+              className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 pr-2"
             >
               {courses.map((item) => (
                 <Card

@@ -138,7 +138,7 @@ function ArchivedLessons() {
           handleQueryChange(e.target.value)
         }
       />
-      <div className="flex flex-col w-full min-h-[200px]">
+      <div className="flex flex-col w-full">
         {isInitialLoad ? (
           <LoadingSkeleton />
         ) : lessonsList.length === 0 ? (

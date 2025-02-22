@@ -181,7 +181,7 @@ function ProfileSettings() {
   }
 
   return (
-    <div>
+    <div className='pb-8'>
       <h1 className="text-lg font-semibold">
         {en.ProfileSetting.profileSetting}
       </h1>
