@@ -3,10 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/quick-learn-frontend-e2e/src",
   "tags": [],
-  "implicitDependencies": [
-    "quick-learn-frontend"
-  ],
-  "// targets": "to see all targets run: nx show project quick-learn-frontend-e2e --web",
+  "implicitDependencies": ["quick-learn-frontend"],
   "targets": {
     "e2e": {
       "executor": "@nx/cypress:cypress",
@@ -28,9 +25,7 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "apps/quick-learn-frontend-e2e/src/**/*.{ts,tsx,js,jsx}"
