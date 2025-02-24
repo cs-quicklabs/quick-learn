@@ -24,9 +24,8 @@ export class PaginationService<T> extends BasicCrudService<T> {
       order: Object.keys(order).length > 0 ? order : { updated_at: 'DESC' },
     };
 
-    const [items, total] = await this.repository.findAndCount(
-      findAndCountOptions,
-    );
+    const [items, total] =
+      await this.repository.findAndCount(findAndCountOptions);
 
     return {
       items,

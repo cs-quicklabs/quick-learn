@@ -208,9 +208,8 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     //get all user with
     const allUsers = await this.getAllUserProgressData(dateToFindFrom);
 
-    const completedLessonsData = await this.getAllUserCompletedLessonData(
-      dateToFindFrom,
-    );
+    const completedLessonsData =
+      await this.getAllUserCompletedLessonData(dateToFindFrom);
 
     // return formattedData;
     const completedLessonsMap = new Map(

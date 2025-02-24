@@ -4,9 +4,8 @@ import { getClientIp } from './ipService';
 // eslint-disable-next-line import/no-cycle
 import { getAccessToken } from './authService';
 
-const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${
-  process.env.NEXT_PUBLIC_API_VERSION || 'v1'
-}`;
+const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${process.env.NEXT_PUBLIC_API_VERSION || 'v1'
+  }`;
 
 export type AxiosErrorObject = AxiosError & {
   response: {
@@ -74,6 +73,7 @@ axiosInstance.interceptors.response.use(
           return axios(originalRequest);
         }
         throw new Error('Original request is undefined');
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
       } catch (err) {
         setTimeout(() => {
           window.location.replace('/');

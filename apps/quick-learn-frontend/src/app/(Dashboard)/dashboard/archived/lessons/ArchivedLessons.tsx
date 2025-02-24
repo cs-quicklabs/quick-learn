@@ -161,8 +161,8 @@ function ArchivedLessons() {
                   item.updated_by
                     ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
                     : item.archive_by_user
-                    ? `${item.archive_by_user.first_name} ${item.archive_by_user.last_name}`
-                    : ''
+                      ? `${item.archive_by_user.first_name} ${item.archive_by_user.last_name}`
+                      : ''
                 }
                 deactivationDate={item.updated_at}
                 onClickDelete={() => setDeleteId(item.id)}

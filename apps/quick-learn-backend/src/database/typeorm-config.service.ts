@@ -49,13 +49,13 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
                 undefined,
             }
           : this.configService
-              .get('database.host', { infer: true })
-              .includes('localhost')
-          ? undefined
-          : {
-              rejectUnauthorized:
-                process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
-            },
+                .get('database.host', { infer: true })
+                .includes('localhost')
+            ? undefined
+            : {
+                rejectUnauthorized:
+                  process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
+              },
       },
     } as TypeOrmModuleOptions;
   }
