@@ -44,6 +44,7 @@ export enum ContentRepositoryApiEnum {
   LESSON_PROGRESS = '/lesson-progress',
   LESSON_FLAGGED = '/lesson/flag',
   GET_FLAGGED_LESSON = '/lesson/flagged',
+  ORPHAN_COURSES = '/course/orphan',
 }
 
 export enum ArchivedApiEnum {

@@ -34,6 +34,7 @@ import {
 import {
   selectContentRepositoryMetadata,
   updateContentRepository,
+  updateContentRepositoryRoadmapCount,
 } from '@src/store/features/metadataSlice';
 import { AppDispatch } from '@src/store/store';
 import {
@@ -176,12 +177,27 @@ function CourseDetails() {
       .finally(() => setIsLoading(false));
   }
 
+  const handleUpdateContentRepoRoadmapcount = (data: string[]) => {
+    if (!courseData) return;
+    dispatch(
+      updateContentRepositoryRoadmapCount([
+        {
+          id: String(courseData.id),
+          action:
+            data.length -
+            (courseData.roadmaps ? courseData.roadmaps.length : 0),
+        },
+      ]),
+    );
+  };
+
   function assignRoadmaps(data: string[]) {
     setIsLoading(true);
     assignRoadmapsToCourse(courseId, data)
       .then((res) => {
         showApiMessageInToast(res);
         setOpenAssignModal(false);
+        handleUpdateContentRepoRoadmapcount(data);
 
         // Check if the current roadmap is still assigned
         const isCurrentRoadmapAssigned = data.includes(roadmapId);

@@ -1,6 +1,6 @@
 import React from 'react';
 
-function FlaggedListSkeleton() {
+function Skeleton() {
   return (
     <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
       {/* Header Section */}
@@ -23,10 +23,10 @@ function FlaggedListSkeleton() {
                 <tr>
                   {[
                     'Lesson',
+                    'course_category_name',
                     'Updated On',
                     'Created On',
-                    'Flagged On',
-                    'Flagged By',
+                    'Created By',
                   ].map((header) => (
                     <th key={header} scope="col" className="px-4 py-3">
                       <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
@@ -43,6 +43,10 @@ function FlaggedListSkeleton() {
                     <td className="px-4 py-2">
                       <div className="h-5 w-48 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
                     </td>
+                    {/* course_category_name */}
+                    <td className="px-4 py-2">
+                      <div className="h-5 w-48 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
+                    </td>
                     {/* Updated On */}
                     <td className="px-4 py-2">
                       <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
@@ -51,11 +55,7 @@ function FlaggedListSkeleton() {
                     <td className="px-4 py-2">
                       <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
                     </td>
-                    {/* Flagged On */}
-                    <td className="px-4 py-2">
-                      <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
-                    </td>
-                    {/* Flagged By */}
+                    {/* Created By */}
                     <td className="px-4 py-2">
                       <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
                     </td>
@@ -70,4 +70,4 @@ function FlaggedListSkeleton() {
   );
 }
 
-export default FlaggedListSkeleton;
+export default Skeleton;

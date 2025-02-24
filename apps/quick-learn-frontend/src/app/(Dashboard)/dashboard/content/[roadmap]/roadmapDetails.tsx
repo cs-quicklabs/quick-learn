@@ -30,7 +30,11 @@ import {
   TRoadmap,
 } from '@src/shared/types/contentRepository';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectContentRepositoryMetadata } from '@src/store/features/metadataSlice';
+import {
+  selectContentRepositoryMetadata,
+  updateContentRepositoryCourse,
+  updateContentRepositoryRoadmapCount,
+} from '@src/store/features/metadataSlice';
 import {
   selectRoadmapById,
   updateRoadmap as updateStoreRoadmap,
@@ -132,6 +136,7 @@ function RoadmapDetails() {
         list: item.courses.map((course) => ({
           name: course.name,
           value: Number(course.id),
+          roadmap_count: course.roadmaps_count,
         })),
       }));
     setCourseCategoriesData(data);
@@ -159,6 +164,7 @@ function RoadmapDetails() {
     try {
       const res = await createCourse({ ...data, roadmap_id: +roadmapId });
       setOpenAddCourseModal(false);
+      dispatch(updateContentRepositoryCourse(res.data));
       const updatedCourses = [...courses, res.data];
       setCourses(updatedCourses);
       if (roadmapData) {
@@ -174,6 +180,29 @@ function RoadmapDetails() {
     }
   };
 
+  const handleUpdateContentRepoRoadmapcount = (data: string[]) => {
+    // Get initially assigned courses or empty array if roadmapData is undefined
+    const initialCourses =
+      roadmapData?.courses?.map((course) => String(course.id)) || [];
+
+    // Find courses that were removed (present in initial but not in selected)
+    const removedCourses = initialCourses
+      .filter((courseId) => !data.includes(courseId))
+      .map((courseId) => ({ id: courseId, action: -1 }));
+
+    // Find courses that were added (present in selected but not in initial)
+    const addedCourses = data
+      .filter((courseId) => !initialCourses.includes(courseId))
+      .map((courseId) => ({ id: courseId, action: 1 }));
+
+    // Combine added and removed courses
+    const updates: { id: string; action: number }[] = [
+      ...removedCourses,
+      ...addedCourses,
+    ];
+    dispatch(updateContentRepositoryRoadmapCount(updates));
+  };
+
   const assignCourses = async (data: string[]) => {
     setIsLoading(true);
     try {
@@ -183,6 +212,7 @@ function RoadmapDetails() {
       setCourses(updatedRoadmap.data.courses || []);
       dispatch(updateStoreRoadmap(updatedRoadmap.data));
       setOpenAssignModal(false);
+      handleUpdateContentRepoRoadmapcount(data);
       showApiMessageInToast(res);
     } catch (err) {
       showApiErrorInToast(err as AxiosErrorObject);

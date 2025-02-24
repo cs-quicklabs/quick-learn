@@ -29,6 +29,7 @@ import { useFetchContentRepositoryMetadata } from '@src/context/contextHelperSer
 import { useSelector } from 'react-redux';
 import { selectUser } from '@src/store/features/userSlice';
 import { UserTypeIdEnum } from 'lib/shared/src';
+import { updateContentRepositoryRoadmap } from '@src/store/features';
 
 function ContentRepository() {
   const router = useRouter();
@@ -81,6 +82,8 @@ function ContentRepository() {
     createRoadmap(data)
       .then((res) => {
         dispatch(addRoadmap(res.data));
+        //add roadmap to metadata as well
+        dispatch(updateContentRepositoryRoadmap(res.data));
         setOpenAddModal(false);
         router.push(`${RouteEnum.CONTENT}/${res.data.id}`);
         showApiMessageInToast(res);

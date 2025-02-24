@@ -42,6 +42,7 @@ export interface TCourse extends TCreateCourse {
   course_category: TCourseCategories;
   created_by_user_id: number;
   lessons_count?: number;
+  roadmaps_count?: number;
   userCount?: number;
   created_by?: TUser;
   created_at: string;
@@ -56,6 +57,7 @@ export type TAssignModalMetadata = {
   list: {
     value: number;
     name: string;
+    roadmap_count?: number;
   }[];
 };
 

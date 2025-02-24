@@ -16,7 +16,7 @@ function BasicPagination({ total, currentPage, totalPages, onChange }: Props) {
   }
 
   return (
-    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between my-5">
+    <div className=" flex items-center justify-between my-5 sm:flex-1  ">
       <div>
         <p className="text-sm text-gray-700">
           {en.teams.showing} <span className="font-medium">{showRange()}</span>{' '}

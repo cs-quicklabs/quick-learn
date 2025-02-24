@@ -25,4 +25,5 @@ export enum RouteEnum {
   CHANGE_LOGS = 'https://release.quicklabs.in/quick-learn/changelogs',
   FEATURE_LOGS = 'https://release.quicklabs.in/quick-learn/roadmap',
   LEADERBOARD = '/dashboard/leaderboard',
+  ORPHANCOURSES = '/dashboard/orphan-course',
 }
