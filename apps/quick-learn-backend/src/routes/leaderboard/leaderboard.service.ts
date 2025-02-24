@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { en } from '@src/lang/en';
 
 @Injectable()
 export class LeaderboardService extends PaginationService<Leaderboard> {
+  private logger = new Logger(LeaderboardService.name);
   constructor(
     @InjectRepository(Leaderboard)
     repo: Repository<Leaderboard>,
@@ -52,6 +53,7 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
         type,
       });
     } catch (error) {
+      this.logger.error(error);
       throw new HttpException(en.leaderboardDeleteError, 500);
     }
   }

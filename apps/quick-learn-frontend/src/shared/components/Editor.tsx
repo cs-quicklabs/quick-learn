@@ -49,6 +49,7 @@ class CustomClipboard extends Clipboard {
           this.quill.insertEmbed(range.index, 'image', res.data.file, 'user');
           this.quill.setSelection(range.index + 1, 0);
         } catch (err) {
+          console.log(err);
           showErrorMessage('Failed to upload image. Please try again.');
         }
         return;

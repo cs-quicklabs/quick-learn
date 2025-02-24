@@ -52,6 +52,7 @@ function ArchivedCourses() {
         );
         toast.success(en.archivedSection.courseDeleted);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setDeleteId(false);
@@ -75,6 +76,7 @@ function ArchivedCourses() {
         );
         toast.success(en.archivedSection.courseRestored);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setRestoreId(false);
@@ -97,6 +99,7 @@ function ArchivedCourses() {
             }),
           );
         } catch (err) {
+          console.log(err);
           toast.error(en.common.somethingWentWrong);
         }
       }, 300),

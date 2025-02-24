@@ -50,6 +50,7 @@ function ContentRepository() {
         payload: res.data,
       });
     } catch (err) {
+      console.log(err);
       dispatch({
         type: 'roadmaps/fetchRoadmaps/rejected',
         payload: 'Failed to fetch roadmaps',
