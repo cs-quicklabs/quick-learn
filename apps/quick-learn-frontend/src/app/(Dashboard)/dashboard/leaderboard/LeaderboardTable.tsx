@@ -157,10 +157,10 @@ const LeaderboardTable = () => {
   return (
     <div className="relative overflow-x-auto border-t border-gray-200 shadow-md  overflow-y-auto sm:rounded-lg">
       <div className=" text-xs font-bold md:flex space-x-1 rounded-lg  p-0.5 md:justify-between md:items-center ">
-        <div className="text-sm  ml-3 text-gray-700">
+        <div className="text-sm mb-2 ml-3 md:mb-0 text-gray-700">
           Records from {getRecords(type)}
         </div>
-        <div className="flex space-x-1 bg-slate-200 p-1 rounded-lg">
+        <div className="flex space-x-1 bg-slate-200 p-1 w-52 md:w-auto rounded-lg">
           <button
             type="button"
             className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
