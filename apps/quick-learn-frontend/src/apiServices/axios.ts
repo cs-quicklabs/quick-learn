@@ -4,8 +4,9 @@ import { getClientIp } from './ipService';
 // eslint-disable-next-line import/no-cycle
 import { getAccessToken } from './authService';
 
-const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${process.env.NEXT_PUBLIC_API_VERSION || 'v1'
-  }`;
+const baseURL = `${process.env.NEXT_PUBLIC_BASE_API_URL}/${
+  process.env.NEXT_PUBLIC_API_VERSION || 'v1'
+}`;
 
 export type AxiosErrorObject = AxiosError & {
   response: {
