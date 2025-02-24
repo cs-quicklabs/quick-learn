@@ -192,7 +192,7 @@ const LeaderboardTable = () => {
             {tableHeader.map((item) => (
               <th
                 key={item}
-                className={`px-4 py-3 ${
+                className={`px-4 py-3 whitespace-nowrap ${
                   item === en.leaderboard.leaderboardUser
                     ? 'w-[40%]'
                     : 'w-[20%]'

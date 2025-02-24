@@ -65,7 +65,7 @@ function Dashboard() {
         className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
       >
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <h1 className="text-3xl font-bold leading-tight">
+          <h1 className="text-2xl md:text-3xl font-bold leading-tight">
             {en.common.myRoadmaps}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
@@ -128,7 +128,7 @@ function Dashboard() {
         className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
       >
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <h1 className="text-3xl font-bold leading-tight">
+          <h1 className="text-2xl md:text-3xl font-bold leading-tight">
             {en.common.myCourses}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">

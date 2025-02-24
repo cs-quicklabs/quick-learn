@@ -156,9 +156,9 @@ function LessonDetails() {
             type="checkbox"
             checked={isChecked}
             onChange={handleCheckboxChange}
-            className="rounded-md h-8 w-8 border-gray-400 bg-[#F4F4F6]"
+            className="rounded-md h-6 w-6 md:h-8 md:w-8 border-gray-400 bg-[#F4F4F6]"
           />
-          <p className="text-2xl font-semibold text-gray-900 dark:text-gray-300">
+          <p className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-300">
             {en.myLearningPath.markRead}
           </p>
         </div>

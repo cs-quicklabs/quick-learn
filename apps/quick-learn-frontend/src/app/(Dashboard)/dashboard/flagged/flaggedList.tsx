@@ -89,7 +89,7 @@ function FlaggedList() {
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
       <div className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
-        <div className="flex items-center justify-between">
+        <div>
           <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
             <div>
               <h1 className="mr-3 text-lg font-semibold">
@@ -97,17 +97,17 @@ function FlaggedList() {
               </h1>
               <p className="text-gray-500 text-sm">{en.common.flaggedDesc}</p>
             </div>
-          
-          <div className="mr-6">
-            <input
-              type="text"
-              className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
-              placeholder="Search Lessons"
-              value={search}
-              onChange={handleSearchChange}
-              id="search"
-            />
-          </div>
+
+            <div className="w-full sm:w-auto">
+              <input
+                type="text"
+                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+                placeholder="Search Lessons"
+                value={search}
+                onChange={handleSearchChange}
+                id="search"
+              />
+            </div>
           </div>
         </div>
         <div className={`overflow-x-auto ${isLoading ? 'opacity-60' : ''}`}>
