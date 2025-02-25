@@ -54,11 +54,11 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
       >
         <div className="flex flex-col h-48">
           <div className="flex-1 py-4 px-6 text-gray-900 overflow-hidden">
-            <h3 className="font-medium first-letter:uppercase text-gray-900 line-clamp-2 group-hover:underline">
+            <h3 className="text-sm md:text-base font-medium first-letter:uppercase text-gray-900 line-clamp-2 group-hover:underline">
               {name}
             </h3>
             <p
-              className="font-normal first-letter:uppercase text-sm text-gray-500 line-clamp-3 mt-2"
+              className=" text-xs md:text-sm font-normal first-letter:uppercase text-gray-500 line-clamp-3 mt-2"
               // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{
                 __html: title,

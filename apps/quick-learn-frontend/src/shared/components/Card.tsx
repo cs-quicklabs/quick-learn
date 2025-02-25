@@ -51,12 +51,12 @@ const CardContent: FC<CardContentProps> = ({
         <h1
           ref={titleRef}
           id="message-heading"
-          className="font-medium first-letter:uppercase text-gray-900 line-clamp-3 group-hover:underline mb-2"
+          className="text-sm md:text-base font-medium first-letter:uppercase text-gray-900 line-clamp-3 group-hover:underline mb-2"
         >
           {title}
         </h1>
         <p
-          className={`font-normal first-letter:uppercase  text-gray-500 ${
+          className={`text-xs md:text-sm font-normal first-letter:uppercase  text-gray-500 ${
             isLongTitle ? 'line-clamp-1' : 'line-clamp-2'
           } text-sm whitespace-pre-line`}
           // eslint-disable-next-line react/no-danger
@@ -68,7 +68,7 @@ const CardContent: FC<CardContentProps> = ({
 
       <div className={`mt-auto ${isLongTitle ? 'space-y-0.5' : 'space-y-1'}`}>
         {stats && !isCreateCard && (
-          <p className="font-normal text-xs first-letter:uppercase text-gray-500">
+          <p className="font-normal text-[10px] md:text-xs first-letter:uppercase text-gray-500">
             {showWarning ? (
               <span className="inline-flex items-center">
                 <ExclamationTriangleIcon
@@ -84,7 +84,7 @@ const CardContent: FC<CardContentProps> = ({
           </p>
         )}
         {metadata && !isCreateCard && (metadata.addedBy || metadata.date) && (
-          <p className="text-xs text-gray-500">
+          <p className="text-[10px] md:text-xs text-gray-500">
             {metadata.addedBy ? (
               <>
                 {en.component.addedBy} {metadata.addedBy}
