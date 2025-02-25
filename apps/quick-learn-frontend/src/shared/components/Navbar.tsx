@@ -318,7 +318,7 @@ function Navbar() {
                   <MenuItems className="absolute right-0 mt-2 w-64 divide-y divide-gray-100 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     {/* User Info Section */}
                     <div className="px-4 py-3">
-                      <p className="text-base text-gray-900 font-medium">
+                      <p className="text-base text-gray-900 font-medium first-letter:uppercase">
                         {user?.first_name} {user?.last_name}
                       </p>
                       <p className="text-sm text-gray-500">{user?.email}</p>

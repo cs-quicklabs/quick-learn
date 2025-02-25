@@ -26,7 +26,7 @@ const LessonHeader = memo(
   }) => (
     <div className="px-4 mb-8 text-center sm:px-6 lg:px-8">
       <div className="items-baseline">
-        <h1 className="text-5xl font-extrabold leading-tight first-letter:uppercase">
+        <h1 className="text-4xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
           {name}
         </h1>
         {showCreatedBy && (
@@ -43,7 +43,7 @@ const LessonHeader = memo(
 LessonHeader.displayName = 'LessonHeader';
 
 const LessonContent = memo(({ content }: { content: string }) => (
-  <article className="lesson-content flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-10 py-4 mb-8">
+  <article className="lesson-content flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-4 md:px-10 py-4 mb-8">
     <div
       className="lesson-viewer"
       // eslint-disable-next-line react/no-danger
@@ -73,11 +73,11 @@ const ApprovalCheckbox = memo(
         checked={value}
         onChange={() => setValue?.(true)}
         disabled={value}
-        className="w-8 h-8 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
+        className="w-6 h-6 md:w-8 md:h-8 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
       />
       <label
         htmlFor="default-checkbox"
-        className="ms-4 text-2xl ml-4 font-semibold text-gray-900"
+        className="ms-4 sm:text-xl md:text-2xl ml-4 font-semibold text-gray-900"
       >
         {text}
       </label>
