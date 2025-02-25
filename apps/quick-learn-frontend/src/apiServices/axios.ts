@@ -74,6 +74,7 @@ axiosInstance.interceptors.response.use(
           return axios(originalRequest);
         }
         throw new Error('Original request is undefined');
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
       } catch (err) {
         setTimeout(() => {
           window.location.replace('/');

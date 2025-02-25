@@ -69,6 +69,7 @@ function FlaggedList() {
     try {
       return format(new Date(date), DateFormats.shortDate);
     } catch (error) {
+      console.warn(error);
       return '-';
     }
   };

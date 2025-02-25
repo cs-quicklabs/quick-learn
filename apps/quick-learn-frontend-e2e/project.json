@@ -6,7 +6,6 @@
   "implicitDependencies": [
     "quick-learn-frontend"
   ],
-  "// targets": "to see all targets run: nx show project quick-learn-frontend-e2e --web",
   "targets": {
     "e2e": {
       "executor": "@nx/cypress:cypress",
@@ -27,7 +26,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": [
         "{options.outputFile}"
       ],

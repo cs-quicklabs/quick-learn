@@ -52,6 +52,7 @@ function ArchivedRoadmaps() {
         );
         toast.success(en.archivedSection.roadmapDeletedSuccess);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setDeleteId(false);
@@ -73,6 +74,7 @@ function ArchivedRoadmaps() {
         );
         toast.success(en.archivedSection.roadmapRestoredSuccess);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setRestoreId(false);
@@ -95,6 +97,7 @@ function ArchivedRoadmaps() {
             }),
           );
         } catch (err) {
+          console.log(err);
           toast.error(en.common.somethingWentWrong);
         }
       }, 300),

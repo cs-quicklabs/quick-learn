@@ -67,14 +67,14 @@ const CourseTable = () => {
             >
               <div className="flex items-center">
                 <SuperLink
-                  className="hover:underline"
+                  className="hover:underline first-letter:uppercase"
                   href={`${RouteEnum.CONTENT}/course/${course.id}`}
                 >
                   {course.name}
                 </SuperLink>
               </div>
             </th>
-            <td className="px-4 py-2 whitespace-nowrap">
+            <td className="px-4 py-2 capitalize whitespace-nowrap">
               {course.course_category?.name}
             </td>
             <td className="px-4 py-2 whitespace-nowrap">
@@ -83,7 +83,7 @@ const CourseTable = () => {
             <td className="px-4 py-2 whitespace-nowrap">
               {format(course.created_at, DateFormats.shortDate)}
             </td>
-            <td className="px-4 py-2 whitespace-nowrap">
+            <td className="px-4 py-2 capitalize whitespace-nowrap">
               {course.created_by?.display_name ?? 'Super Admin'}
             </td>
           </tr>

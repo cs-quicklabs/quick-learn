@@ -1,5 +1,5 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from '@src/config/config.type';
@@ -57,6 +57,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
 
       return session;
     } catch (error) {
+      Logger.error(error);
       Helpers.clearCookies(req.res);
       throw new UnauthorizedException(en.authenticationFailed);
     }

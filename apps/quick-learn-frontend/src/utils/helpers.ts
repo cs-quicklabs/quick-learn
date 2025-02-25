@@ -180,8 +180,8 @@ export const calculateCourseProgress = (
     ? course.lesson_ids?.filter((lesson) =>
         completedLessonIds.includes(lesson.id),
       ).length || 0
-    : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
-        .length ?? 0;
+    : (course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
+        .length ?? 0);
 
   return totalLessons > 0
     ? Math.round((completedCount / totalLessons) * 100)

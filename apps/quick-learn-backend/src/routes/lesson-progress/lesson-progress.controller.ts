@@ -59,9 +59,8 @@ export class LessonProgressController {
   })
   @Get('daily-lesson/:userID')
   async getAllDailyLesson(@Param('userID') userID: number) {
-    const data = await this.lessonProgressService.getDailyLessonProgress(
-      userID,
-    );
+    const data =
+      await this.lessonProgressService.getDailyLessonProgress(userID);
     return new SuccessResponse(en.allDailyLessons, data);
   }
 
