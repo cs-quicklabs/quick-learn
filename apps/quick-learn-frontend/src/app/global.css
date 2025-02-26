@@ -205,4 +205,54 @@ input:-webkit-autofill:active {
     font-size: 13px;
     max-width: 100%;
   }
+
+  .quill .ql-container .ql-editor a,
+.quill .ql-container .ql-editor p,
+  .lesson-viewer a,
+.lesson-viewer p {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0px;
+}
+
+.quill .ql-container .ql-editor h1,
+.lesson-viewer h1 {
+  font-size: 2rem;
+  line-height: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.quill .ql-container .ql-editor h2,
+.lesson-viewer h2 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.quill .ql-container .ql-syntax,
+.lesson-viewer .ql-syntax {
+  background-color: #dedede !important;
+  color: #000000 !important;
+  margin: 1rem auto;
+  font-size: 12px;
+  padding: 1rem 2rem;
+  line-height: 1.5;
+  letter-spacing: normal;
+  max-width: 85%;
+  /* Add horizontal scroll for long lines */
+}
+
+.quill .ql-container ul,
+.quill .ql-container ol,
+.lesson-viewer ul,
+.lesson-viewer ol {
+  padding-left: 2.5rem;
+  padding-right: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
 }
