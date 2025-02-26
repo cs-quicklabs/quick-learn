@@ -1,14 +1,12 @@
 'use client';
-import ReactQuill, { Quill } from 'react-quill';
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+// All the impoort which is used for the customisation of the editor
 import EditorToolbar, { formats } from './EditorToolbar';
 import { en } from '@src/constants/lang/en';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
 import { showErrorMessage } from '@src/utils/helpers';
-
-const Clipboard = Quill.import('modules/clipboard');
-const Delta = Quill.import('delta');
 
 function checkSize(file: File): boolean {
   if (file.size > 1024 * 1024 * 5) {
@@ -17,72 +15,6 @@ function checkSize(file: File): boolean {
   }
   return true;
 }
-
-class CustomClipboard extends Clipboard {
-  async onPaste(e: ClipboardEvent) {
-    e.preventDefault();
-
-    const range = this.quill.getSelection();
-    if (!range) return;
-
-    const clipboard = e.clipboardData;
-    if (!clipboard?.items) return;
-
-    // Check for images in clipboard
-    const items = Array.from(clipboard.items);
-    const imageItem = items.find((item) => item.type.indexOf('image') !== -1);
-
-    if (imageItem) {
-      const file = imageItem.getAsFile();
-      if (file) {
-        if (!checkSize(file)) return;
-        try {
-          const formData = new FormData();
-          formData.append('file', file);
-
-          const res = await fileUploadApiCall(formData, 'lesson');
-
-          if (range.length > 0) {
-            this.quill.deleteText(range.index, range.length);
-          }
-
-          this.quill.insertEmbed(range.index, 'image', res.data.file, 'user');
-          this.quill.setSelection(range.index + 1, 0);
-        } catch (err) {
-          console.log(err);
-          showErrorMessage('Failed to upload image. Please try again.');
-        }
-        return;
-      }
-    }
-
-    // Handle HTML content if available and no images
-    const html = clipboard.getData('text/html');
-    if (html && !imageItem) {
-      const delta = this.quill.clipboard.convert(html);
-      this.quill.updateContents(
-        new Delta().retain(range.index).delete(range.length).concat(delta),
-        'user',
-      );
-      this.quill.setSelection(range.index + delta.length(), 0);
-      return;
-    }
-
-    // Fall back to plain text
-    const text = clipboard.getData('text/plain');
-    if (text) {
-      const delta = new Delta()
-        .retain(range.index)
-        .delete(range.length)
-        .insert(text);
-
-      this.quill.updateContents(delta, 'user');
-      this.quill.setSelection(range.index + text.length, 0);
-    }
-  }
-}
-
-Quill.register('modules/clipboard', CustomClipboard, true);
 
 interface Props {
   isEditing: boolean;
