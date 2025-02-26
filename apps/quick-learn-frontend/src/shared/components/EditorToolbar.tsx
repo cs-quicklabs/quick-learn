@@ -13,6 +13,7 @@ export const formats = [
   'link',
   'image',
   'code-block',
+  'indent',
 ];
 
 interface Props {
