@@ -41,6 +41,7 @@ function ContentRepository() {
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(!isRoadmapsInitialized);
   const user = useSelector(selectUser);
+  const [activeTab, setActiveTab] = useState('roadmaps');
 
   const fetchRoadmapData = async () => {
     try {
@@ -116,9 +117,41 @@ function ContentRepository() {
             {en.contentRepository.courses})
           </p>
         </div>
+        <section className="md:hidden w-[312px] border border-gray-200 bg-gray-100 mt-10 mb-5 rounded-md">
+          <div className="max-w-full px-1 mx-auto">
+            <div className="flex space-x-4">
+              <button
+                type="button"
+                className={`flex items-center px-3 py-2 text-base font-medium ${
+                  activeTab === 'roadmaps'
+                    ? 'bg-white rounded-md text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+                onClick={() => setActiveTab('roadmaps')}
+              >
+                {en.contentRepository.allRoadmaps}{' '}
+                <span className="text-sm ml-1">({roadmaps.length})</span>
+              </button>
+              <button
+                type="button"
+                className={`flex items-center px-3 py-2 text-base font-medium ${
+                  activeTab === 'courses'
+                    ? 'bg-white rounded-md text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+                onClick={() => setActiveTab('courses')}
+              >
+                {en.contentRepository.allCourses}{' '}
+                <span className="text-sm ml-1">({courses.length})</span>
+              </button>
+            </div>
+          </div>
+        </section>
 
-        <section className="mb-12">
-          <div className="flex items-baseline mb-6">
+        <section
+          className={`mb-12 + ${activeTab === 'courses' ? 'hidden md:block' : 'block'}`}
+        >
+          <div className="hidden md:flex items-baseline mb-6">
             <h2 className="text-2xl md:text-3xl font-bold">
               {en.contentRepository.allRoadmaps}
             </h2>
@@ -165,8 +198,10 @@ function ContentRepository() {
           )}
         </section>
 
-        <section>
-          <div className="flex items-baseline mb-6">
+        <section
+          className={`${activeTab === 'roadmaps' ? 'hidden md:block' : 'block'}`}
+        >
+          <div className="hidden md:flex items-baseline mb-6">
             <h2 className="text-2xl md:text-3xl font-bold">
               {en.contentRepository.allCourses}
             </h2>
