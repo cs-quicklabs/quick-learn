@@ -31,7 +31,7 @@ export const en = {
   successDeleteRoadmap: 'Roadmap is deleted.',
   InvalidRoadmapCategory: 'Roadmap category does not exist.',
   RoadmapStatusUpdated: 'Roadmap status updated successfully.',
-  RoadmapCoursesAssigned: 'Successfully assigned courses to roadmap.',
+  RoadmapCoursesAssigned: 'Successfully updated the courses to roadmap.',
   invalidDeleteCondition: 'Invalid delete condition. An ID is required.',
 
   // Course related messages
