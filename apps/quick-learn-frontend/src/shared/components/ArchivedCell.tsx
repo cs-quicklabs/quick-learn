@@ -51,12 +51,12 @@ const ArchivedCell: FC<Props> = ({
   }
 
   return (
-    <div className="md:flex md:items-center p-4">
+    <div className="md:flex md:items-center p-4 bg-gray-100 rounded-lg border border-gray-100 mb-3 md:bg-transparent md:border-none md:mb-0">
       <div className="flex-1 min-w-0 mb-3 md:mb-0">
-        <div className="flex text-sm font-medium text-gray-600">
-          <p className=" truncate first-letter:uppercase">{title}</p>
+        <div className="md:flex text-sm font-medium text-gray-600">
+          <p className="truncate first-letter:uppercase">{title}</p>
           {subtitle && (
-            <p className="ml-1 font-normal truncate text-gray-500 first-letter:uppercase">
+            <p className="md:ml-1 font-normal truncate text-gray-500 first-letter:uppercase">
               {subtitle}
             </p>
           )}
@@ -64,7 +64,7 @@ const ArchivedCell: FC<Props> = ({
         <div className="mt-2">
           <div className="flex items-center text-sm text-gray-500">
             <CalenderIcon />
-            <p className="truncate ml-1.5">
+            <p className="md:truncate ml-1.5">
               {en.common.deactivatedOn}{' '}
               {format(deactivationDate, DateFormats.shortDate)} {en.common.by}{' '}
               <span className="max-w-64 inline-block truncate align-bottom">

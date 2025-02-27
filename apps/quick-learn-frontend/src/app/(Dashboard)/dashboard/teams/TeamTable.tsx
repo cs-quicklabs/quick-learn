@@ -66,7 +66,9 @@ function TeamTable() {
                       <span>{user.user_type.name || 'Role'}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-2 lowercase">{user.email}</td>
+                  <td className="px-4 py-2 lowercase whitespace-nowrap">
+                    {user.email}
+                  </td>
                   <td className="px-4 py-2 capitalize whitespace-nowrap">
                     {user.skill.name}
                   </td>

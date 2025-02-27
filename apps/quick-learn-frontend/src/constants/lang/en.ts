@@ -475,6 +475,8 @@ export const en = {
       'This is the leaderboard of the users past records.',
     leaderboardRank: 'Rank',
     leaderboardLessonsCompleted: 'Lessons Completed',
+    lessoncompleted: 'Completed',
+    score: 'Score',
     leaderboardUser: 'User',
     leaderboardNoMoreData: 'No more data to show',
     leaderboardLoading: 'Loading...',

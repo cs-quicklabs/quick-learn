@@ -25,6 +25,7 @@ const schema = z.object({
 });
 
 type schemaType = z.infer<typeof schema>;
+const SM_MEDIA_QUERY = '(max-width: 639px)';
 
 const AssignDataModal: FC<Props> = ({
   show,
@@ -68,8 +69,17 @@ const AssignDataModal: FC<Props> = ({
     if (show) {
       // When the modal is opened
       const allAccordionIds = sortedData.map((ele) => ele.name);
-      setOpenAccordions(allAccordionIds);
-      setIsAllExpanded(true);
+      const isMobileView = window.matchMedia(SM_MEDIA_QUERY).matches;
+
+      if (isMobileView) {
+        // On mobile, collapse all accordions by default
+        setOpenAccordions([]);
+        setIsAllExpanded(false);
+      } else {
+        // On desktop, expand all accordions by default
+        setOpenAccordions(allAccordionIds);
+        setIsAllExpanded(true);
+      }
 
       // Set initial values
       const initialSelected = initialValues?.selected || [];
@@ -173,7 +183,7 @@ const AssignDataModal: FC<Props> = ({
             <li className="mr-1">
               <button
                 type="button"
-                className="bg-blue-700 px-3 py-2 rounded-md text-white mb-2 inline-block hover:bg-blue-600"
+                className="bg-blue-700 px-3 py-2 rounded-md text-white mb-2 inline-block hover:bg-blue-600 invisible md:visible"
                 onClick={handleToggleAll}
               >
                 {isAllExpanded ? 'Collapse All' : 'Expand All'}
@@ -188,7 +198,7 @@ const AssignDataModal: FC<Props> = ({
               className="overflow-y-auto h-[35rem] scrollbar-hide"
             >
               <div
-                className="columns-2 md:columns-4 gap-4"
+                className="columns-1 md:columns-4 gap-4"
                 id="brand"
                 role="tabpanel"
                 aria-labelledby="brand-tab"
