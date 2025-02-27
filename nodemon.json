@@ -1,5 +1,0 @@
-{
-  "watch": ["apps/quick-learn-backend/src"],
-  "ext": "ts,js,json",
-  "exec": "yarn nx run quick-learn-backend:dev"
-}

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, ILike, In, Repository } from 'typeorm';
+import { DeleteResult, ILike, In, Not, Repository } from 'typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { RoadmapEntity, UserEntity } from '@src/entities';
 import { CreateRoadmapDto } from './dto/create-roadmap.dto';
@@ -122,7 +122,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       );
     }
 
-    return this.queryBuilderPaginate(
+    return await this.queryBuilderPaginate(
       queryBuilder,
       paginationDto.page,
       paginationDto.limit,
@@ -181,18 +181,16 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
 
     // Check for name conflicts if name is being updated
     if (updateRoadmapDto.name) {
-      const existingRoadmap = await this.repository
-        .createQueryBuilder('roadmap')
-        .where('LOWER(roadmap.name) = LOWER(:name)', {
-          name: updateRoadmapDto.name,
-        })
-        .andWhere('roadmap.id != :id', { id })
-        .getOne();
+      const existingRoadmap = await this.get({
+        name: ILike(`%${updateRoadmapDto.name}%`),
+        id: Not(id),
+      });
 
       if (existingRoadmap) {
         throw new BadRequestException(en.RoadmapAlreadyExists);
       }
     }
+
     const verifyRoadmapCategory = updateRoadmapDto.roadmap_category_id;
     if (verifyRoadmapCategory) {
       const roadmapCategory = await this.roadmapCategoryService.get({
