@@ -114,9 +114,11 @@ function ApprovalList() {
           {format(lesson.created_at, DateFormats.shortDate)}
         </td>
         <td className="px-4 py-2 first-letter:uppercase whitespace-nowrap">
-          {lesson.created_by_user.first_name +
-            ' ' +
-            lesson.created_by_user.last_name || '-'}
+          {lesson.created_by
+            ? lesson.created_by_user.first_name +
+                ' ' +
+                lesson.created_by_user.last_name || '-'
+            : 'Super Admin'}
         </td>
       </tr>
     ));
