@@ -37,8 +37,8 @@ function Skeleton() {
 
               {/* Table Body */}
               <tbody className="divide-y divide-gray-200 bg-white">
-                {[...Array(10)].map((row) => (
-                  <tr key={row} className="border-b border-gray-200">
+                {[...Array(10)].map((_, index) => (
+                  <tr key={index} className="border-b border-gray-200">
                     {/* Lesson Name */}
                     <td className="px-4 py-2">
                       <div className="h-5 w-48 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />

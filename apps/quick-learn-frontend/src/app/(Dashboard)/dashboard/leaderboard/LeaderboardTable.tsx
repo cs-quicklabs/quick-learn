@@ -211,7 +211,7 @@ const LeaderboardTable = () => {
         {currentLeaderboard.length === 0 && !isLoading && (
           <tbody>
             <tr>
-              <td colSpan={3} className="px-4 py-3 text-center text-gray-500">
+              <td colSpan={4} className="px-4 py-3 text-center text-gray-500">
                 {en.leaderboard.noDataFound}
               </td>
             </tr>

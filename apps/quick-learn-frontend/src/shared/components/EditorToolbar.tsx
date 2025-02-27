@@ -9,7 +9,6 @@ export const formats = [
   'italic',
   'blockquote',
   'list',
-  'bullet',
   'link',
   'image',
   'code-block',
