@@ -235,9 +235,9 @@ function Navbar() {
         as="nav"
         className="bg-gray-800 text-white shadow fixed z-10 w-full top-0"
       >
-        <div className="mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="mx-auto px-4 sm:px-4 lg:px-8">
           <div className="flex py-2 justify-between align-center">
-            <div className="flex px-2 lg:px-0">
+            <div className="hidden md:flex px-2 lg:px-0">
               <div className="flex-shrink-0 flex items-center">
                 <SuperLink
                   id="homeLogo"
@@ -302,16 +302,6 @@ function Navbar() {
 
             <div className="hidden lg:ml-4 lg:block">
               <div className="flex items-center">
-                <button
-                  type="button"
-                  className="relative flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">
-                    {en.component.viewNotification}
-                  </span>
-                </button>
-
                 {/* Updated Profile Menu */}
                 <Menu as="div" className="relative ml-4">
                   <MenuButton className="flex items-center">
@@ -425,13 +415,6 @@ function Navbar() {
                   {user?.email}
                 </div>
               </div>
-              <button
-                type="button"
-                className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">{en.component.viewNotification}</span>
-              </button>
             </div>
             {/* Menu Items */}
             <div className="mt-3 space-y-1 px-2">

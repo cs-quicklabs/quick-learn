@@ -26,7 +26,7 @@ const LessonHeader = memo(
   }) => (
     <div className="px-4 mb-8 text-center sm:px-6 lg:px-8">
       <div className="items-baseline">
-        <h1 className="text-4xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
+        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
           {name}
         </h1>
         {showCreatedBy && (
@@ -43,7 +43,7 @@ const LessonHeader = memo(
 LessonHeader.displayName = 'LessonHeader';
 
 const LessonContent = memo(({ content }: { content: string }) => (
-  <article className="lesson-content flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-4 md:px-10 py-4 mb-8">
+  <article className="lesson-content flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-8 md:px-10 py-4 mb-8">
     <div
       className="lesson-viewer"
       // eslint-disable-next-line react/no-danger

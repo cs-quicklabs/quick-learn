@@ -167,7 +167,7 @@ function RoadmapDetails() {
       </motion.div>
 
       <motion.div className="items-baseline mb-8" variants={headerVariants}>
-        <h1 className="text-center text-4xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
+        <h1 className="text-center text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
           {roadmapData.name}
         </h1>
         <p className="mt-1 ml-1 text-sm text-gray-500 truncate text-center">

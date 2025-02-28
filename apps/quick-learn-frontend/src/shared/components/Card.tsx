@@ -51,14 +51,14 @@ const CardContent: FC<CardContentProps> = ({
         <h1
           ref={titleRef}
           id="message-heading"
-          className="text-sm md:text-base font-medium first-letter:uppercase text-gray-900 line-clamp-3 group-hover:underline mb-2"
+          className="text-sm md:text-base font-medium first-letter:uppercase text-gray-900  line-clamp-2 md:line-clamp-3 group-hover:underline mb-2"
         >
           {title}
         </h1>
         <p
           className={`text-xs md:text-sm font-normal first-letter:uppercase  text-gray-500 ${
             isLongTitle
-              ? 'line-clamp-2 md:line-clamp-1'
+              ? 'line-clamp-3 md:line-clamp-1'
               : 'line-clamp-3 md:line-clamp-2'
           } text-sm whitespace-pre-line`}
           // eslint-disable-next-line react/no-danger

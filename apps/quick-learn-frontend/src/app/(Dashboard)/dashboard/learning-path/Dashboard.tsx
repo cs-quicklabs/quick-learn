@@ -19,6 +19,7 @@ import {
   calculateRoadmapProgress,
   calculateCourseProgress,
 } from '@src/utils/helpers';
+import SmallScreenTabs from '@src/shared/components/SmallScreenTabs';
 
 const AnimatedProgressCard = motion.create(ProgressCard);
 
@@ -57,38 +58,10 @@ function Dashboard() {
     return <DashboardSkeleton />;
   }
 
-  const renderTabsForSmallScreen = () => (
-    <div className="md:hidden w-[318px] border border-gray-200 bg-gray-100 ml-6 mt-[85px] mb-5 rounded-md">
-      <div className="max-w-full px-1 mx-auto">
-        <div className="flex space-x-4">
-          <button
-            type="button"
-            className={`flex items-center px-3 py-2 text-base font-medium ${
-              activeTab === 'roadmaps'
-                ? 'bg-white rounded-md text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-            onClick={() => setActiveTab('roadmaps')}
-          >
-            {en.common.myRoadmaps}{' '}
-            <span className="text-sm ml-1"> ({roadmaps.length})</span>
-          </button>
-          <button
-            type="button"
-            className={`flex items-center px-3 py-2 text-base font-medium ${
-              activeTab === 'courses'
-                ? 'bg-white rounded-md text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-            onClick={() => setActiveTab('courses')}
-          >
-            {en.common.myCourses}{' '}
-            <span className="text-sm ml-1"> ({courses.length})</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  const tabs = [
+    { id: 'roadmaps', label: en.common.myRoadmaps, count: roadmaps.length },
+    { id: 'courses', label: en.common.myCourses, count: courses.length }
+  ];
 
   const renderRoadmapsSection = () => (
     <div className={`${activeTab === 'courses' ? 'hidden md:block' : 'block'}`}>
@@ -229,7 +202,14 @@ function Dashboard() {
       transition={{ duration: 0.5 }}
       className="bg-gray-50 relative z-0 flex-1 min-h-0 focus:outline-none"
     >
-      {renderTabsForSmallScreen()}
+
+      <div className=" mt-[85px] mb-5 mx-6"> 
+      <SmallScreenTabs 
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        tabs={tabs}
+      />
+      </div>
       {renderRoadmapsSection()}
       {renderCoursesSection()}
     </motion.div>
