@@ -221,7 +221,9 @@ const AssignDataModal: FC<Props> = ({
                               className="relative flex items-center justify-between text-black bg-transparent focus:ring-0 [&>svg]:hidden px-3 py-4"
                               onClick={() => handleAccordionChange(ele.name)}
                             >
-                              <span className="flex-grow capitalize">{ele.name}</span>
+                              <span className="flex-grow capitalize">
+                                {ele.name}
+                              </span>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"

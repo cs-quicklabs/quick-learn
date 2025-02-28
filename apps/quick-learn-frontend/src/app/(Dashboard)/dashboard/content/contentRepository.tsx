@@ -99,9 +99,17 @@ function ContentRepository() {
     return <ContentRepositorySkeleton />;
   }
 
-   const tabs = [
-    { id: 'roadmaps', label: en.contentRepository.allRoadmaps, count: roadmaps.length || 0 },
-    { id: 'courses', label: en.contentRepository.allCourses, count: courses.length }
+  const tabs = [
+    {
+      id: 'roadmaps',
+      label: en.contentRepository.allRoadmaps,
+      count: roadmaps.length || 0,
+    },
+    {
+      id: 'courses',
+      label: en.contentRepository.allCourses,
+      count: courses.length,
+    },
   ];
 
   return (
@@ -123,9 +131,9 @@ function ContentRepository() {
             {en.contentRepository.courses})
           </p>
         </div>
-        
+
         {/* Small screen tabs */}
-        <SmallScreenTabs 
+        <SmallScreenTabs
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           tabs={tabs}

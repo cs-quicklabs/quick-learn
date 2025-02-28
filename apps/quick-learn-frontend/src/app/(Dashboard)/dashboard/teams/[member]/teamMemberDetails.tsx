@@ -192,8 +192,12 @@ function TeamMemberDetails() {
   const hasCourses = allCourses.length > 0;
 
   const tabs = [
-    { id: 'roadmaps', label: en.common.roadmaps, count: member?.assigned_roadmaps?.length || 0 },
-    { id: 'courses', label: en.common.courses, count: allCourses.length }
+    {
+      id: 'roadmaps',
+      label: en.common.roadmaps,
+      count: member?.assigned_roadmaps?.length || 0,
+    },
+    { id: 'courses', label: en.common.courses, count: allCourses.length },
   ];
 
   if (isPageLoading && !openAssignModal) return <TeamMemberDetailsSkeleton />;
@@ -285,7 +289,7 @@ function TeamMemberDetails() {
         </div>
 
         {/* Small Screen Tabs */}
-        <SmallScreenTabs 
+        <SmallScreenTabs
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           tabs={tabs}

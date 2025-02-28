@@ -13,10 +13,10 @@ interface SmallScreenTabsProps {
   readonly tabs: ReadonlyArray<Tab>;
 }
 
-function SmallScreenTabs({ 
-  activeTab, 
-  setActiveTab, 
-  tabs 
+function SmallScreenTabs({
+  activeTab,
+  setActiveTab,
+  tabs,
 }: SmallScreenTabsProps) {
   return (
     <section className="md:hidden border border-gray-200 bg-gray-100 mt-10 mb-5 rounded-md">
@@ -33,8 +33,7 @@ function SmallScreenTabs({
               }`}
               onClick={() => setActiveTab(tab.id)}
             >
-              {tab.label}{' '}
-              <span className="text-sm ml-1"> ({tab.count})</span>
+              {tab.label} <span className="text-sm ml-1"> ({tab.count})</span>
             </button>
           ))}
         </div>

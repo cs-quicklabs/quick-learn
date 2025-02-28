@@ -60,7 +60,7 @@ function Dashboard() {
 
   const tabs = [
     { id: 'roadmaps', label: en.common.myRoadmaps, count: roadmaps.length },
-    { id: 'courses', label: en.common.myCourses, count: courses.length }
+    { id: 'courses', label: en.common.myCourses, count: courses.length },
   ];
 
   const renderRoadmapsSection = () => (
@@ -202,13 +202,12 @@ function Dashboard() {
       transition={{ duration: 0.5 }}
       className="bg-gray-50 relative z-0 flex-1 min-h-0 focus:outline-none"
     >
-
-      <div className=" mt-[85px] mb-5 mx-6"> 
-      <SmallScreenTabs 
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        tabs={tabs}
-      />
+      <div className=" mt-[85px] mb-5 mx-6">
+        <SmallScreenTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          tabs={tabs}
+        />
       </div>
       {renderRoadmapsSection()}
       {renderCoursesSection()}
