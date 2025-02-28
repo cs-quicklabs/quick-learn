@@ -4,7 +4,11 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { BasicCrudService } from '@src/common/services';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
-import { getLastMonthRange, getLastWeekRange } from '@quick-learn/shared';
+import {
+  getLastMonthRange,
+  getLastQuarterRange,
+  getLastWeekRange,
+} from '@quick-learn/shared';
 import { CourseService } from '../course/course.service';
 import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
 @Injectable()
@@ -202,14 +206,20 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     let dateToFindFrom;
     if (type === LeaderboardTypeEnum.MONTHLY) {
       dateToFindFrom = getLastMonthRange();
-    } else {
+    } else if (type === LeaderboardTypeEnum.WEEKLY) {
       dateToFindFrom = getLastWeekRange();
+    } else {
+      dateToFindFrom = getLastQuarterRange();
     }
     //get all user with
     const allUsers = await this.getAllUserProgressData(dateToFindFrom);
 
     const completedLessonsData =
       await this.getAllUserCompletedLessonData(dateToFindFrom);
+
+    console.log('allUser', allUsers);
+    console.log('completedLesson', completedLessonsData);
+    console.log(dateToFindFrom);
 
     // return formattedData;
     const completedLessonsMap = new Map(
@@ -260,6 +270,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
           .andWhere('userLessonProgress.lesson_id IN (:...lessonIds)', {
             lessonIds: lessonIdsIndex,
           })
+          .andWhere('userLessonProgress.deleted_at IS NULL')
           .getMany();
         const totalOpeningTime = completedLessons
           .map((completedLesson) => {

@@ -31,7 +31,7 @@ export class LeaderboardCronService {
     });
   }
 
-  @Cron('0 8 * * 1', {
+  @Cron('0 6 * * 1', {
     name: 'sendWeeklyLeaderboardEmail',
     timeZone: CRON_TIMEZONE,
     disabled: process.env.ENV !== EnvironmentEnum.Production,
@@ -40,7 +40,7 @@ export class LeaderboardCronService {
     await this.sendLeaderboardEmail(LeaderboardTypeEnum.WEEKLY);
   }
 
-  @Cron('0 6 1 * *', {
+  @Cron('0 7 1 * *', {
     name: 'sendMonthlyLeaderboardEmail',
     timeZone: CRON_TIMEZONE,
     disabled: process.env.ENV !== EnvironmentEnum.Production,
@@ -49,11 +49,24 @@ export class LeaderboardCronService {
     await this.sendLeaderboardEmail(LeaderboardTypeEnum.MONTHLY);
   }
 
+  @Cron('0 8 1 */3 *', {
+    //At 08:00 on day-of-month 1 in every 3rd month.
+    name: 'sendQuarterlyLeaderboardEmail',
+    timeZone: CRON_TIMEZONE,
+    disabled: process.env.ENV !== EnvironmentEnum.Production,
+  })
+  async sendQuarterlyLeaderboardEmail() {
+    await this.sendLeaderboardEmail(LeaderboardTypeEnum.QUARTERLY);
+  }
+
   async sendLeaderboardEmail(type: LeaderboardTypeEnum) {
     let skip = 0;
     let processedCount = 0;
-
-    await this.leaderboardService.createLeaderboardRanking(type);
+    if (type === LeaderboardTypeEnum.QUARTERLY) {
+      await this.leaderboardService.createLeaderboardQuaterlyRanking(type);
+    } else {
+      await this.leaderboardService.createLeaderboardRanking(type);
+    }
 
     this.logger.log('Created new leaderboard entries');
 
@@ -108,7 +121,7 @@ export class LeaderboardCronService {
 
       if (userLeaderboardData) {
         const leaderboardData = {
-          type: type === 'weekly' ? 'Weekly' : 'Monthly',
+          type: type.charAt(0).toUpperCase() + type.slice(1).toLowerCase(),
           fullName: user.display_name,
           rank: userLeaderboardData.rank,
           totalMembers: totalMembers,

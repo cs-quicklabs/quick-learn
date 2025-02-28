@@ -4,8 +4,13 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import { PaginationService } from '@src/common/services';
-import { LeaderboardTypeEnum } from '@src/common/constants/constants';
+import {
+  LeaderboardTypeEnum,
+  LeaderboardQuarterEnum,
+} from '@src/common/constants/constants';
 import { en } from '@src/lang/en';
+import { QuarterlyLeaderboardEntity } from '@src/entities/quarterlyLeaderboard.entity';
+import Helpers from '@src/common/utils/helper';
 
 @Injectable()
 export class LeaderboardService extends PaginationService<Leaderboard> {
@@ -13,6 +18,8 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
   constructor(
     @InjectRepository(Leaderboard)
     repo: Repository<Leaderboard>,
+    @InjectRepository(QuarterlyLeaderboardEntity)
+    private readonly quaterlyRepository: Repository<QuarterlyLeaderboardEntity>,
     private readonly lessonProgressService: LessonProgressService,
   ) {
     super(repo);
@@ -43,6 +50,22 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
         lessons_completed_count: entry.lesson_completed_count,
         rank: index + 1,
         type,
+      })),
+    );
+  }
+
+  async createLeaderboardQuaterlyRanking(type: LeaderboardTypeEnum) {
+    const LeaderboardData =
+      await this.lessonProgressService.calculateLeaderBoardPercentage(type);
+    const lastQuarter = Helpers.getPreviousQuarter();
+    const currYear = new Date().getFullYear();
+    return this.quaterlyRepository.save(
+      LeaderboardData.map((entry, index) => ({
+        user_id: entry.user_id,
+        lessons_completed_count: entry.lesson_completed_count,
+        rank: index + 1,
+        quarter: lastQuarter,
+        year: currYear,
       })),
     );
   }

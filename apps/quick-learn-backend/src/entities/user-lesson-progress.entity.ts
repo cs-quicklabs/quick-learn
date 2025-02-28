@@ -26,6 +26,9 @@ export class UserLessonProgressEntity {
   @Column({ type: 'timestamp', nullable: true, name: 'completed_date' })
   completed_date: Date;
 
+  @Column({ type: 'timestamp', default: null })
+  deleted_at: Date;
+
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
