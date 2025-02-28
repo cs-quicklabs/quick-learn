@@ -307,4 +307,13 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
     return leaderBoardWithPercentage;
   }
+
+  async resetUserReadingHistory(userID: number) {
+    try {
+      await this.repository.softDelete({ user_id: userID });
+    } catch (error) {
+      console.error(`Error resetting history for user ${userID}`, error);
+      throw error;
+    }
+  }
 }

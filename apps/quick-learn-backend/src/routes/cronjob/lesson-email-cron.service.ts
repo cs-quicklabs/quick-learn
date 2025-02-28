@@ -209,9 +209,7 @@ export class LessonEmailService {
 
   private async resetUserReadingHistory(userID: number) {
     try {
-      await this.lessonProgressService.delete({
-        user_id: userID,
-      });
+      await this.lessonProgressService.resetUserReadingHistory(userID);
     } catch (error) {
       this.logger.error(`Error resetting history for user ${userID}`, error);
       throw error;
