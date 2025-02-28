@@ -57,7 +57,9 @@ const CardContent: FC<CardContentProps> = ({
         </h1>
         <p
           className={`text-xs md:text-sm font-normal first-letter:uppercase  text-gray-500 ${
-            isLongTitle ? 'line-clamp-1' : 'line-clamp-2'
+            isLongTitle
+              ? 'line-clamp-2 md:line-clamp-1'
+              : 'line-clamp-3 md:line-clamp-2'
           } text-sm whitespace-pre-line`}
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{

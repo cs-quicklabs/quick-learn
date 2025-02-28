@@ -58,7 +58,7 @@ function Dashboard() {
   }
 
   const renderTabsForSmallScreen = () => (
-    <div className="md:hidden w-[312px] border border-gray-200 bg-gray-100 ml-6 mt-[85px] mb-5 rounded-md">
+    <div className="md:hidden w-[318px] border border-gray-200 bg-gray-100 ml-6 mt-[85px] mb-5 rounded-md">
       <div className="max-w-full px-1 mx-auto">
         <div className="flex space-x-4">
           <button

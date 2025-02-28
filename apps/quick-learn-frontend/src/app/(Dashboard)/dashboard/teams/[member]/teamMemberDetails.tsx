@@ -277,7 +277,7 @@ function TeamMemberDetails() {
             </Tooltip>
           </div>
         </div>
-        <section className="md:hidden w-[255px] border border-gray-200 bg-gray-100 mt-5 mb-5 rounded-md">
+        <section className="md:hidden w-[261px] border border-gray-200 bg-gray-100 mt-5 mb-5 rounded-md">
           <div className="max-w-full px-1 mx-auto">
             <div className="flex space-x-4">
               <button
