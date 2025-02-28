@@ -217,10 +217,6 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     const completedLessonsData =
       await this.getAllUserCompletedLessonData(dateToFindFrom);
 
-    console.log('allUser', allUsers);
-    console.log('completedLesson', completedLessonsData);
-    console.log(dateToFindFrom);
-
     // return formattedData;
     const completedLessonsMap = new Map(
       completedLessonsData.map((data) => [data.userId, data]),
