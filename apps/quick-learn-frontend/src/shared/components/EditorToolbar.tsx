@@ -33,9 +33,7 @@ const EditorToolbar: FC<Props> = ({
   return (
     <div
       className={
-        'mx-auto my-4 px-4 sticky top-12 z-10 ' +
-        'flex flex-col md:flex-row rounded-full md:h-11 md:w-max ' +
-        'items-center gap-1 py-3 md:py-0 ' +
+        'mx-auto my-4 px-4 sticky top-12 z-10 flex flex-col md:flex-row rounded-full md:h-11 md:w-max items-center gap-1 py-3 md:py-0 ' +
         (isEditing
           ? 'bg-[#e2f0fe] ql-toolbar ql-snow'
           : 'bg-zinc-200 md:w-min ')
@@ -98,8 +96,7 @@ const EditorToolbar: FC<Props> = ({
       {/* Formatting tools section */}
       <div
         className={
-          'items-center w-full md:w-auto justify-center ' +
-          'md:border-l-2 md:border-l-white gap-1 px-2 md:mx-2 ' +
+          'items-center w-full md:w-auto justify-center md:border-l-2 md:border-l-white gap-1 px-2 md:mx-2 ' +
           (isEditing ? 'flex ' : 'hidden ') +
           (!isAdd ? 'md:border-r-2 md:border-r-white ' : ' ')
         }
@@ -128,7 +125,6 @@ const EditorToolbar: FC<Props> = ({
         <div
           className={
             'hidden md:flex items-center gap-2 text-white p-[4px] rounded-full ' +
-            // (isEditing ? 'flex ' : 'hidden ') +
             (isUpdating ? 'bg-amber-400 ' : 'bg-[#3070b9] ')
           }
         >
