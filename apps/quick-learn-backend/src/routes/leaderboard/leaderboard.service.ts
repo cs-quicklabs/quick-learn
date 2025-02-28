@@ -4,10 +4,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import { PaginationService } from '@src/common/services';
-import {
-  LeaderboardTypeEnum,
-  LeaderboardQuarterEnum,
-} from '@src/common/constants/constants';
+import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 import { en } from '@src/lang/en';
 import { QuarterlyLeaderboardEntity } from '@src/entities/quarterlyLeaderboard.entity';
 import Helpers from '@src/common/utils/helper';
@@ -55,10 +52,14 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
   }
 
   async createLeaderboardQuaterlyRanking(type: LeaderboardTypeEnum) {
+    const currYear = new Date().getFullYear();
+    const lastQuarter = Helpers.getPreviousQuarter();
+    await this.quaterlyRepository.delete({
+      quarter: lastQuarter,
+      year: currYear,
+    });
     const LeaderboardData =
       await this.lessonProgressService.calculateLeaderBoardPercentage(type);
-    const lastQuarter = Helpers.getPreviousQuarter();
-    const currYear = new Date().getFullYear();
     return this.quaterlyRepository.save(
       LeaderboardData.map((entry, index) => ({
         user_id: entry.user_id,

@@ -64,9 +64,8 @@ export class LeaderboardCronService {
     let processedCount = 0;
     if (type === LeaderboardTypeEnum.QUARTERLY) {
       await this.leaderboardService.createLeaderboardQuaterlyRanking(type);
-    } else {
-      await this.leaderboardService.createLeaderboardRanking(type);
     }
+    await this.leaderboardService.createLeaderboardRanking(type);
 
     this.logger.log('Created new leaderboard entries');
 

@@ -20,7 +20,7 @@ const getMedalEmoji = (rank: number, totalUser: number) => {
   if (rank === 2) return <span className="text-gray-500">🥈</span>;
   if (rank === 3) return <span className="text-red-500">🥉</span>;
   if (totalUser - rank < 5) {
-    //this will display the :thumbs down to approx. bottom 10% of user.
+    //this will display the thumbs down to approx. bottom 10% of user.
     return (
       <span
         className="text-gray-500 cursor-help relative group"
@@ -50,9 +50,12 @@ const LeaderboardTable = () => {
   const [monthlyLeaderboard, setMonthlyLeaderboard] = useState<
     LeaderboardData[]
   >([]);
+  const [quarterlyLeaderboard, setQuarterlyLeaderboard] = useState<
+    LeaderboardData[]
+  >([]);
   const params = useSearchParams();
-  const initalType = params.get('type');
-  const [type, setType] = useState(initalType ?? 'weekly');
+  const initialType = params.get('type');
+  const [type, setType] = useState(initialType ?? 'weekly');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,8 +79,17 @@ const LeaderboardTable = () => {
 
   // Memoize the current leaderboard based on type
   const currentLeaderboard = useMemo(() => {
-    return type === 'weekly' ? weeklyLeaderboard : monthlyLeaderboard;
-  }, [type, weeklyLeaderboard, monthlyLeaderboard]);
+    switch (type) {
+      case 'weekly':
+        return weeklyLeaderboard;
+      case 'monthly':
+        return monthlyLeaderboard;
+      case 'quarterly':
+        return quarterlyLeaderboard;
+      default:
+        return weeklyLeaderboard;
+    }
+  }, [type, weeklyLeaderboard, monthlyLeaderboard, quarterlyLeaderboard]);
 
   const fetchLeaderboardData = async (currentPage: number) => {
     setIsLoading(true);
@@ -90,8 +102,12 @@ const LeaderboardTable = () => {
         setWeeklyLeaderboard((prev) =>
           currentPage === 1 ? newData : [...prev, ...newData],
         );
-      } else {
+      } else if (type === 'monthly') {
         setMonthlyLeaderboard((prev) =>
+          currentPage === 1 ? newData : [...prev, ...newData],
+        );
+      } else if (type === 'quarterly') {
+        setQuarterlyLeaderboard((prev) =>
           currentPage === 1 ? newData : [...prev, ...newData],
         );
       }
@@ -109,7 +125,8 @@ const LeaderboardTable = () => {
     // Only fetch if we don't have data for this type
     if (
       (newType === 'weekly' && weeklyLeaderboard.length === 0) ||
-      (newType === 'monthly' && monthlyLeaderboard.length === 0)
+      (newType === 'monthly' && monthlyLeaderboard.length === 0) ||
+      (newType === 'quarterly' && quarterlyLeaderboard.length === 0)
     ) {
       fetchLeaderboardData(1);
     }
@@ -121,15 +138,15 @@ const LeaderboardTable = () => {
   }, [page, type]);
 
   const renderLeaderboard = () => {
-    const totalDivident = Math.round(total / 10);
+    const totalDivident = Math.max(1, Math.round(total / 10));
 
     return currentLeaderboard.map((user, index) => {
-      const isCurrentUser = currentUser?.id === user?.user?.id; // yellow line
+      const isCurrentUser = currentUser?.id === user?.user?.id;
       const isLastElement = index === currentLeaderboard.length - 1;
       const learningScore = 10 - Math.floor((user.rank - 1) / totalDivident);
       return (
         <tr
-          key={user.user_id}
+          key={user.user.id}
           ref={isLastElement ? lastElementRef : null}
           className={`bg-white border-b border-gray-200 hover:bg-gray-50 ${
             isCurrentUser ? 'bg-yellow-200 hover:bg-yellow-100' : ''
@@ -155,38 +172,30 @@ const LeaderboardTable = () => {
   };
 
   return (
-    <div className="relative overflow-x-auto border-t border-gray-200 shadow-md  overflow-y-auto sm:rounded-lg">
-      <div className=" text-xs font-bold md:flex space-x-1 rounded-lg  p-0.5 md:justify-between md:items-center ">
+    <div className="relative overflow-x-auto border-t border-gray-200 shadow-md overflow-y-auto sm:rounded-lg">
+      <div className="text-xs font-bold md:flex space-x-1 rounded-lg p-0.5 md:justify-between md:items-center">
         <div className="text-sm mb-2 ml-3 md:mb-0 text-gray-700">
           Records from {getRecords(type)}
         </div>
-        <div className="flex space-x-1 bg-slate-200 p-1 w-52 md:w-auto rounded-lg">
-          <button
-            type="button"
-            className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
-              type === 'weekly'
-                ? 'bg-blue-400 text-white'
-                : 'bg-gray-200 text-gray-500'
-            }`}
-            onClick={() => handleTypeChange('weekly')}
-          >
-            {en.leaderboard.weekly}
-          </button>
-          <button
-            type="button"
-            className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
-              type === 'monthly'
-                ? 'bg-blue-400 text-white'
-                : 'bg-gray-200 text-gray-500 '
-            }`}
-            onClick={() => handleTypeChange('monthly')}
-          >
-            {en.leaderboard.monthly}
-          </button>
+        <div className="flex w-full justify-between md:space-x-1 bg-slate-200 p-1  md:w-auto rounded-lg">
+          {(['weekly', 'monthly', 'quarterly'] as const).map((tabType) => (
+            <button
+              key={tabType}
+              type="button"
+              className={`group flex items-center justify-center py-2 px-4 rounded-md transition-colors duration-200 ${
+                type === tabType
+                  ? 'bg-blue-400 text-white'
+                  : 'bg-gray-200 text-gray-500'
+              }`}
+              onClick={() => handleTypeChange(tabType)}
+            >
+              {en.leaderboard[tabType]}
+            </button>
+          ))}
         </div>
       </div>
 
-      <table className="w-full text-sm text-left text-gray-500 ">
+      <table className="w-full text-sm text-left text-gray-500">
         <thead className="text-xs text-gray-700 border-t border-gray-200 uppercase bg-gray-50">
           <tr>
             {tableHeader.map((item) => (
@@ -211,7 +220,7 @@ const LeaderboardTable = () => {
         {currentLeaderboard.length === 0 && !isLoading && (
           <tbody>
             <tr>
-              <td colSpan={3} className="px-4 py-3 text-center text-gray-500">
+              <td colSpan={4} className="px-4 py-3 text-center text-gray-500">
                 {en.leaderboard.noDataFound}
               </td>
             </tr>
