@@ -7,8 +7,6 @@ import { LessonProgressService } from '../lesson-progress/lesson-progress.servic
 import { PaginationService } from '@src/common/services';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 import { en } from '@src/lang/en';
-import { QuarterlyLeaderboardEntity } from '@src/entities/quarterlyLeaderboard.entity';
-import Helpers from '@src/common/utils/helper';
 
 @Injectable()
 export class LeaderboardService extends PaginationService<Leaderboard> {
@@ -16,13 +14,10 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
   constructor(
     @InjectRepository(Leaderboard)
     repo: Repository<Leaderboard>,
-    @InjectRepository(QuarterlyLeaderboardEntity)
-    private readonly quarterlyRepository: Repository<QuarterlyLeaderboardEntity>,
     private readonly QuarterlyLeaderboardService: QuarterlyLeaderboardService,
     private readonly lessonProgressService: LessonProgressService,
   ) {
     super(repo);
-    this.quarterlyRepository = quarterlyRepository;
   }
 
   async findOne(id: number, type: LeaderboardTypeEnum) {
