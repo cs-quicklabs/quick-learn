@@ -3,15 +3,15 @@ import { MigrationInterface, QueryRunner, Table, TableColumn } from 'typeorm';
 
 export class Migration1740651805491 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // await queryRunner.addColumn(
-    //   'user_lesson_progress',
-    //   new TableColumn({
-    //     name: 'deleted_at',
-    //     type: 'timestamp',
-    //     isNullable: true,
-    //     default: null,
-    //   }),
-    // );
+    await queryRunner.addColumn(
+      'user_lesson_progress',
+      new TableColumn({
+        name: 'deleted_at',
+        type: 'timestamp',
+        isNullable: true,
+        default: null,
+      }),
+    );
 
     await queryRunner.createTable(
       new Table({
@@ -70,6 +70,6 @@ export class Migration1740651805491 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('quarterly_leaderboard');
-    // await queryRunner.dropColumn('user_lesson_progress', 'deleted_at');
+    await queryRunner.dropColumn('user_lesson_progress', 'deleted_at');
   }
 }
