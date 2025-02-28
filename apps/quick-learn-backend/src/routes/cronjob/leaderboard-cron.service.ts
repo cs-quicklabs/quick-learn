@@ -1,7 +1,5 @@
+import { QuarterlyLeaderboardService } from './../leaderboard/quarterly-leaderboard.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { Cron } from '@nestjs/schedule';
 import { CRON_TIMEZONE } from '@src/common/enum/daily_lesson.enum';
 import {
@@ -13,19 +11,14 @@ import { UsersService } from '@src/routes/users/users.service';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
-import { QuarterlyLeaderboardEntity } from '@src/entities';
-import Helpers from '@src/common/utils/helper';
 @Injectable()
 export class LeaderboardCronService {
   private frontendURL: string;
   private readonly logger = new Logger(LeaderboardCronService.name);
   private readonly BATCH_SIZE = 10;
   constructor(
-    @InjectRepository(Leaderboard)
-    private readonly leaderboardRepository: Repository<Leaderboard>,
     private readonly leaderboardService: LeaderboardService,
-    @InjectRepository(QuarterlyLeaderboardEntity)
-    private readonly quarterRepository: Repository<QuarterlyLeaderboardEntity>,
+    private readonly QuarterlyLeaderboardService: QuarterlyLeaderboardService,
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
@@ -68,7 +61,9 @@ export class LeaderboardCronService {
     let skip = 0;
     let processedCount = 0;
     if (type === LeaderboardTypeEnum.QUARTERLY) {
-      await this.leaderboardService.createLeaderboardQuaterlyRanking(type);
+      await this.QuarterlyLeaderboardService.createLeaderboardQuaterlyRanking(
+        type,
+      );
     } else {
       await this.leaderboardService.createLeaderboardRanking(type);
     }
@@ -108,37 +103,15 @@ export class LeaderboardCronService {
   }
 
   async getTotalMember(type: LeaderboardTypeEnum) {
-    if (type === LeaderboardTypeEnum.QUARTERLY)
-      return await this.quarterRepository.count({
-        where: {
-          quarter: Helpers.getPreviousQuarter(),
-          year: new Date().getFullYear(),
-        },
-      });
-    else
-      return await this.leaderboardRepository.count({
-        where: {
-          type: type,
-        },
-      });
+    return type === LeaderboardTypeEnum.QUARTERLY
+      ? this.QuarterlyLeaderboardService.findTotalMember()
+      : await this.leaderboardService.findTotalMember(type);
   }
 
   async getUser(type: LeaderboardTypeEnum, id: number) {
-    if (type === LeaderboardTypeEnum.QUARTERLY)
-      return await this.quarterRepository.findOne({
-        where: {
-          user_id: id,
-          quarter: Helpers.getPreviousQuarter(),
-          year: new Date().getFullYear(),
-        },
-      });
-    else
-      return await this.leaderboardRepository.findOne({
-        where: {
-          user_id: id,
-          type: type,
-        },
-      });
+    return type === LeaderboardTypeEnum.QUARTERLY
+      ? this.QuarterlyLeaderboardService.findOne(id)
+      : this.leaderboardService.findOne(id, type);
   }
 
   async generateLeaderboardEmail(

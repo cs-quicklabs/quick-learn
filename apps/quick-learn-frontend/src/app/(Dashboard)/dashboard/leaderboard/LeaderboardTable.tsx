@@ -86,8 +86,6 @@ const LeaderboardTable = () => {
   // Memoize the current leaderboard based on type
   const currentLeaderboard = useMemo(() => {
     switch (type) {
-      case 'weekly':
-        return weeklyLeaderboard;
       case 'monthly':
         return monthlyLeaderboard;
       case 'quarterly':

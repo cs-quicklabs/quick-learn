@@ -204,12 +204,16 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
   async getLeaderboardDataService(type: LeaderboardTypeEnum) {
     let dateToFindFrom;
-    if (type === LeaderboardTypeEnum.MONTHLY) {
-      dateToFindFrom = getLastMonthRange();
-    } else if (type === LeaderboardTypeEnum.WEEKLY) {
-      dateToFindFrom = getLastWeekRange();
-    } else {
-      dateToFindFrom = getLastQuarterRange();
+
+    switch (type) {
+      case LeaderboardTypeEnum.MONTHLY:
+        dateToFindFrom = getLastMonthRange();
+        break;
+      case LeaderboardTypeEnum.QUARTERLY:
+        dateToFindFrom = getLastQuarterRange();
+        break;
+      default:
+        dateToFindFrom = getLastWeekRange();
     }
     //get all user with
     const allUsers = await this.getAllUserProgressData(dateToFindFrom);
