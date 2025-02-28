@@ -135,7 +135,7 @@ function LessonDetails() {
             <span className="bg-[#166534] flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center  ">
               <MdInfo />
             </span>
-            <p>
+            <span>
               <span className="font-bold">
                 {en.myLearningPath.alreadyCompleted}
               </span>{' '}
@@ -147,7 +147,7 @@ function LessonDetails() {
               >
                 {en.myLearningPath.markAsUnread}
               </button>
-            </p>
+            </span>
           </p>
         </div>
       ) : (

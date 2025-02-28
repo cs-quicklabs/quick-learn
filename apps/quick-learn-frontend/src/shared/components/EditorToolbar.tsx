@@ -9,7 +9,6 @@ export const formats = [
   'italic',
   'blockquote',
   'list',
-  'bullet',
   'link',
   'image',
   'code-block',
@@ -33,46 +32,72 @@ const EditorToolbar: FC<Props> = ({
   return (
     <div
       className={
-        'mx-auto my-4 h-11 w-max px-4 sticky top-12 z-10 rounded-full flex flex-wrap items-center ' +
-        (isEditing ? 'bg-[#e2f0fe] ql-toolbar ql-snow' : 'bg-zinc-200 w-min')
+        'mx-auto my-4 px-4 sticky top-12 z-10 flex flex-col md:flex-row rounded-full md:h-11 md:w-max items-center gap-1 py-3 md:py-0 ' +
+        (isEditing
+          ? 'bg-[#e2f0fe] ql-toolbar ql-snow'
+          : 'bg-zinc-200 md:w-min ')
       }
       id="toolbar"
     >
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          className="custom-quill-button"
-          onClick={() => setIsEditing(false)}
-        >
-          <EyeIcon height={24} width={24} />
-        </button>
-        <label
-          htmlFor="toggle"
-          className="inline-flex items-center cursor-pointer"
-          aria-label="Toggle editing mode"
-        >
-          <input
-            id="toggle"
-            type="checkbox"
-            checked={isEditing}
-            onChange={() => setIsEditing(!isEditing)}
-            className="sr-only peer"
-          />
-          <div className="relative w-11 h-6 bg-gray-400 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#3070b9]" />
-        </label>
-        <button
-          type="button"
-          className="custom-quill-button"
-          onClick={() => setIsEditing(true)}
-        >
-          <PencilIcon height={24} width={24} />
-        </button>
+      {/* View/Edit toggle section with status icon on mobile */}
+      <div className="flex items-center gap-2 w-full md:w-auto justify-center md:justify-center">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="custom-quill-button"
+            onClick={() => setIsEditing(false)}
+          >
+            <EyeIcon height={24} width={24} />
+          </button>
+          <label
+            htmlFor="toggle"
+            className="inline-flex items-center cursor-pointer"
+            aria-label="Toggle editing mode"
+          >
+            <input
+              id="toggle"
+              type="checkbox"
+              checked={isEditing}
+              onChange={() => setIsEditing(!isEditing)}
+              className="sr-only peer"
+            />
+            <div className="relative w-11 h-6 bg-gray-400 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#3070b9]" />
+          </label>
+          <button
+            type="button"
+            className="custom-quill-button"
+            onClick={() => setIsEditing(true)}
+          >
+            <PencilIcon height={24} width={24} />
+          </button>
+        </div>
+
+        {/* Status indicator on mobile - placed in the first row */}
+        {!isAdd && isEditing && (
+          <div
+            className={
+              'flex md:hidden items-center gap-2 text-white p-[4px] rounded-full ' +
+              (isUpdating ? 'bg-amber-400 ' : 'bg-[#3070b9] ')
+            }
+          >
+            {isUpdating ? (
+              <ArrowPathIcon height={16} width={16} strokeWidth={3} />
+            ) : (
+              <CheckIcon height={16} width={16} strokeWidth={3} />
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Divider for mobile */}
+      {isEditing && <div className="w-full h-px bg-white md:hidden" />}
+
+      {/* Formatting tools section */}
       <div
         className={
-          'items-center border-l-2 border-l-white gap-1 px-2 mx-2 ' +
+          'items-center w-full md:w-auto justify-center md:border-l-2 md:border-l-white gap-1 px-2 md:mx-2 ' +
           (isEditing ? 'flex ' : 'hidden ') +
-          (!isAdd ? 'border-r-2 border-r-white ' : ' ')
+          (!isAdd ? 'md:border-r-2 md:border-r-white ' : ' ')
         }
       >
         <span className="ql-formats" style={{ margin: '0px' }}>
@@ -93,19 +118,15 @@ const EditorToolbar: FC<Props> = ({
           <button type="button" className="ql-image" />
         </span>
       </div>
-      {/* Status indicator section */}
-      {!isAdd && (
+
+      {/* Status indicator for desktop */}
+      {!isAdd && isEditing && (
         <div
           className={
-            'flex items-center gap-2 text-white p-[4px] rounded-full ' +
-            (isEditing ? 'flex ' : 'hidden ') +
+            'hidden md:flex items-center gap-2 text-white p-[4px] rounded-full ' +
             (isUpdating ? 'bg-amber-400 ' : 'bg-[#3070b9] ')
           }
         >
-          {/* UnComment when the quill issues has been fixed */}
-          {/* <button typeof="button" onClick={undo}>
-            <UndoWithTime className="h-5 w-5" />
-          </button> */}
           {isUpdating ? (
             <ArrowPathIcon height={16} width={16} strokeWidth={3} />
           ) : (

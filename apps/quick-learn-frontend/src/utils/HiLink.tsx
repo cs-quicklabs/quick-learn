@@ -19,6 +19,7 @@ export const SuperLink = forwardRef<
   return (
     <Link
       {...props}
+      scroll={false}
       ref={ref}
       prefetch={false}
       onMouseEnter={(e) => {

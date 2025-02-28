@@ -42,6 +42,12 @@ const tableHeader = [
   en.leaderboard.leaderboardLessonsCompleted,
   en.leaderboard.learningScore,
 ];
+const mobileHeader = [
+  en.leaderboard.leaderboardUser,
+  en.leaderboard.leaderboardRank,
+  en.leaderboard.lessoncompleted,
+  en.leaderboard.score,
+];
 
 const LeaderboardTable = () => {
   const [weeklyLeaderboard, setWeeklyLeaderboard] = useState<LeaderboardData[]>(
@@ -152,10 +158,10 @@ const LeaderboardTable = () => {
             isCurrentUser ? 'bg-yellow-200 hover:bg-yellow-100' : ''
           }`}
         >
-          <td className="px-4 py-2 font-medium text-slate-900 capitalize">
+          <td className="px-4 py-2 font-medium text-slate-900 capitalize whitespace-nowrap">
             {user.user.first_name} {user.user.last_name}
           </td>
-          <td className="pl-6 py-2">
+          <td className="pl-6 py-2 whitespace-nowrap">
             {user.rank} {getMedalEmoji(user.rank, total)}
           </td>
           <td className="pl-10 md:pl-16 py-2 whitespace-nowrap">
@@ -197,20 +203,22 @@ const LeaderboardTable = () => {
 
       <table className="w-full text-sm text-left text-gray-500">
         <thead className="text-xs text-gray-700 border-t border-gray-200 uppercase bg-gray-50">
-          <tr>
-            {tableHeader.map((item) => (
-              <th
-                key={item}
-                className={`px-4 py-3 whitespace-nowrap ${
-                  item === en.leaderboard.leaderboardUser
-                    ? 'w-[40%]'
-                    : 'w-[20%]'
-                }`}
-              >
-                {item}
-              </th>
-            ))}
-          </tr>
+          {['hidden md:table-row', 'md:hidden'].map((className, index) => (
+            <tr key={index} className={className}>
+              {(index === 0 ? tableHeader : mobileHeader).map((item) => (
+                <th
+                  key={item}
+                  className={`px-4 py-3 whitespace-nowrap ${
+                    item === en.leaderboard.leaderboardUser
+                      ? 'w-[40%]'
+                      : 'w-[20%]'
+                  }`}
+                >
+                  {item}
+                </th>
+              ))}
+            </tr>
+          ))}
         </thead>
         {isLoading && currentLeaderboard.length === 0 ? (
           <SkeletonLoader />

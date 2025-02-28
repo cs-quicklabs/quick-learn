@@ -264,7 +264,7 @@ const ActivityGraph: React.FC<Props> = ({
         <div id="myTabContent">
           {selectedTab === 0 && (
             <div id="brandi" role="tabpanel" aria-labelledby="brand-tab">
-              <div className="max-h-[230px] overflow-y-auto scrollbar-width: 3;">
+              <div className="max-h-[230px] overflow-y-auto">
                 {userActivityList && userActivityList.length ? (
                   <ol className="relative ms-3 border-s border-dashed border-gray-200 dark:border-gray-700">
                     {userActivityList.map(
@@ -304,7 +304,7 @@ const ActivityGraph: React.FC<Props> = ({
             </div>
           )}
           {selectedTab === 1 && (
-            <div className="grid place-items-center">
+            <div className="grid place-items-center overflow-x-auto ">
               <div className="flex items-start gap-4">
                 <div className="flex flex-col gap-2 pt-6">
                   <h6 className="h-4 text-xs">Sun</h6>
