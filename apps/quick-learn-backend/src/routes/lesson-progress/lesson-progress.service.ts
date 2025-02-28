@@ -264,14 +264,15 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
         const completedLessons = await this.repository
           .createQueryBuilder('userLessonProgress')
-          .where('userLessonProgress.user_id =:userId', {
+          .withDeleted()
+          .where('userLessonProgress.user_id = :userId', {
             userId: entry.user_id,
           })
           .andWhere('userLessonProgress.lesson_id IN (:...lessonIds)', {
             lessonIds: lessonIdsIndex,
           })
-          .andWhere('userLessonProgress.deleted_at IS NULL')
-          .getMany();
+          .getRawMany();
+
         const totalOpeningTime = completedLessons
           .map((completedLesson) => {
             const lessonIndex = entry.lessonIds.find(
