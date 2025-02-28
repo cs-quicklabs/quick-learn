@@ -45,6 +45,74 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
 
     const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border border-gray-100 group relative transition-shadow duration-200 w-full ${className}`;
 
+    function renderContent() {
+      if (isCompleted) {
+        return (
+          <div className="text-xs text-gray-500 flex gap-2 items-center font-medium">
+            <span className="bg-green-600 flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center">
+              <MdOutlineDone />
+            </span>
+            {en.component.CompletedOn}{' '}
+            {format(isCompleted.completed_date, DateFormats.shortDate)}
+          </div>
+        );
+      }
+
+      if (isLesson) {
+        return (
+          <div className="text-xs text-gray-500 font-xs font-medium">
+            Pending
+          </div>
+        );
+      }
+
+      return (
+        <>
+          <p className="font-bold text-xs text-gray-500 pb-2">
+            {percentage === 0 ? (
+              'Not started yet'
+            ) : (
+              <>
+                {percentage}% {en.common.complete}
+              </>
+            )}
+          </p>
+          <div className="overflow-hidden rounded-full bg-gray-200">
+            <div
+              className="h-2 rounded-full transition-[width] duration-1000 ease-in-out relative overflow-hidden"
+              style={{ width: `${animatedWidth}%` }}
+            >
+              <div
+                className="absolute inset-0 h-full w-full"
+                style={{
+                  background: `linear-gradient(
+                        90deg,
+                        rgba(22, 163, 74, 1) 0%,
+                        rgba(34, 197, 94, 1) 45%,
+                        rgba(34, 197, 94, 1) 55%,
+                        rgba(22, 163, 74, 1) 100%
+                      )`,
+                  backgroundSize: '200% 100%',
+                  animation:
+                    percentage > 0 ? 'shimmer 2s infinite linear' : 'none',
+                }}
+              />
+            </div>
+          </div>
+          <style jsx>{`
+            @keyframes shimmer {
+              0% {
+                background-position: 100% 0;
+              }
+              100% {
+                background-position: -100% 0;
+              }
+            }
+          `}</style>
+        </>
+      );
+    }
+
     return (
       <SuperLink
         href={link}
@@ -54,80 +122,18 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
       >
         <div className="flex flex-col h-48">
           <div className="flex-1 py-4 px-6 text-gray-900 overflow-hidden">
-            <h3 className="font-medium first-letter:uppercase text-gray-900 line-clamp-2 group-hover:underline">
+            <h3 className="text-sm md:text-base font-medium first-letter:uppercase text-gray-900 line-clamp-2 group-hover:underline">
               {name}
             </h3>
             <p
-              className="font-normal first-letter:uppercase text-sm text-gray-500 line-clamp-3 mt-2"
+              className=" text-xs md:text-sm font-normal first-letter:uppercase text-gray-500 line-clamp-3 mt-2"
               // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{
                 __html: title,
               }}
             />
           </div>
-          <div className="px-6 pb-4">
-            {!isCompleted ? (
-              isLesson ? (
-                <div className="text-xs text-gray-500 font-xs font-medium">
-                  Pending
-                </div>
-              ) : (
-                <>
-                  <p className="font-bold text-xs text-gray-500 pb-2">
-                    {percentage === 0 ? (
-                      'Not started yet'
-                    ) : (
-                      <>
-                        {percentage}% {en.common.complete}
-                      </>
-                    )}
-                  </p>
-                  <div className="overflow-hidden rounded-full bg-gray-200">
-                    <div
-                      className="h-2 rounded-full transition-[width] duration-1000 ease-in-out relative overflow-hidden"
-                      style={{ width: `${animatedWidth}%` }}
-                    >
-                      <div
-                        className="absolute inset-0 h-full w-full"
-                        style={{
-                          background: `linear-gradient(
-                        90deg,
-                        rgba(22, 163, 74, 1) 0%,
-                        rgba(34, 197, 94, 1) 45%,
-                        rgba(34, 197, 94, 1) 55%,
-                        rgba(22, 163, 74, 1) 100%
-                      )`,
-                          backgroundSize: '200% 100%',
-                          animation:
-                            percentage > 0
-                              ? 'shimmer 2s infinite linear'
-                              : 'none',
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <style jsx>{`
-                    @keyframes shimmer {
-                      0% {
-                        background-position: 100% 0;
-                      }
-                      100% {
-                        background-position: -100% 0;
-                      }
-                    }
-                  `}</style>
-                </>
-              )
-            ) : (
-              <div className="text-xs text-gray-500 flex gap-2 items-center font-medium">
-                <span className="bg-green-600 flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center">
-                  <MdOutlineDone />
-                </span>
-                {en.component.CompletedOn}{' '}
-                {format(isCompleted.completed_date, DateFormats.shortDate)}
-              </div>
-            )}
-          </div>
+          <div className="px-6 pb-4">{renderContent()}</div>
         </div>
       </SuperLink>
     );

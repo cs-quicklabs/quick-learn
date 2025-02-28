@@ -201,6 +201,26 @@ function Navbar() {
     );
   };
 
+  function renderProfileIcon() {
+    if (user?.profile_image) {
+      return (
+        <Image
+          alt=""
+          src={user.profile_image}
+          className="h-10 w-10 rounded-full object-cover"
+          width={40}
+          height={40}
+        />
+      );
+    }
+
+    return (
+      <span className="text-lg font-medium">
+        {getInitials(user?.first_name, user?.last_name)}
+      </span>
+    );
+  }
+
   return (
     <>
       <ConformationModal
@@ -299,19 +319,7 @@ function Navbar() {
                       className="h-10 w-10 bg-gray-400 rounded-full flex items-center justify-center"
                       id="headerProfileImage"
                     >
-                      {user?.profile_image ? (
-                        <Image
-                          alt=""
-                          src={user.profile_image}
-                          className="h-10 w-10 rounded-full object-cover"
-                          width={40}
-                          height={40}
-                        />
-                      ) : (
-                        <span className="text-lg font-medium">
-                          {getInitials(user?.first_name, user?.last_name)}
-                        </span>
-                      )}
+                      {renderProfileIcon()}
                     </div>
                   </MenuButton>
 
@@ -406,17 +414,11 @@ function Navbar() {
           </div>
           <div className="border-t border-gray-700 pb-3 pt-4">
             <div className="flex items-center px-5">
-              <div className="flex-shrink-0">
-                <Image
-                  alt=""
-                  src={user?.profile_image ?? '/placeholder.png'}
-                  className="h-10 w-10 rounded-full object-cover"
-                  height={40}
-                  width={40}
-                />
+              <div className="flex items-center justify-center h-10 w-10 bg-gray-400 rounded-full">
+                {renderProfileIcon()}
               </div>
               <div className="ml-3">
-                <div className="text-base font-medium text-white">
+                <div className="text-base font-medium text-white first-letter:uppercase">
                   {user?.first_name} {user?.last_name}
                 </div>
                 <div className="text-sm font-medium text-gray-400">

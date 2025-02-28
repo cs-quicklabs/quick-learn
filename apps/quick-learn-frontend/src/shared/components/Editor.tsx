@@ -148,7 +148,7 @@ const Editor: FC<Props> = ({
           formats={formats}
           readOnly={!isEditing}
           placeholder={placeholder}
-          className="h-full"
+          className="h-full mb-12"
           style={{ lineHeight: '2rem' }}
         />
       </div>
