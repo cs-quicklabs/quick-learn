@@ -1,19 +1,19 @@
 import { QuarterlyLeaderboardService } from './quarterly-leaderboard.service';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
-import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import { PaginationService } from '@src/common/services';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 import { en } from '@src/lang/en';
+import { LeaderboardEntity } from '@src/entities/leaderboard.entity';
 
 @Injectable()
-export class LeaderboardService extends PaginationService<Leaderboard> {
+export class LeaderboardService extends PaginationService<LeaderboardEntity> {
   private logger = new Logger(LeaderboardService.name);
   constructor(
-    @InjectRepository(Leaderboard)
-    repo: Repository<Leaderboard>,
+    @InjectRepository(LeaderboardEntity)
+    repo: Repository<LeaderboardEntity>,
     private readonly QuarterlyLeaderboardService: QuarterlyLeaderboardService,
     private readonly lessonProgressService: LessonProgressService,
   ) {
@@ -44,7 +44,6 @@ export class LeaderboardService extends PaginationService<Leaderboard> {
 
       case LeaderboardTypeEnum.QUARTERLY:
         return this.QuarterlyLeaderboardService.getLastQuarterRanking(
-          type,
           page,
           limit,
         );

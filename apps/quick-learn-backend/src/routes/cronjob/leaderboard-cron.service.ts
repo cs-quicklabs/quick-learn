@@ -11,6 +11,7 @@ import { UsersService } from '@src/routes/users/users.service';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from '@src/common/modules/email/email.service';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
+import { LeaderboardEntity, QuarterlyLeaderboardEntity } from '@src/entities';
 @Injectable()
 export class LeaderboardCronService {
   private frontendURL: string;
@@ -18,7 +19,7 @@ export class LeaderboardCronService {
   private readonly BATCH_SIZE = 10;
   constructor(
     private readonly leaderboardService: LeaderboardService,
-    private readonly QuarterlyLeaderboardService: QuarterlyLeaderboardService,
+    private readonly quarterlyLeaderboardService: QuarterlyLeaderboardService,
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
@@ -48,7 +49,6 @@ export class LeaderboardCronService {
 
   @Cron('0 8 1 1,4,7,10 *', {
     //At 08:00 on day-of-month 1 in every 3rd month.
-
     name: 'sendQuarterlyLeaderboardEmail',
     timeZone: CRON_TIMEZONE,
     disabled: process.env.ENV !== EnvironmentEnum.Production,
@@ -61,7 +61,7 @@ export class LeaderboardCronService {
     let skip = 0;
     let processedCount = 0;
     if (type === LeaderboardTypeEnum.QUARTERLY) {
-      await this.QuarterlyLeaderboardService.createLeaderboardQuaterlyRanking(
+      await this.quarterlyLeaderboardService.createLeaderboardQuaterlyRanking(
         type,
       );
     } else {
@@ -102,15 +102,18 @@ export class LeaderboardCronService {
     }
   }
 
-  async getTotalMember(type: LeaderboardTypeEnum) {
+  getTotalMember(type: LeaderboardTypeEnum): Promise<number> {
     return type === LeaderboardTypeEnum.QUARTERLY
-      ? this.QuarterlyLeaderboardService.findTotalMember()
-      : await this.leaderboardService.findTotalMember(type);
+      ? this.quarterlyLeaderboardService.findTotalMember()
+      : this.leaderboardService.findTotalMember(type);
   }
 
-  async getUser(type: LeaderboardTypeEnum, id: number) {
+  getUser(
+    type: LeaderboardTypeEnum,
+    id: number,
+  ): Promise<QuarterlyLeaderboardEntity> | Promise<LeaderboardEntity> {
     return type === LeaderboardTypeEnum.QUARTERLY
-      ? this.QuarterlyLeaderboardService.findOne(id)
+      ? this.quarterlyLeaderboardService.findOne(id)
       : this.leaderboardService.findOne(id, type);
   }
 
