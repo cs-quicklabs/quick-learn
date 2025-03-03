@@ -58,7 +58,7 @@ export default function Layout({
   const isFullWidth = fullWidthPaths.some((path) => pathname?.startsWith(path));
   const mainClasses = isFullWidth
     ? 'mt-16 w-full'
-    : 'max-w-screen-2xl mx-auto mt-16 py-3 px-4 sm:py-5 lg:px-8';
+    : 'max-w-screen-2xl mx-auto mt-16 py-3 md:px-4 sm:py-5 lg:px-8';
 
   return (
     <div className="w-full">

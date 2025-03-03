@@ -69,7 +69,7 @@ function Dashboard() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="px-8 py-8 hidden md:flex md::items-center md:justify-between sm:px-6 lg:px-8"
+        className="hidden px-8 py-8 md:flex md::items-center md:justify-between sm:px-6 lg:px-8"
       >
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
           <h1 className="text-2xl md:text-3xl font-bold leading-tight">

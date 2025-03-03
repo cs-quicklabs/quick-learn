@@ -234,10 +234,10 @@ function TeamMemberDetails() {
 
       {/* Rest of the component remains the same */}
       <Breadcrumb links={links} />
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto  px-6 md:px-4">
         {/* Member Header */}
         <div className="flex flex-col items-center justify-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2 text-center">
             {member?.first_name} {member?.last_name}
           </h1>
           <p className="text-sm text-gray-500">

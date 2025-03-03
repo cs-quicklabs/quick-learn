@@ -147,9 +147,9 @@ const ViewLesson: FC<Props> = ({
   const content = lesson?.new_content || lesson?.content || '';
 
   return (
-    <>
+    <div className="-mt-8">
       <Breadcrumb links={links} disabled={disableLink} />
-      <div className="-mt-8">
+      <div>
         <LessonHeader
           name={lesson?.name}
           firstName={lesson?.created_by_user?.first_name}
@@ -188,7 +188,7 @@ const ViewLesson: FC<Props> = ({
 
         {isPending && <PendingAlert />}
       </div>
-    </>
+    </div>
   );
 };
 

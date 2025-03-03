@@ -335,10 +335,10 @@ function Lesson() {
   }, [lessonId, roadmapId, courseId, router]);
 
   return (
-    <>
+    <div className="-mt-4">
       {(loading || isArchiving) && <FullPageLoader />}
       <Breadcrumb links={links} />
-      <div className="mx-auto max-w-screen-lg bg-white -mt-4">
+      <div className="mx-auto max-w-screen-lg bg-white">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Controller
             name="name"
@@ -396,7 +396,7 @@ function Lesson() {
           onConfirm={handleArchiveLesson}
         />
       </div>
-    </>
+    </div>
   );
 }
 

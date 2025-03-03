@@ -166,7 +166,10 @@ function RoadmapDetails() {
         <Breadcrumb links={links} />
       </motion.div>
 
-      <motion.div className="items-baseline mb-8" variants={headerVariants}>
+      <motion.div
+        className="items-baseline mb-3 md:mb-8"
+        variants={headerVariants}
+      >
         <h1 className="text-center text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
           {roadmapData.name}
         </h1>

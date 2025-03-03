@@ -38,8 +38,8 @@ const CardContent: FC<CardContentProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col h-48 ${
-        isLongTitle ? 'p-4' : 'py-4 px-6'
+      className={`flex flex-col h-[193.5px] md:h-48 ${
+        isLongTitle ? ' px-6 md:px-4 py-4' : 'py-4 px-6'
       } text-gray-900`}
     >
       {isCreateCard && (
@@ -68,7 +68,7 @@ const CardContent: FC<CardContentProps> = ({
         />
       </div>
 
-      <div className={`mt-auto ${isLongTitle ? 'space-y-0.5' : 'space-y-1'}`}>
+      <div className={` mt-auto ${isLongTitle ? 'space-y-0.5' : 'space-y-1'}`}>
         {stats && !isCreateCard && (
           <p className="font-normal text-[10px] md:text-xs first-letter:uppercase text-gray-500">
             {showWarning ? (
