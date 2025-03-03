@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import Helpers from '@src/common/utils/helper';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
+import { PaginatedResult } from '@src/common/interfaces';
 
 export class QuarterlyLeaderboardService extends PaginationService<QuarterlyLeaderboardEntity> {
   constructor(
@@ -15,25 +16,25 @@ export class QuarterlyLeaderboardService extends PaginationService<QuarterlyLead
     super(repo);
   }
 
-  async findOne(id: number) {
-    return await this.repository.findOne({
-      where: {
-        user_id: id,
-        quarter: Helpers.getPreviousQuarter(),
-        year: new Date().getFullYear(),
-      },
-    });
-  }
-  async findTotalMember() {
-    return await this.repository.count({
-      where: {
-        quarter: Helpers.getPreviousQuarter(),
-        year: new Date().getFullYear(),
-      },
+  async findOne(id: number): Promise<QuarterlyLeaderboardEntity> {
+    return await this.get({
+      user_id: id,
+      quarter: Helpers.getPreviousQuarter(),
+      year: new Date().getFullYear(),
     });
   }
 
-  async getLastQuarterRanking(type: LeaderboardTypeEnum, page = 1, limit = 10) {
+  async findTotalMember(): Promise<number> {
+    return await this.count({
+      quarter: Helpers.getPreviousQuarter(),
+      year: new Date().getFullYear(),
+    });
+  }
+
+  async getLastQuarterRanking(
+    page = 1,
+    limit = 10,
+  ): Promise<PaginatedResult<QuarterlyLeaderboardEntity>> {
     const currYear = new Date().getFullYear();
     const lastQuarter = Helpers.getPreviousQuarter();
 
@@ -52,14 +53,16 @@ export class QuarterlyLeaderboardService extends PaginationService<QuarterlyLead
   async createLeaderboardQuaterlyRanking(type: LeaderboardTypeEnum) {
     const currYear = new Date().getFullYear();
     const lastQuarter = Helpers.getPreviousQuarter();
-    await this.repository.delete({
+
+    await this.delete({
       quarter: lastQuarter,
       year: currYear,
     });
-    const LeaderboardData =
+
+    const leaderboardData =
       await this.lessonProgressService.calculateLeaderBoardPercentage(type);
     return this.repository.save(
-      LeaderboardData.map((entry, index) => ({
+      leaderboardData.map((entry, index) => ({
         user_id: entry.user_id,
         lessons_completed_count: entry.lesson_completed_count,
         rank: index + 1,

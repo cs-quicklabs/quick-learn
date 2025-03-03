@@ -10,7 +10,7 @@ import { UserEntity } from './user.entity';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 
 @Entity('leaderboard')
-export class Leaderboard {
+export class LeaderboardEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
