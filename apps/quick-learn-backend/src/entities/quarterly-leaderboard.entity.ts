@@ -7,10 +7,10 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { LeaderboardTypeEnum } from '@src/common/constants/constants';
+import { LeaderboardQuarterEnum } from '@src/common/constants/constants';
 
-@Entity('leaderboard')
-export class LeaderboardEntity {
+@Entity('quarterly_leaderboard')
+export class QuarterlyLeaderboardEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -24,11 +24,18 @@ export class LeaderboardEntity {
   rank: number;
 
   @Column({
-    enum: LeaderboardTypeEnum,
-    default: LeaderboardTypeEnum.WEEKLY,
+    type: 'enum',
+    enum: LeaderboardQuarterEnum,
+    default: LeaderboardQuarterEnum.Q1,
     nullable: false,
   })
-  type: string;
+  quarter: LeaderboardQuarterEnum; // Fixed type from number to LeaderboardQuarterEnum
+
+  @Column({
+    nullable: false,
+    type: 'int', // Changed from 'year' to 'int' to match migration
+  })
+  year: number;
 
   @CreateDateColumn({
     type: 'timestamp',
