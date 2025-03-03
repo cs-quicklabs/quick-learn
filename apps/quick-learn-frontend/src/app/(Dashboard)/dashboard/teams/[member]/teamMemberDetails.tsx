@@ -233,9 +233,8 @@ function TeamMemberDetails() {
       />
 
       {/* Rest of the component remains the same */}
+      <Breadcrumb links={links} />
       <div className="container mx-auto px-4">
-        <Breadcrumb links={links} />
-
         {/* Member Header */}
         <div className="flex flex-col items-center justify-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">

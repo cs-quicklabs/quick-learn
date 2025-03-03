@@ -306,9 +306,8 @@ function RoadmapDetails() {
         onConfirm={onArchive}
       />
 
+      <Breadcrumb links={links} />
       <div className="container mx-auto px-4">
-        <Breadcrumb links={links} />
-
         {/* Roadmap Header */}
         <div className="flex flex-col items-center justify-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold first-letter:uppercase mb-2 text-center">

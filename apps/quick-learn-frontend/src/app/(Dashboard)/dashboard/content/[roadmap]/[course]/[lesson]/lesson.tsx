@@ -337,8 +337,8 @@ function Lesson() {
   return (
     <>
       {(loading || isArchiving) && <FullPageLoader />}
+      <Breadcrumb links={links} />
       <div className="mx-auto max-w-screen-lg bg-white -mt-4">
-        <Breadcrumb links={links} />
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Controller
             name="name"

@@ -147,47 +147,48 @@ const ViewLesson: FC<Props> = ({
   const content = lesson?.new_content || lesson?.content || '';
 
   return (
-    <div className="-mt-8">
+    <>
       <Breadcrumb links={links} disabled={disableLink} />
+      <div className="-mt-8">
+        <LessonHeader
+          name={lesson?.name}
+          firstName={lesson?.created_by_user?.first_name}
+          lastName={lesson?.created_by_user?.last_name}
+          createdAt={lesson?.created_at}
+          showCreatedBy={showCreatedBy}
+        />
 
-      <LessonHeader
-        name={lesson?.name}
-        firstName={lesson?.created_by_user?.first_name}
-        lastName={lesson?.created_by_user?.last_name}
-        createdAt={lesson?.created_at}
-        showCreatedBy={showCreatedBy}
-      />
+        <LessonContent content={content} />
 
-      <LessonContent content={content} />
+        {setIsApproved && (
+          <ApprovalCheckbox value={isApproved} setValue={setIsApproved} />
+        )}
 
-      {setIsApproved && (
-        <ApprovalCheckbox value={isApproved} setValue={setIsApproved} />
-      )}
-
-      {setIsFlagged && (
-        <>
-          <div className="mx-auto max-w-fit flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
-            <div className="h-5 w-5">
-              <FlagIcon />
+        {setIsFlagged && (
+          <>
+            <div className="mx-auto max-w-fit flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
+              <div className="h-5 w-5">
+                <FlagIcon />
+              </div>
+              {`${en.approvals.lessonFlaggedBy} ${
+                lesson?.flagged_lesson?.user?.display_name ??
+                `${en.common.unknown}`
+              } ${en.common.on} ${format(
+                lesson?.flagged_lesson?.flagged_on ?? Date.now(),
+                DateFormats.shortDate,
+              )}`}
             </div>
-            {`${en.approvals.lessonFlaggedBy} ${
-              lesson?.flagged_lesson?.user?.display_name ??
-              `${en.common.unknown}`
-            } ${en.common.on} ${format(
-              lesson?.flagged_lesson?.flagged_on ?? Date.now(),
-              DateFormats.shortDate,
-            )}`}
-          </div>
-          <ApprovalCheckbox
-            value={isFlagged}
-            setValue={setIsFlagged}
-            text={en.approvals.unFlagThisLesson}
-          />
-        </>
-      )}
+            <ApprovalCheckbox
+              value={isFlagged}
+              setValue={setIsFlagged}
+              text={en.approvals.unFlagThisLesson}
+            />
+          </>
+        )}
 
-      {isPending && <PendingAlert />}
-    </div>
+        {isPending && <PendingAlert />}
+      </div>
+    </>
   );
 };
 
