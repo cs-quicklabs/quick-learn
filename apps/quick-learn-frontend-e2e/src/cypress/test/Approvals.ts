@@ -1,5 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 export class Approvals {
+  private readonly lessonPageHeading = 'Lesson Approvals';
+  private readonly approvalPageURL = '/dashboard/approvals';
+
   VisitContentPageViaEditor() {
     return cy.get('[href="/dashboard/content"]');
   }
@@ -147,7 +150,7 @@ export class Approvals {
   }
 
   VisitApprovalsPageViaSuperAdmin() {
-    return cy.get('[href="/dashboard/approvals"]');
+    return cy.get(`[href="${this.approvalPageURL}"]`);
   }
 
   getColumnsData() {
@@ -169,7 +172,7 @@ export class Approvals {
   }
 
   getApprovalLessonList() {
-    cy.get('h1.mr-3').contains('Lessons Approvals').should('be.visible');
+    cy.get('h1.mr-3').contains(this.lessonPageHeading).should('be.visible');
     cy.get('a.ml-2').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
@@ -196,13 +199,13 @@ export class Approvals {
 
   getApprovalColumnData() {
     this.VisitApprovalsPageViaSuperAdmin().click();
-    cy.contains('Lessons Approvals').should('be.visible');
+    cy.contains(this.lessonPageHeading).should('be.visible');
     this.getColumnsData();
   }
 
   ApproveLessonViaSuperAdmin() {
     this.VisitApprovalsPageViaSuperAdmin().click();
-    cy.contains('Lessons Approvals').should('be.visible');
+    cy.contains(this.lessonPageHeading).should('be.visible');
     cy.get('.ml-2').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
@@ -210,20 +213,27 @@ export class Approvals {
     cy.get('li.text-gray-700').contains('Approvals').should('be.visible');
     this.EnsureApproveLessonUnchecked();
     this.clickApproveLessonCheckbox();
-    cy.contains('Lessons Approvals').should('be.visible');
+    cy.contains(this.lessonPageHeading).should('be.visible');
   }
 
   BreadCrumbsUnclickable() {
     this.VisitApprovalsPageViaSuperAdmin().click();
-    cy.contains('Lessons Approvals').should('be.visible');
+    cy.contains(this.lessonPageHeading).should('be.visible');
     cy.get('.ml-2').each(($el, index) => {
+
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
     cy.get('.ml-2').eq(0).click();
     cy.get('li.text-gray-700').contains('Approvals').should('be.visible');
-    cy.get('span.flex.items-center').eq(0).click({ force: true });
-    cy.get('span.flex.items-center').eq(0).should('exist');
-    cy.get('span.flex.items-center').eq(1).click({ force: true });
-    cy.get('span.flex.items-center').eq(1).should('exist');
+
+    // Get the last breadcrumb element
+    cy.get('nav[aria-label="Breadcrumb"] ol li:last-child span')
+      .should('have.class', 'cursor-not-allowed');
+
+    // Try to click the last breadcrumb element
+    cy.get('nav[aria-label="Breadcrumb"] ol li:last-child span').click();
+
+    // Ensure that the click did not navigate away
+    cy.url().should('include', Cypress.config().baseUrl + this.approvalPageURL);
   }
 }
