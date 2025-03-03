@@ -331,6 +331,18 @@ function Navbar() {
                           </MenuItem>
                         </div>
                       )}
+                      {user?.user_type_id === UserTypeIdEnum.ADMIN && (
+                        <div>
+                          <MenuItem>
+                            <SuperLink
+                              href={RouteEnum.ARCHIVED_USERS}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                            >
+                              {en.component.archive}
+                            </SuperLink>
+                          </MenuItem>
+                        </div>
+                      )}
                     </div>
 
                     {/* Extended Menu Items */}

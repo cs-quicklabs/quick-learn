@@ -449,6 +449,7 @@ export const en = {
 
     //view Lesson
     addLessonOn: 'added this lesson on',
+    archive: 'Archive',
   },
 
   modals: {

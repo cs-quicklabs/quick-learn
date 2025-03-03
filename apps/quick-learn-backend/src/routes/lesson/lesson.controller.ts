@@ -75,7 +75,7 @@ export class LessonController {
   @ApiOperation({ summary: 'Get all archived lessons.' })
   @Get('archived')
   @UseGuards(RolesGuard)
-  @Roles(UserTypeIdEnum.SUPERADMIN)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   async findAllArchivedLessons(
     @Query() paginationDto: PaginationDto,
   ): Promise<SuccessResponse> {

@@ -25,6 +25,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { CourseParamDto } from './dto/course-param.dto';
+import { UserTypeIdEnum } from '@quick-learn/shared';
 
 @ApiTags('Course')
 @Controller({
@@ -49,6 +50,8 @@ export class CourseController {
   }
 
   @Get('archived')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @ApiOperation({ summary: 'Get Archived Courses' })
   async findAllArchivedCourses(
     @Query() paginationDto: PaginationDto,
