@@ -49,6 +49,7 @@ import { SuperLink } from '@src/utils/HiLink';
 import { useAppSelector } from '@src/store/hooks';
 import { selectUser } from '@src/store/features';
 import { UserTypeIdEnum } from 'lib/shared/src';
+import SmallScreenTabs from '@src/shared/components/SmallScreenTabs';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 
@@ -190,6 +191,15 @@ function TeamMemberDetails() {
     member?.assigned_roadmaps && member.assigned_roadmaps.length > 0;
   const hasCourses = allCourses.length > 0;
 
+  const tabs = [
+    {
+      id: 'roadmaps',
+      label: en.common.roadmaps,
+      count: member?.assigned_roadmaps?.length || 0,
+    },
+    { id: 'courses', label: en.common.courses, count: allCourses.length },
+  ];
+
   if (isPageLoading && !openAssignModal) return <TeamMemberDetailsSkeleton />;
 
   return (
@@ -223,12 +233,11 @@ function TeamMemberDetails() {
       />
 
       {/* Rest of the component remains the same */}
-      <div className="container mx-auto px-4">
-        <Breadcrumb links={links} />
-
+      <Breadcrumb links={links} />
+      <div className="container mx-auto  px-6 md:px-4">
         {/* Member Header */}
         <div className="flex flex-col items-center justify-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold capitalize mb-2 text-center">
             {member?.first_name} {member?.last_name}
           </h1>
           <p className="text-sm text-gray-500">
@@ -277,39 +286,13 @@ function TeamMemberDetails() {
             </Tooltip>
           </div>
         </div>
-        <section className="md:hidden w-[261px] border border-gray-200 bg-gray-100 mt-5 mb-5 rounded-md">
-          <div className="max-w-full px-1 mx-auto">
-            <div className="flex space-x-4">
-              <button
-                type="button"
-                className={`flex items-center px-3 py-2 text-base font-medium ${
-                  activeTab === 'roadmaps'
-                    ? 'bg-white rounded-md text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-                onClick={() => setActiveTab('roadmaps')}
-              >
-                {en.common.roadmaps}{' '}
-                <span className="text-sm ml-1">
-                  {' '}
-                  ({member?.assigned_roadmaps?.length})
-                </span>
-              </button>
-              <button
-                type="button"
-                className={`flex items-center px-3 py-2 text-base font-medium ${
-                  activeTab === 'courses'
-                    ? 'bg-white rounded-md text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-                onClick={() => setActiveTab('courses')}
-              >
-                {en.common.courses}{' '}
-                <span className="text-sm ml-1"> ({allCourses.length})</span>
-              </button>
-            </div>
-          </div>
-        </section>
+
+        {/* Small Screen Tabs */}
+        <SmallScreenTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          tabs={tabs}
+        />
 
         {/* Roadmaps Section */}
         <section

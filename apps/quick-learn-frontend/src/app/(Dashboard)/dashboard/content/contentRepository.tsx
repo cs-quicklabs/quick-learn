@@ -30,6 +30,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '@src/store/features/userSlice';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import { updateContentRepositoryRoadmap } from '@src/store/features';
+import SmallScreenTabs from '@src/shared/components/SmallScreenTabs';
 
 function ContentRepository() {
   const router = useRouter();
@@ -98,6 +99,19 @@ function ContentRepository() {
     return <ContentRepositorySkeleton />;
   }
 
+  const tabs = [
+    {
+      id: 'roadmaps',
+      label: en.contentRepository.allRoadmaps,
+      count: roadmaps.length || 0,
+    },
+    {
+      id: 'courses',
+      label: en.contentRepository.allCourses,
+      count: courses.length,
+    },
+  ];
+
   return (
     <>
       <AddEditRoadMapModal
@@ -107,7 +121,7 @@ function ContentRepository() {
         isloading={isModalLoading}
       />
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-6 md:px-4">
         <div className="flex flex-col items-center justify-center mb-10">
           <h1 className="text-4xl text-center md:text-5xl font-bold mb-2">
             {en.contentRepository.contentRepository}
@@ -117,36 +131,13 @@ function ContentRepository() {
             {en.contentRepository.courses})
           </p>
         </div>
-        <section className="md:hidden w-[312px] border border-gray-200 bg-gray-100 mt-10 mb-5 rounded-md">
-          <div className="max-w-full px-1 mx-auto">
-            <div className="flex space-x-4">
-              <button
-                type="button"
-                className={`flex items-center px-3 py-2 text-base font-medium ${
-                  activeTab === 'roadmaps'
-                    ? 'bg-white rounded-md text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-                onClick={() => setActiveTab('roadmaps')}
-              >
-                {en.contentRepository.allRoadmaps}{' '}
-                <span className="text-sm ml-1">({roadmaps.length})</span>
-              </button>
-              <button
-                type="button"
-                className={`flex items-center px-3 py-2 text-base font-medium ${
-                  activeTab === 'courses'
-                    ? 'bg-white rounded-md text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-                onClick={() => setActiveTab('courses')}
-              >
-                {en.contentRepository.allCourses}{' '}
-                <span className="text-sm ml-1">({courses.length})</span>
-              </button>
-            </div>
-          </div>
-        </section>
+
+        {/* Small screen tabs */}
+        <SmallScreenTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          tabs={tabs}
+        />
 
         <section
           className={`mb-12 + ${activeTab === 'courses' ? 'hidden md:block' : 'block'}`}
@@ -163,7 +154,7 @@ function ContentRepository() {
           {roadmaps.length > 0 ? (
             <div
               style={{ scrollbarWidth: 'thin' }}
-              className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4  pr-2"
+              className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4"
             >
               <CreateNewCard
                 title={en.contentRepository.createNewRoadmap}
@@ -213,7 +204,7 @@ function ContentRepository() {
           {courses.length > 0 ? (
             <div
               style={{ scrollbarWidth: 'thin' }}
-              className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 pr-2"
+              className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4"
             >
               {courses.map((item) => (
                 <Card

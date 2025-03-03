@@ -26,7 +26,7 @@ const LessonHeader = memo(
   }) => (
     <div className="px-4 mb-8 text-center sm:px-6 lg:px-8">
       <div className="items-baseline">
-        <h1 className="text-4xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
+        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
           {name}
         </h1>
         {showCreatedBy && (
@@ -43,7 +43,7 @@ const LessonHeader = memo(
 LessonHeader.displayName = 'LessonHeader';
 
 const LessonContent = memo(({ content }: { content: string }) => (
-  <article className="lesson-content flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-4 md:px-10 py-4 mb-8">
+  <article className="lesson-content flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-8 md:px-10 py-4 mb-8">
     <div
       className="lesson-viewer"
       // eslint-disable-next-line react/no-danger
@@ -149,44 +149,45 @@ const ViewLesson: FC<Props> = ({
   return (
     <div className="-mt-8">
       <Breadcrumb links={links} disabled={disableLink} />
+      <div>
+        <LessonHeader
+          name={lesson?.name}
+          firstName={lesson?.created_by_user?.first_name}
+          lastName={lesson?.created_by_user?.last_name}
+          createdAt={lesson?.created_at}
+          showCreatedBy={showCreatedBy}
+        />
 
-      <LessonHeader
-        name={lesson?.name}
-        firstName={lesson?.created_by_user?.first_name}
-        lastName={lesson?.created_by_user?.last_name}
-        createdAt={lesson?.created_at}
-        showCreatedBy={showCreatedBy}
-      />
+        <LessonContent content={content} />
 
-      <LessonContent content={content} />
+        {setIsApproved && (
+          <ApprovalCheckbox value={isApproved} setValue={setIsApproved} />
+        )}
 
-      {setIsApproved && (
-        <ApprovalCheckbox value={isApproved} setValue={setIsApproved} />
-      )}
-
-      {setIsFlagged && (
-        <>
-          <div className="mx-auto max-w-fit flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
-            <div className="h-5 w-5">
-              <FlagIcon />
+        {setIsFlagged && (
+          <>
+            <div className="mx-auto max-w-fit flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
+              <div className="h-5 w-5">
+                <FlagIcon />
+              </div>
+              {`${en.approvals.lessonFlaggedBy} ${
+                lesson?.flagged_lesson?.user?.display_name ??
+                `${en.common.unknown}`
+              } ${en.common.on} ${format(
+                lesson?.flagged_lesson?.flagged_on ?? Date.now(),
+                DateFormats.shortDate,
+              )}`}
             </div>
-            {`${en.approvals.lessonFlaggedBy} ${
-              lesson?.flagged_lesson?.user?.display_name ??
-              `${en.common.unknown}`
-            } ${en.common.on} ${format(
-              lesson?.flagged_lesson?.flagged_on ?? Date.now(),
-              DateFormats.shortDate,
-            )}`}
-          </div>
-          <ApprovalCheckbox
-            value={isFlagged}
-            setValue={setIsFlagged}
-            text={en.approvals.unFlagThisLesson}
-          />
-        </>
-      )}
+            <ApprovalCheckbox
+              value={isFlagged}
+              setValue={setIsFlagged}
+              text={en.approvals.unFlagThisLesson}
+            />
+          </>
+        )}
 
-      {isPending && <PendingAlert />}
+        {isPending && <PendingAlert />}
+      </div>
     </div>
   );
 };

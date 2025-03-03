@@ -126,7 +126,7 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
               {name}
             </h3>
             <p
-              className=" text-xs md:text-sm font-normal first-letter:uppercase text-gray-500 line-clamp-3 mt-2"
+              className=" text-xs md:text-sm font-normal first-letter:uppercase text-gray-500 line-clamp-4 md:line-clamp-3 mt-2"
               // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{
                 __html: title,

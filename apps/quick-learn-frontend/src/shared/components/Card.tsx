@@ -38,8 +38,8 @@ const CardContent: FC<CardContentProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col h-48 ${
-        isLongTitle ? 'p-4' : 'py-4 px-6'
+      className={`flex flex-col h-[193.5px] md:h-48 ${
+        isLongTitle ? ' px-6 md:px-4 py-4' : 'py-4 px-6'
       } text-gray-900`}
     >
       {isCreateCard && (
@@ -51,14 +51,14 @@ const CardContent: FC<CardContentProps> = ({
         <h1
           ref={titleRef}
           id="message-heading"
-          className="text-sm md:text-base font-medium first-letter:uppercase text-gray-900 line-clamp-3 group-hover:underline mb-2"
+          className="text-sm md:text-base font-medium first-letter:uppercase text-gray-900  line-clamp-2 md:line-clamp-3 group-hover:underline mb-2"
         >
           {title}
         </h1>
         <p
           className={`text-xs md:text-sm font-normal first-letter:uppercase  text-gray-500 ${
             isLongTitle
-              ? 'line-clamp-2 md:line-clamp-1'
+              ? 'line-clamp-3 md:line-clamp-1'
               : 'line-clamp-3 md:line-clamp-2'
           } text-sm whitespace-pre-line`}
           // eslint-disable-next-line react/no-danger
@@ -68,7 +68,7 @@ const CardContent: FC<CardContentProps> = ({
         />
       </div>
 
-      <div className={`mt-auto ${isLongTitle ? 'space-y-0.5' : 'space-y-1'}`}>
+      <div className={` mt-auto ${isLongTitle ? 'space-y-0.5' : 'space-y-1'}`}>
         {stats && !isCreateCard && (
           <p className="font-normal text-[10px] md:text-xs first-letter:uppercase text-gray-500">
             {showWarning ? (
