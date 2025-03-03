@@ -9,10 +9,11 @@ import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { LeaderboardCronService } from './leaderboard-cron.service';
 import { LeaderboardModule } from '../leaderboard/leaderboard.module';
 import { AuthModule } from '../auth/auth.module';
+import { QuarterlyLeaderboardEntity } from '@src/entities';
 @Module({
   // TODO: Remove lesson token repository from here to use module
   imports: [
-    TypeOrmModule.forFeature([Leaderboard]),
+    TypeOrmModule.forFeature([Leaderboard, QuarterlyLeaderboardEntity]),
     UsersModule,
     LessonProgressModule,
     EmailModule,

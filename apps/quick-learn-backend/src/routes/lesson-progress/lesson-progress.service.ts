@@ -4,7 +4,11 @@ import { Repository } from 'typeorm';
 import { UserLessonProgressEntity } from '@src/entities/user-lesson-progress.entity';
 import { BasicCrudService } from '@src/common/services';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
-import { getLastMonthRange, getLastWeekRange } from '@quick-learn/shared';
+import {
+  getLastMonthRange,
+  getLastQuarterRange,
+  getLastWeekRange,
+} from '@quick-learn/shared';
 import { CourseService } from '../course/course.service';
 import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
 @Injectable()
@@ -200,10 +204,16 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
   async getLeaderboardDataService(type: LeaderboardTypeEnum) {
     let dateToFindFrom;
-    if (type === LeaderboardTypeEnum.MONTHLY) {
-      dateToFindFrom = getLastMonthRange();
-    } else {
-      dateToFindFrom = getLastWeekRange();
+
+    switch (type) {
+      case LeaderboardTypeEnum.MONTHLY:
+        dateToFindFrom = getLastMonthRange();
+        break;
+      case LeaderboardTypeEnum.QUARTERLY:
+        dateToFindFrom = getLastQuarterRange();
+        break;
+      default:
+        dateToFindFrom = getLastWeekRange();
     }
     //get all user with
     const allUsers = await this.getAllUserProgressData(dateToFindFrom);
@@ -254,13 +264,15 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
         const completedLessons = await this.repository
           .createQueryBuilder('userLessonProgress')
-          .where('userLessonProgress.user_id =:userId', {
+          .withDeleted()
+          .where('userLessonProgress.user_id = :userId', {
             userId: entry.user_id,
           })
           .andWhere('userLessonProgress.lesson_id IN (:...lessonIds)', {
             lessonIds: lessonIdsIndex,
           })
-          .getMany();
+          .getRawMany();
+
         const totalOpeningTime = completedLessons
           .map((completedLesson) => {
             const lessonIndex = entry.lessonIds.find(
@@ -299,5 +311,14 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     });
 
     return leaderBoardWithPercentage;
+  }
+
+  async resetUserReadingHistory(userID: number) {
+    try {
+      await this.repository.softDelete({ user_id: userID });
+    } catch (error) {
+      console.error(`Error resetting history for user ${userID}`, error);
+      throw error;
+    }
   }
 }

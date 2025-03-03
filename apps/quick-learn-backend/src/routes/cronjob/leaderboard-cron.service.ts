@@ -1,7 +1,5 @@
+import { QuarterlyLeaderboardService } from './../leaderboard/quarterly-leaderboard.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Leaderboard } from '@src/entities/leaderboard.entity';
 import { Cron } from '@nestjs/schedule';
 import { CRON_TIMEZONE } from '@src/common/enum/daily_lesson.enum';
 import {
@@ -19,9 +17,8 @@ export class LeaderboardCronService {
   private readonly logger = new Logger(LeaderboardCronService.name);
   private readonly BATCH_SIZE = 10;
   constructor(
-    @InjectRepository(Leaderboard)
-    private readonly leaderboardRepository: Repository<Leaderboard>,
     private readonly leaderboardService: LeaderboardService,
+    private readonly QuarterlyLeaderboardService: QuarterlyLeaderboardService,
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
@@ -31,7 +28,7 @@ export class LeaderboardCronService {
     });
   }
 
-  @Cron('0 8 * * 1', {
+  @Cron('0 6 * * 1', {
     name: 'sendWeeklyLeaderboardEmail',
     timeZone: CRON_TIMEZONE,
     disabled: process.env.ENV !== EnvironmentEnum.Production,
@@ -40,7 +37,7 @@ export class LeaderboardCronService {
     await this.sendLeaderboardEmail(LeaderboardTypeEnum.WEEKLY);
   }
 
-  @Cron('0 6 1 * *', {
+  @Cron('0 7 1 * *', {
     name: 'sendMonthlyLeaderboardEmail',
     timeZone: CRON_TIMEZONE,
     disabled: process.env.ENV !== EnvironmentEnum.Production,
@@ -49,19 +46,31 @@ export class LeaderboardCronService {
     await this.sendLeaderboardEmail(LeaderboardTypeEnum.MONTHLY);
   }
 
+  @Cron('0 8 1 1,4,7,10 *', {
+    //At 08:00 on day-of-month 1 in every 3rd month.
+
+    name: 'sendQuarterlyLeaderboardEmail',
+    timeZone: CRON_TIMEZONE,
+    disabled: process.env.ENV !== EnvironmentEnum.Production,
+  })
+  async sendQuarterlyLeaderboardEmail() {
+    await this.sendLeaderboardEmail(LeaderboardTypeEnum.QUARTERLY);
+  }
+
   async sendLeaderboardEmail(type: LeaderboardTypeEnum) {
     let skip = 0;
     let processedCount = 0;
-
-    await this.leaderboardService.createLeaderboardRanking(type);
+    if (type === LeaderboardTypeEnum.QUARTERLY) {
+      await this.QuarterlyLeaderboardService.createLeaderboardQuaterlyRanking(
+        type,
+      );
+    } else {
+      await this.leaderboardService.createLeaderboardRanking(type);
+    }
 
     this.logger.log('Created new leaderboard entries');
 
-    const totalMembers = await this.leaderboardRepository.count({
-      where: {
-        type: type,
-      },
-    });
+    const totalMembers = await this.getTotalMember(type);
     try {
       this.logger.log('Starting leaderboard email...');
       let userBatch: UserEntity[];
@@ -93,22 +102,29 @@ export class LeaderboardCronService {
     }
   }
 
+  async getTotalMember(type: LeaderboardTypeEnum) {
+    return type === LeaderboardTypeEnum.QUARTERLY
+      ? this.QuarterlyLeaderboardService.findTotalMember()
+      : await this.leaderboardService.findTotalMember(type);
+  }
+
+  async getUser(type: LeaderboardTypeEnum, id: number) {
+    return type === LeaderboardTypeEnum.QUARTERLY
+      ? this.QuarterlyLeaderboardService.findOne(id)
+      : this.leaderboardService.findOne(id, type);
+  }
+
   async generateLeaderboardEmail(
     user: UserEntity,
     totalMembers: number,
     type: LeaderboardTypeEnum,
   ) {
     try {
-      const userLeaderboardData = await this.leaderboardRepository.findOne({
-        where: {
-          user_id: user.id,
-          type: type,
-        },
-      });
+      const userLeaderboardData = await this.getUser(type, user.id);
 
       if (userLeaderboardData) {
         const leaderboardData = {
-          type: type === 'weekly' ? 'Weekly' : 'Monthly',
+          type: type.charAt(0).toUpperCase() + type.slice(1).toLowerCase(),
           fullName: user.display_name,
           rank: userLeaderboardData.rank,
           totalMembers: totalMembers,

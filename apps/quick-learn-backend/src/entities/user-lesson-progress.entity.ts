@@ -4,6 +4,7 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { LessonEntity } from './lesson.entity';
@@ -25,6 +26,9 @@ export class UserLessonProgressEntity {
 
   @Column({ type: 'timestamp', nullable: true, name: 'completed_date' })
   completed_date: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
