@@ -85,11 +85,7 @@ const menuItems: TLink[] = [
   {
     name: 'Archive',
     link: RouteEnum.ARCHIVED_USERS,
-    exclude: [
-      UserTypeIdEnum.ADMIN,
-      UserTypeIdEnum.EDITOR,
-      UserTypeIdEnum.MEMBER,
-    ],
+    exclude: [UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER],
   },
   {
     name: 'Leaderboard', //displayed to every user_type

@@ -22,6 +22,9 @@ import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
 import { PaginationDto } from '../users/dto';
 import { ActivateRoadmapDto } from './dto/activate-roadmap.dto';
 import { RoadmapParamDto } from './dto/roadmap-param.dto';
+import { UserTypeIdEnum } from '@quick-learn/shared';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '@src/common/decorators/roles.decorator';
 
 @ApiTags('Roadmap')
 @Controller({
@@ -50,6 +53,8 @@ export class RoadmapController {
   }
 
   @Get('archived')
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @ApiOperation({ summary: 'Get Archived Roadmaps' })
   async findAllArchivedRoadmaps(@Query() paginationDto: PaginationDto) {
     const roadmaps = await this.service.findAllArchived(paginationDto);

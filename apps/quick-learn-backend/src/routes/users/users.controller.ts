@@ -254,7 +254,7 @@ export class UsersController {
 
   @Delete(':userId')
   @UseGuards(RolesGuard)
-  @Roles(UserTypeIdEnum.SUPERADMIN)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @ApiOperation({ summary: 'Permanently delete user by userId' })
   async remove(@Param() param: UserParamDto) {
     await this.usersService.delete({ id: param.userId });
