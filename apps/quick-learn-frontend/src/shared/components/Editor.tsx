@@ -1,8 +1,8 @@
 'use client';
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
-// All the impoort which is used for the customisation of the editor
+
+// All the import which is used for the customisation of the editor
 import EditorToolbar, { formats } from './EditorToolbar';
 import { en } from '@src/constants/lang/en';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';

@@ -9,6 +9,8 @@ import { en } from '@src/constants/lang/en';
 import { TLesson } from '../types/contentRepository';
 import { TBreadcrumb } from '../types/breadcrumbType';
 import { FlagIcon } from '@heroicons/react/24/outline';
+import ReactQuill from 'react-quill-new';
+
 // Separate components for better performance
 const LessonHeader = memo(
   ({
@@ -42,17 +44,29 @@ const LessonHeader = memo(
 
 LessonHeader.displayName = 'LessonHeader';
 
-const LessonContent = memo(({ content }: { content: string }) => (
-  <article className="lesson-content flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-8 md:px-10 py-4 mb-8">
-    <div
-      className="lesson-viewer"
-      // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{
-        __html: content,
-      }}
-    />
-  </article>
-));
+const LessonContent = memo(({ content }: { content: string }) => {
+  // Configure modules without toolbar
+  const modules = {
+    toolbar: false, // This disables the toolbar
+    clipboard: {
+      matchVisual: false,
+    },
+  };
+
+  return (
+    <article className="flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-8 md:px-10 py-4 mb-8">
+      <div className="quill-content-display w-full">
+        <ReactQuill
+          value={content}
+          readOnly
+          theme="snow"
+          modules={modules}
+          className="w-full"
+        />
+      </div>
+    </article>
+  );
+});
 
 LessonContent.displayName = 'LessonContent';
 
