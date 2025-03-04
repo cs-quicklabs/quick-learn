@@ -13,7 +13,7 @@
           <br /><br />
         </mj-text>
 
-        <mj-text padding="0"> Thank you. </mj-text>
+        <mj-text padding="0"> Thanks </mj-text>
       </mj-column>
     </mj-section>
   </mj-body>

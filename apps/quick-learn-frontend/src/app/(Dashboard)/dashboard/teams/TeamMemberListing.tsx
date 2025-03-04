@@ -108,8 +108,8 @@ function TeamMemberListing() {
   }
 
   return (
-    <>
-      <section className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
+    <div className="relative mx-4 md:mx-0">
+      <section className=" overflow-hidden bg-white shadow-md sm:rounded-sm">
         <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
           <div>
             <h1 className="mr-3 text-lg font-semibold">{en.teams.team}</h1>
@@ -122,7 +122,7 @@ function TeamMemberListing() {
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <input
               type="text"
-              className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+              className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block touch-none"
               placeholder="Search Members"
               value={searchInputValue} // Use local state for input value
               onChange={handleSearchChange}
@@ -191,7 +191,7 @@ function TeamMemberListing() {
           );
         }}
       />
-    </>
+    </div>
   );
 }
 
