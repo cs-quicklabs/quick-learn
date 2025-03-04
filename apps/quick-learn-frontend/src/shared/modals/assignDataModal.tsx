@@ -44,6 +44,11 @@ const AssignDataModal: FC<Props> = ({
   const [initialSelectedRoadmaps, setInitialSelectedRoadmaps] = useState<
     string[]
   >([]);
+  const [defaultValues, setDefaultValues] = useState(initialValues);
+
+  useEffect(() => {
+    if (initialValues) setDefaultValues(initialValues);
+  }, [initialValues]);
 
   const {
     register,
@@ -55,7 +60,7 @@ const AssignDataModal: FC<Props> = ({
     reset,
   } = useForm<schemaType>({
     resolver: zodResolver(schema),
-    defaultValues: initialValues,
+    defaultValues,
     mode: 'onChange',
   });
 
@@ -64,60 +69,63 @@ const AssignDataModal: FC<Props> = ({
     [data],
   );
 
-  // Initialize form and accordion state
   useEffect(() => {
-    if (show) {
-      // When the modal is opened
+    const initializeState = () => {
       const allAccordionIds = sortedData.map((ele) => ele.name);
       const isMobileView = window.matchMedia(SM_MEDIA_QUERY).matches;
 
       if (isMobileView) {
-        // On mobile, collapse all accordions by default
         setOpenAccordions([]);
         setIsAllExpanded(false);
       } else {
-        // On desktop, expand all accordions by default
         setOpenAccordions(allAccordionIds);
         setIsAllExpanded(true);
       }
 
-      // Set initial values
-      const initialSelected = initialValues?.selected || [];
-      setValue('selected', initialSelected);
-      setInitialSelectedRoadmaps(initialSelected);
+      reset(defaultValues);
+      setInitialSelectedRoadmaps(defaultValues?.selected || []);
       setIsFormDirty(false);
-    } else {
-      // Reset when modal is closed
+    };
+
+    const resetState = () => {
       reset();
       setIsFormDirty(false);
       setOpenAccordions([]);
       setIsAllExpanded(false);
       setInitialSelectedRoadmaps([]);
-    }
-  }, [show, initialValues, setValue, reset, sortedData]);
+    };
 
-  // Watch for form changes
-  useEffect(() => {
     if (show) {
-      const subscription = watch((_value, { name, type }) => {
-        const currentSelected = getValues('selected') || [];
-
-        // Only check if form is dirty when the 'selected' field changes
-        if (name === 'selected' || type === 'change') {
-          const isDirty =
-            currentSelected.length !== initialSelectedRoadmaps.length ||
-            !currentSelected.every((value) =>
-              initialSelectedRoadmaps.includes(value),
-            );
-
-          setIsFormDirty(isDirty);
-        }
-      });
-      return () => subscription.unsubscribe();
+      initializeState();
+    } else {
+      resetState();
     }
+  }, [show, setValue, reset, sortedData]);
+
+  useEffect(() => {
+    if (!show) return;
+
+    const subscription = watch((_value, { name, type }) => {
+      const currentSelected = getValues('selected') || [];
+
+      if (name === 'selected' || type === 'change') {
+        const isDirty =
+          currentSelected.length !== initialSelectedRoadmaps.length ||
+          !currentSelected.every((value) =>
+            initialSelectedRoadmaps.includes(value),
+          );
+
+        setIsFormDirty(isDirty);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [show, watch, getValues, initialSelectedRoadmaps]);
 
   function onFormSubmit(formData: schemaType) {
+    if (defaultValues) {
+      setDefaultValues({ selected: formData?.selected || [] });
+    }
     onSubmit(formData?.selected ?? []);
   }
 

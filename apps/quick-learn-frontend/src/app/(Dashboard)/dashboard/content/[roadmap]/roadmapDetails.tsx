@@ -208,9 +208,9 @@ function RoadmapDetails() {
     try {
       const res = await assignCoursesToRoadmap(roadmapId, data);
       const updatedRoadmap = await getRoadmap(roadmapId);
+      dispatch(updateStoreRoadmap(updatedRoadmap.data));
       setRoadmapData(updatedRoadmap.data);
       setCourses(updatedRoadmap.data.courses || []);
-      dispatch(updateStoreRoadmap(updatedRoadmap.data));
       setOpenAssignModal(false);
       handleUpdateContentRepoRoadmapcount(data);
       showApiMessageInToast(res);
