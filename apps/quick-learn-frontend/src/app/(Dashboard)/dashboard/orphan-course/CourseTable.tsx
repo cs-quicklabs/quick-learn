@@ -106,7 +106,7 @@ const CourseTable = () => {
   if (isInitialLoad) return <Skeleton />;
 
   return (
-    <div>
+    <div className="mx-4 md:mx-0">
       <div className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
         <div className=" mx-auto max-w-screen-2xl overflow-auto">
           <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
