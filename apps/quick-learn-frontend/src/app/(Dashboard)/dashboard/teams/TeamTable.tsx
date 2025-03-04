@@ -1,51 +1,17 @@
 // components/TeamTable.tsx
-import { useEffect } from 'react';
 import { format } from 'date-fns';
-import { toast } from 'react-toastify';
 import { DateFormats } from '@src/constants/dateFormats';
 import { CustomClipBoardIcon } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import TeamMemberListingSkeleton from './TeamMemberListingSkeleton';
-import {
-  fetchTeamMembers,
-  selectTeamListingData,
-} from '@src/store/features/teamSlice';
-import { useAppDispatch, useAppSelector } from '@src/store/hooks';
+import { selectTeamListingData } from '@src/store/features/teamSlice';
+import { useAppSelector } from '@src/store/hooks';
 import { SuperLink } from '@src/utils/HiLink';
 
 function TeamTable() {
-  const dispatch = useAppDispatch();
-  const {
-    isLoading,
-    isInitialLoad,
-    users,
-    currentPage,
-    currentUserType,
-    searchQuery,
-  } = useAppSelector(selectTeamListingData);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch(
-          fetchTeamMembers({
-            page: currentPage,
-            userTypeCode: currentUserType,
-            query: searchQuery,
-          }),
-        );
-      } catch (error) {
-        console.error('API call failed:', error);
-        toast.error('Something went wrong!');
-      }
-    };
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, currentPage, currentUserType]);
-
-  // Only show skeleton loader on initial load
-  if (isInitialLoad && isLoading) return <TeamMemberListingSkeleton />;
+  const { isLoading, isInitialLoad, users } = useAppSelector(
+    selectTeamListingData,
+  );
 
   return (
     <div className="flow-root">
@@ -62,7 +28,7 @@ function TeamTable() {
                 <th scope="col" className="px-4 py-3">
                   {en.teams.User}
                 </th>
-                <th scope="col" className="px-4 py-3">
+                <th scope="col" className="px-4 py-3 text-nowrap">
                   {en.teams.Role}
                 </th>
                 <th scope="col" className="px-4 py-3">
@@ -89,19 +55,23 @@ function TeamTable() {
                   key={user.uuid}
                   className="border-b border-gray-200 hover:bg-gray-100"
                 >
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap capitalize">
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap capitalize hover:underline">
                     <SuperLink href={`${RouteEnum.TEAM}/${user.id}`}>
                       {user.first_name} {user.last_name}
                     </SuperLink>
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     <div className="inline-flex items-center bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded capitalize">
                       <CustomClipBoardIcon color="#1e40af" />
                       <span>{user.user_type.name || 'Role'}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-2 lowercase">{user.email}</td>
-                  <td className="px-4 py-2 capitalize">{user.skill.name}</td>
+                  <td className="px-4 py-2 lowercase whitespace-nowrap">
+                    {user.email}
+                  </td>
+                  <td className="px-4 py-2 capitalize whitespace-nowrap">
+                    {user.skill.name}
+                  </td>
                   <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                     <div className="inline-flex items-center">
                       <div
@@ -112,7 +82,7 @@ function TeamTable() {
                       {user.active ? 'Active' : 'Inactive'}
                     </div>
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {(user.last_login_timestamp &&
                       format(
                         user.last_login_timestamp,
@@ -120,7 +90,7 @@ function TeamTable() {
                       )) ||
                       'Not logged in.'}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {format(user.created_at, DateFormats.shortDate)}
                   </td>
                 </tr>

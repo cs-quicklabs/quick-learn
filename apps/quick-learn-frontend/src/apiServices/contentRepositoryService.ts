@@ -9,6 +9,7 @@ import {
 } from '@src/shared/types/contentRepository';
 import axiosInstance, { AxiosSuccessResponse } from './axios';
 import { ContentRepositoryApiEnum } from '@src/constants/api.enum';
+import { PaginateWrapper } from '@src/shared/types/utilTypes';
 
 export const getContentRepositoryMetadata = async (): Promise<
   AxiosSuccessResponse<TContentRepositoryMetadata>
@@ -162,5 +163,18 @@ export const getSystemPreferences = async (): Promise<
   const response = await axiosInstance.get<
     AxiosSuccessResponse<SystemPreferences>
   >(`${ContentRepositoryApiEnum.SYSTEM_PREFERNCES}`);
+  return response.data;
+};
+
+export const getOrphanCourses = async (
+  page = 1,
+  limit = 10,
+  q = '',
+): Promise<AxiosSuccessResponse<PaginateWrapper<TCourse[]>>> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<PaginateWrapper<TCourse[]>>
+  >(
+    `${ContentRepositoryApiEnum.ORPHAN_COURSES}?page=${page}&limit=${limit}&q=${q}`,
+  );
   return response.data;
 };

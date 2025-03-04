@@ -29,6 +29,8 @@ import { useFetchContentRepositoryMetadata } from '@src/context/contextHelperSer
 import { useSelector } from 'react-redux';
 import { selectUser } from '@src/store/features/userSlice';
 import { UserTypeIdEnum } from 'lib/shared/src';
+import { updateContentRepositoryRoadmap } from '@src/store/features';
+import SmallScreenTabs from '@src/shared/components/SmallScreenTabs';
 
 function ContentRepository() {
   const router = useRouter();
@@ -40,6 +42,7 @@ function ContentRepository() {
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(!isRoadmapsInitialized);
   const user = useSelector(selectUser);
+  const [activeTab, setActiveTab] = useState('roadmaps');
 
   const fetchRoadmapData = async () => {
     try {
@@ -49,6 +52,7 @@ function ContentRepository() {
         payload: res.data,
       });
     } catch (err) {
+      console.log(err);
       dispatch({
         type: 'roadmaps/fetchRoadmaps/rejected',
         payload: 'Failed to fetch roadmaps',
@@ -81,6 +85,8 @@ function ContentRepository() {
     createRoadmap(data)
       .then((res) => {
         dispatch(addRoadmap(res.data));
+        //add roadmap to metadata as well
+        dispatch(updateContentRepositoryRoadmap(res.data));
         setOpenAddModal(false);
         router.push(`${RouteEnum.CONTENT}/${res.data.id}`);
         showApiMessageInToast(res);
@@ -93,6 +99,19 @@ function ContentRepository() {
     return <ContentRepositorySkeleton />;
   }
 
+  const tabs = [
+    {
+      id: 'roadmaps',
+      label: en.contentRepository.allRoadmaps,
+      count: roadmaps.length || 0,
+    },
+    {
+      id: 'courses',
+      label: en.contentRepository.allCourses,
+      count: courses.length,
+    },
+  ];
+
   return (
     <>
       <AddEditRoadMapModal
@@ -102,9 +121,9 @@ function ContentRepository() {
         isloading={isModalLoading}
       />
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-6 md:px-4">
         <div className="flex flex-col items-center justify-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-2">
+          <h1 className="text-4xl text-center md:text-5xl font-bold mb-2">
             {en.contentRepository.contentRepository}
           </h1>
           <p className="text-sm text-gray-500">
@@ -113,8 +132,17 @@ function ContentRepository() {
           </p>
         </div>
 
-        <section className="mb-12">
-          <div className="flex items-baseline mb-6">
+        {/* Small screen tabs */}
+        <SmallScreenTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          tabs={tabs}
+        />
+
+        <section
+          className={`mb-12 + ${activeTab === 'courses' ? 'hidden md:block' : 'block'}`}
+        >
+          <div className="hidden md:flex items-baseline mb-6">
             <h2 className="text-2xl md:text-3xl font-bold">
               {en.contentRepository.allRoadmaps}
             </h2>
@@ -126,7 +154,7 @@ function ContentRepository() {
           {roadmaps.length > 0 ? (
             <div
               style={{ scrollbarWidth: 'thin' }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4  pr-2"
+              className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4"
             >
               <CreateNewCard
                 title={en.contentRepository.createNewRoadmap}
@@ -161,8 +189,10 @@ function ContentRepository() {
           )}
         </section>
 
-        <section>
-          <div className="flex items-baseline mb-6">
+        <section
+          className={`${activeTab === 'roadmaps' ? 'hidden md:block' : 'block'}`}
+        >
+          <div className="hidden md:flex items-baseline mb-6">
             <h2 className="text-2xl md:text-3xl font-bold">
               {en.contentRepository.allCourses}
             </h2>
@@ -174,7 +204,7 @@ function ContentRepository() {
           {courses.length > 0 ? (
             <div
               style={{ scrollbarWidth: 'thin' }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 pr-2"
+              className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4"
             >
               {courses.map((item) => (
                 <Card

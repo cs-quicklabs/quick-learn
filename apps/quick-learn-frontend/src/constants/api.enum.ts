@@ -44,6 +44,7 @@ export enum ContentRepositoryApiEnum {
   LESSON_PROGRESS = '/lesson-progress',
   LESSON_FLAGGED = '/lesson/flag',
   GET_FLAGGED_LESSON = '/lesson/flagged',
+  ORPHAN_COURSES = '/course/orphan',
 }
 
 export enum ArchivedApiEnum {
@@ -75,5 +76,5 @@ export enum LearningPathAPIEnum {
 }
 
 export enum DailyLessionEnum {
-  GET_DAILY_LESSON_DETAILS = '/lesson/:lesson/:course/:token',
+  GET_DAILY_LESSON_DETAILS = '/lesson/daily/:token',
 }

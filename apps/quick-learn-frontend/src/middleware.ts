@@ -20,11 +20,11 @@ const SUPERADMIN_ONLY_ROUTES = [
 const ADMIN_AND_SUPERADMIN_ROUTES = [
   RouteEnum.TEAM,
   RouteEnum.ARCHIVED_USERS,
-  RouteEnum.TEAM,
   RouteEnum.APPROVALS,
   RouteEnum.FLAGGED,
 ];
-const EDITOR_ROUTES = [RouteEnum.CONTENT, RouteEnum.FLAGGED];
+const EDITOR_ROUTES = [RouteEnum.TEAM, RouteEnum.CONTENT, RouteEnum.FLAGGED];
+const EDITOR_RESTRICTED_TEAM_ROUTES = [`${RouteEnum.TEAM}/edit`];
 
 // Helper functions
 const isPublicRoute = (path: string) => PUBLIC_ROUTES.includes(path);
@@ -62,6 +62,14 @@ export async function middleware(request: NextRequest) {
       : NextResponse.redirect(new URL(RouteEnum.MY_LEARNING_PATH, request.url));
 
   if (isEditorRoute(pathname)) {
+    if (
+      userRoleNum === UserTypeIdEnum.EDITOR &&
+      EDITOR_RESTRICTED_TEAM_ROUTES.some((route) => pathname.startsWith(route))
+    ) {
+      return NextResponse.redirect(
+        new URL(RouteEnum.MY_LEARNING_PATH, request.url),
+      );
+    }
     return roleBasedRedirect(
       userRoleNum === UserTypeIdEnum.EDITOR ||
         userRoleNum === UserTypeIdEnum.ADMIN ||

@@ -1,4 +1,12 @@
 export class LoginPage {
+  initialize(email: string, password: string) {
+    this.visit();
+    cy.get('.text-xl').contains('Sign in to your account');
+    this.login(email, password);
+    cy.url().should('include', '/dashboard');
+    this.getWelcomeMessage();
+  }
+
   visit() {
     cy.visit('/');
   }
@@ -10,6 +18,7 @@ export class LoginPage {
   getPasswordInput() {
     return cy.get('#loginForm_input_passwordpassword');
   }
+
   ensureRememberMeUnchecked() {
     cy.get('input[type="checkbox"]').then(($checkbox) => {
       if ($checkbox.is(':checked')) {
@@ -17,19 +26,25 @@ export class LoginPage {
       }
     });
   }
+
   clickRememberMeCheckbox() {
     cy.get('input[type="checkbox"]').check(); // Check after entering credentials
   }
+
   getSubmitButton() {
     return cy.get('button[type="submit"]');
   }
 
   getErrorMessage() {
-    return cy.get('.Toastify');
+    return cy.get('div.Toastify__toast');
+  }
+
+  getError() {
+    return cy.get('p.mt-1');
   }
 
   getWelcomeMessage() {
-    cy.get('.Toastify__toast-body')
+    cy.get('div.Toastify__toast--success')
       .contains('Successfully logged in.')
       .should('be.visible');
   }
@@ -40,7 +55,9 @@ export class LoginPage {
     this.getPasswordInput().type(password);
     this.clickRememberMeCheckbox(); // Check after filling credentials
     this.getSubmitButton().click();
+    this.getWelcomeMessage();
   }
+
   loginWithInvalidCredential(username, password) {
     this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
     this.getUsernameInput().type(username);
@@ -48,37 +65,36 @@ export class LoginPage {
     this.clickRememberMeCheckbox(); // Check after filling credentials
     this.getSubmitButton().click();
   }
+
   loginWithEmptyValue() {
-    this.getUsernameInput().clear();
-    this.getPasswordInput().clear();
+    this.getUsernameInput().type(' ');
+    this.getError().should('contain', 'This field is required');
+    this.getPasswordInput().type(' ');
+    this.getError().should(
+      'contain',
+      'Password must be at least 8 characters long',
+    );
     this.getSubmitButton().should('be.disabled');
   }
 
-  loginAsEditor(EditorMail, EditorPassword) {
-    cy.get('.text-xl').contains('Sign in to your account');
-    this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
-    this.getUsernameInput().type(EditorMail);
-    this.getPasswordInput().type(EditorPassword);
-    this.clickRememberMeCheckbox(); // Check after filling credentials
+  loginWithIncorrectData() {
+    this.ensureRememberMeUnchecked();
+    this.getUsernameInput().type('super.yo@');
+    this.getError().should('contain', 'Invalid email address');
+    this.getPasswordInput().type('Pass');
+    this.getError().should(
+      'contain',
+      'Password must be at least 8 characters long',
+    );
+    this.getUsernameInput().clear();
+    this.getUsernameInput().type('test1.21@yopmail.com');
+    this.getPasswordInput().clear();
+    this.getPasswordInput().type('password@123P');
+    this.clickRememberMeCheckbox();
     this.getSubmitButton().click();
-    this.getWelcomeMessage();
-  }
-
-  loginAsAdmin(AdminMail, AdminPassword) {
-    this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
-    this.getUsernameInput().type(AdminMail);
-    this.getPasswordInput().type(AdminPassword);
-    this.clickRememberMeCheckbox(); // Check after filling credentials
-    this.getSubmitButton().click();
-    this.getWelcomeMessage();
-  }
-
-  loginAsMember(MemberMail, MemberPassword) {
-    this.ensureRememberMeUnchecked(); // Uncheck before filling credentials
-    this.getUsernameInput().type(MemberMail);
-    this.getPasswordInput().type(MemberPassword);
-    this.clickRememberMeCheckbox(); // Check after filling credentials
-    this.getSubmitButton().click();
-    this.getWelcomeMessage();
+    this.getErrorMessage().should(
+      'contain',
+      'No user is linked to the provided email.',
+    );
   }
 }

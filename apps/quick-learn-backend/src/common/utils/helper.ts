@@ -1,7 +1,19 @@
 import { Response } from 'express';
 import sanitizeHtml from 'sanitize-html';
-import { EnvironmentEnum } from '../constants/constants';
+import crypto from 'crypto';
+import {
+  EnvironmentEnum,
+  LeaderboardQuarterEnum,
+} from '../constants/constants';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 export default class Helpers {
+  static generateRandomhash(): string {
+    return crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+  }
+
   static clearCookies(res: Response) {
     res.clearCookie('refresh_token');
     res.clearCookie('access_token');
@@ -91,5 +103,33 @@ export default class Helpers {
     }
 
     return urls;
+  }
+
+  static getPreviousQuarter(): LeaderboardQuarterEnum {
+    const currentMonth = new Date().getMonth(); // 0-11 (Jan=0, Dec=11)
+
+    // Map month to quarter using integer division
+    // Jan-Mar (0-2) → Q4, Apr-Jun (3-5) → Q1, Jul-Sep (6-8) → Q2, Oct-Dec (9-11) → Q3
+    const quarterMap = [
+      LeaderboardQuarterEnum.Q4, // Jan-Mar (0-2)
+      LeaderboardQuarterEnum.Q1, // Apr-Jun (3-5)
+      LeaderboardQuarterEnum.Q2, // Jul-Sep (6-8)
+      LeaderboardQuarterEnum.Q3, // Oct-Dec (9-11)
+    ];
+
+    const currentQuarter = quarterMap[Math.floor(currentMonth / 3)];
+
+    // Simple mapping for previous quarter
+    const previousQuarterMap: Record<
+      LeaderboardQuarterEnum,
+      LeaderboardQuarterEnum
+    > = {
+      [LeaderboardQuarterEnum.Q1]: LeaderboardQuarterEnum.Q4,
+      [LeaderboardQuarterEnum.Q2]: LeaderboardQuarterEnum.Q1,
+      [LeaderboardQuarterEnum.Q3]: LeaderboardQuarterEnum.Q2,
+      [LeaderboardQuarterEnum.Q4]: LeaderboardQuarterEnum.Q3,
+    };
+
+    return previousQuarterMap[currentQuarter];
   }
 }

@@ -52,6 +52,7 @@ function ArchivedRoadmaps() {
         );
         toast.success(en.archivedSection.roadmapDeletedSuccess);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setDeleteId(false);
@@ -73,6 +74,7 @@ function ArchivedRoadmaps() {
         );
         toast.success(en.archivedSection.roadmapRestoredSuccess);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setRestoreId(false);
@@ -95,6 +97,7 @@ function ArchivedRoadmaps() {
             }),
           );
         } catch (err) {
+          console.log(err);
           toast.error(en.common.somethingWentWrong);
         }
       }, 300),
@@ -106,7 +109,7 @@ function ArchivedRoadmaps() {
   }, [dispatch]);
 
   return (
-    <div className="max-w-xl px-4 pb-12 lg:col-span-8">
+    <div className="max-w-[43rem] px-4 pb-12 lg:col-span-8">
       <ConformationModal
         title={
           restoreId
@@ -138,7 +141,7 @@ function ArchivedRoadmaps() {
           handleQueryChange(e.target.value)
         }
       />
-      <div className="flex flex-col w-full min-h-[200px]">
+      <div className="flex flex-col w-full">
         {isInitialLoad ? (
           <LoadingSkeleton />
         ) : roadmapsList.length === 0 ? (

@@ -42,14 +42,14 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
   }, []);
 
   return (
-    <main className="max-w-7xl mx-auto pb-10 lg:py-6 lg:px-8 ">
+    <main className="max-w-7xl mx-auto lg:py-6 lg:px-8 ">
       <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
         {/* Sidebar */}
         <aside className="px-2 py-6 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
           <Sidebar navLinks={navLinks} />
         </aside>
         {/* Main Section */}
-        <main className="max-w-xl pb-12 px-4 lg:col-span-6">{children} </main>
+        <main className="max-w-xl px-4 lg:col-span-6">{children} </main>
       </div>
     </main>
   );

@@ -34,6 +34,7 @@ import {
 import {
   selectContentRepositoryMetadata,
   updateContentRepository,
+  updateContentRepositoryRoadmapCount,
 } from '@src/store/features/metadataSlice';
 import { AppDispatch } from '@src/store/store';
 import {
@@ -176,12 +177,27 @@ function CourseDetails() {
       .finally(() => setIsLoading(false));
   }
 
+  const handleUpdateContentRepoRoadmapcount = (data: string[]) => {
+    if (!courseData) return;
+    dispatch(
+      updateContentRepositoryRoadmapCount([
+        {
+          id: String(courseData.id),
+          action:
+            data.length -
+            (courseData.roadmaps ? courseData.roadmaps.length : 0),
+        },
+      ]),
+    );
+  };
+
   function assignRoadmaps(data: string[]) {
     setIsLoading(true);
     assignRoadmapsToCourse(courseId, data)
       .then((res) => {
         showApiMessageInToast(res);
         setOpenAssignModal(false);
+        handleUpdateContentRepoRoadmapcount(data);
 
         // Check if the current roadmap is still assigned
         const isCurrentRoadmapAssigned = data.includes(roadmapId);
@@ -278,12 +294,11 @@ function CourseDetails() {
         onConfirm={onArchive}
       />
 
+      <Breadcrumb links={links} />
       <div className="container mx-auto px-4">
-        <Breadcrumb links={links} />
-
         {/* Course Header */}
         <div className="flex flex-col items-center justify-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold first-letter:uppercase mb-2">
+          <h1 className="text-4xl text-center md:text-5xl font-bold first-letter:uppercase mb-2">
             {courseData.name}
           </h1>
           <p className="text-sm text-gray-500 text-center">
@@ -346,7 +361,7 @@ function CourseDetails() {
             </p>
           </div>
           {hasLessons ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               <CreateNewCard
                 title={en.lesson.createNewLesson}
                 onAdd={onAddLesson}

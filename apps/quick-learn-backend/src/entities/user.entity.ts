@@ -126,7 +126,9 @@ export class UserEntity extends BaseEntity {
   @Column({ nullable: true })
   updated_by_id: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.updated_users)
+  @ManyToOne(() => UserEntity, (user) => user.updated_users, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'updated_by_id' })
   updated_by: UserEntity;
 

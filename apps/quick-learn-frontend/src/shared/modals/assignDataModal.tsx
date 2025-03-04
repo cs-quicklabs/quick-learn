@@ -25,6 +25,7 @@ const schema = z.object({
 });
 
 type schemaType = z.infer<typeof schema>;
+const SM_MEDIA_QUERY = '(max-width: 639px)';
 
 const AssignDataModal: FC<Props> = ({
   show,
@@ -43,6 +44,12 @@ const AssignDataModal: FC<Props> = ({
   const [initialSelectedRoadmaps, setInitialSelectedRoadmaps] = useState<
     string[]
   >([]);
+  const [defaultValues, setDefaultValues] = useState(initialValues);
+
+  useEffect(() => {
+    if (initialValues) setDefaultValues(initialValues);
+  }, [initialValues]);
+
   const {
     register,
     handleSubmit,
@@ -53,49 +60,73 @@ const AssignDataModal: FC<Props> = ({
     reset,
   } = useForm<schemaType>({
     resolver: zodResolver(schema),
-    defaultValues: initialValues,
+    defaultValues,
     mode: 'onChange',
   });
+
   const sortedData = useMemo(
     () => [...data].sort((a, b) => a.name.localeCompare(b.name)),
     [data],
   );
-  useEffect(() => {
-    const selectedRoadmaps = initialValues?.selected || [];
-    setInitialSelectedRoadmaps(selectedRoadmaps);
-  }, [initialValues]);
 
   useEffect(() => {
-    if (show) {
-      // When the modal is opened, expand all accordions
+    const initializeState = () => {
       const allAccordionIds = sortedData.map((ele) => ele.name);
-      setOpenAccordions(allAccordionIds);
-      setIsAllExpanded(true);
-      if (initialValues?.selected && !isLoading) {
-        setValue('selected', initialValues.selected);
-        setInitialSelectedRoadmaps(initialValues.selected);
+      const isMobileView = window.matchMedia(SM_MEDIA_QUERY).matches;
+
+      if (isMobileView) {
+        setOpenAccordions([]);
+        setIsAllExpanded(false);
+      } else {
+        setOpenAccordions(allAccordionIds);
+        setIsAllExpanded(true);
       }
-    } else {
-      // Reset the state when the modal is closed
+
+      reset(defaultValues);
+      setInitialSelectedRoadmaps(defaultValues?.selected || []);
+      setIsFormDirty(false);
+    };
+
+    const resetState = () => {
       reset();
       setIsFormDirty(false);
-      setOpenAccordions([]); // Collapse all when modal is closed
+      setOpenAccordions([]);
       setIsAllExpanded(false);
-    }
-    if (initialValues?.selected && show && !isLoading) {
-      setValue('selected', initialValues.selected);
-    }
-  }, [initialValues, show, isLoading, reset, setValue, sortedData]);
+      setInitialSelectedRoadmaps([]);
+    };
 
-  useEffect(() => {
     if (show) {
-      const subscription = watch(() => handleCheckFormDirty());
-      return () => subscription.unsubscribe();
+      initializeState();
+    } else {
+      resetState();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, watch]);
+  }, [show, setValue, reset, sortedData]);
+
+  useEffect(() => {
+    if (!show) return;
+
+    const subscription = watch((_value, { name, type }) => {
+      const currentSelected = getValues('selected') || [];
+
+      if (name === 'selected' || type === 'change') {
+        const isDirty =
+          currentSelected.length !== initialSelectedRoadmaps.length ||
+          !currentSelected.every((value) =>
+            initialSelectedRoadmaps.includes(value),
+          );
+
+        setIsFormDirty(isDirty);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [show, watch, getValues, initialSelectedRoadmaps]);
 
   function onFormSubmit(formData: schemaType) {
+    if (defaultValues) {
+      setDefaultValues({ selected: formData?.selected || [] });
+    }
     onSubmit(formData?.selected ?? []);
   }
 
@@ -125,16 +156,6 @@ const AssignDataModal: FC<Props> = ({
       newOpenAccordions.length === allAccordionIds.length;
 
     setIsAllExpanded(newIsAllExpanded);
-  };
-  const handleCheckFormDirty = () => {
-    const currentSelected = getValues('selected') || [];
-    const isDirty =
-      currentSelected.length !== initialSelectedRoadmaps.length ||
-      !currentSelected.every((value) =>
-        initialSelectedRoadmaps.includes(value),
-      );
-
-    setIsFormDirty(isDirty);
   };
 
   return (
@@ -171,7 +192,7 @@ const AssignDataModal: FC<Props> = ({
             <li className="mr-1">
               <button
                 type="button"
-                className="bg-blue-700 px-3 py-2 rounded-md text-white mb-2 inline-block hover:bg-blue-600"
+                className="bg-blue-700 px-3 py-2 rounded-md text-white mb-2 inline-block hover:bg-blue-600 invisible md:visible"
                 onClick={handleToggleAll}
               >
                 {isAllExpanded ? 'Collapse All' : 'Expand All'}
@@ -183,10 +204,10 @@ const AssignDataModal: FC<Props> = ({
           <div className="px-4 md:px-6">
             <div
               id="myTabContent"
-              className="overflow-y-auto h-[35rem] scrollbar-hide"
+              className="overflow-y-auto h-[24rem] md:h-[35rem] scrollbar-hide"
             >
               <div
-                className="columns-2 md:columns-4 gap-4"
+                className="columns-1 md:columns-4 gap-4"
                 id="brand"
                 role="tabpanel"
                 aria-labelledby="brand-tab"
@@ -209,7 +230,9 @@ const AssignDataModal: FC<Props> = ({
                               className="relative flex items-center justify-between text-black bg-transparent focus:ring-0 [&>svg]:hidden px-3 py-4"
                               onClick={() => handleAccordionChange(ele.name)}
                             >
-                              <span className="flex-grow">{ele.name}</span>
+                              <span className="flex-grow capitalize">
+                                {ele.name}
+                              </span>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -246,9 +269,21 @@ const AssignDataModal: FC<Props> = ({
                                     />
                                     <label
                                       htmlFor={item.name}
-                                      className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                      className="flex items-center group gap-2 w-full ml-2 text-sm justify-between font-medium text-gray-900 dark:text-gray-300"
                                     >
-                                      {firstLetterCapital(item.name)}
+                                      <span>
+                                        {firstLetterCapital(item.name)}
+                                      </span>
+                                      {item.roadmap_count === 0 && (
+                                        <span className="flex">
+                                          <span className="hidden md:flex text-gray-500 text-xs italic">
+                                            orphan
+                                          </span>
+                                          <span className="text-red-500 text-md ml-1">
+                                            *
+                                          </span>
+                                        </span>
+                                      )}
                                     </label>
                                   </div>
                                 ))

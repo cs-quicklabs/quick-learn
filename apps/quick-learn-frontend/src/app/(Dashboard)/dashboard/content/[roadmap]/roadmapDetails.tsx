@@ -30,7 +30,11 @@ import {
   TRoadmap,
 } from '@src/shared/types/contentRepository';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectContentRepositoryMetadata } from '@src/store/features/metadataSlice';
+import {
+  selectContentRepositoryMetadata,
+  updateContentRepositoryCourse,
+  updateContentRepositoryRoadmapCount,
+} from '@src/store/features/metadataSlice';
 import {
   selectRoadmapById,
   updateRoadmap as updateStoreRoadmap,
@@ -132,6 +136,7 @@ function RoadmapDetails() {
         list: item.courses.map((course) => ({
           name: course.name,
           value: Number(course.id),
+          roadmap_count: course.roadmaps_count,
         })),
       }));
     setCourseCategoriesData(data);
@@ -159,6 +164,7 @@ function RoadmapDetails() {
     try {
       const res = await createCourse({ ...data, roadmap_id: +roadmapId });
       setOpenAddCourseModal(false);
+      dispatch(updateContentRepositoryCourse(res.data));
       const updatedCourses = [...courses, res.data];
       setCourses(updatedCourses);
       if (roadmapData) {
@@ -174,15 +180,39 @@ function RoadmapDetails() {
     }
   };
 
+  const handleUpdateContentRepoRoadmapcount = (data: string[]) => {
+    // Get initially assigned courses or empty array if roadmapData is undefined
+    const initialCourses =
+      roadmapData?.courses?.map((course) => String(course.id)) || [];
+
+    // Find courses that were removed (present in initial but not in selected)
+    const removedCourses = initialCourses
+      .filter((courseId) => !data.includes(courseId))
+      .map((courseId) => ({ id: courseId, action: -1 }));
+
+    // Find courses that were added (present in selected but not in initial)
+    const addedCourses = data
+      .filter((courseId) => !initialCourses.includes(courseId))
+      .map((courseId) => ({ id: courseId, action: 1 }));
+
+    // Combine added and removed courses
+    const updates: { id: string; action: number }[] = [
+      ...removedCourses,
+      ...addedCourses,
+    ];
+    dispatch(updateContentRepositoryRoadmapCount(updates));
+  };
+
   const assignCourses = async (data: string[]) => {
     setIsLoading(true);
     try {
       const res = await assignCoursesToRoadmap(roadmapId, data);
       const updatedRoadmap = await getRoadmap(roadmapId);
+      dispatch(updateStoreRoadmap(updatedRoadmap.data));
       setRoadmapData(updatedRoadmap.data);
       setCourses(updatedRoadmap.data.courses || []);
-      dispatch(updateStoreRoadmap(updatedRoadmap.data));
       setOpenAssignModal(false);
+      handleUpdateContentRepoRoadmapcount(data);
       showApiMessageInToast(res);
     } catch (err) {
       showApiErrorInToast(err as AxiosErrorObject);
@@ -276,12 +306,11 @@ function RoadmapDetails() {
         onConfirm={onArchive}
       />
 
+      <Breadcrumb links={links} />
       <div className="container mx-auto px-4">
-        <Breadcrumb links={links} />
-
         {/* Roadmap Header */}
         <div className="flex flex-col items-center justify-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold first-letter:uppercase mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold first-letter:uppercase mb-2 text-center">
             {roadmapData.name}
           </h1>
           <p className="text-sm text-gray-500 text-center">
@@ -329,6 +358,7 @@ function RoadmapDetails() {
 
             <Tooltip content={en.contentRepository.archiveRoadmap}>
               <button
+                id="archiveRoadmap"
                 type="button"
                 className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setShowConformationModal(true)}
@@ -351,7 +381,7 @@ function RoadmapDetails() {
             </p>
           </div>
           {hasCourses ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               <CreateNewCard
                 title={en.roadmapDetails.createNewCourse}
                 onAdd={() => setOpenAddCourseModal(true)}

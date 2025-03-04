@@ -135,7 +135,7 @@ function LessonDetails() {
             <span className="bg-[#166534] flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center  ">
               <MdInfo />
             </span>
-            <p>
+            <span>
               <span className="font-bold">
                 {en.myLearningPath.alreadyCompleted}
               </span>{' '}
@@ -147,7 +147,7 @@ function LessonDetails() {
               >
                 {en.myLearningPath.markAsUnread}
               </button>
-            </p>
+            </span>
           </p>
         </div>
       ) : (
@@ -156,9 +156,9 @@ function LessonDetails() {
             type="checkbox"
             checked={isChecked}
             onChange={handleCheckboxChange}
-            className="rounded-md h-8 w-8 border-gray-400 bg-[#F4F4F6]"
+            className="rounded-md h-6 w-6 md:h-8 md:w-8 border-gray-400 bg-[#F4F4F6]"
           />
-          <p className="text-2xl font-semibold text-gray-900 dark:text-gray-300">
+          <p className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-300">
             {en.myLearningPath.markRead}
           </p>
         </div>

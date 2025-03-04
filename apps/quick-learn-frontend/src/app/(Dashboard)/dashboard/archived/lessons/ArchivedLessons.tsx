@@ -52,6 +52,7 @@ function ArchivedLessons() {
         );
         toast.success(en.archivedSection.lessonDeletedSuccess);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setDeleteId(false);
@@ -73,6 +74,7 @@ function ArchivedLessons() {
         );
         toast.success(en.archivedSection.lessonRestoredSuccess);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setRestoreId(false);
@@ -95,6 +97,7 @@ function ArchivedLessons() {
             }),
           );
         } catch (err) {
+          console.log(err);
           toast.error(en.common.somethingWentWrong);
         }
       }, 300),
@@ -106,7 +109,7 @@ function ArchivedLessons() {
   }, [dispatch]);
 
   return (
-    <div className="max-w-xl px-4 pb-12 lg:col-span-8">
+    <div className="max-w-[43rem] px-4 pb-12 lg:col-span-8">
       <ConformationModal
         title={
           restoreId
@@ -138,7 +141,7 @@ function ArchivedLessons() {
           handleQueryChange(e.target.value)
         }
       />
-      <div className="flex flex-col w-full min-h-[200px]">
+      <div className="flex flex-col w-full">
         {isInitialLoad ? (
           <LoadingSkeleton />
         ) : lessonsList.length === 0 ? (
@@ -161,8 +164,8 @@ function ArchivedLessons() {
                   item.updated_by
                     ? `${item.updated_by.first_name} ${item.updated_by.last_name}`
                     : item.archive_by_user
-                    ? `${item.archive_by_user.first_name} ${item.archive_by_user.last_name}`
-                    : ''
+                      ? `${item.archive_by_user.first_name} ${item.archive_by_user.last_name}`
+                      : ''
                 }
                 deactivationDate={item.updated_at}
                 onClickDelete={() => setDeleteId(item.id)}

@@ -1,12 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DeleteResult,
-  FindOperator,
-  FindOptionsWhere,
-  In,
-  Repository,
-} from 'typeorm';
+import { DeleteResult, ILike, In, Not, Repository } from 'typeorm';
 import { PaginationService } from '@src/common/services/pagination.service';
 import { RoadmapEntity, UserEntity } from '@src/entities';
 import { CreateRoadmapDto } from './dto/create-roadmap.dto';
@@ -22,7 +16,7 @@ import { PaginatedResult } from '@src/common/interfaces';
 export class RoadmapService extends PaginationService<RoadmapEntity> {
   constructor(
     @InjectRepository(RoadmapEntity)
-    private roadmapRepository: Repository<RoadmapEntity>,
+    roadmapRepository: Repository<RoadmapEntity>,
     private readonly roadmapCategoryService: RoadmapCategoryService,
     private readonly courseService: CourseService,
   ) {
@@ -30,7 +24,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   }
 
   async getAllRoadmaps(): Promise<RoadmapEntity[]> {
-    return this.roadmapRepository
+    return this.repository
       .createQueryBuilder('roadmap')
       .andWhere('roadmap.archived = :archived', { archived: false })
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
@@ -104,7 +98,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   async findAllArchived(
     paginationDto: PaginationDto,
   ): Promise<PaginatedResult<RoadmapEntity>> {
-    const queryBuilder = this.roadmapRepository
+    const queryBuilder = this.repository
       .createQueryBuilder('roadmap')
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
       .leftJoinAndSelect('roadmap.created_by', 'created_by')
@@ -128,34 +122,21 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       );
     }
 
-    // Add pagination
-    const skip = (paginationDto.page - 1) * paginationDto.limit;
-    queryBuilder
-      .skip(skip)
-      .take(paginationDto.limit)
-      .orderBy('roadmap.created_at', 'DESC');
-
-    const [items, total] = await queryBuilder.getManyAndCount();
-
-    return {
-      items,
-      total,
-      page: paginationDto.page,
-      limit: paginationDto.limit,
-      total_pages: Math.ceil(total / paginationDto.limit),
-    };
+    return await this.queryBuilderPaginate(
+      queryBuilder,
+      paginationDto.page,
+      paginationDto.limit,
+    );
   }
+
   async createRoadmap(
     createRoadmapDto: CreateRoadmapDto,
     user: UserEntity,
   ): Promise<RoadmapEntity> {
     // Check for existing roadmap with same name
-    const existingRoadmap = await this.roadmapRepository
-      .createQueryBuilder('roadmap')
-      .where('LOWER(roadmap.name) = LOWER(:name)', {
-        name: createRoadmapDto.name,
-      })
-      .getOne();
+    const existingRoadmap = await this.get({
+      name: ILike(`%${createRoadmapDto.name}%`),
+    });
 
     if (existingRoadmap) {
       throw new BadRequestException(en.RoadmapAlreadyExists);
@@ -170,13 +151,11 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       throw new BadRequestException(en.InvalidRoadmapCategory);
     }
 
-    const newRoadmap = this.roadmapRepository.create({
+    return await this.create({
       ...createRoadmapDto,
       roadmap_category_id: +createRoadmapDto.roadmap_category_id,
       created_by_user_id: user.id,
     });
-
-    return await this.roadmapRepository.save(newRoadmap);
   }
 
   async updateRoadmap(
@@ -184,21 +163,13 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
     updateRoadmapDto: UpdateRoadmapDto,
     userID: number,
   ): Promise<RoadmapEntity> {
-    const roadmap = await this.roadmapRepository
-      .createQueryBuilder('roadmap')
-      .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
-      .where('roadmap.id = :id', { id })
-      .getOne();
-
-    if (!roadmap) {
-      throw new BadRequestException(en.RoadmapNotFound);
-    }
+    const roadmap = await this.getRoadmapById(id, ['roadmap_category']);
 
     const handleActiveStatus =
       Object.keys(updateRoadmapDto).length === 1 &&
       'active' in updateRoadmapDto;
     if (handleActiveStatus) {
-      await this.roadmapRepository.update(
+      await this.repository.update(
         { id },
         {
           archived: !updateRoadmapDto.active,
@@ -210,18 +181,16 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
 
     // Check for name conflicts if name is being updated
     if (updateRoadmapDto.name) {
-      const existingRoadmap = await this.roadmapRepository
-        .createQueryBuilder('roadmap')
-        .where('LOWER(roadmap.name) = LOWER(:name)', {
-          name: updateRoadmapDto.name,
-        })
-        .andWhere('roadmap.id != :id', { id })
-        .getOne();
+      const existingRoadmap = await this.get({
+        name: ILike(`%${updateRoadmapDto.name}%`),
+        id: Not(id),
+      });
 
       if (existingRoadmap) {
         throw new BadRequestException(en.RoadmapAlreadyExists);
       }
     }
+
     const verifyRoadmapCategory = updateRoadmapDto.roadmap_category_id;
     if (verifyRoadmapCategory) {
       const roadmapCategory = await this.roadmapCategoryService.get({
@@ -232,7 +201,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       }
     }
 
-    await this.roadmapRepository.update(
+    await this.repository.update(
       { id },
       {
         ...updateRoadmapDto,
@@ -245,30 +214,28 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
     return await this.getRoadmapById(id);
   }
 
-  private async getRoadmapById(id: number): Promise<RoadmapEntity> {
-    return await this.roadmapRepository
-      .createQueryBuilder('roadmap')
-      .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
-      .leftJoinAndSelect('roadmap.courses', 'courses')
-      .leftJoinAndSelect('roadmap.created_by', 'created_by')
-      .leftJoinAndSelect('roadmap.updated_by', 'updated_by')
-      .where('roadmap.id = :id', { id })
-      .getOne();
-  }
-
-  async archiveRoadmap(id: number): Promise<void> {
-    const roadmap = await this.getRoadmapById(id);
+  private async getRoadmapById(
+    id: number,
+    relations = ['roadmap_category', 'courses', 'created_by', 'updated_by'],
+  ): Promise<RoadmapEntity> {
+    const roadmap = await this.get({ id }, relations);
     if (!roadmap) {
       throw new BadRequestException(en.RoadmapNotFound);
     }
-    await this.roadmapRepository.update({ id }, { archived: true });
+
+    return roadmap;
+  }
+
+  async archiveRoadmap(id: number): Promise<void> {
+    await this.getRoadmapById(id);
+    await this.update({ id }, { archived: true });
   }
 
   async getRoadmapDetailsWithCourseAndLessonsCount(
     roadmapId: number,
     courseId?: number,
   ): Promise<RoadmapEntity> {
-    const queryBuilder = this.roadmapRepository
+    const queryBuilder = this.repository
       .createQueryBuilder('roadmap')
       .where('roadmap.id = :id', { id: roadmapId })
       .andWhere('roadmap.archived = :archived', { archived: false })
@@ -318,9 +285,6 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
     assignCourses: AssignCoursesToRoadmapDto,
   ): Promise<void> {
     const roadmap = await this.getRoadmapById(id);
-    if (!roadmap) {
-      throw new BadRequestException(en.RoadmapNotFound);
-    }
 
     const courses = await this.courseService.getMany({
       id: In(assignCourses.courses),
@@ -331,50 +295,19 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
     }
 
     roadmap.courses = courses;
-    await this.roadmapRepository.save(roadmap);
+    await this.repository.save(roadmap);
   }
 
-  private getIdFromCondition(
-    condition: FindOptionsWhere<RoadmapEntity>,
-  ): number | null {
-    if (!condition || !('id' in condition)) {
-      return null;
-    }
-
-    const idCondition = condition.id;
-
-    if (typeof idCondition === 'number') {
-      return idCondition;
-    }
-
-    if (idCondition instanceof FindOperator) {
-      const value = idCondition.value;
-      return typeof value === 'number' ? value : null;
-    }
-
-    return null;
-  }
-  async delete(
-    condition: FindOptionsWhere<RoadmapEntity>,
-  ): Promise<DeleteResult> {
+  async deleteRoadmap(id: number): Promise<DeleteResult> {
     // Get the queryRunner instance
-    const queryRunner =
-      this.roadmapRepository.manager.connection.createQueryRunner();
+    const queryRunner = this.repository.manager.connection.createQueryRunner();
 
     // Start transaction
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const id = this.getIdFromCondition(condition);
-      if (!id) {
-        throw new BadRequestException(en.invalidDeleteCondition);
-      }
-
       const roadmap = await this.getRoadmapById(id);
-      if (!roadmap) {
-        throw new BadRequestException(en.RoadmapNotFound);
-      }
 
       // Remove roadmap-course associations
       await queryRunner.manager
@@ -397,7 +330,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         .createQueryBuilder()
         .delete()
         .from(RoadmapEntity)
-        .where(condition)
+        .where({ id })
         .execute();
 
       // Commit transaction
@@ -415,7 +348,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   }
 
   async getUserRoadmapDetails(userId: number, roadmapId: number) {
-    const queryBuilder = this.roadmapRepository
+    const queryBuilder = this.repository
       .createQueryBuilder('roadmap')
       .leftJoinAndSelect(
         'roadmap.courses',

@@ -13,7 +13,13 @@ import {
 } from '@src/shared/types/contentRepository';
 import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
-import { getLastMonthRange, getLastWeekRange } from 'lib/shared/src';
+import {
+  getLastMonthRange,
+  getLastQuarterRange,
+  getLastWeekRange,
+} from 'lib/shared/src';
+
+type RangeType = 'weekly' | 'monthly' | 'quarterly';
 
 export function showErrorMessage(error: unknown) {
   if (error instanceof AxiosError) {
@@ -180,8 +186,8 @@ export const calculateCourseProgress = (
     ? course.lesson_ids?.filter((lesson) =>
         completedLessonIds.includes(lesson.id),
       ).length || 0
-    : course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
-        .length ?? 0;
+    : (course.lessons?.filter(({ id }) => completedLessonIds.includes(id))
+        .length ?? 0);
 
   return totalLessons > 0
     ? Math.round((completedCount / totalLessons) * 100)
@@ -189,9 +195,18 @@ export const calculateCourseProgress = (
 };
 
 export const getRecords = (type: string) => {
-  const { start, end } =
-    type === 'weekly' ? getLastWeekRange() : getLastMonthRange();
+  const rangeFunctions: Record<
+    RangeType,
+    () => { start: string; end: string }
+  > = {
+    weekly: getLastWeekRange,
+    monthly: getLastMonthRange,
+    quarterly: getLastQuarterRange,
+  };
 
+  const { start, end } = (
+    rangeFunctions[type as RangeType] || getLastWeekRange
+  )();
   return `${format(start, DateFormats.shortDate)} to ${format(
     end,
     DateFormats.shortDate,

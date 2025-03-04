@@ -69,6 +69,7 @@ function FlaggedList() {
     try {
       return format(new Date(date), DateFormats.shortDate);
     } catch (error) {
+      console.warn(error);
       return '-';
     }
   };
@@ -89,7 +90,7 @@ function FlaggedList() {
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
       <div className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
-        <div className="flex items-center justify-between">
+        <div>
           <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
             <div>
               <h1 className="mr-3 text-lg font-semibold">
@@ -97,16 +98,17 @@ function FlaggedList() {
               </h1>
               <p className="text-gray-500 text-sm">{en.common.flaggedDesc}</p>
             </div>
-          </div>
-          <div className="mr-6">
-            <input
-              type="text"
-              className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
-              placeholder="Search Lessons"
-              value={search}
-              onChange={handleSearchChange}
-              id="search"
-            />
+
+            <div className="w-full sm:w-auto">
+              <input
+                type="text"
+                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block touch-none"
+                placeholder="Search Lessons"
+                value={search}
+                onChange={handleSearchChange}
+                id="search"
+              />
+            </div>
           </div>
         </div>
         <div className={`overflow-x-auto ${isLoading ? 'opacity-60' : ''}`}>
@@ -139,30 +141,30 @@ function FlaggedList() {
                   >
                     <div className="flex items-center">
                       <SuperLink
-                        className="ml-2 hover:underline"
+                        className="ml-2 hover:underline first-letter:uppercase"
                         href={`${RouteEnum.FLAGGED}/${flaggedLesson.lesson_id}`}
                       >
                         {flaggedLesson.lesson?.name ?? '-'}
                       </SuperLink>
                     </div>
                   </th>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {(flaggedLesson?.lesson?.updated_at &&
                       formatDate(flaggedLesson?.lesson?.updated_at)) ||
                       '-'}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {(flaggedLesson?.lesson?.created_at &&
                       formatDate(flaggedLesson.lesson.created_at)) ||
                       '-'}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {formatDate(flaggedLesson.flagged_on)}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 whitespace-nowrap">
                     {flaggedLesson.user
                       ? `${flaggedLesson.user.first_name} ${flaggedLesson.user.last_name}`
-                      : '-'}
+                      : en.common.unknown}
                   </td>
                 </tr>
               ))}

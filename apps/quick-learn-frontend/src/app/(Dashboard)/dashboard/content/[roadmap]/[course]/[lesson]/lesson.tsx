@@ -132,7 +132,9 @@ function Lesson() {
   );
   const timeoutRef = useRef<NodeJS.Timeout>();
 
-  const [isEditing, setIsEditing] = useState<boolean>(lessonId === 'add');
+  const [isEditing, setIsEditing] = useState<boolean>(
+    lessonId === 'add' || path.includes('edit'),
+  );
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -333,10 +335,10 @@ function Lesson() {
   }, [lessonId, roadmapId, courseId, router]);
 
   return (
-    <>
+    <div className="-mt-4">
       {(loading || isArchiving) && <FullPageLoader />}
-      <div className="mx-auto max-w-screen-lg bg-white -mt-4">
-        <Breadcrumb links={links} />
+      <Breadcrumb links={links} />
+      <div className="mx-auto max-w-screen-lg bg-white">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Controller
             name="name"
@@ -394,7 +396,7 @@ function Lesson() {
           onConfirm={handleArchiveLesson}
         />
       </div>
-    </>
+    </div>
   );
 }
 

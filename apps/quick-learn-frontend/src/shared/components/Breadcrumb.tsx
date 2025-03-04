@@ -33,8 +33,11 @@ function customLink(
 
 const Breadcrumb: FC<Props> = ({ links, disabled = false }) => {
   return (
-    <div className="px-4 pb-4 sm:flex sm:items-center sm:justify-center sm:flex-wrap sm:px-6 lg:px-8">
-      <nav className="flex" aria-label="Breadcrumb">
+    <div className="flex justify-center px-4 pb-4 pt-5 sm:px-6 lg:px-8">
+      <nav
+        className="flex justify-self-center flex-wrap"
+        aria-label="Breadcrumb"
+      >
         <ol className="inline-flex justify-self-center flex-wrap align-center justify-center rtl:space-x-reverse">
           {links.map((link, index) => (
             <li

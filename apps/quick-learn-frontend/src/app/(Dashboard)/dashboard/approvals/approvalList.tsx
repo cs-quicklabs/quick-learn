@@ -100,23 +100,25 @@ function ApprovalList() {
         >
           <div className="flex items-center">
             <SuperLink
-              className="ml-2 hover:underline"
+              className="ml-2 hover:underline first-letter:uppercase"
               href={`${RouteEnum.APPROVALS}/${lesson.id}`}
             >
               {lesson.name}
             </SuperLink>
           </div>
         </th>
-        <td className="px-4 py-2">
+        <td className="px-4 py-2 whitespace-nowrap">
           {format(lesson.updated_at, DateFormats.shortDate)}
         </td>
-        <td className="px-4 py-2">
+        <td className="px-4 py-2 whitespace-nowrap">
           {format(lesson.created_at, DateFormats.shortDate)}
         </td>
-        <td className="px-4 py-2">
-          {lesson.created_by_user.first_name +
-            ' ' +
-            lesson.created_by_user.last_name || '-'}
+        <td className="px-4 py-2 first-letter:uppercase whitespace-nowrap">
+          {lesson.created_by
+            ? lesson.created_by_user.first_name +
+              ' ' +
+              lesson.created_by_user.last_name
+            : en.common.unknown}
         </td>
       </tr>
     ));
@@ -138,7 +140,7 @@ function ApprovalList() {
             <div className="w-full sm:w-auto">
               <input
                 type="text"
-                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block touch-none"
                 placeholder="Search lessons..."
                 value={search}
                 onChange={handleSearchChange}

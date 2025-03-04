@@ -24,6 +24,7 @@ const defaultLinks = [{ name: 'Flagged Lessons', link: RouteEnum.FLAGGED }];
 
 function LessonDetails() {
   const { lesson: id } = useParams<{ lesson: string }>();
+  const [links, setLinks] = useState<TBreadcrumb[]>(defaultLinks);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const user = useSelector(selectUser);
@@ -44,17 +45,20 @@ function LessonDetails() {
   const [loading, setLoading] = useState(true);
   const [lesson, setLesson] = useState<TLesson>();
   const [isFlagged, setIsFlagged] = useState<boolean>(false);
-  const links = useMemo<TBreadcrumb[]>(
-    () =>
-      !lesson
-        ? defaultLinks
-        : [
-            ...defaultLinks,
-            { name: lesson.course.name, link: '#', disabled: true },
-            { name: lesson.name, link: `${RouteEnum.FLAGGED}/${lesson.id}` },
-          ],
-    [lesson],
-  );
+  useEffect(() => {
+    if (!lesson) {
+      setLinks(defaultLinks);
+    } else {
+      setLinks([
+        ...defaultLinks,
+        {
+          name: lesson.course.name,
+          link: `${RouteEnum.CONTENT}/courses/${lesson.course_id}`,
+        },
+        { name: lesson.name, link: `${RouteEnum.FLAGGED}/${lesson.id}` },
+      ]);
+    }
+  }, [lesson]);
 
   useEffect(() => {
     if (isNaN(+id)) return;

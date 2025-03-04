@@ -25,6 +25,8 @@ export const en = {
     select: 'Select',
     quickLearn: 'Quick Learn',
     add: 'Add New',
+    unknown: 'Unknown',
+    on: 'on',
 
     //dashboard
     loading: 'Loading...',
@@ -203,11 +205,13 @@ export const en = {
    * Approvals section
    */
   approvals: {
-    lessonsApprovals: 'Lessons Approvals',
+    lessonsApprovals: 'Lesson Approvals',
     subHeading:
       'Following lessons are waiting for approval after being created or updated by the team.',
     approveThisLesson: 'Approve this lesson',
-    unFlagThisLesson: 'Unflag this lesson',
+    unFlagThisLesson: 'Resolve this lesson',
+    lessonFlaggedBy: 'The Lesson has been flagged by',
+    flagLesson: 'Flag lesson for editing',
     approvalPendingExclamation: 'Approval pending!',
     approvalPendingInfo:
       'This lesson is awaiting approval from the team. After approval this will be available to all the team members.',
@@ -456,6 +460,7 @@ export const en = {
     // asssign data model
 
     noDataFound: 'No data found',
+    orphanCourse: 'Orphan',
   },
 
   Search: {
@@ -464,16 +469,28 @@ export const en = {
     Loading: 'Loading....',
   },
   leaderboard: {
+    pageLoading: 'Page is Loading....',
     smallLeaderboard: 'Leaderboard',
     leaderboard: 'LEADERBOARD',
     leaderboardDescription:
       'This is the leaderboard of the users past records.',
     leaderboardRank: 'Rank',
     leaderboardLessonsCompleted: 'Lessons Completed',
+    lessoncompleted: 'Completed',
+    score: 'Score',
     leaderboardUser: 'User',
     leaderboardNoMoreData: 'No more data to show',
     leaderboardLoading: 'Loading...',
     weekly: 'Last Week',
     monthly: 'Last Month',
+    quarterly: 'Last Quarter',
+    noDataFound: 'No data found',
+    tooltipsText: 'Complete more than 3 lessons to remove this badge.',
+    learningScore: 'Learning Score',
+  },
+  orphanCourse: {
+    heading: 'Orphan Courses',
+    subHeading: 'Following courses are not part of any roadmap.',
+    noDataFound: 'No data found',
   },
 };

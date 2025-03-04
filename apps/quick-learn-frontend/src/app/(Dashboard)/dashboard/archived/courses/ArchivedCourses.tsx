@@ -52,6 +52,7 @@ function ArchivedCourses() {
         );
         toast.success(en.archivedSection.courseDeleted);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setDeleteId(false);
@@ -75,6 +76,7 @@ function ArchivedCourses() {
         );
         toast.success(en.archivedSection.courseRestored);
       } catch (error) {
+        console.log(error);
         toast.error(en.common.somethingWentWrong);
       } finally {
         setRestoreId(false);
@@ -97,6 +99,7 @@ function ArchivedCourses() {
             }),
           );
         } catch (err) {
+          console.log(err);
           toast.error(en.common.somethingWentWrong);
         }
       }, 300),
@@ -108,7 +111,7 @@ function ArchivedCourses() {
   }, [dispatch]);
 
   return (
-    <div className="max-w-xl px-4 pb-12 lg:col-span-8">
+    <div className="max-w-[43rem] px-4 pb-12 lg:col-span-8">
       <ConformationModal
         title={
           restoreId
@@ -140,7 +143,7 @@ function ArchivedCourses() {
           handleQueryChange(e.target.value)
         }
       />
-      <div className="flex flex-col w-full min-h-[200px]">
+      <div className="flex flex-col w-full">
         {isInitialLoad ? (
           <LoadingSkeleton />
         ) : coursesList.length === 0 ? (

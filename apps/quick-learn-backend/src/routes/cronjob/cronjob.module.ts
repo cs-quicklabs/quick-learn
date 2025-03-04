@@ -4,19 +4,22 @@ import { UsersModule } from '../users/users.module';
 import { LessonProgressModule } from '../lesson-progress/lesson-progress.module';
 import { CronjobController } from './cronjob.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LessonTokenEntity } from '@src/entities';
-import { EmailModule } from '@src/common/modules';
-import { Leaderboard } from '@src/entities/leaderboard.entity';
+import { EmailModule, LessonTokenModule } from '@src/common/modules';
+import { LeaderboardEntity } from '@src/entities/leaderboard.entity';
 import { LeaderboardCronService } from './leaderboard-cron.service';
 import { LeaderboardModule } from '../leaderboard/leaderboard.module';
+import { AuthModule } from '../auth/auth.module';
+import { QuarterlyLeaderboardEntity } from '@src/entities';
 @Module({
   // TODO: Remove lesson token repository from here to use module
   imports: [
+    TypeOrmModule.forFeature([LeaderboardEntity, QuarterlyLeaderboardEntity]),
     UsersModule,
     LessonProgressModule,
     EmailModule,
-    TypeOrmModule.forFeature([LessonTokenEntity, Leaderboard]),
     LeaderboardModule,
+    LessonTokenModule,
+    AuthModule,
   ],
   providers: [LessonEmailService, LeaderboardCronService],
   controllers: [CronjobController],

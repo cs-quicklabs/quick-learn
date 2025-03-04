@@ -48,6 +48,7 @@ function InactiveUsers() {
         );
         toast.success(en.successUserDelete);
       } catch (error) {
+        console.log(error);
         toast.error(en.errorDeletingUser);
       } finally {
         setDeleteId(false);
@@ -65,6 +66,7 @@ function InactiveUsers() {
         );
         toast.success(en.successUserActivate);
       } catch (error) {
+        console.log(error);
         toast.error(en.errorActivatingUser);
       } finally {
         setRestoreId(false);

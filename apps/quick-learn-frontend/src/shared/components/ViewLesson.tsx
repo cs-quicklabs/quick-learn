@@ -9,27 +9,29 @@ import { en } from '@src/constants/lang/en';
 import { TLesson } from '../types/contentRepository';
 import { TBreadcrumb } from '../types/breadcrumbType';
 import { FlagIcon } from '@heroicons/react/24/outline';
+import ReactQuill from 'react-quill-new';
+
 // Separate components for better performance
 const LessonHeader = memo(
   ({
     name,
-    firstName,
-    lastName,
+    full_name,
     createdAt,
     showCreatedBy,
   }: {
     name: string;
-    firstName?: string;
-    lastName?: string;
+    full_name: string;
     createdAt?: string | Date;
     showCreatedBy?: boolean;
   }) => (
     <div className="px-4 mb-8 text-center sm:px-6 lg:px-8">
       <div className="items-baseline">
-        <h1 className="text-5xl font-extrabold leading-tight">{name}</h1>
+        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
+          {name}
+        </h1>
         {showCreatedBy && (
           <p className="mt-1 ml-1 text-sm text-gray-500">
-            {firstName} {lastName} {en.component.addLessonOn}{' '}
+            {full_name} {en.component.addLessonOn}{' '}
             {createdAt && format(new Date(createdAt), DateFormats.shortDate)}
           </p>
         )}
@@ -40,17 +42,29 @@ const LessonHeader = memo(
 
 LessonHeader.displayName = 'LessonHeader';
 
-const LessonContent = memo(({ content }: { content: string }) => (
-  <article className="lesson-content flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-10 py-4 mb-8">
-    <div
-      className="lesson-viewer"
-      // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{
-        __html: content,
-      }}
-    />
-  </article>
-));
+const LessonContent = memo(({ content }: { content: string }) => {
+  // Configure modules without toolbar
+  const modules = {
+    toolbar: false, // This disables the toolbar
+    clipboard: {
+      matchVisual: false,
+    },
+  };
+
+  return (
+    <article className="flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-8 md:px-10 py-4 mb-8">
+      <div className="quill-content-display w-full">
+        <ReactQuill
+          value={content}
+          readOnly
+          theme="snow"
+          modules={modules}
+          className="w-full"
+        />
+      </div>
+    </article>
+  );
+});
 
 LessonContent.displayName = 'LessonContent';
 
@@ -71,11 +85,11 @@ const ApprovalCheckbox = memo(
         checked={value}
         onChange={() => setValue?.(true)}
         disabled={value}
-        className="w-8 h-8 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
+        className="w-6 h-6 md:w-8 md:h-8 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
       />
       <label
         htmlFor="default-checkbox"
-        className="ms-4 text-2xl ml-4 font-semibold text-gray-900"
+        className="ms-4 sm:text-xl md:text-2xl ml-4 font-semibold text-gray-900"
       >
         {text}
       </label>
@@ -147,43 +161,44 @@ const ViewLesson: FC<Props> = ({
   return (
     <div className="-mt-8">
       <Breadcrumb links={links} disabled={disableLink} />
+      <div>
+        <LessonHeader
+          name={lesson?.name}
+          full_name={lesson?.created_by_user?.display_name ?? en.common.unknown}
+          createdAt={lesson?.created_at}
+          showCreatedBy={showCreatedBy}
+        />
 
-      <LessonHeader
-        name={lesson?.name}
-        firstName={lesson?.created_by_user?.first_name}
-        lastName={lesson?.created_by_user?.last_name}
-        createdAt={lesson?.created_at}
-        showCreatedBy={showCreatedBy}
-      />
+        <LessonContent content={content} />
 
-      <LessonContent content={content} />
+        {setIsApproved && (
+          <ApprovalCheckbox value={isApproved} setValue={setIsApproved} />
+        )}
 
-      {setIsApproved && (
-        <ApprovalCheckbox value={isApproved} setValue={setIsApproved} />
-      )}
-
-      {setIsFlagged && (
-        <>
-          <div className="mx-auto max-w-fit flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
-            <div className="h-5 w-5">
-              <FlagIcon />
+        {setIsFlagged && (
+          <>
+            <div className="mx-auto max-w-fit flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
+              <div className="h-5 w-5">
+                <FlagIcon />
+              </div>
+              {`${en.approvals.lessonFlaggedBy} ${
+                lesson?.flagged_lesson?.user?.display_name ??
+                `${en.common.unknown}`
+              } ${en.common.on} ${format(
+                lesson?.flagged_lesson?.flagged_on ?? Date.now(),
+                DateFormats.shortDate,
+              )}`}
             </div>
-            {`The Lesson is flagged by ${
-              lesson?.flagged_lesson?.user?.display_name ?? 'Unknown'
-            } on ${format(
-              lesson?.flagged_lesson?.flagged_on ?? Date.now(),
-              DateFormats.shortDate,
-            )}`}
-          </div>
-          <ApprovalCheckbox
-            value={isFlagged}
-            setValue={setIsFlagged}
-            text={en.approvals.unFlagThisLesson}
-          />
-        </>
-      )}
+            <ApprovalCheckbox
+              value={isFlagged}
+              setValue={setIsFlagged}
+              text={en.approvals.unFlagThisLesson}
+            />
+          </>
+        )}
 
-      {isPending && <PendingAlert />}
+        {isPending && <PendingAlert />}
+      </div>
     </div>
   );
 };

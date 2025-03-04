@@ -48,10 +48,14 @@ function CommunityCourse() {
     <div className="container mx-auto px-4">
       {/* Heading */}
       <div className="flex flex-col gap-4 text-center mb-10">
-        <h1 className="text-4xl md:text-5xl font-bold">{courseData.name}</h1>
+        <h1 className="text-4xl md:text-5xl font-bold first-letter:uppercase">
+          {courseData.name}
+        </h1>
         {hasLessons && (
           <>
-            <p className="text-sm text-gray-500">{courseData.description}</p>
+            <p className="text-sm text-gray-500 first-letter:uppercase">
+              {courseData.description}
+            </p>
             <p className="text-sm text-gray-500">
               ({courseData.lessons?.length} {en.lesson.lesson})
             </p>
@@ -61,7 +65,7 @@ function CommunityCourse() {
 
       {/* Lessons Grid */}
       {hasLessons ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
           {courseData.lessons?.map((lesson) => {
             const formattedDate = format(
               lesson.created_at,

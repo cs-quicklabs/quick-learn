@@ -41,7 +41,10 @@ function LessonDetails() {
         ? defaultLinks
         : [
             ...defaultLinks,
-            { name: lesson.course.name, link: '#', disabled: true },
+            {
+              name: lesson.course.name,
+              link: `${RouteEnum.CONTENT}/courses/${lesson.course_id}`,
+            },
             { name: lesson.name, link: `${RouteEnum.FLAGGED}/${lesson.id}` },
           ],
     [lesson],

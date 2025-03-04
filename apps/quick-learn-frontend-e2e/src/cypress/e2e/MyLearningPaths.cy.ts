@@ -4,15 +4,12 @@ import { MemberValidCredentials } from '../fixtures/credential';
 
 describe('My Learning Paths', () => {
   const loginPage = new LoginPage();
+
   beforeEach(() => {
-    loginPage.visit();
-    cy.get('.text-xl').contains('Sign in to your account');
-    loginPage.login(
+    loginPage.initialize(
       MemberValidCredentials.MemberMail,
       MemberValidCredentials.MemberPassword,
     );
-    cy.url().should('include', '/dashboard');
-    loginPage.getWelcomeMessage();
   });
 
   it('Verify user should able to navigate to lesson page via RoadMap', () => {

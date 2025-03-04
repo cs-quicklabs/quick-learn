@@ -5,8 +5,14 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsOrder, FindOptionsWhere, ILike, In } from 'typeorm';
-import { BasicCrudService } from '@src/common/services';
+import {
+  Brackets,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ILike,
+  In,
+} from 'typeorm';
+import { PaginationService } from '@src/common/services';
 import { CourseEntity, UserEntity, LessonEntity } from '@src/entities';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CourseCategoryService } from '../course-category/course-category.service';
@@ -21,12 +27,12 @@ import { FileService } from '@src/file/file.service';
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
 
 @Injectable()
-export class CourseService extends BasicCrudService<CourseEntity> {
+export class CourseService extends PaginationService<CourseEntity> {
   constructor(
     @InjectRepository(CourseEntity) repo,
     @Inject(forwardRef(() => RoadmapService))
-    private roadmapService: RoadmapService,
-    private courseCategoryService: CourseCategoryService,
+    private readonly roadmapService: RoadmapService,
+    private readonly courseCategoryService: CourseCategoryService,
     private readonly FileService: FileService,
   ) {
     super(repo);
@@ -72,22 +78,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       .orderBy('courses.name', 'ASC');
 
     if (mode === 'paginate') {
-      const total = await queryBuilder.getCount();
-
-      // Apply pagination
-      queryBuilder.skip((page - 1) * limit).take(limit);
-      const items = await queryBuilder.getMany();
-      const total_pages = Math.ceil(total / limit);
-      return {
-        items,
-        total,
-        page,
-        limit,
-        total_pages,
-      };
+      return await this.queryBuilderPaginate(queryBuilder, page, limit);
     } else {
-      const items = await queryBuilder.getMany();
-      return items;
+      return await queryBuilder.getMany();
     }
   }
 
@@ -104,6 +97,12 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     user: UserEntity,
     createCourseDto: CreateCourseDto,
   ): Promise<CourseEntity> {
+    const course = await this.get({ name: ILike(createCourseDto.name) });
+
+    if (course) {
+      throw new BadRequestException(en.courseAlreadyExists);
+    }
+
     const courseCategory = await this.courseCategoryService.get({
       id: +createCourseDto.course_category_id,
     });
@@ -118,12 +117,6 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
     if (!roadmap) {
       throw new BadRequestException(en.InvalidRoadmap);
-    }
-
-    const course = await this.get({ name: ILike(createCourseDto.name) });
-
-    if (course) {
-      throw new BadRequestException(en.courseAlreadyExists);
     }
 
     return await this.create({
@@ -179,7 +172,8 @@ export class CourseService extends BasicCrudService<CourseEntity> {
 
     return course;
   }
-  async filterSanitisedLessons(
+
+  private async filterSanitisedLessons(
     lessons: LessonEntity[],
     conditions: { archived: boolean; approved?: boolean | null },
   ): Promise<LessonEntity[]> {
@@ -210,12 +204,11 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     const result = await queryBuilder.getRawOne();
     return result?.userCount || 0;
   }
+
   /**
    * Gets course details from assigned roadmaps
    */
-
   async getUserAssignedRoadmapCourses(userId: number): Promise<CourseEntity[]> {
-    // INNER JOINT CREATED ON user_roadmaps TO GET ALL ASSIGNED ROADMAPS USER ID CHECK ADDED FOR SAME, LEFT JOINT CREATED ON lessons TO GET ALL LESSONS COUNT
     return await this.repository
       .createQueryBuilder('course')
       .innerJoin('course.roadmaps', 'roadmap')
@@ -235,7 +228,6 @@ export class CourseService extends BasicCrudService<CourseEntity> {
   /**
    * Gets lessions details within cource with relations
    */
-
   async getImagesUsedInLessonsRelatedCource(
     options: FindOptionsWhere<CourseEntity>,
     relations: string[] = [],
@@ -254,9 +246,9 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       throw new BadRequestException(en.invalidCourse);
     }
 
-    let imageToDelete = [];
+    let imageToDelete: string[] = [];
     if (!course.lessons) {
-      return (imageToDelete = []);
+      return imageToDelete;
     } else {
       imageToDelete = Helpers.extractImageUrlsFromHtml(
         course.lessons as [],
@@ -388,9 +380,11 @@ export class CourseService extends BasicCrudService<CourseEntity> {
   async getArchivedCourses(
     paginationDto: PaginationDto,
     relations: string[] = [],
-  ): Promise<PaginatedResult<CourseEntity>> {
-    const { page = 1, limit = 10, q = '' } = paginationDto;
-    const skip = (page - 1) * limit;
+  ): Promise<PaginatedResult<CourseEntity> | CourseEntity[]> {
+    const { page = 1, limit = 10, q = '', mode = 'paginate' } = paginationDto;
+    const order: FindOptionsOrder<CourseEntity> = {
+      updated_at: 'DESC',
+    };
 
     const allRelations = [...new Set([...courseRelations, ...relations])];
 
@@ -411,23 +405,20 @@ export class CourseService extends BasicCrudService<CourseEntity> {
       );
     }
 
-    const [items, total] = await this.repository.findAndCount({
-      where: q ? whereConditions : baseWhere,
-      relations: allRelations,
-      skip,
-      take: limit,
-      order: {
-        updated_at: 'DESC',
-      },
-    });
+    if (mode === 'paginate') {
+      return await this.paginate(
+        { page, limit },
+        q ? whereConditions : baseWhere,
+        allRelations,
+        order,
+      );
+    }
 
-    return {
-      items,
-      total,
-      page,
-      total_pages: Math.ceil(total / limit),
-      limit,
-    };
+    return await this.getMany(
+      q ? whereConditions : baseWhere,
+      order,
+      allRelations,
+    );
   }
 
   async deleteCourse(id: number): Promise<void> {
@@ -503,5 +494,30 @@ export class CourseService extends BasicCrudService<CourseEntity> {
     }
 
     return queryBuilder.select(['course.id', 'course.name']).limit(3).getMany();
+  }
+
+  async getOrphanCourses(page = 1, limit = 10, q = '') {
+    const queryBuilder = this.repository
+      .createQueryBuilder('course')
+      .where('course.archived = :courseArchived', { courseArchived: false })
+      .leftJoin('course.roadmaps', 'roadmap')
+      .andWhere('roadmap.id IS NULL')
+      .leftJoinAndSelect('course.created_by', 'created_by')
+      .leftJoinAndSelect('course.course_category', 'course_category');
+
+    if (q) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('course.name ILIKE :q', { q: `%${q}%` })
+            .orWhere('course_category.name ILIKE :q', { q: `%${q}%` })
+            .orWhere(
+              'created_by.first_name ILIKE :q OR created_by.last_name ILIKE :q',
+              { q: `%${q}%` },
+            );
+        }),
+      );
+    }
+
+    return this.queryBuilderPaginate(queryBuilder, page, limit);
   }
 }

@@ -33,6 +33,7 @@ type TLink = {
   isExtended?: boolean;
   showCount?: boolean;
   countKey?: SystemPreferencesKey;
+  exclude?: UserTypeIdEnum[];
 };
 
 const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
@@ -63,35 +64,50 @@ const adminUserLinks: TLink[] = [
   flagged,
 ];
 const superAdminUserLinks: TLink[] = [...adminUserLinks, community];
-const editorUserLinks: TLink[] = [myLearningPath, content, flagged];
+const editorUserLinks: TLink[] = [team, myLearningPath, content, flagged];
 const memberUserLinks: TLink[] = [myLearningPath];
 
 const menuItems: TLink[] = [
   {
     name: 'Account Settings',
     link: RouteEnum.ACCOUNT_SETTINGS,
+    exclude: [
+      UserTypeIdEnum.ADMIN,
+      UserTypeIdEnum.EDITOR,
+      UserTypeIdEnum.MEMBER,
+    ],
   },
   {
     name: 'My Profile',
     link: RouteEnum.PROFILE_SETTINGS,
+    exclude: [],
   },
   {
     name: 'Archive',
     link: RouteEnum.ARCHIVED_USERS,
+    exclude: [UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER],
   },
   {
-    name: 'Leaderboard',
+    name: 'Leaderboard', //displayed to every user_type
     link: RouteEnum.LEADERBOARD,
+    exclude: [],
+  },
+  {
+    name: 'Orphan Courses', // displayed to superAdmin, Admin, editor
+    link: RouteEnum.ORPHANCOURSES,
+    exclude: [UserTypeIdEnum.MEMBER],
   },
   {
     name: 'Change-Logs',
     link: RouteEnum.CHANGE_LOGS,
     isExtended: true,
+    exclude: [],
   },
   {
     name: 'Feature Roadmaps',
     link: RouteEnum.FEATURE_LOGS,
     isExtended: true,
+    exclude: [],
   },
 ];
 
@@ -181,6 +197,26 @@ function Navbar() {
     );
   };
 
+  function renderProfileIcon() {
+    if (user?.profile_image) {
+      return (
+        <Image
+          alt=""
+          src={user.profile_image}
+          className="h-10 w-10 rounded-full object-cover"
+          width={40}
+          height={40}
+        />
+      );
+    }
+
+    return (
+      <span className="text-lg font-medium">
+        {getInitials(user?.first_name, user?.last_name)}
+      </span>
+    );
+  }
+
   return (
     <>
       <ConformationModal
@@ -195,9 +231,9 @@ function Navbar() {
         as="nav"
         className="bg-gray-800 text-white shadow fixed z-10 w-full top-0"
       >
-        <div className="mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="mx-auto px-4 sm:px-4 lg:px-8">
           <div className="flex py-2 justify-between align-center">
-            <div className="flex px-2 lg:px-0">
+            <div className="hidden md:flex px-2 lg:px-0">
               <div className="flex-shrink-0 flex items-center">
                 <SuperLink
                   id="homeLogo"
@@ -262,41 +298,21 @@ function Navbar() {
 
             <div className="hidden lg:ml-4 lg:block">
               <div className="flex items-center">
-                <button
-                  type="button"
-                  className="relative flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">
-                    {en.component.viewNotification}
-                  </span>
-                </button>
-
                 {/* Updated Profile Menu */}
                 <Menu as="div" className="relative ml-4">
                   <MenuButton className="flex items-center">
-                    <div className="h-10 w-10 bg-gray-400 rounded-full flex items-center justify-center">
-                      {user?.profile_image ? (
-                        <Image
-                          alt=""
-                          id="headerProfileImage"
-                          src={user.profile_image}
-                          className="h-10 w-10 rounded-full object-cover"
-                          width={40}
-                          height={40}
-                        />
-                      ) : (
-                        <span className="text-lg font-medium">
-                          {getInitials(user?.first_name, user?.last_name)}
-                        </span>
-                      )}
+                    <div
+                      className="h-10 w-10 bg-gray-400 rounded-full flex items-center justify-center"
+                      id="headerProfileImage"
+                    >
+                      {renderProfileIcon()}
                     </div>
                   </MenuButton>
 
                   <MenuItems className="absolute right-0 mt-2 w-64 divide-y divide-gray-100 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     {/* User Info Section */}
                     <div className="px-4 py-3">
-                      <p className="text-base text-gray-900 font-medium">
+                      <p className="text-base text-gray-900 font-medium first-letter:uppercase">
                         {user?.first_name} {user?.last_name}
                       </p>
                       <p className="text-sm text-gray-500">{user?.email}</p>
@@ -307,42 +323,14 @@ function Navbar() {
 
                     {/* Main Menu Items */}
                     <div className="py-1">
-                      {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
+                      {user &&
                         menuItems
                           .filter((item) => !item.isExtended)
-                          .map((item) => renderMenuItem(item))}
-                      {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN && (
-                        <div>
-                          <MenuItem>
-                            <SuperLink
-                              href={RouteEnum.PROFILE_SETTINGS}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            >
-                              {en.component.profile}
-                            </SuperLink>
-                          </MenuItem>
-                          <MenuItem>
-                            <SuperLink
-                              href={RouteEnum.LEADERBOARD}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            >
-                              {en.leaderboard.smallLeaderboard}
-                            </SuperLink>
-                          </MenuItem>
-                        </div>
-                      )}
-                      {user?.user_type_id === UserTypeIdEnum.ADMIN && (
-                        <div>
-                          <MenuItem>
-                            <SuperLink
-                              href={RouteEnum.ARCHIVED_USERS}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                            >
-                              {en.component.archive}
-                            </SuperLink>
-                          </MenuItem>
-                        </div>
-                      )}
+                          .map((item) =>
+                            !item.exclude?.includes(user?.user_type_id)
+                              ? renderMenuItem(item)
+                              : null,
+                          )}
                     </div>
 
                     {/* Extended Menu Items */}
@@ -412,36 +400,25 @@ function Navbar() {
           </div>
           <div className="border-t border-gray-700 pb-3 pt-4">
             <div className="flex items-center px-5">
-              <div className="flex-shrink-0">
-                <Image
-                  alt=""
-                  src={user?.profile_image ?? '/placeholder.png'}
-                  className="h-10 w-10 rounded-full object-cover"
-                  height={40}
-                  width={40}
-                />
+              <div className="flex items-center justify-center h-10 w-10 bg-gray-400 rounded-full">
+                {renderProfileIcon()}
               </div>
               <div className="ml-3">
-                <div className="text-base font-medium text-white">
+                <div className="text-base font-medium text-white first-letter:uppercase">
                   {user?.first_name} {user?.last_name}
                 </div>
                 <div className="text-sm font-medium text-gray-400">
                   {user?.email}
                 </div>
               </div>
-              <button
-                type="button"
-                className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">{en.component.viewNotification}</span>
-              </button>
             </div>
+            {/* Menu Items */}
             <div className="mt-3 space-y-1 px-2">
-              {user?.user_type_id === UserTypeIdEnum.SUPERADMIN &&
-                menuItems.map(
-                  (item, index) =>
-                    item.isExtended === undefined && (
+              {user &&
+                menuItems
+                  .filter((item) => !item.isExtended)
+                  .map((item, index) =>
+                    !item.exclude?.includes(user?.user_type_id) ? (
                       <DisclosureButton
                         as="a"
                         id={`profileMenuMobile${index}`}
@@ -451,20 +428,8 @@ function Navbar() {
                       >
                         {item.name}
                       </DisclosureButton>
-                    ),
-                )}
-              {user?.user_type_id !== UserTypeIdEnum.SUPERADMIN ? (
-                <DisclosureButton
-                  as="a"
-                  href={RouteEnum.PROFILE_SETTINGS}
-                  id="myProfileMobile"
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  My Profile
-                </DisclosureButton>
-              ) : (
-                ''
-              )}
+                    ) : null,
+                  )}
               <div className="border-y border-gray-700">
                 {menuItems.map(
                   (item, index) =>

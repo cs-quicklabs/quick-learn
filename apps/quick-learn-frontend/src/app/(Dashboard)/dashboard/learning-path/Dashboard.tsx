@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import ProgressCard from '@src/shared/components/ProgressCard';
 import { en } from '@src/constants/lang/en';
@@ -19,6 +19,7 @@ import {
   calculateRoadmapProgress,
   calculateCourseProgress,
 } from '@src/utils/helpers';
+import SmallScreenTabs from '@src/shared/components/SmallScreenTabs';
 
 const AnimatedProgressCard = motion.create(ProgressCard);
 
@@ -38,6 +39,7 @@ const containerVariants = {
 };
 
 function Dashboard() {
+  const [activeTab, setActiveTab] = useState('roadmaps');
   const dispatch = useAppDispatch();
 
   // Only select from store if it's ready
@@ -56,16 +58,21 @@ function Dashboard() {
     return <DashboardSkeleton />;
   }
 
+  const tabs = [
+    { id: 'roadmaps', label: en.common.myRoadmaps, count: roadmaps.length },
+    { id: 'courses', label: en.common.myCourses, count: courses.length },
+  ];
+
   const renderRoadmapsSection = () => (
-    <>
+    <div className={`${activeTab === 'courses' ? 'hidden md:block' : 'block'}`}>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
+        className="hidden px-8 py-8 md:flex md::items-center md:justify-between sm:px-6 lg:px-8"
       >
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <h1 className="text-3xl font-bold leading-tight">
+          <h1 className="text-2xl md:text-3xl font-bold leading-tight">
             {en.common.myRoadmaps}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
@@ -116,19 +123,21 @@ function Dashboard() {
           </motion.div>
         )}
       </div>
-    </>
+    </div>
   );
 
   const renderCoursesSection = () => (
-    <>
+    <div
+      className={`${activeTab === 'roadmaps' ? 'hidden md:block' : 'block'}`}
+    >
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="px-8 py-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
+        className="px-8 py-8 hidden md:flex md:items-center md:justify-between sm:px-6 lg:px-8"
       >
-        <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <h1 className="text-3xl font-bold leading-tight">
+        <div className="hidden md:flex flex-wrap items-baseline -mt-2 -ml-2">
+          <h1 className="text-2xl md:text-3xl font-bold leading-tight">
             {en.common.myCourses}
           </h1>
           <p className="mt-1 ml-1 text-sm text-gray-500 truncate">
@@ -183,7 +192,7 @@ function Dashboard() {
           </motion.div>
         )}
       </div>
-    </>
+    </div>
   );
 
   return (
@@ -193,6 +202,13 @@ function Dashboard() {
       transition={{ duration: 0.5 }}
       className="bg-gray-50 relative z-0 flex-1 min-h-0 focus:outline-none"
     >
+      <div className=" mt-[85px] mb-5 mx-6">
+        <SmallScreenTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          tabs={tabs}
+        />
+      </div>
       {renderRoadmapsSection()}
       {renderCoursesSection()}
     </motion.div>

@@ -24,7 +24,6 @@ import { Public } from '@src/common/decorators/public.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { UserTypeId } from '@src/common/enum/user_role.enum';
-import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
 import { MoreThan } from 'typeorm';
 import { LessonParamDto } from './dto/lesson-param.dto';
 import { TokenValidationDto } from './dto/token-validation.dto';
@@ -37,10 +36,7 @@ import { UserTypeIdEnum } from '@quick-learn/shared';
 })
 @UseGuards(JwtAuthGuard)
 export class LessonController {
-  constructor(
-    private readonly service: LessonService,
-    private readonly lessonProgressService: LessonProgressService,
-  ) {}
+  constructor(private readonly service: LessonService) {}
 
   @ApiOperation({ summary: 'Get all the lessons.' })
   @Get()
@@ -255,42 +251,21 @@ export class LessonController {
    * @returns lesson details
    */
 
-  @Get(':lessonId/:courseId/:token')
+  @Get('daily/:token')
   @Public()
   @ApiOperation({ summary: "Get current user's lesson by id and course id" })
   async getCurrentUserLessonsByIdAndCourseId(
     @Param() param: TokenValidationDto,
   ): Promise<SuccessResponse> {
-    const [userTokenDetail, lessonDetail] = await Promise.all([
-      await this.service.validateLessionToken(
-        param.token,
-        +param.courseId,
-        +param.lessonId,
-      ),
-      await this.service.fetchLesson(+param.lessonId, +param.courseId),
-    ]);
-
-    const userLessonReadInfo = await this.lessonProgressService.checkLessonRead(
-      userTokenDetail.user.id,
-      +param.lessonId,
-    );
-
-    await this.service.updateDailyLessonToken(
+    const dailyLessonDetails = await this.service.getDailyLessonFromToken(
       param.token,
-      +param.courseId,
-      +param.lessonId,
     );
-
-    return new SuccessResponse(en.lessonForTheDay, {
-      lesson_detail: lessonDetail,
-      user_detail: userTokenDetail.user,
-      user_lesson_read_info: userLessonReadInfo,
-    });
+    return new SuccessResponse(en.lessonForTheDay, dailyLessonDetails);
   }
 
   @ApiOperation({ summary: 'Flag a lesson for review' })
   @Post('flag/:token')
-  @UseGuards(JwtAuthGuard)
+  @Public()
   async flagLesson(@Param('token') token: string): Promise<SuccessResponse> {
     await this.service.flagLesson(token);
     return new SuccessResponse(en.succcessLessonFlagged);
