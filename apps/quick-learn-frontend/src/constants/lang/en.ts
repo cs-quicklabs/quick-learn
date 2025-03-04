@@ -490,7 +490,7 @@ export const en = {
   },
   orphanCourse: {
     heading: 'Orphan Courses',
-    subHeading: 'This the list of Orphan Courses.',
+    subHeading: 'Following courses are not part of any roadmap.',
     noDataFound: 'No data found',
   },
 };
