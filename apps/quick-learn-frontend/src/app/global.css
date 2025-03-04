@@ -2,15 +2,29 @@
 @import '../../../../node_modules/tailwindcss/components.css';
 @import '../../../../node_modules/tailwindcss/utilities.css';
 
+@import 'react-quill-new/dist/quill.snow.css';
+
 div[role='dialog'] {
   align-content: center !important;
 }
 
 html {
   -webkit-text-size-adjust: 100%;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
-    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Helvetica Neue,
+    Arial,
+    Noto Sans,
+    sans-serif,
+    Apple Color Emoji,
+    Segoe UI Emoji,
+    Segoe UI Symbol,
+    Noto Color Emoji;
   line-height: 1.5;
   tab-size: 4;
   scroll-behavior: smooth;
@@ -44,8 +58,15 @@ a {
   text-decoration: inherit;
 }
 pre {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    Liberation Mono, Courier New, monospace;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    Liberation Mono,
+    Courier New,
+    monospace;
 }
 svg {
   display: block;
@@ -87,6 +108,11 @@ input:-webkit-autofill:active {
 
 .quill .ql-container .ql-editor {
   min-height: 100vh;
+  font:
+    400 16px/28px 'Open Sans',
+    sans-serif;
+  line-height: 2rem !important;
+  max-width: 100%;
 }
 
 .quill .ql-container .ql-editor:focus {
@@ -96,58 +122,6 @@ input:-webkit-autofill:active {
 }
 
 .quill .ql-container .ql-syntax {
-  background-color: #d3d3d3 !important;
-  color: #000000 !important;
-}
-/* Quill  toolbar and editor css */
-
-/* lesson viewer css */
-.quill .ql-container .ql-editor{
-  font: 400 16px/28px 'Open Sans', sans-serif;
-  line-height: 2rem !important;
-  max-width: 100%;
-}
-.quill .ql-container .ql-editor a,
-.quill .ql-container .ql-editor p
-{
-  font-size: 1.25rem;
-  line-height: 2rem;
-  margin-bottom: 0.5rem;
-  margin-top: 0px;
-}
-.quill .ql-container .ql-editor a
-{
-  color: #1c64f2;
-}
-.quill .ql-container .ql-editor a:hover{
-  text-decoration-color: #1c64f2;
-  text-decoration: underline;
-}
-.quill .ql-container .ql-editor strong{
-  font-weight: 600;
-}
-.quill .ql-container .ql-editor h1{
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
-}
-.quill .ql-container .ql-editor h2{
-  font-size: 1.75rem;
-  line-height: 2rem;
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
-.ql-snow .ql-editor blockquote{
-  border-left: 4px solid #ccc;
-  margin-bottom: 5px;
-  margin-top: 5px;
-  padding-left: 16px;
-  background-color: #eee;
-  margin: 1rem auto;
-}
-.quill .ql-container .ql-syntax,
- .ql-syntax {
   background-color: #dedede !important;
   color: #000000 !important;
   margin: 1rem auto;
@@ -156,22 +130,60 @@ input:-webkit-autofill:active {
   line-height: 1.5;
   letter-spacing: normal;
   max-width: 85%;
-  /* Add horizontal scroll for long lines */
+}
+
+.quill .ql-container .ql-editor a,
+.quill .ql-container .ql-editor p {
+  font-size: 1.25rem;
+  line-height: 2rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0px;
+}
+.quill .ql-container .ql-editor a {
+  color: #1c64f2;
+}
+.quill .ql-container .ql-editor a:hover {
+  text-decoration-color: #1c64f2;
+  text-decoration-line: underline;
+}
+.quill .ql-container .ql-editor strong {
+  font-weight: 600;
+}
+.quill .ql-container .ql-editor h1 {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+.quill .ql-container .ql-editor h2 {
+  font-size: 1.75rem;
+  line-height: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.ql-snow .ql-editor blockquote {
+  border-left: 4px solid #ccc;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding-left: 16px;
+  background-color: #eee;
+  margin: 1rem auto;
 }
 .quill .ql-container ul,
-.quill .ql-container ol{
+.quill .ql-container ol {
   padding-left: 2.5rem;
   padding-right: 0.5rem;
   margin-bottom: 1rem;
   font-size: 1.25rem;
 }
-.quill .ql-container ul{
+.quill .ql-container ul {
   list-style-type: disc;
 }
-.quill .ql-container ol{
+.quill .ql-container ol {
   list-style-type: decimal;
 }
-.quill .ql-container img{
+.quill .ql-container img {
   margin: 1rem auto;
 }
 .ql-clipboard {
@@ -187,54 +199,44 @@ input:-webkit-autofill:active {
 }
 
 @media screen and (max-width: 640px) {
-  .quill .ql-container .ql-syntax,
-  .ql-syntax {
-    padding: 0.75rem;
-    font-size: 13px;
-    max-width: 100%;
+  .quill .ql-container .ql-syntax {
+    background-color: #dedede !important;
+    color: #000000 !important;
+    margin: 1rem auto;
+    font-size: 12px;
+    padding: 1rem 2rem;
+    line-height: 1.5;
+    letter-spacing: normal;
+    max-width: 85%;
   }
 
   .quill .ql-container .ql-editor a,
-.quill .ql-container .ql-editor p{
-  font-size: 1rem;
-  line-height: 1.5rem;
-  margin-bottom: 0.5rem;
-  margin-top: 0px;
-}
+  .quill .ql-container .ql-editor p {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0px;
+  }
 
-.quill .ql-container .ql-editor h1{
-  font-size: 2rem;
-  line-height: 2.5rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
-}
+  .quill .ql-container .ql-editor h1 {
+    font-size: 2rem;
+    line-height: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
 
-.quill .ql-container .ql-editor h2{
-  font-size: 1.5rem;
-  line-height: 2rem;
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
+  .quill .ql-container .ql-editor h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
 
-.quill .ql-container .ql-syntax,
- .ql-syntax {
-  background-color: #dedede !important;
-  color: #000000 !important;
-  margin: 1rem auto;
-  font-size: 12px;
-  padding: 1rem 2rem;
-  line-height: 1.5;
-  letter-spacing: normal;
-  max-width: 85%;
-  /* Add horizontal scroll for long lines */
-}
-
-.quill .ql-container ul,
-.quill .ql-container ol {
-  padding-left: 2.5rem;
-  padding-right: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-}
-
+  .quill .ql-container ul,
+  .quill .ql-container ol {
+    padding-left: 2.5rem;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
 }

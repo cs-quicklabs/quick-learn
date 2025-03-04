@@ -10,7 +10,7 @@ import { TLesson } from '../types/contentRepository';
 import { TBreadcrumb } from '../types/breadcrumbType';
 import { FlagIcon } from '@heroicons/react/24/outline';
 import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
+
 // Separate components for better performance
 const LessonHeader = memo(
   ({
