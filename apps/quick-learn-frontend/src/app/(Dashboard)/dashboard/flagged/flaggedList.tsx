@@ -164,7 +164,7 @@ function FlaggedList() {
                   <td className="px-4 py-2 whitespace-nowrap">
                     {flaggedLesson.user
                       ? `${flaggedLesson.user.first_name} ${flaggedLesson.user.last_name}`
-                      : '-'}
+                      : en.common.unknown}
                   </td>
                 </tr>
               ))}

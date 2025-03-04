@@ -18,7 +18,7 @@ export class FlaggedLessonEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   user_id: number;
 
   @Column({ type: 'int', nullable: false })
@@ -27,7 +27,7 @@ export class FlaggedLessonEntity {
   @Column({ type: 'int', nullable: false })
   course_id: number;
 
-  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 

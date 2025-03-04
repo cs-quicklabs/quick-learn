@@ -84,7 +84,7 @@ const CourseTable = () => {
               {format(course.created_at, DateFormats.shortDate)}
             </td>
             <td className="px-4 py-2 capitalize whitespace-nowrap">
-              {course.created_by?.display_name ?? 'Super Admin'}
+              {course.created_by?.display_name ?? en.common.unknown}
             </td>
           </tr>
         ))}

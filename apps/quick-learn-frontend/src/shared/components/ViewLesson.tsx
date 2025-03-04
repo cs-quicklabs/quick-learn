@@ -15,14 +15,12 @@ import ReactQuill from 'react-quill-new';
 const LessonHeader = memo(
   ({
     name,
-    firstName,
-    lastName,
+    full_name,
     createdAt,
     showCreatedBy,
   }: {
     name: string;
-    firstName?: string;
-    lastName?: string;
+    full_name: string;
     createdAt?: string | Date;
     showCreatedBy?: boolean;
   }) => (
@@ -33,7 +31,7 @@ const LessonHeader = memo(
         </h1>
         {showCreatedBy && (
           <p className="mt-1 ml-1 text-sm text-gray-500">
-            {firstName} {lastName} {en.component.addLessonOn}{' '}
+            {full_name} {en.component.addLessonOn}{' '}
             {createdAt && format(new Date(createdAt), DateFormats.shortDate)}
           </p>
         )}
@@ -166,8 +164,7 @@ const ViewLesson: FC<Props> = ({
       <div>
         <LessonHeader
           name={lesson?.name}
-          firstName={lesson?.created_by_user?.first_name}
-          lastName={lesson?.created_by_user?.last_name}
+          full_name={lesson?.created_by_user?.display_name ?? en.common.unknown}
           createdAt={lesson?.created_at}
           showCreatedBy={showCreatedBy}
         />
