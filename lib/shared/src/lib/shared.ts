@@ -7,7 +7,6 @@ import {
   endOfWeek,
   startOfWeek,
   subWeeks,
-  subQuarters,
   getQuarter,
   getYear,
 } from 'date-fns';
