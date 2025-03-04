@@ -176,7 +176,7 @@ const LeaderboardTable = () => {
   };
 
   return (
-    <div className="relative overflow-x-auto border-t border-gray-200 shadow-md overflow-y-auto sm:rounded-lg">
+    <div className="relative overflow-x-auto border-t border-gray-200 shadow-md overflow-y-auto sm:rounded-lg mx-4 md:mx-0">
       <div className="text-xs font-bold md:flex space-x-1 rounded-lg p-0.5 md:justify-between md:items-center">
         <div className="text-sm mb-2 ml-3 md:mb-0 text-gray-700">
           Records from {getRecords(type)}
