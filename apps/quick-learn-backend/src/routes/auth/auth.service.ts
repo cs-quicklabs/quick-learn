@@ -60,10 +60,10 @@ export class AuthService {
     this.refreshTokenRememberMeExpiresIn = this.getTokenExpiresInMilliSeconds(
       'auth.refreshRememberMeExpires',
     );
-    this.authSecret = this.configService.getOrThrow('auth.secret', {
+    this.authSecret = this.configService.getOrThrow<string>('auth.secret', {
       infer: true,
     });
-    this.authRefreshSecret = this.configService.getOrThrow(
+    this.authRefreshSecret = this.configService.getOrThrow<string>(
       'auth.refreshSecret',
       { infer: true },
     );

@@ -24,9 +24,12 @@ export class LeaderboardCronService {
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
   ) {
-    this.frontendURL = this.configService.getOrThrow('app.frontendDomain', {
-      infer: true,
-    });
+    this.frontendURL = this.configService.getOrThrow<string>(
+      'app.frontendDomain',
+      {
+        infer: true,
+      },
+    );
   }
 
   @Cron('0 6 * * 1', {
