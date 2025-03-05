@@ -26,7 +26,7 @@ const LessonHeader = memo(
   }) => (
     <div className="px-4 mb-8 text-center sm:px-6 lg:px-8">
       <div className="items-baseline">
-        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
+        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase mb-3">
           {name}
         </h1>
         {showCreatedBy && (
@@ -164,7 +164,7 @@ const ViewLesson: FC<Props> = ({
       <div>
         <LessonHeader
           name={lesson?.name}
-          full_name={lesson?.created_by_user?.display_name ?? en.common.unknown}
+          full_name={lesson?.created_by_user?.display_name ?? 'Admin'}
           createdAt={lesson?.created_at}
           showCreatedBy={showCreatedBy}
         />
