@@ -66,7 +66,7 @@ const LeaderboardTable = () => {
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const currentUser = useAppSelector(selectUser);
-  const observer = useRef<IntersectionObserver>();
+  const observer = useRef<IntersectionObserver>(null);
   const lastElementRef = useCallback(
     (node: HTMLElement | null) => {
       if (isLoading) return;

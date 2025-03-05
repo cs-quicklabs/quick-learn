@@ -130,7 +130,7 @@ function Lesson() {
       ),
     [user?.user_type_id],
   );
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout>(null);
 
   const [isEditing, setIsEditing] = useState<boolean>(
     lessonId === 'add' || path.includes('edit'),
