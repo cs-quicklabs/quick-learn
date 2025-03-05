@@ -240,7 +240,7 @@ input:-webkit-autofill:active {
     font-size: 1rem;
   }
 
-  .ql-indent-4, .ql-indent-5, .ql-indent-6, .ql-indent-7, .ql-indent-8, .ql-indent-9 {
+  [class^='ql-indent-']:not(.ql-indent-1):not(.ql-indent-2):not(.ql-indent-3) {
     white-space: nowrap;
   }
 }
