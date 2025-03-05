@@ -31,9 +31,12 @@ export class LessonEmailService {
     private readonly lessonTokenService: LessonTokenService,
     private readonly authService: AuthService,
   ) {
-    this.frontendURL = this.configService.getOrThrow('app.frontendDomain', {
-      infer: true,
-    });
+    this.frontendURL = this.configService.getOrThrow<string>(
+      'app.frontendDomain',
+      {
+        infer: true,
+      },
+    );
   }
 
   private getGreeting(): string {
