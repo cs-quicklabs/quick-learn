@@ -137,6 +137,7 @@ function CourseDetails() {
         .then((res) => setMemberUserProgress(res.data))
         .catch((e) => showApiErrorInToast(e));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, progressStatus, roadmap, course, router, member]);
 
   const courseLessonProgress = useMemo(() => {

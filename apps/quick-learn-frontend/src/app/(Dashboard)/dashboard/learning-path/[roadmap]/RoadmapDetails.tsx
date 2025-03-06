@@ -142,6 +142,7 @@ function RoadmapDetails() {
         .then((res) => setMemberUserProgress(res.data))
         .catch((e) => showApiErrorInToast(e));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roadmap, router, dashboardRoadmaps, member]);
 
   if (isPageLoading && !roadmapData) {

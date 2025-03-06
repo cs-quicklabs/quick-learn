@@ -114,6 +114,7 @@ function LessonDetails() {
         setIsChecked(res.data.isRead);
       })
       .catch((err) => console.log('err', err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, lesson, course, roadmap, member]);
 
   if (!lessonDetails) return <FullPageLoader />;

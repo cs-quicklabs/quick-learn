@@ -40,6 +40,7 @@ function Lesson() {
 
   useEffect(() => {
     getLessonData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div>{lessonData && <ViewLesson lesson={lessonData} links={links} />}</div>
