@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Dialog } from '@headlessui/react';
+import { Dialog, DialogPanel } from '@headlessui/react';
 import { CloseIcon, ReadFileIcon } from '../components/UIElements';
 import { format, subMonths } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
@@ -212,7 +212,7 @@ const ActivityGraph: React.FC<Props> = ({
       />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="mx-auto w-full max-w-4xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
+        <DialogPanel className="mx-auto w-full max-w-4xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
           <div className="mb-4 flex items-center justify-between rounded-t dark:border-gray-700 sm:mb-5">
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
               {memberDetail?.first_name} {memberDetail?.last_name.concat("'s")}{' '}
@@ -385,7 +385,7 @@ const ActivityGraph: React.FC<Props> = ({
               </div>
             )}
           </div>
-        </Dialog.Panel>
+        </DialogPanel>
       </div>
     </Dialog>
   );

@@ -2,7 +2,7 @@ import { FC, useEffect, useState, useMemo } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Dialog } from '@headlessui/react';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { CloseIcon, Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
@@ -173,14 +173,14 @@ const AssignDataModal: FC<Props> = ({
       />
       {/* Modal container */}
       <div className="fixed inset-0 overflow-y-auto flex min-h-full items-center justify-center p-4">
-        <Dialog.Panel className="w-full max-w-9xl bg-white rounded-lg shadow-xl">
+        <DialogPanel className="w-full max-w-9xl bg-white rounded-lg shadow-xl">
           <div className="flex items-start justify-between pt-4 px-4 rounded-t">
-            <Dialog.Title
+            <DialogTitle
               as="h3"
               className="text-xl font-semibold text-gray-900 dark:text-gray-400"
             >
               {heading}
-            </Dialog.Title>
+            </DialogTitle>
             <button
               type="button"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-2.5 ml-auto inline-flex items-center"
@@ -354,7 +354,7 @@ const AssignDataModal: FC<Props> = ({
               </button>
             </div>
           </form>
-        </Dialog.Panel>
+        </DialogPanel>
       </div>
     </Dialog>
   );

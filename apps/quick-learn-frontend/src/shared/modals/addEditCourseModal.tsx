@@ -1,6 +1,6 @@
 'use client';
 import { FC, useEffect } from 'react';
-import { Dialog } from '@headlessui/react';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { CloseIcon } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { z } from 'zod';
@@ -127,16 +127,16 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
 
       {/* Modal panel */}
       <div className="fixed inset-0 overflow-y-auto flex h-auto items-center justify-center p-4">
-        <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-lg bg-white p-4 shadow-xl">
+        <DialogPanel className="w-full max-w-2xl transform overflow-hidden rounded-lg bg-white p-4 shadow-xl">
           <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b border-gray-200 sm:mb-5">
-            <Dialog.Title
+            <DialogTitle
               as="h3"
               className="text-lg font-semibold text-gray-900 dark:text-white"
             >
               {isAdd
                 ? en.addEditCourseModal.addCourse
                 : en.addEditCourseModal.editCourse}
-            </Dialog.Title>
+            </DialogTitle>
             <button
               type="button"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
@@ -161,7 +161,7 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
               id="addCourseForm"
             />
           </FormProvider>
-        </Dialog.Panel>
+        </DialogPanel>
       </div>
     </Dialog>
   );

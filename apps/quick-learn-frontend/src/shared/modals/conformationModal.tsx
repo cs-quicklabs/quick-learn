@@ -1,4 +1,9 @@
-import { Dialog } from '@headlessui/react';
+import {
+  Description,
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+} from '@headlessui/react';
 import { CloseIcon, InfoIcon } from '../components/UIElements';
 
 interface Props {
@@ -44,7 +49,7 @@ export default function ConformationModal({
       {/* Modal container */}
       <div className="fixed inset-0 overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white shadow-xl">
+          <DialogPanel className="w-full max-w-md rounded-lg bg-white shadow-xl">
             <div className="relative">
               <button
                 type="button"
@@ -55,7 +60,7 @@ export default function ConformationModal({
               </button>
               <div className="p-4 md:p-5 text-center">
                 <InfoIcon className="mx-auto mb-4 text-red-600 w-12 h-12" />
-                <Dialog.Title
+                <DialogTitle
                   as="h3"
                   className={
                     'text-lg font-bold text-gray-700' +
@@ -63,11 +68,11 @@ export default function ConformationModal({
                   }
                 >
                   {title}
-                </Dialog.Title>
+                </DialogTitle>
                 {subTitle && (
-                  <Dialog.Description className="mb-5 font-xs text-gray-500">
+                  <Description className="mb-5 font-xs text-gray-500">
                     {subTitle}
-                  </Dialog.Description>
+                  </Description>
                 )}
                 <div className="mt-4">
                   <button
@@ -87,7 +92,7 @@ export default function ConformationModal({
                 </div>
               </div>
             </div>
-          </Dialog.Panel>
+          </DialogPanel>
         </div>
       </div>
     </Dialog>
