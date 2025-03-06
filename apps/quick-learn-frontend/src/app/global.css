@@ -2,7 +2,7 @@
 @import '../../../../node_modules/tailwindcss/components.css';
 @import '../../../../node_modules/tailwindcss/utilities.css';
 
-@import 'react-quill-new/dist/quill.snow.css';
+@import '~react-quill-new/dist/quill.snow.css';
 
 div[role='dialog'] {
   align-content: center !important;
