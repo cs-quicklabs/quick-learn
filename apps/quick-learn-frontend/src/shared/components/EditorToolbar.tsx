@@ -13,6 +13,8 @@ export const formats = [
   'image',
   'code-block',
   'indent',
+  'underline',
+  'strike',
 ];
 
 interface Props {
@@ -115,6 +117,8 @@ const EditorToolbar: FC<Props> = ({
           <button type="button" className="ql-link" />
           <button type="button" className="ql-list" value="bullet" />
           <button type="button" className="ql-list" value="ordered" />
+          <button type="button" className="ql-strike" />
+          <button type="button" className="ql-underline" />
           <button type="button" className="ql-image" />
         </span>
       </div>
