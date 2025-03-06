@@ -154,7 +154,7 @@ function DailyLessonDetail() {
         <div className="w-full flex align-middle justify-center">
           <p className="bg-green-100 p-5 rounded-md text-[#166534] flex justify-center items-center gap-2 my-5 mx-2 w-full lg:w-1/2 text-start">
             <span className="text-[#166534] flex bg-white rounded-full w-5 h-5 aspect-square font-bold items-center justify-center">
-              <InformationCircleIcon fontWeight="" />
+              <InformationCircleIcon />
             </span>
             <p>
               <span className="font-bold">
@@ -175,7 +175,7 @@ function DailyLessonDetail() {
     }
 
     return (
-      <div className="flex justify-center items-center gap-2 mb-12 mt-12">
+      <div className="flex justify-center items-center gap-2 mb-12 mt-0 md:mt-6">
         <input
           type="checkbox"
           checked={isChecked}
@@ -224,7 +224,7 @@ function DailyLessonDetail() {
     }
 
     return (
-      <div className="flex justify-center items-center mb-12 mt-6 ml-4">
+      <div className="flex justify-center items-center my-5 mx-2">
         {renderFlaggedBy()}
       </div>
     );
@@ -252,7 +252,7 @@ function DailyLessonDetail() {
   if (!lessonDetails) return <FullPageLoader />;
 
   return (
-    <div className="max-w-screen-2xl mx-auto mt-12 py-3 px-4 sm:py-5 lg:px-8">
+    <div className="max-w-screen-2xl mx-auto mt-12 py-3 mb-12 sm:py-5 md:mb-0">
       <ViewLesson
         lesson={lessonDetails}
         links={link}

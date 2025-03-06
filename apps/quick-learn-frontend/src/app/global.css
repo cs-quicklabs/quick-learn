@@ -2,7 +2,7 @@
 @import '../../../../node_modules/tailwindcss/components.css';
 @import '../../../../node_modules/tailwindcss/utilities.css';
 
-@import 'react-quill-new/dist/quill.snow.css';
+@import '~react-quill-new/dist/quill.snow.css';
 
 div[role='dialog'] {
   align-content: center !important;
@@ -238,5 +238,9 @@ input:-webkit-autofill:active {
     padding-right: 0.5rem;
     margin-bottom: 1rem;
     font-size: 1rem;
+  }
+
+  [class^='ql-indent-']:not(.ql-indent-1):not(.ql-indent-2):not(.ql-indent-3) {
+    white-space: nowrap;
   }
 }
