@@ -62,30 +62,23 @@ function CourseDetails() {
     course: string;
   }>();
   // dynamically set the url to Team member or own Learning path
-  const baseLink = useMemo(() => {
-    return member !== undefined
+  const baseLink =
+    member !== undefined
       ? `${RouteEnum.TEAM}/${member}`
       : RouteEnum.MY_LEARNING_PATH;
-  }, [member]);
 
-  const defaultlinks: TBreadcrumb[] = useMemo(() => {
-    const links: TBreadcrumb[] = [];
-
-    if (member !== undefined) {
-      links.push({ name: 'Team', link: RouteEnum.TEAM });
-    }
-
-    links.push({
+  const defaultLinks: TBreadcrumb[] = [
+    ...(member !== undefined ? [{ name: 'Team', link: RouteEnum.TEAM }] : []),
+    {
       name: member
         ? en.myLearningPath.learning_path
         : en.myLearningPath.heading,
       link: baseLink,
-    });
+    },
+  ];
 
-    return links;
-  }, [member, baseLink]);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
-  const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
+  const [links, setLinks] = useState<TBreadcrumb[]>(defaultLinks);
   const [courseData, setCourseData] = useState<TUserCourse>();
 
   const [memberUserProgress, setMemberUserProgress] = useState<
@@ -117,7 +110,7 @@ function CourseDetails() {
             !isNaN(+roadmap) ? roadmap : undefined,
           );
           setCourseData(res.data);
-          const tempLinks = [...defaultlinks];
+          const tempLinks = [...defaultLinks];
           if (roadmap && !isNaN(+roadmap)) {
             tempLinks.push({
               name: res.data?.roadmaps?.[0]?.name ?? '',
@@ -144,16 +137,7 @@ function CourseDetails() {
         .then((res) => setMemberUserProgress(res.data))
         .catch((e) => showApiErrorInToast(e));
     }
-  }, [
-    dispatch,
-    progressStatus,
-    roadmap,
-    course,
-    router,
-    member,
-    defaultlinks,
-    baseLink,
-  ]);
+  }, [dispatch, progressStatus, roadmap, course, router, member]);
 
   const courseLessonProgress = useMemo(() => {
     const courseProgress = member

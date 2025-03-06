@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchArchivedCourses,
@@ -85,26 +85,22 @@ function ArchivedCourses() {
     [dispatch, searchValue],
   );
 
-  const handleQueryChange = useMemo(
-    () =>
-      debounce(async (value: string) => {
-        const searchText = value || '';
-        try {
-          dispatch(setCoursesSearchValue(searchText));
-          dispatch(
-            fetchArchivedCourses({
-              page: 1,
-              search: searchText,
-              resetList: true,
-            }),
-          );
-        } catch (err) {
-          console.log(err);
-          toast.error(en.common.somethingWentWrong);
-        }
-      }, 300),
-    [dispatch],
-  );
+  const handleQueryChange = debounce(async (value: string) => {
+    const searchText = value || '';
+    try {
+      dispatch(setCoursesSearchValue(searchText));
+      dispatch(
+        fetchArchivedCourses({
+          page: 1,
+          search: searchText,
+          resetList: true,
+        }),
+      );
+    } catch (err) {
+      console.log(err);
+      toast.error(en.common.somethingWentWrong);
+    }
+  }, 300);
 
   useEffect(() => {
     dispatch(fetchArchivedCourses({ page: 1, search: '', resetList: true }));

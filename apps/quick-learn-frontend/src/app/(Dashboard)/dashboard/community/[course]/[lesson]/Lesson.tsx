@@ -1,6 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { TLesson } from '@src/shared/types/contentRepository';
 import { getLessonDetails } from '@src/apiServices/lessonsService';
 import ViewLesson from '@src/shared/components/ViewLesson';
@@ -18,17 +18,16 @@ function Lesson() {
   const lessonId = params.lesson;
   const courseId = params.course;
 
-  const links = useMemo<TBreadcrumb[]>(() => {
-    const url = `${RouteEnum.COMMUNITY}/${courseId}/${lessonId}`;
-    return [
-      ...defaultlinks,
-      {
-        name: lessonData?.course?.name ? lessonData.course.name : 'Course',
-        link: `${RouteEnum.COMMUNITY}/${courseId}`,
-      },
-      { name: lessonData?.name ? lessonData.name : 'Lesson', link: url },
-    ];
-  }, [courseId, lessonId, lessonData]);
+  const url = `${RouteEnum.COMMUNITY}/${courseId}/${lessonId}`;
+
+  const links: TBreadcrumb[] = [
+    ...defaultlinks,
+    {
+      name: lessonData?.course?.name ?? 'Course',
+      link: `${RouteEnum.COMMUNITY}/${courseId}`,
+    },
+    { name: lessonData?.name ?? 'Lesson', link: url },
+  ];
 
   const getLessonData = useCallback(() => {
     if (!lessonId) return;

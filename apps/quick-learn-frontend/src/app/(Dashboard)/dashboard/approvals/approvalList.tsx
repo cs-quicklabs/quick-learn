@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
@@ -44,14 +44,10 @@ function ApprovalList() {
     [dispatch],
   );
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((searchTerm: string) => {
-        dispatch(setCurrentPageApprovalList(1));
-        fetchLessons(1, searchTerm);
-      }, 500),
-    [dispatch, fetchLessons],
-  );
+  const debouncedSearch = debounce((searchTerm: string) => {
+    dispatch(setCurrentPageApprovalList(1));
+    fetchLessons(1, searchTerm);
+  }, 500);
 
   useEffect(() => {
     fetchLessons(1, '');

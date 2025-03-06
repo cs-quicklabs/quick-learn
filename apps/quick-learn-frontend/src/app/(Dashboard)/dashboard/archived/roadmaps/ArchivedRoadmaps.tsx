@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchArchivedRoadmaps,
@@ -83,26 +83,22 @@ function ArchivedRoadmaps() {
     [dispatch, searchValue],
   );
 
-  const handleQueryChange = useMemo(
-    () =>
-      debounce(async (value: string) => {
-        const searchValue = value || '';
-        try {
-          dispatch(setRoadmapsSearchValue(searchValue));
-          dispatch(
-            fetchArchivedRoadmaps({
-              page: 1,
-              search: searchValue,
-              resetList: true,
-            }),
-          );
-        } catch (err) {
-          console.log(err);
-          toast.error(en.common.somethingWentWrong);
-        }
-      }, 300),
-    [dispatch],
-  );
+  const handleQueryChange = debounce(async (value: string) => {
+    const searchValue = value || '';
+    try {
+      dispatch(setRoadmapsSearchValue(searchValue));
+      dispatch(
+        fetchArchivedRoadmaps({
+          page: 1,
+          search: searchValue,
+          resetList: true,
+        }),
+      );
+    } catch (err) {
+      console.log(err);
+      toast.error(en.common.somethingWentWrong);
+    }
+  }, 300);
 
   useEffect(() => {
     dispatch(fetchArchivedRoadmaps({ page: 1, search: '', resetList: true }));

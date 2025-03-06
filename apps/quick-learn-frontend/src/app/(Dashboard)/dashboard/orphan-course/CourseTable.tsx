@@ -4,7 +4,7 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { RouteEnum } from '@src/constants/route.enum';
 import { SuperLink } from '@src/utils/HiLink';
 import { format } from 'date-fns';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Skeleton from './Skeleton';
 import BasicPagination from '@src/shared/components/BasicPagination';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
@@ -42,15 +42,10 @@ const CourseTable = () => {
     debouncedSearch(searchTerm);
   };
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((searchTerm: string) => {
-        dispatch(setCurrentPageOrphanList(1));
-        dispatch(fetchOrphanCourses({ page: 1, q: searchTerm }));
-      }, 500),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatch, fetchOrphanCourses],
-  );
+  const debouncedSearch = debounce((searchTerm: string) => {
+    dispatch(setCurrentPageOrphanList(1));
+    dispatch(fetchOrphanCourses({ page: 1, q: searchTerm }));
+  }, 500);
 
   const renderTableData = () => {
     return course && course.length > 0 ? (

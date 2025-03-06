@@ -102,16 +102,14 @@ const LeaderboardTable = () => {
       const newData = response.data.items;
       setTotal(response.data.total);
 
-      if (type === 'weekly') {
-        setWeeklyLeaderboard((prev) =>
-          currentPage === 1 ? newData : [...prev, ...newData],
-        );
-      } else if (type === 'monthly') {
-        setMonthlyLeaderboard((prev) =>
-          currentPage === 1 ? newData : [...prev, ...newData],
-        );
-      } else if (type === 'quarterly') {
-        setQuarterlyLeaderboard((prev) =>
+      const setLeaderboard = {
+        weekly: setWeeklyLeaderboard,
+        monthly: setMonthlyLeaderboard,
+        quarterly: setQuarterlyLeaderboard,
+      }[type];
+
+      if (setLeaderboard) {
+        setLeaderboard((prev) =>
           currentPage === 1 ? newData : [...prev, ...newData],
         );
       }

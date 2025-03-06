@@ -1,12 +1,17 @@
 'use client';
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
-import ReactQuill from 'react-quill-new';
+import { FC, useCallback, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
+import type ReactQuillType from 'react-quill-new';
 
 // All the import which is used for the customisation of the editor
 import EditorToolbar, { formats } from './EditorToolbar';
 import { en } from '@src/constants/lang/en';
 import { fileUploadApiCall } from '@src/apiServices/fileUploadService';
 import { showErrorMessage } from '@src/utils/helpers';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), {
+  ssr: false,
+});
 
 function checkSize(file: File): boolean {
   if (file.size > 1024 * 1024 * 5) {
@@ -35,7 +40,7 @@ const Editor: FC<Props> = ({
   isUpdating = false,
   isAdd = false,
 }) => {
-  const quillRef = useRef<ReactQuill | null>(null);
+  const quillRef = useRef<ReactQuillType>(null);
 
   const handleImageUpload = async (file: File) => {
     if (!checkSize(file)) return;
@@ -74,26 +79,23 @@ const Editor: FC<Props> = ({
     };
   }, []);
 
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: '#toolbar',
-        history: {
-          delay: 500,
-          maxStack: 100,
-          userOnly: true,
-        },
-        handlers: {
-          image: imageHandler,
-        },
+  const modules = {
+    toolbar: {
+      container: '#toolbar',
+      history: {
+        delay: 500,
+        maxStack: 100,
+        userOnly: true,
       },
-      clipboard: {
-        matchVisual: false,
-        matchers: [],
+      handlers: {
+        image: imageHandler,
       },
-    }),
-    [imageHandler],
-  );
+    },
+    clipboard: {
+      matchVisual: false,
+      matchers: [],
+    },
+  };
 
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
@@ -140,6 +142,7 @@ const Editor: FC<Props> = ({
       />
       <div className="flex-grow relative">
         <ReactQuill
+          // @ts-expect-error - As forwardRef is not supported in react 19 and we have to wait for the next version of react-quill
           ref={quillRef}
           value={value}
           onChange={setValue}

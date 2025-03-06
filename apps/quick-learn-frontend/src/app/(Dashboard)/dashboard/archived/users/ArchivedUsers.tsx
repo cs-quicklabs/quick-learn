@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchArchivedUsers,
@@ -75,25 +75,21 @@ function InactiveUsers() {
     [dispatch, searchValue],
   );
 
-  const handleQueryChange = useMemo(
-    () =>
-      debounce(async (value: string) => {
-        const searchText = value || '';
-        try {
-          dispatch(setUsersSearchValue(searchText));
-          dispatch(
-            fetchArchivedUsers({
-              page: 1,
-              search: searchText,
-              resetList: true,
-            }),
-          );
-        } catch (err) {
-          console.log('Something went wrong!', err);
-        }
-      }, 300),
-    [dispatch],
-  );
+  const handleQueryChange = debounce(async (value: string) => {
+    const searchText = value || '';
+    try {
+      dispatch(setUsersSearchValue(searchText));
+      dispatch(
+        fetchArchivedUsers({
+          page: 1,
+          search: searchText,
+          resetList: true,
+        }),
+      );
+    } catch (err) {
+      console.log('Something went wrong!', err);
+    }
+  }, 300);
 
   useEffect(() => {
     dispatch(fetchArchivedUsers({ page: 1, search: '', resetList: true }));
