@@ -111,7 +111,7 @@ function ApprovalList() {
             ? lesson.created_by_user.first_name +
               ' ' +
               lesson.created_by_user.last_name
-            : en.common.unknown}
+            : 'Admin'}
         </td>
       </tr>
     ));
