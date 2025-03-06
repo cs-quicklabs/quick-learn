@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Modal, Tooltip } from 'flowbite-react';
 import { CloseIcon, ReadFileIcon } from '../components/UIElements';
 import { format, subMonths } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { TUser } from '../types/userTypes';
 import { TUserDailyProgress } from '../types/contentRepository';
+import Tooltip from '../components/Tooltip';
 
 interface Props {
   userProgressData: Course[];
@@ -199,9 +199,17 @@ const ActivityGraph: React.FC<Props> = ({
     }
   }, [userDailyProgressData, userProgressData]);
 
+  if (!isOpen) return null;
+
   return (
-    <Modal show={isOpen} size="4xl">
-      <Modal.Body>
+    <div
+      className="fixed z-10 flex inset-0 md:h-full items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-900 bg-opacity-50 dark:bg-opacity-80 overscroll-y-contain px-3 md:px-0"
+      onClick={() => setShow(false)}
+    >
+      <div
+        className="relative w-full max-w-[54rem] p-6  md:h-auto bg-white rounded-lg shadow dark:bg-gray-800"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="mb-4 flex items-center justify-between rounded-t dark:border-gray-700 sm:mb-5">
           <p className="text-lg font-semibold text-gray-900 dark:text-white">
             {memberDetail?.first_name} {memberDetail?.last_name.concat("'s")}{' '}
@@ -263,7 +271,12 @@ const ActivityGraph: React.FC<Props> = ({
 
         <div id="myTabContent">
           {selectedTab === 0 && (
-            <div id="brandi" role="tabpanel" aria-labelledby="brand-tab">
+            <div
+              id="brandi"
+              role="tabpanel"
+              aria-labelledby="brand-tab"
+              className="py-3"
+            >
               <div className="max-h-[230px] overflow-y-auto">
                 {userActivityList && userActivityList.length ? (
                   <ol className="relative ms-3 border-s border-dashed border-gray-200 dark:border-gray-700">
@@ -304,7 +317,7 @@ const ActivityGraph: React.FC<Props> = ({
             </div>
           )}
           {selectedTab === 1 && (
-            <div className="grid place-items-center overflow-x-auto ">
+            <div className="grid place-items-center overflow-x-auto py-3">
               <div className="flex items-start gap-4">
                 <div className="flex flex-col gap-2 pt-6">
                   <h6 className="h-4 text-xs">Sun</h6>
@@ -342,7 +355,7 @@ const ActivityGraph: React.FC<Props> = ({
                                 item.timestamp,
                                 DateFormats.shortDate,
                               )}`}
-                              placement="top"
+                              className="absolute z-[2000]"
                             >
                               <div
                                 className="h-4 w-4"
@@ -372,8 +385,8 @@ const ActivityGraph: React.FC<Props> = ({
             </div>
           )}
         </div>
-      </Modal.Body>
-    </Modal>
+      </div>
+    </div>
   );
 };
 

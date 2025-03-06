@@ -29,7 +29,6 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import { Tooltip } from 'flowbite-react';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import TeamMemberDetailsSkeleton from './TeamMemberDetailsSkeleton';
 import {
@@ -50,6 +49,7 @@ import { useAppSelector } from '@src/store/hooks';
 import { selectUser } from '@src/store/features';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import SmallScreenTabs from '@src/shared/components/SmallScreenTabs';
+import Tooltip from '@src/shared/components/Tooltip';
 
 const defaultlinks: TBreadcrumb[] = [{ name: 'Team', link: RouteEnum.TEAM }];
 

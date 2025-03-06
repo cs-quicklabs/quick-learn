@@ -42,13 +42,13 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
-import { Tooltip } from 'flowbite-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CourseDetailsSkeleton from './CourseDetailsSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 import { HTMLSanitizer } from '@src/utils/helpers';
+import Tooltip from '@src/shared/components/Tooltip';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },

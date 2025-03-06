@@ -1,4 +1,3 @@
-import { Modal } from 'flowbite-react';
 import { CloseIcon, InfoIcon } from '../components/UIElements';
 
 interface Props {
@@ -27,9 +26,16 @@ export default function ConformationModal({
     onConfirm();
   };
 
+  if (!open) return null;
   return (
-    <Modal show={open} size="md" popup>
-      <Modal.Body className="p-0">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-900 bg-opacity-50 dark:bg-opacity-80 overscroll-none px-4 md:px-0"
+      onClick={() => setOpen(false)}
+    >
+      <div
+        className="relative w-full max-w-[26rem] max-h-full dark:bg-gray-700"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="relative bg-white rounded-lg shadow">
           <button
             type="button"
@@ -67,7 +73,7 @@ export default function ConformationModal({
             </button>
           </div>
         </div>
-      </Modal.Body>
-    </Modal>
+      </div>
+    </div>
   );
 }

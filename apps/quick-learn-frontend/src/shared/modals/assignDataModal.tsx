@@ -2,7 +2,6 @@ import { FC, useEffect, useState, useMemo } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Modal, Accordion } from 'flowbite-react';
 import { CloseIcon, Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
@@ -158,9 +157,18 @@ const AssignDataModal: FC<Props> = ({
     setIsAllExpanded(newIsAllExpanded);
   };
 
+  if (!show) return null;
+
   return (
-    <Modal show={show} size="6xl">
-      <Modal.Body className="p-0">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 px-4 md:px-3 overscroll-none"
+      onClick={() => setShow(false)}
+    >
+      <div
+        className="relative w-full max-w-[115rem] h-auto bg-white rounded-lg shadow dark:bg-gray-800"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Header */}
         <div className="flex items-start justify-between pt-4 px-4 rounded-t">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-400">
             {heading}
@@ -173,9 +181,13 @@ const AssignDataModal: FC<Props> = ({
             <CloseIcon className="w-3 h-3" />
           </button>
         </div>
+
+        {/* Note */}
         <div className="ml-4 text-[14px] text-gray-500 mt-0">
           <p>{note}</p>
         </div>
+
+        {/* Tab Header */}
         <div className="mb-4 px-4 md:px-6 mt-3">
           <ul
             className="flex flex-wrap -mb-px text-sm font-medium justify-between items-center border-b border-gray-200 dark:border-gray-700"
@@ -200,11 +212,13 @@ const AssignDataModal: FC<Props> = ({
             </li>
           </ul>
         </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit(onFormSubmit)}>
-          <div className="px-4 md:px-6">
+          <div className="px-4 md:px-6 ">
             <div
               id="myTabContent"
-              className="overflow-y-auto h-[24rem] md:h-[35rem] scrollbar-hide"
+              className="overflow-y-auto h-[20rem] md:h-[35rem] scrollbar-hide"
             >
               <div
                 className="columns-1 md:columns-4 gap-4"
@@ -220,82 +234,75 @@ const AssignDataModal: FC<Props> = ({
                   const isOpen = openAccordions.includes(ele.name);
                   return (
                     <div key={ele.name} className="break-inside-avoid mb-4">
-                      {
-                        <Accordion
-                          collapseAll
-                          className="[&>div>div>button>svg]:hidden" // Hide default Flowbite accordion icon
+                      <div className="border border-gray-300 rounded-lg ">
+                        {/* Accordion Title */}
+                        <div
+                          className="relative flex items-center justify-between text-black bg-transparent px-3 py-4 cursor-pointer"
+                          onClick={() => handleAccordionChange(ele.name)}
                         >
-                          <Accordion.Panel>
-                            <Accordion.Title
-                              className="relative flex items-center justify-between text-black bg-transparent focus:ring-0 [&>svg]:hidden px-3 py-4"
-                              onClick={() => handleAccordionChange(ele.name)}
-                            >
-                              <span className="flex-grow capitalize">
-                                {ele.name}
-                              </span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className={`size-6 absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-300 ${
-                                  isOpen ? 'rotate-180' : 'rotate-0'
-                                }`}
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                                />
-                              </svg>
-                            </Accordion.Title>
-                            <Accordion.Content
-                              className="py-6 border-none"
-                              hidden={!openAccordions.includes(ele.name)}
-                            >
-                              {sortedList.length > 0 ? (
-                                sortedList.map((item) => (
-                                  <div
-                                    key={item.value}
-                                    className="flex items-center mb-2"
+                          <span className="flex-grow capitalize font-medium font-[16px]">
+                            {ele.name}
+                          </span>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className={`size-6 absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-300 ${
+                              isOpen ? 'rotate-180' : 'rotate-0'
+                            }`}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* Accordion Content */}
+                        {isOpen && (
+                          <div className="py-6 border-none">
+                            {sortedList.length > 0 ? (
+                              sortedList.map((item) => (
+                                <div
+                                  key={item.value}
+                                  className="px-3 flex items-center mb-2"
+                                >
+                                  <input
+                                    id={item.name}
+                                    type="checkbox"
+                                    value={item.value}
+                                    className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
+                                    {...register('selected')}
+                                  />
+                                  <label
+                                    htmlFor={item.name}
+                                    className="flex items-center group gap-2 w-full ml-2 text-sm justify-between font-medium text-gray-900 dark:text-gray-300"
                                   >
-                                    <input
-                                      id={item.name}
-                                      type="checkbox"
-                                      value={item.value}
-                                      className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
-                                      {...register('selected')}
-                                    />
-                                    <label
-                                      htmlFor={item.name}
-                                      className="flex items-center group gap-2 w-full ml-2 text-sm justify-between font-medium text-gray-900 dark:text-gray-300"
-                                    >
-                                      <span>
-                                        {firstLetterCapital(item.name)}
-                                      </span>
-                                      {item.roadmap_count === 0 && (
-                                        <span className="flex">
-                                          <span className="hidden md:flex text-gray-500 text-xs italic">
-                                            orphan
-                                          </span>
-                                          <span className="text-red-500 text-md ml-1">
-                                            *
-                                          </span>
+                                    <span>{firstLetterCapital(item.name)}</span>
+                                    {item.roadmap_count === 0 && (
+                                      <span className="flex">
+                                        <span className="hidden md:flex text-gray-500 text-xs italic">
+                                          orphan
                                         </span>
-                                      )}
-                                    </label>
-                                  </div>
-                                ))
-                              ) : (
-                                <p className="font-medium text-gray-500">
-                                  No data found
-                                </p>
-                              )}
-                            </Accordion.Content>
-                          </Accordion.Panel>
-                        </Accordion>
-                      }
+                                        <span className="text-red-500 text-md ml-1">
+                                          *
+                                        </span>
+                                      </span>
+                                    )}
+                                  </label>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="font-medium text-gray-500 px-3">
+                                No data found
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -328,7 +335,7 @@ const AssignDataModal: FC<Props> = ({
               disabled={!isFormDirty || !isValid || isLoading}
             >
               {isLoading ? (
-                <div className="pl-3">
+                <div className="text-center">
                   <Loader />
                 </div>
               ) : (
@@ -345,8 +352,8 @@ const AssignDataModal: FC<Props> = ({
             </button>
           </div>
         </form>
-      </Modal.Body>
-    </Modal>
+      </div>
+    </div>
   );
 };
 

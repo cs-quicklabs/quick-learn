@@ -20,7 +20,6 @@ const nextConfig = {
       },
     ],
   },
-  transpilePackages: ['flowbite-react'],
   rewrites: async () => {
     return [
       {

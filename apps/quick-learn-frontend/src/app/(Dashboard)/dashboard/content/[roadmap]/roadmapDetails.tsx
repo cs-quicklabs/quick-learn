@@ -45,12 +45,12 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
-import { Tooltip } from 'flowbite-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import RoadmapDetailsSkeleton from './RoadmapDetailsSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import Tooltip from '@src/shared/components/Tooltip';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },

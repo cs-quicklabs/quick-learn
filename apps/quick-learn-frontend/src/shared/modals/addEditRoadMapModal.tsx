@@ -1,6 +1,5 @@
 'use client';
 import { FC, useEffect } from 'react';
-import { Modal } from 'flowbite-react';
 import { CloseIcon } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { z } from 'zod';
@@ -106,9 +105,17 @@ const AddEditRoadMapModal: FC<AddEditRoadMapProps> = ({
     }
   }, [open, reset, setValue, initialData]);
 
+  if (!open) return null;
+
   return (
-    <Modal show={open} popup>
-      <Modal.Body className="p-4 sm:p-5">
+    <div
+      className="fixed z-50 flex inset-0 md:h-full items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-900 bg-opacity-50 dark:bg-opacity-80 overscroll-none px-4 md:px-0"
+      onClick={() => setOpen(false)}
+    >
+      <div
+        className="relative w-full max-w-[40rem] max-h-full p-4 sm:p-5 bg-white rounded-lg shadow dark:bg-gray-800"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b border-gray-200 sm:mb-5">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             {isAdd
@@ -139,8 +146,8 @@ const AddEditRoadMapModal: FC<AddEditRoadMapProps> = ({
             id="addRoadmapForm"
           />
         </FormProvider>
-      </Modal.Body>
-    </Modal>
+      </div>
+    </div>
   );
 };
 

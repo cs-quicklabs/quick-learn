@@ -5,9 +5,9 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useParams, useRouter } from 'next/navigation';
 import { Loader, ShowInfoIcon } from '@src/shared/components/UIElements';
-import { Tooltip } from 'flowbite-react';
 import { z } from 'zod';
 import { en } from '@src/constants/lang/en';
+import Tooltip from '@src/shared/components/Tooltip';
 
 export interface IMemberFieldConfig<T> {
   label: string;
