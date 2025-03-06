@@ -274,18 +274,20 @@ function CourseDetails() {
         isloading={isLoading}
         initialData={courseData}
       />
-      <AssignDataModal
-        show={openAssignModal}
-        setShow={setOpenAssignModal}
-        heading={en.courseDetails.addExistingRoadmaps}
-        sub_heading={en.common.selectRoadmaps}
-        isLoading={isLoading}
-        data={roadmapCategoriesData}
-        initialValues={{
-          selected: courseData.roadmaps?.map((item) => String(item.id)) || [],
-        }}
-        onSubmit={assignRoadmaps}
-      />
+      {openAssignModal && (
+        <AssignDataModal
+          show={openAssignModal}
+          setShow={setOpenAssignModal}
+          heading={en.courseDetails.addExistingRoadmaps}
+          sub_heading={en.common.selectRoadmaps}
+          isLoading={isLoading}
+          data={roadmapCategoriesData}
+          initialValues={{
+            selected: courseData.roadmaps?.map((item) => String(item.id)) || [],
+          }}
+          onSubmit={assignRoadmaps}
+        />
+      )}
       <ConformationModal
         title={en.courseDetails.archiveConfirmHeading}
         subTitle={en.courseDetails.archiveConfirmSubHeading}

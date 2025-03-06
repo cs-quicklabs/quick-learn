@@ -334,7 +334,7 @@ const ActivityGraph: React.FC<Props> = ({
                     style={{ width: 600 }}
                   >
                     {getLastSixMonths().map((month: string, index: number) => (
-                      <h6 className="w-full text-xs" key={index}>
+                      <h6 className="w-full text-xs text-end" key={index}>
                         {month}
                       </h6>
                     ))}
