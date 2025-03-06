@@ -98,7 +98,7 @@ const AssignDataModal: FC<Props> = ({
       resetState();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, setValue, reset, sortedData]);
+  }, [show, setValue, reset]);
 
   useEffect(() => {
     if (!show) return;

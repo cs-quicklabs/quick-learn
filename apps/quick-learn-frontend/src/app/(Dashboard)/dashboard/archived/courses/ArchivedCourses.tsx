@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchArchivedCourses,
@@ -33,57 +33,49 @@ function ArchivedCourses() {
   const [restoreId, setRestoreId] = useState<string | false>(false);
   const [deleteId, setDeleteId] = useState<string | false>(false);
 
-  const getNextCourses = useCallback(() => {
+  const getNextCourses = () => {
     if (!isLoading && hasMore) {
       dispatch(fetchArchivedCourses({ page, search: searchValue }));
     }
-  }, [dispatch, hasMore, isLoading, page, searchValue]);
+  };
 
-  const handleDeleteCourse = useCallback(
-    async (id: string) => {
-      try {
-        await dispatch(deleteArchivedCourse({ id: parseInt(id, 10) })).unwrap();
-        dispatch(
-          fetchArchivedCourses({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.courseDeleted);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setDeleteId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
+  const handleDeleteCourse = async (id: string) => {
+    try {
+      await dispatch(deleteArchivedCourse({ id: parseInt(id, 10) })).unwrap();
+      dispatch(
+        fetchArchivedCourses({
+          page: 1,
+          search: searchValue,
+          resetList: true,
+        }),
+      );
+      toast.success(en.archivedSection.courseDeleted);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setDeleteId(false);
+    }
+  };
 
-  const restoreCourse = useCallback(
-    async (id: string) => {
-      try {
-        await dispatch(
-          activateArchivedCourse({ id: parseInt(id, 10) }),
-        ).unwrap();
-        dispatch(
-          fetchArchivedCourses({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.courseRestored);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setRestoreId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
+  const restoreCourse = async (id: string) => {
+    try {
+      await dispatch(activateArchivedCourse({ id: parseInt(id, 10) })).unwrap();
+      dispatch(
+        fetchArchivedCourses({
+          page: 1,
+          search: searchValue,
+          resetList: true,
+        }),
+      );
+      toast.success(en.archivedSection.courseRestored);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setRestoreId(false);
+    }
+  };
 
   const handleQueryChange = debounce(async (value: string) => {
     const searchText = value || '';

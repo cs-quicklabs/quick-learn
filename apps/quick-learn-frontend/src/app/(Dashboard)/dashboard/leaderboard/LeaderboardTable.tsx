@@ -1,11 +1,5 @@
 'use client';
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  useMemo,
-} from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { en } from '@src/constants/lang/en';
 import { getLeaderBoardStatus } from '@src/apiServices/lessonsService';
 import { useAppSelector } from '@src/store/hooks';
@@ -67,21 +61,18 @@ const LeaderboardTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const currentUser = useAppSelector(selectUser);
   const observer = useRef<IntersectionObserver>(null);
-  const lastElementRef = useCallback(
-    (node: HTMLElement | null) => {
-      if (isLoading) return;
-      if (observer.current) observer.current.disconnect();
+  const lastElementRef = (node: HTMLElement | null) => {
+    if (isLoading) return;
+    if (observer.current) observer.current.disconnect();
 
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && page * 25 < total) {
-          setPage((prevPage) => prevPage + 1);
-        }
-      });
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && page * 25 < total) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    });
 
-      if (node) observer.current.observe(node);
-    },
-    [isLoading, page, total],
-  );
+    if (node) observer.current.observe(node);
+  };
 
   // Memoize the current leaderboard based on type
   const currentLeaderboard = useMemo(() => {

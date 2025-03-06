@@ -1,6 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TLesson } from '@src/shared/types/contentRepository';
 import { getLessonDetails } from '@src/apiServices/lessonsService';
 import ViewLesson from '@src/shared/components/ViewLesson';
@@ -29,18 +29,18 @@ function Lesson() {
     { name: lessonData?.name ?? 'Lesson', link: url },
   ];
 
-  const getLessonData = useCallback(() => {
+  const getLessonData = () => {
     if (!lessonId) return;
     getLessonDetails(lessonId)
       .then((res) => {
         setLessonData(res.data);
       })
       .catch((err) => showApiErrorInToast(err));
-  }, [lessonId]);
+  };
 
   useEffect(() => {
     getLessonData();
-  }, [getLessonData]);
+  }, []);
   return (
     <div>{lessonData && <ViewLesson lesson={lessonData} links={links} />}</div>
   );

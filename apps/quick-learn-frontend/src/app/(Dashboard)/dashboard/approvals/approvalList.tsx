@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
@@ -37,12 +37,9 @@ function ApprovalList() {
 
   const [search, setSearch] = useState('');
 
-  const fetchLessons = useCallback(
-    (pageNum: number, searchTerm: string) => {
-      dispatch(fetchUnapprovedLessons({ page: pageNum, q: searchTerm }));
-    },
-    [dispatch],
-  );
+  const fetchLessons = (pageNum: number, searchTerm: string) => {
+    dispatch(fetchUnapprovedLessons({ page: pageNum, q: searchTerm }));
+  };
 
   const debouncedSearch = debounce((searchTerm: string) => {
     dispatch(setCurrentPageApprovalList(1));

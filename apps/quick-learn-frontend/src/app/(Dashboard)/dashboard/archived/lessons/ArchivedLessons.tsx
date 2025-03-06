@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchArchivedLessons,
@@ -33,56 +33,48 @@ function ArchivedLessons() {
   const [restoreId, setRestoreId] = useState<number | false>(false);
   const [deleteId, setDeleteId] = useState<number | false>(false);
 
-  const getNextLessons = useCallback(() => {
+  const getNextLessons = () => {
     if (!isLoading && hasMore) {
       dispatch(fetchArchivedLessons({ page, search: searchValue }));
     }
-  }, [dispatch, hasMore, isLoading, page, searchValue]);
+  };
+  const handleDeleteLesson = async (id: number) => {
+    try {
+      await dispatch(deleteArchivedLesson({ id })).unwrap();
+      dispatch(
+        fetchArchivedLessons({
+          page: 1,
+          search: searchValue,
+          resetList: true,
+        }),
+      );
+      toast.success(en.archivedSection.lessonDeletedSuccess);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setDeleteId(false);
+    }
+  };
 
-  const handleDeleteLesson = useCallback(
-    async (id: number) => {
-      try {
-        await dispatch(deleteArchivedLesson({ id })).unwrap();
-        dispatch(
-          fetchArchivedLessons({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.lessonDeletedSuccess);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setDeleteId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
-
-  const restoreLesson = useCallback(
-    async (id: number) => {
-      try {
-        await dispatch(activateArchivedLesson({ id })).unwrap();
-        dispatch(
-          fetchArchivedLessons({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.lessonRestoredSuccess);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setRestoreId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
-
+  const restoreLesson = async (id: number) => {
+    try {
+      await dispatch(activateArchivedLesson({ id })).unwrap();
+      dispatch(
+        fetchArchivedLessons({
+          page: 1,
+          search: searchValue,
+          resetList: true,
+        }),
+      );
+      toast.success(en.archivedSection.lessonRestoredSuccess);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setRestoreId(false);
+    }
+  };
   const handleQueryChange = debounce(async (value: string) => {
     const searchTerm = value || '';
     try {
