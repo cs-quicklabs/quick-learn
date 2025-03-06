@@ -19,6 +19,8 @@ import {
 import { useAppDispatch } from '@src/store/hooks';
 import { setHideNavbar, selectUser } from '@src/store/features';
 import { UserTypeIdEnum } from 'lib/shared/src';
+import { SuperLink } from '@src/utils/HiLink';
+import { PencilIcon } from '@heroicons/react/24/outline';
 
 const defaultLinks = [{ name: 'Flagged Lessons', link: RouteEnum.FLAGGED }];
 
@@ -45,6 +47,10 @@ function LessonDetails() {
   const [loading, setLoading] = useState(true);
   const [lesson, setLesson] = useState<TLesson>();
   const [isFlagged, setIsFlagged] = useState<boolean>(false);
+  const canEdit = useMemo(() => {
+    return user?.user_type_id === UserTypeIdEnum.EDITOR;
+  }, [user]);
+
   useEffect(() => {
     if (!lesson) {
       setLinks(defaultLinks);
@@ -96,6 +102,15 @@ function LessonDetails() {
         isFlagged={isAdmin && isFlagged}
         setIsFlagged={isAdmin ? markAsUnFlagged : undefined}
       />
+      {canEdit && (
+        <SuperLink
+          href={`${RouteEnum.CONTENT}/courses/${lesson.course_id}/${lesson.id}`}
+        >
+          <span className="fixed flex items-center bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500">
+            <PencilIcon className="flex-shrink-0 inline w-4 h-4 me-1" />| Edit
+          </span>
+        </SuperLink>
+      )}
     </div>
   );
 }
