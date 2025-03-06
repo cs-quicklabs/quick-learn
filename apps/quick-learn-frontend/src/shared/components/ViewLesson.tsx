@@ -9,7 +9,11 @@ import { en } from '@src/constants/lang/en';
 import { TLesson } from '../types/contentRepository';
 import { TBreadcrumb } from '../types/breadcrumbType';
 import { FlagIcon } from '@heroicons/react/24/outline';
-import ReactQuill from 'react-quill-new';
+import dynamic from 'next/dynamic';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), {
+  ssr: false,
+});
 
 // Separate components for better performance
 const LessonHeader = memo(
@@ -24,7 +28,7 @@ const LessonHeader = memo(
     createdAt?: string | Date;
     showCreatedBy?: boolean;
   }) => (
-    <div className="px-4 mb-8 text-center sm:px-6 lg:px-8">
+    <div className="px-4 mb-4 text-center sm:px-6 md:mb-8 lg:px-8">
       <div className="items-baseline">
         <h1 className="text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
           {name}
@@ -52,7 +56,7 @@ const LessonContent = memo(({ content }: { content: string }) => {
   };
 
   return (
-    <article className="flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-8 md:px-10 py-4 mb-8">
+    <article className="flex mx-auto w-full max-w-5xl format format-sm format-blue px-4 pt-0 pb-4 mb-4 sm:format-base md:px-10 md:pt-4 md:mb-8 lg:format-lg">
       <div className="quill-content-display w-full">
         <ReactQuill
           value={content}
