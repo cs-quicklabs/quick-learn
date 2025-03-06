@@ -211,26 +211,30 @@ function TeamMemberDetails() {
         setOpen={setShowConformationModal}
         onConfirm={onDeactivateUser}
       />
-      <AssignDataModal
-        show={openAssignModal}
-        setShow={setOpenAssignModal}
-        heading={en.teamMemberDetails.assignNewRoadmap}
-        note={en.teamMemberDetails.checkboxAssign}
-        sub_heading={en.common.selectRoadmaps}
-        data={allRoadmapCategories.map((item) => ({
-          name: item.name,
-          list: item.roadmaps.map((roadmap) => ({
-            name: roadmap.name,
-            value: +roadmap.id,
-          })),
-        }))}
-        isLoading={isPageLoading}
-        initialValues={{
-          selected:
-            member?.assigned_roadmaps?.map((item) => item.id.toString()) || [],
-        }}
-        onSubmit={assignCourses}
-      />
+
+      {openAssignModal && (
+        <AssignDataModal
+          show={openAssignModal}
+          setShow={setOpenAssignModal}
+          heading={en.teamMemberDetails.assignNewRoadmap}
+          note={en.teamMemberDetails.checkboxAssign}
+          sub_heading={en.common.selectRoadmaps}
+          data={allRoadmapCategories.map((item) => ({
+            name: item.name,
+            list: item.roadmaps.map((roadmap) => ({
+              name: roadmap.name,
+              value: +roadmap.id,
+            })),
+          }))}
+          isLoading={isPageLoading}
+          initialValues={{
+            selected:
+              member?.assigned_roadmaps?.map((item) => item.id.toString()) ||
+              [],
+          }}
+          onSubmit={assignCourses}
+        />
+      )}
 
       {/* Rest of the component remains the same */}
       <Breadcrumb links={links} />

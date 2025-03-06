@@ -1,6 +1,6 @@
 'use client';
 import { FC, useEffect } from 'react';
-import { Modal } from 'flowbite-react';
+import { Dialog } from '@headlessui/react';
 import { CloseIcon } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { z } from 'zod';
@@ -116,40 +116,54 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
   }, [open, reset, setValue, initialData]);
 
   return (
-    <Modal show={open} popup>
-      <Modal.Body className="p-4 sm:p-5">
-        <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b border-gray-200 sm:mb-5">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {isAdd
-              ? en.addEditCourseModal.addCourse
-              : en.addEditCourseModal.editCourse}
-          </h3>
-          <button
-            type="button"
-            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-            onClick={() => setOpen(false)}
-          >
-            <CloseIcon className="w-3 h-3" />
-          </button>
-        </div>
-        <FormProvider {...methods}>
-          <FormFieldsMapper
-            fields={AddEditCourseFields}
-            schema={AddEditCourseSchema}
-            onSubmit={onSubmit}
-            methods={methods}
-            isLoading={isloading}
-            buttonText={
-              isAdd
+    <Dialog
+      as="div"
+      className="relative z-10"
+      open={open}
+      onClose={() => setOpen(false)}
+    >
+      {/* Background overlay */}
+      <div className="fixed inset-0 bg-gray-900 opacity-50" />
+
+      {/* Modal panel */}
+      <div className="fixed inset-0 overflow-y-auto flex h-auto items-center justify-center p-4">
+        <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-lg bg-white p-4 shadow-xl">
+          <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b border-gray-200 sm:mb-5">
+            <Dialog.Title
+              as="h3"
+              className="text-lg font-semibold text-gray-900 dark:text-white"
+            >
+              {isAdd
                 ? en.addEditCourseModal.addCourse
-                : en.addEditCourseModal.editCourse
-            }
-            cancelButton={() => setOpen(false)}
-            id="addCourseForm"
-          />
-        </FormProvider>
-      </Modal.Body>
-    </Modal>
+                : en.addEditCourseModal.editCourse}
+            </Dialog.Title>
+            <button
+              type="button"
+              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+              onClick={() => setOpen(false)}
+            >
+              <CloseIcon className="w-3 h-3" />
+            </button>
+          </div>
+          <FormProvider {...methods}>
+            <FormFieldsMapper
+              fields={AddEditCourseFields}
+              schema={AddEditCourseSchema}
+              onSubmit={onSubmit}
+              methods={methods}
+              isLoading={isloading}
+              buttonText={
+                isAdd
+                  ? en.addEditCourseModal.addCourse
+                  : en.addEditCourseModal.editCourse
+              }
+              cancelButton={() => setOpen(false)}
+              id="addCourseForm"
+            />
+          </FormProvider>
+        </Dialog.Panel>
+      </div>
+    </Dialog>
   );
 };
 
