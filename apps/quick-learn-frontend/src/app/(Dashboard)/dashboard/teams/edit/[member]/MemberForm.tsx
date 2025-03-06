@@ -110,10 +110,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                   {label}
                   {tooltip && (
                     <div className="flex items-center ml-1">
-                      <Tooltip
-                        content={tooltip}
-                        className="py-1 px-2 max-w-sm text-xs font-normal text-white bg-gray-900 rounded-sm shadow-sm tooltip"
-                      >
+                      <Tooltip content={tooltip}>
                         <ShowInfoIcon />
                       </Tooltip>
                     </div>

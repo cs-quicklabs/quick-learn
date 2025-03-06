@@ -355,7 +355,6 @@ const ActivityGraph: React.FC<Props> = ({
                                 item.timestamp,
                                 DateFormats.shortDate,
                               )}`}
-                              className="absolute z-[2000]"
                             >
                               <div
                                 className="h-4 w-4"

@@ -52,7 +52,7 @@ const LessonContent = memo(({ content }: { content: string }) => {
   };
 
   return (
-    <article className="flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-8 md:px-10 py-4 mb-8">
+    <article className="flex mx-auto w-full max-w-5xl format format-sm sm:format-base lg:format-lg format-blue px-4 md:px-10 py-4 mb-8">
       <div className="quill-content-display w-full">
         <ReactQuill
           value={content}
