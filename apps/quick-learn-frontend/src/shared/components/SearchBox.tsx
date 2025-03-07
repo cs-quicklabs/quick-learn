@@ -16,13 +16,13 @@ const SearchBox: FC<Props> = ({ handleChange }) => {
         {en.component.search}
       </label>
       <div className="relative rounded-md shadow-sm">
-        <div className="absolute inset-y-0 start-0 flex items-center  ps-3 pointer-events-none">
+        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
           <SearchIcon />
         </div>
         <input
           type="search"
           id="default-search"
-          className="block w-full rounded-md border-gray-300 bg-gray-50 py-1.5 pl-10 text-sm focus:border-blue-500 focus:ring-blue-500"
+          className="block w-full rounded-md border border-gray-300 focus:outline-none bg-gray-50 py-1.5 pl-10 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 h-[34px] px-2"
           placeholder="Search"
           onChange={handleChange}
           autoComplete="off"
