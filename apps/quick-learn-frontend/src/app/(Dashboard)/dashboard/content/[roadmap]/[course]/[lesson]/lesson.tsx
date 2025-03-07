@@ -64,23 +64,25 @@ const lessonSchema = z.object({
 type LessonFormData = z.infer<typeof lessonSchema>;
 
 // Separate components for better performance
-const SaveButton = memo(
-  ({ isAdmin, disabled }: { isAdmin: boolean; disabled: boolean }) => (
-    <button
-      type="submit"
-      className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
-      disabled={disabled}
-    >
-      {isAdmin
-        ? en.common.saveAndPublish
-        : en.common.lessonSaveAndApprovalButton}
-    </button>
-  ),
+const SaveButton = ({
+  isAdmin,
+  disabled,
+}: {
+  isAdmin: boolean;
+  disabled: boolean;
+}) => (
+  <button
+    type="submit"
+    className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
+    disabled={disabled}
+  >
+    {isAdmin ? en.common.saveAndPublish : en.common.lessonSaveAndApprovalButton}
+  </button>
 );
 
 SaveButton.displayName = 'SaveButton';
 
-const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
+const ArchiveButton = ({ onClick }: { onClick: () => void }) => (
   <button
     type="button"
     className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
@@ -88,7 +90,7 @@ const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
   >
     {en.common.Archive}
   </button>
-));
+);
 
 ArchiveButton.displayName = 'ArchiveButton';
 
@@ -131,12 +133,8 @@ function Lesson() {
 
   // Context and state remain the same
   const user = useSelector(selectUser);
-  const isAdmin = useMemo(
-    () =>
-      [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
-        user?.user_type_id ?? -1,
-      ),
-    [user?.user_type_id],
+  const isAdmin = [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
+    user?.user_type_id ?? -1,
   );
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -170,24 +168,16 @@ function Lesson() {
         },
         { name: lesson?.name ?? en.common.addLesson, link: url },
       ];
-    }
+      
     return [
-      ...defaultlinks,
-      { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
-      {
-        name: roadmap.courses[0].name,
-        link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
-      },
-      { name: lesson?.name ?? en.common.addLesson, link: url },
-    ];
-  }, [
-    roadmap,
-    lesson?.course?.name,
-    lesson?.name,
-    roadmapId,
-    courseId,
-    lessonId,
-  ]);
+        ...defaultlinks,
+        { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
+        {
+          name: roadmap.courses[0].name,
+          link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
+        },
+        { name: lesson?.name ?? en.common.addLesson, link: url },
+      ];
 
   // Optimize initial data fetching
   useEffect(() => {

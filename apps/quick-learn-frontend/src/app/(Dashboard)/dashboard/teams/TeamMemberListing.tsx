@@ -1,6 +1,6 @@
 'use client';
 import { RouteEnum } from '@src/constants/route.enum';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TUserType } from '@src/shared/types/userTypes';
 import { debounce } from '@src/utils/helpers';
 import TeamTable from './TeamTable';
@@ -81,21 +81,17 @@ function TeamMemberListing() {
     dispatch(setCurrentPage(1));
   }
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((value: string) => {
-        dispatch(setSearchQuery(value));
-        dispatch(setCurrentPage(1));
-        dispatch(
-          fetchTeamMembers({
-            page: 1,
-            userTypeCode: currentUserType,
-            query: value,
-          }),
-        );
-      }, 500),
-    [dispatch, currentUserType],
-  );
+  const debouncedSearch = debounce((value: string) => {
+    dispatch(setSearchQuery(value));
+    dispatch(setCurrentPage(1));
+    dispatch(
+      fetchTeamMembers({
+        page: 1,
+        userTypeCode: currentUserType,
+        query: value,
+      }),
+    );
+  }, 500);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;

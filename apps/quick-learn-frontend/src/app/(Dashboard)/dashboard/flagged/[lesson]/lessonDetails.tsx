@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useSelector } from 'react-redux';
 import {
@@ -29,12 +29,11 @@ function LessonDetails() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const user = useSelector(selectUser);
-  const isAdmin = useMemo<boolean>(() => {
-    if (!user) return false;
-    return [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
+  const isAdmin =
+    user?.user_type_id !== undefined &&
+    [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
       user.user_type_id,
     );
-  }, [user]);
 
   useEffect(() => {
     dispatch(setHideNavbar(true));

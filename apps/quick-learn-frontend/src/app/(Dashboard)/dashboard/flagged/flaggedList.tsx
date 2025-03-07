@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { en } from '@src/constants/lang/en';
 import { DateFormats } from '@src/constants/dateFormats';
@@ -48,21 +48,14 @@ function FlaggedList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  const fetchLessons = useCallback(
-    (pageNum: number, searchTerm: string) => {
-      dispatch(fetchFlaggedLessons({ page: pageNum, q: searchTerm }));
-    },
-    [dispatch],
-  );
+  const fetchLessons = (pageNum: number, searchTerm: string) => {
+    dispatch(fetchFlaggedLessons({ page: pageNum, q: searchTerm }));
+  };
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((searchTerm: string) => {
-        dispatch(setCurrentPageFlaggedList(1));
-        fetchLessons(1, searchTerm);
-      }, 500),
-    [dispatch, fetchLessons],
-  );
+  const debouncedSearch = debounce((searchTerm: string) => {
+    dispatch(setCurrentPageFlaggedList(1));
+    fetchLessons(1, searchTerm);
+  }, 500);
 
   const formatDate = (date: string | Date) => {
     if (!date) return '-';

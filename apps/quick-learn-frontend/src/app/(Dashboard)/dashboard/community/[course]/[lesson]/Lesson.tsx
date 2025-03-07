@@ -1,6 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TLesson } from '@src/shared/types/contentRepository';
 import { getLessonDetails } from '@src/apiServices/lessonsService';
 import ViewLesson from '@src/shared/components/ViewLesson';
@@ -18,30 +18,30 @@ function Lesson() {
   const lessonId = params.lesson;
   const courseId = params.course;
 
-  const links = useMemo<TBreadcrumb[]>(() => {
-    const url = `${RouteEnum.COMMUNITY}/${courseId}/${lessonId}`;
-    return [
-      ...defaultlinks,
-      {
-        name: lessonData?.course?.name ? lessonData.course.name : 'Course',
-        link: `${RouteEnum.COMMUNITY}/${courseId}`,
-      },
-      { name: lessonData?.name ? lessonData.name : 'Lesson', link: url },
-    ];
-  }, [courseId, lessonId, lessonData]);
+  const url = `${RouteEnum.COMMUNITY}/${courseId}/${lessonId}`;
 
-  const getLessonData = useCallback(() => {
+  const links: TBreadcrumb[] = [
+    ...defaultlinks,
+    {
+      name: lessonData?.course?.name ?? 'Course',
+      link: `${RouteEnum.COMMUNITY}/${courseId}`,
+    },
+    { name: lessonData?.name ?? 'Lesson', link: url },
+  ];
+
+  const getLessonData = () => {
     if (!lessonId) return;
     getLessonDetails(lessonId)
       .then((res) => {
         setLessonData(res.data);
       })
       .catch((err) => showApiErrorInToast(err));
-  }, [lessonId]);
+  };
 
   useEffect(() => {
     getLessonData();
-  }, [getLessonData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div>{lessonData && <ViewLesson lesson={lessonData} links={links} />}</div>
   );

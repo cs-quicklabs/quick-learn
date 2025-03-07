@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { getLearningPathLessionDetails } from '@src/apiServices/learningPathService';
@@ -24,29 +24,21 @@ function LessonDetails() {
     lesson: string;
     member: string;
   }>();
-  const baseLink = useMemo(() => {
-    return member !== undefined
+  const baseLink =
+    member !== undefined
       ? `${RouteEnum.TEAM}/${member}`
       : RouteEnum.MY_LEARNING_PATH;
-  }, [member]);
-  const defaultlinks: TBreadcrumb[] = useMemo(() => {
-    const links: TBreadcrumb[] = [];
-
-    if (member) {
-      links.push({ name: 'Team', link: RouteEnum.TEAM });
-    }
-
-    links.push({
+  const defaultLinks: TBreadcrumb[] = [
+    ...(member ? [{ name: 'Team', link: RouteEnum.TEAM }] : []),
+    {
       name: member
         ? en.myLearningPath.learning_path
         : en.myLearningPath.heading,
       link: baseLink,
-    });
+    },
+  ];
 
-    return links;
-  }, [member, baseLink]);
-
-  const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
+  const [links, setLinks] = useState<TBreadcrumb[]>(defaultLinks);
   const [lessonDetails, setLessonDetails] = useState<TLesson>();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -93,7 +85,7 @@ function LessonDetails() {
     )
       .then((res) => {
         setLessonDetails(res.data);
-        const tempLinks = [...defaultlinks];
+        const tempLinks = [...defaultLinks];
         if (roadmap && !isNaN(+roadmap)) {
           tempLinks.push({
             name: res.data.course.roadmaps?.[0]?.name ?? '',
@@ -122,7 +114,8 @@ function LessonDetails() {
         setIsChecked(res.data.isRead);
       })
       .catch((err) => console.log('err', err));
-  }, [router, lesson, course, roadmap, member, baseLink, defaultlinks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router, lesson, course, roadmap, member]);
 
   if (!lessonDetails) return <FullPageLoader />;
   return (

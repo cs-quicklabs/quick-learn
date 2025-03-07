@@ -10,7 +10,7 @@ import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TRoadmap, TUserRoadmap } from '@src/shared/types/contentRepository';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchUserProgress,
@@ -61,31 +61,23 @@ const headerVariants = {
 
 function RoadmapDetails() {
   const { member, roadmap } = useParams<{ member: string; roadmap: string }>();
-  const baseLink = useMemo(() => {
-    return member !== undefined
+  const baseLink =
+    member !== undefined
       ? `${RouteEnum.TEAM}/${member}`
       : RouteEnum.MY_LEARNING_PATH;
-  }, [member]);
 
-  const defaultlinks: TBreadcrumb[] = useMemo(() => {
-    const links: TBreadcrumb[] = [];
-
-    if (member !== undefined) {
-      links.push({ name: 'Team', link: RouteEnum.TEAM });
-    }
-
-    links.push({
+  const defaultLinks: TBreadcrumb[] = [
+    ...(member !== undefined ? [{ name: 'Team', link: RouteEnum.TEAM }] : []),
+    {
       name: member
         ? en.myLearningPath.learning_path
         : en.myLearningPath.heading,
       link: baseLink,
-    });
-
-    return links;
-  }, [member, baseLink]);
+    },
+  ];
 
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
-  const [links, setLinks] = useState<TBreadcrumb[]>(defaultlinks);
+  const [links, setLinks] = useState<TBreadcrumb[]>(defaultLinks);
   const [roadmapData, setRoadmapData] = useState<TRoadmap | TUserRoadmap>();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -116,7 +108,7 @@ function RoadmapDetails() {
         .then((res) => {
           setRoadmapData(res.data);
           setLinks([
-            ...defaultlinks,
+            ...defaultLinks,
             {
               name: res.data.name,
               link: `${baseLink}/${roadmap}`,
@@ -132,7 +124,7 @@ function RoadmapDetails() {
         .then((res) => {
           setRoadmapData(res.data);
           setLinks([
-            ...defaultlinks,
+            ...defaultLinks,
             {
               name: res.data.name,
               link: `${RouteEnum.MY_LEARNING_PATH}/${roadmap}`,
@@ -150,7 +142,8 @@ function RoadmapDetails() {
         .then((res) => setMemberUserProgress(res.data))
         .catch((e) => showApiErrorInToast(e));
     }
-  }, [roadmap, router, dashboardRoadmaps, member, baseLink, defaultlinks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roadmap, router, dashboardRoadmaps, member]);
 
   if (isPageLoading && !roadmapData) {
     return <RoadmapCourseSkeleton />;

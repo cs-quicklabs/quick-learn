@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchArchivedRoadmaps,
@@ -33,76 +33,65 @@ function ArchivedRoadmaps() {
   const [restoreId, setRestoreId] = useState<number | false>(false);
   const [deleteId, setDeleteId] = useState<number | false>(false);
 
-  const getNextRoadmaps = useCallback(() => {
+  const getNextRoadmaps = () => {
     if (!isLoading && hasMore) {
       dispatch(fetchArchivedRoadmaps({ page, search: searchValue }));
     }
-  }, [dispatch, hasMore, isLoading, page, searchValue]);
+  };
 
-  const handleDeleteRoadmap = useCallback(
-    async (id: number) => {
-      try {
-        await dispatch(deleteArchivedRoadmap({ id })).unwrap();
-        dispatch(
-          fetchArchivedRoadmaps({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.roadmapDeletedSuccess);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setDeleteId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
+  const handleDeleteRoadmap = async (id: number) => {
+    try {
+      await dispatch(deleteArchivedRoadmap({ id })).unwrap();
+      dispatch(
+        fetchArchivedRoadmaps({
+          page: 1,
+          search: searchValue,
+          resetList: true,
+        }),
+      );
+      toast.success(en.archivedSection.roadmapDeletedSuccess);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setDeleteId(false);
+    }
+  };
 
-  const restoreRoadmap = useCallback(
-    async (id: number) => {
-      try {
-        await dispatch(activateArchivedRoadmap({ id })).unwrap();
-        dispatch(
-          fetchArchivedRoadmaps({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.roadmapRestoredSuccess);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setRestoreId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
-
-  const handleQueryChange = useMemo(
-    () =>
-      debounce(async (value: string) => {
-        const searchValue = value || '';
-        try {
-          dispatch(setRoadmapsSearchValue(searchValue));
-          dispatch(
-            fetchArchivedRoadmaps({
-              page: 1,
-              search: searchValue,
-              resetList: true,
-            }),
-          );
-        } catch (err) {
-          console.log(err);
-          toast.error(en.common.somethingWentWrong);
-        }
-      }, 300),
-    [dispatch],
-  );
+  const restoreRoadmap = async (id: number) => {
+    try {
+      await dispatch(activateArchivedRoadmap({ id })).unwrap();
+      dispatch(
+        fetchArchivedRoadmaps({
+          page: 1,
+          search: searchValue,
+          resetList: true,
+        }),
+      );
+      toast.success(en.archivedSection.roadmapRestoredSuccess);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setRestoreId(false);
+    }
+  };
+  const handleQueryChange = debounce(async (value: string) => {
+    const searchValue = value || '';
+    try {
+      dispatch(setRoadmapsSearchValue(searchValue));
+      dispatch(
+        fetchArchivedRoadmaps({
+          page: 1,
+          search: searchValue,
+          resetList: true,
+        }),
+      );
+    } catch (err) {
+      console.log(err);
+      toast.error(en.common.somethingWentWrong);
+    }
+  }, 300);
 
   useEffect(() => {
     dispatch(fetchArchivedRoadmaps({ page: 1, search: '', resetList: true }));
