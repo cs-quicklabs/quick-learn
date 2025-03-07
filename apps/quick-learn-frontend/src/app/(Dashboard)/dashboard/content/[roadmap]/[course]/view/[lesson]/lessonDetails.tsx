@@ -13,7 +13,7 @@ import { SuperLink } from '@src/utils/HiLink';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const defaultlinks: TBreadcrumb[] = [
@@ -34,33 +34,29 @@ function LessonDetails() {
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const user = useSelector(selectUser);
-  const canEdit = useMemo(() => {
-    return user?.user_type_id === UserTypeIdEnum.EDITOR;
-  }, [user]);
+  const canEdit = user?.user_type_id === UserTypeIdEnum.EDITOR;
 
   // To set the links for the breadcrumb
-  const links = useMemo<TBreadcrumb[]>(() => {
-    const url = `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${lessonId}`;
-    if (!roadmap) {
-      return [
-        ...defaultlinks,
-        {
-          name: lesson?.course?.name ?? 'Course',
-          link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
-        },
-        { name: lesson?.name ?? en.common.addLesson, link: url },
-      ];
-    }
-    return [
-      ...defaultlinks,
-      { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
-      {
-        name: roadmap.courses[0].name,
-        link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
-      },
-      { name: lesson?.name ?? en.common.addLesson, link: url },
-    ];
-  }, [roadmap, lesson, roadmapId, courseId, lessonId]);
+  const url = `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${lessonId}`;
+
+  const links = [
+    ...defaultlinks,
+    ...(roadmap
+      ? [
+          { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
+          {
+            name: roadmap.courses[0].name,
+            link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
+          },
+        ]
+      : [
+          {
+            name: lesson?.course?.name ?? 'Course',
+            link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
+          },
+        ]),
+    { name: lesson?.name ?? en.common.addLesson, link: url },
+  ];
 
   useEffect(() => {
     if (!(isNaN(+roadmapId) || isNaN(+courseId))) {

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useMemo } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -64,10 +64,7 @@ const AssignDataModal: FC<Props> = ({
     mode: 'onChange',
   });
 
-  const sortedData = useMemo(
-    () => [...data].sort((a, b) => a.name.localeCompare(b.name)),
-    [data],
-  );
+  const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
     const initializeState = () => {
@@ -101,7 +98,7 @@ const AssignDataModal: FC<Props> = ({
       resetState();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, setValue, reset, sortedData]);
+  }, [show, setValue, reset]);
 
   useEffect(() => {
     if (!show) return;

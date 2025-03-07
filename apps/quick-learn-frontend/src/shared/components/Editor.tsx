@@ -1,5 +1,5 @@
 'use client';
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import { FC, useCallback, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import type ReactQuillType from 'react-quill-new';
 
@@ -79,26 +79,23 @@ const Editor: FC<Props> = ({
     };
   }, []);
 
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: '#toolbar',
-        history: {
-          delay: 500,
-          maxStack: 100,
-          userOnly: true,
-        },
-        handlers: {
-          image: imageHandler,
-        },
+  const modules = {
+    toolbar: {
+      container: '#toolbar',
+      history: {
+        delay: 500,
+        maxStack: 100,
+        userOnly: true,
       },
-      clipboard: {
-        matchVisual: false,
-        matchers: [],
+      handlers: {
+        image: imageHandler,
       },
-    }),
-    [imageHandler],
-  );
+    },
+    clipboard: {
+      matchVisual: false,
+      matchers: [],
+    },
+  };
 
   useEffect(() => {
     document.body.style.backgroundColor = 'white';

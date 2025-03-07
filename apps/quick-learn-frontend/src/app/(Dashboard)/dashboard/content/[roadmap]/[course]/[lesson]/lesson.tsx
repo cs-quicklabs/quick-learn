@@ -33,7 +33,7 @@ import {
 } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { memo, useCallback, useEffect, useState, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -59,23 +59,25 @@ const lessonSchema = z.object({
 type LessonFormData = z.infer<typeof lessonSchema>;
 
 // Separate components for better performance
-const SaveButton = memo(
-  ({ isAdmin, disabled }: { isAdmin: boolean; disabled: boolean }) => (
-    <button
-      type="submit"
-      className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
-      disabled={disabled}
-    >
-      {isAdmin
-        ? en.common.saveAndPublish
-        : en.common.lessonSaveAndApprovalButton}
-    </button>
-  ),
+const SaveButton = ({
+  isAdmin,
+  disabled,
+}: {
+  isAdmin: boolean;
+  disabled: boolean;
+}) => (
+  <button
+    type="submit"
+    className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
+    disabled={disabled}
+  >
+    {isAdmin ? en.common.saveAndPublish : en.common.lessonSaveAndApprovalButton}
+  </button>
 );
 
 SaveButton.displayName = 'SaveButton';
 
-const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
+const ArchiveButton = ({ onClick }: { onClick: () => void }) => (
   <button
     type="button"
     className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
@@ -83,7 +85,7 @@ const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
   >
     {en.common.Archive}
   </button>
-));
+);
 
 ArchiveButton.displayName = 'ArchiveButton';
 
@@ -123,12 +125,8 @@ function Lesson() {
 
   // Context and state remain the same
   const user = useSelector(selectUser);
-  const isAdmin = useMemo(
-    () =>
-      [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
-        user?.user_type_id ?? -1,
-      ),
-    [user?.user_type_id],
+  const isAdmin = [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
+    user?.user_type_id ?? -1,
   );
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -144,42 +142,29 @@ function Lesson() {
 
   const form = useLessonForm();
 
-  const isEdit = useMemo(() => {
-    return (
-      path.includes('edit') && user?.user_type_id === UserTypeIdEnum.EDITOR
-    );
-  }, [path]);
+  const isEdit =
+    path.includes('edit') && user?.user_type_id === UserTypeIdEnum.EDITOR;
 
-  // Memoize links calculation
-  const links = useMemo(() => {
-    const url = `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${lessonId}`;
-    if (!roadmap) {
-      return [
+  const url = `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${lessonId}`;
+
+  const links = !roadmap
+    ? [
         ...defaultlinks,
         {
           name: lesson?.course?.name ?? 'Course',
           link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
         },
         { name: lesson?.name ?? en.common.addLesson, link: url },
+      ]
+    : [
+        ...defaultlinks,
+        { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
+        {
+          name: roadmap.courses[0].name,
+          link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
+        },
+        { name: lesson?.name ?? en.common.addLesson, link: url },
       ];
-    }
-    return [
-      ...defaultlinks,
-      { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
-      {
-        name: roadmap.courses[0].name,
-        link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
-      },
-      { name: lesson?.name ?? en.common.addLesson, link: url },
-    ];
-  }, [
-    roadmap,
-    lesson?.course?.name,
-    lesson?.name,
-    roadmapId,
-    courseId,
-    lessonId,
-  ]);
 
   // Optimize initial data fetching
   useEffect(() => {
