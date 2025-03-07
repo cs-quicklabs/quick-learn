@@ -93,7 +93,7 @@ function LessonDetails() {
     if (lesson.approved) {
       // If lesson is approved, same link for all users
       router.push(
-        `${RouteEnum.CONTENT}/courses/${lesson.course_id}/${lesson.id}`,
+        `${RouteEnum.CONTENT}/courses/${lesson.course_id}/${lesson.id}?edit=true`,
       );
     } else {
       router.push(

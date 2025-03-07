@@ -32,7 +32,12 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -119,6 +124,9 @@ function Lesson() {
     course: string;
     lesson: string;
   }>();
+  const checkToolbarOpen = useSearchParams();
+  const isToolbarOpen = checkToolbarOpen.get('edit');
+
   const { roadmap: roadmapId, course: courseId, lesson: lessonId } = params;
 
   // Context and state remain the same
@@ -133,7 +141,7 @@ function Lesson() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isEditing, setIsEditing] = useState<boolean>(
-    lessonId === 'add' || path.includes('edit'),
+    lessonId === 'add' || path.includes('edit') || isToolbarOpen === 'true',
   );
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
