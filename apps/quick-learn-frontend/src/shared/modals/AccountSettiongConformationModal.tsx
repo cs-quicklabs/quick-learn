@@ -31,13 +31,13 @@ export default function AccountSettingConformationModal({
           <div className="flex items-center border-b border-gray-200 pl-4 pr-2 py-4">
             <DialogTitle
               as="h3"
-              className="text-lg font-bold text-gray-700 dark:text-gray-400"
+              className="text-lg font-bold text-gray-700 0"
             >
               {title}
             </DialogTitle>
             <button
               type="button"
-              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
               onClick={() => setOpen(false)}
             >
               <CloseIcon className="w-3 h-3" />
@@ -48,7 +48,7 @@ export default function AccountSettingConformationModal({
           </p>
           <button
             type="button"
-            className="py-2.5 px-5 ml-4 my-3.5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 uppercase"
+            className="py-2.5 px-5 ml-4 my-3.5 text-sm font-medium text-gray-900 focus:outline-hidden bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 uppercase"
             onClick={() => setOpen(false)}
           >
             {en.common.ok}

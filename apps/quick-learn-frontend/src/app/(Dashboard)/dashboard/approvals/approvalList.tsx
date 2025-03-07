@@ -85,11 +85,11 @@ function ApprovalList() {
       <tr
         id={`row${index}`}
         key={lesson.id}
-        className="border-b border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        className="border-b border-gray-200 hover:bg-gray-100"
       >
         <th
           scope="row"
-          className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap"
         >
           <div className="flex items-center">
             <SuperLink
@@ -121,7 +121,7 @@ function ApprovalList() {
 
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
-      <div className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
+      <div className="relative overflow-hidden bg-white shadow-md sm:rounded-xs">
         <div>
           <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
             <div>

@@ -11,11 +11,11 @@ const SearchBox: FC<Props> = ({ handleChange }) => {
     <div className="flex-1 min-w-0 mb-6">
       <label
         htmlFor="default-search"
-        className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+        className="mb-2 text-sm font-medium text-gray-900 sr-only "
       >
         {en.component.search}
       </label>
-      <div className="relative rounded-md shadow-sm">
+      <div className="relative rounded-md shadow-xs">
         <div className="absolute inset-y-0 start-0 flex items-center  ps-3 pointer-events-none">
           <SearchIcon />
         </div>

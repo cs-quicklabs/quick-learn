@@ -105,10 +105,10 @@ function TeamMemberListing() {
 
   return (
     <div className="relative mx-4 md:mx-0">
-      <section className=" overflow-hidden bg-white shadow-md sm:rounded-sm">
+      <section className=" overflow-hidden bg-white shadow-md sm:rounded-xs">
         <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
           <div>
-            <h1 className="mr-3 text-lg font-semibold">{en.teams.team}</h1>
+            <h1 className="mr-3 text-sm font-semibold">{en.teams.team}</h1>
             <p className="text-gray-500 text-sm">
               {en.teams.manageExisting}{' '}
               <span className="font-bond">{totalUsers}</span>{' '}
@@ -128,7 +128,7 @@ function TeamMemberListing() {
               <SuperLink
                 id="addNewMember"
                 href={`${RouteEnum.TEAM_EDIT}/add`}
-                className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
+                className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-sm bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
               >
                 {en.teams.addNewMember}
               </SuperLink>

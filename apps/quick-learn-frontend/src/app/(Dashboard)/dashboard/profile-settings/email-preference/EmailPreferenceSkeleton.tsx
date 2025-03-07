@@ -6,9 +6,9 @@ function EmailPreferenceSkeleton({ isPartial = false }) {
       {/* Header Section */}
       {!isPartial && (
         <div className="space-y-2 mb-6">
-          <div className="h-7 w-28 bg-gray-200 dark:bg-gray-700 rounded-md" />{' '}
+          <div className="h-7 w-28 bg-gray-200 rounded-md" />{' '}
           {/* Title */}
-          <div className="h-5 w-64 bg-gray-200 dark:bg-gray-700 rounded-md" />{' '}
+          <div className="h-5 w-64 bg-gray-200 rounded-md" />{' '}
           {/* Subtitle */}
         </div>
       )}
@@ -17,15 +17,15 @@ function EmailPreferenceSkeleton({ isPartial = false }) {
       <div className="flex mt-6">
         {/* Checkbox */}
         <div className="flex items-center h-5">
-          <div className="h-5 w-5 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+          <div className="h-5 w-5 bg-gray-200 rounded-lg" />
         </div>
 
         {/* Text Content */}
         <div className="ms-2 space-y-2">
           {/* Label */}
-          <div className="h-5 w-44 bg-gray-200 dark:bg-gray-700 rounded-md" />
+          <div className="h-5 w-44 bg-gray-200 rounded-md" />
           {/* Helper Text */}
-          <div className="h-5 w-72 bg-gray-200 dark:bg-gray-700 rounded-md" />
+          <div className="h-5 w-72 bg-gray-200 rounded-md" />
         </div>
       </div>
     </div>

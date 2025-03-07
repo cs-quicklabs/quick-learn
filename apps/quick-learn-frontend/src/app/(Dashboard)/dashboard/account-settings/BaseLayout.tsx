@@ -131,8 +131,8 @@ function BaseLayout({
     <>
       {isPageLoading && <FullPageLoader />}
       <div>
-        <h1 className="text-lg font-semibold dark:text-white">{heading}</h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+        <h1 className="text-lg font-semibold">{heading}</h1>
+        <p className="text-gray-500 text-sm mb-4">
           {subHeading}
         </p>
         <FormFieldsMapper
@@ -150,8 +150,8 @@ function BaseLayout({
           className="relative overflow-x-auto mt-8"
           onSubmit={handleSubmit(onEditSubmit)}
         >
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3 w-full">
                   {tableColumnName}
@@ -185,7 +185,7 @@ function BaseLayout({
                       <td>
                         <button
                           type="submit"
-                          className="ml-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-500"
+                          className="ml-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-500"
                           disabled={isEditLoading || !isDirty || !isValid}
                         >
                           {isEditLoading ? <Loader /> : 'Save'}
@@ -204,7 +204,7 @@ function BaseLayout({
                   </React.Fragment>
                 ) : (
                   <tr
-                    className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b border-gray-200"
+                    className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 border-b border-gray-200"
                     key={item.id}
                   >
                     <th
