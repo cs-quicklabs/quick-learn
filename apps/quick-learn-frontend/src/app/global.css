@@ -81,6 +81,14 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: #000000 !important;
 }
 
+/* Tooltip css */
+.tooltip .tooltiptext {
+  visibility: hidden;
+}
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 /* Quill  toolbar and editor css */
 .ql-snow.ql-toolbar {
   padding: 8px 16px !important;

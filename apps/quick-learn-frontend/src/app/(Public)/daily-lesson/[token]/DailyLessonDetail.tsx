@@ -16,7 +16,6 @@ import { RouteEnum } from '@src/constants/route.enum';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
 import ViewLesson from '@src/shared/components/ViewLesson';
-import { Button } from 'flowbite-react';
 import { TUser } from '@src/shared/types/userTypes';
 import { HomeIcon } from '@heroicons/react/20/solid';
 import { FlagIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
@@ -236,14 +235,18 @@ function DailyLessonDetail() {
 
     return (
       <div className="fixed flex bottom-5 left-5">
-        <Button color="blue" pill onClick={navigateUserToLearningPath}>
+        <button
+          type="button"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-full px-5 py-2.5 text-center me-2 mb-2"
+          onClick={navigateUserToLearningPath}
+        >
           <span className="flex items-center gap-1 justify-center">
             <HomeIcon height="1rem" width="1rem" />
             <span className="hidden md:flex">
               {en.lesson.NavigateToLearningPath}
             </span>
           </span>
-        </Button>
+        </button>
       </div>
     );
   };
