@@ -16,7 +16,7 @@
         "name": "next"
       }
     ],
-    "types": ["jest", "node", "flowbite"],
+    "types": ["jest", "node"],
     "paths": {
       "@src/*": ["apps/quick-learn-frontend/src/*"],
       "@quick-learn/shared": ["../../lib/shared/src/index.ts"]

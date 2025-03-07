@@ -29,7 +29,7 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import { Tooltip } from 'flowbite-react';
+import Tooltip from '@src/shared/components/Tooltip';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import TeamMemberDetailsSkeleton from './TeamMemberDetailsSkeleton';
 import {

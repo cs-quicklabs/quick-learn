@@ -42,7 +42,7 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
-import { Tooltip } from 'flowbite-react';
+import Tooltip from '@src/shared/components/Tooltip';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CourseDetailsSkeleton from './CourseDetailsSkeleton';
