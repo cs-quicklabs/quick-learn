@@ -43,13 +43,7 @@ function ArchivedRoadmaps() {
     async (id: number) => {
       try {
         await dispatch(deleteArchivedRoadmap({ id })).unwrap();
-        dispatch(
-          fetchArchivedRoadmaps({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
+
         toast.success(en.archivedSection.roadmapDeletedSuccess);
       } catch (error) {
         console.log(error);
@@ -65,13 +59,7 @@ function ArchivedRoadmaps() {
     async (id: number) => {
       try {
         await dispatch(activateArchivedRoadmap({ id })).unwrap();
-        dispatch(
-          fetchArchivedRoadmaps({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
+
         toast.success(en.archivedSection.roadmapRestoredSuccess);
       } catch (error) {
         console.log(error);

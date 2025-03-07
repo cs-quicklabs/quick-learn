@@ -43,9 +43,6 @@ function InactiveUsers() {
     async (userId: number) => {
       try {
         await dispatch(deleteArchivedUser({ userId: +userId })).unwrap();
-        dispatch(
-          fetchArchivedUsers({ page: 1, search: searchValue, resetList: true }),
-        );
         toast.success(en.successUserDelete);
       } catch (error) {
         console.log(error);
@@ -61,9 +58,6 @@ function InactiveUsers() {
     async (userId: number) => {
       try {
         await dispatch(activateArchivedUser({ userId })).unwrap();
-        dispatch(
-          fetchArchivedUsers({ page: 1, search: searchValue, resetList: true }),
-        );
         toast.success(en.successUserActivate);
       } catch (error) {
         console.log(error);
