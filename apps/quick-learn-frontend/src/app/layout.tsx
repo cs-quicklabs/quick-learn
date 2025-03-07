@@ -1,4 +1,3 @@
-import 'flowbite/dist/flowbite.css';
 import './global.css';
 import { ToastContainer } from 'react-toastify';
 import { ReduxProvider } from '@src/store/provider';

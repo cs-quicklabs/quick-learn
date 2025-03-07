@@ -42,7 +42,7 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
-import { Tooltip } from 'flowbite-react';
+import Tooltip from '@src/shared/components/Tooltip';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CourseDetailsSkeleton from './CourseDetailsSkeleton';
@@ -274,18 +274,22 @@ function CourseDetails() {
         isloading={isLoading}
         initialData={courseData}
       />
-      <AssignDataModal
-        show={openAssignModal}
-        setShow={setOpenAssignModal}
-        heading={en.courseDetails.addExistingRoadmaps}
-        sub_heading={en.common.selectRoadmaps}
-        isLoading={isLoading}
-        data={roadmapCategoriesData}
-        initialValues={{
-          selected: courseData.roadmaps?.map((item) => String(item.id)) || [],
-        }}
-        onSubmit={assignRoadmaps}
-      />
+
+      {openAssignModal && (
+        <AssignDataModal
+          show={openAssignModal}
+          setShow={setOpenAssignModal}
+          heading={en.courseDetails.addExistingRoadmaps}
+          sub_heading={en.common.selectRoadmaps}
+          isLoading={isLoading}
+          data={roadmapCategoriesData}
+          initialValues={{
+            selected: courseData.roadmaps?.map((item) => String(item.id)) || [],
+          }}
+          onSubmit={assignRoadmaps}
+        />
+      )}
+
       <ConformationModal
         title={en.courseDetails.archiveConfirmHeading}
         subTitle={en.courseDetails.archiveConfirmSubHeading}

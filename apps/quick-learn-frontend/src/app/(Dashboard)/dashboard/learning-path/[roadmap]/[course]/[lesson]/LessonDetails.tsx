@@ -1,4 +1,7 @@
 'use client';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { getLearningPathLessionDetails } from '@src/apiServices/learningPathService';
 import { getLessonStatus, markAsDone } from '@src/apiServices/lessonsService';
 import { en } from '@src/constants/lang/en';
@@ -13,9 +16,6 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { MdInfo } from 'react-icons/md';
 
 function LessonDetails() {
   const { roadmap, course, lesson, member } = useParams<{
@@ -126,7 +126,7 @@ function LessonDetails() {
         <div className="w-full flex align-middle justify-center">
           <p className="bg-green-100 p-5 rounded-md text-[#166534]  flex justify-center items-center gap-2 my-5 mx-2 lg:w-1/2 w-full text-start">
             <span className="bg-[#166534] flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center  ">
-              <MdInfo />
+              <InformationCircleIcon />
             </span>
             <span>
               <span className="font-bold">

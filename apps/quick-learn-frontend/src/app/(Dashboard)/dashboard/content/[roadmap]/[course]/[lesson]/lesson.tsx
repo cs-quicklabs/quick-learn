@@ -128,8 +128,7 @@ function Lesson() {
   const isAdmin = [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
     user?.user_type_id ?? -1,
   );
-
-  const timeoutRef = useRef<NodeJS.Timeout>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isEditing, setIsEditing] = useState<boolean>(
     lessonId === 'add' || path.includes('edit'),
