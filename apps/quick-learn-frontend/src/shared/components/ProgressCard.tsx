@@ -1,11 +1,11 @@
 'use client';
 import React, { useEffect, useState, forwardRef } from 'react';
-import { MdOutlineDone } from 'react-icons/md';
 import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import { LessonProgress } from '../types/LessonProgressTypes';
 import { en } from '@src/constants/lang/en';
 import { SuperLink } from '@src/utils/HiLink';
+import { CheckIcon } from '@heroicons/react/20/solid';
 
 interface ProgressCardProps {
   id: number;
@@ -50,7 +50,7 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
         return (
           <div className="text-xs text-gray-500 flex gap-2 items-center font-medium">
             <span className="bg-green-600 flex text-white rounded-full w-4 h-4 aspect-square font-bold items-center justify-center">
-              <MdOutlineDone />
+              <CheckIcon />
             </span>
             {en.component.CompletedOn}{' '}
             {format(isCompleted.completed_date, DateFormats.shortDate)}
