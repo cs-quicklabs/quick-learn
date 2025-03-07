@@ -119,7 +119,8 @@ const Card: FC<CardProps> = ({
   onClick,
   metadata,
 }) => {
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const titleRef = useRef<HTMLHeadingElement>(null!);
   const [isLongTitle, setIsLongTitle] = useState(false);
 
   useEffect(() => {

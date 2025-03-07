@@ -5,7 +5,7 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useParams, useRouter } from 'next/navigation';
 import { Loader, ShowInfoIcon } from '@src/shared/components/UIElements';
-import { Tooltip } from 'flowbite-react';
+import Tooltip from '@src/shared/components/Tooltip';
 import { z } from 'zod';
 import { en } from '@src/constants/lang/en';
 
@@ -110,10 +110,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                   {label}
                   {tooltip && (
                     <div className="flex items-center ml-1">
-                      <Tooltip
-                        content={tooltip}
-                        className="py-1 px-2 max-w-sm text-xs font-normal text-white bg-gray-900 rounded-sm shadow-sm tooltip"
-                      >
+                      <Tooltip content={tooltip}>
                         <ShowInfoIcon />
                       </Tooltip>
                     </div>
