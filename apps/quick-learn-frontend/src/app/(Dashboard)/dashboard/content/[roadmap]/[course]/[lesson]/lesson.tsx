@@ -168,17 +168,24 @@ function Lesson() {
         },
         { name: lesson?.name ?? en.common.addLesson, link: url },
       ];
-      
+    }
     return [
-        ...defaultlinks,
-        { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
-        {
-          name: roadmap.courses[0].name,
-          link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
-        },
-        { name: lesson?.name ?? en.common.addLesson, link: url },
-      ];
-
+      ...defaultlinks,
+      { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
+      {
+        name: roadmap.courses[0].name,
+        link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
+      },
+      { name: lesson?.name ?? en.common.addLesson, link: url },
+    ];
+  }, [
+    roadmap,
+    lesson?.course?.name,
+    lesson?.name,
+    roadmapId,
+    courseId,
+    lessonId,
+  ]);
   // Optimize initial data fetching
   useEffect(() => {
     const fetchData = async () => {
