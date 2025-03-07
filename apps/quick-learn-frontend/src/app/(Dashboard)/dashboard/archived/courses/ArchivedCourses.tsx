@@ -42,13 +42,6 @@ function ArchivedCourses() {
   const handleDeleteCourse = async (id: string) => {
     try {
       await dispatch(deleteArchivedCourse({ id: parseInt(id, 10) })).unwrap();
-      dispatch(
-        fetchArchivedCourses({
-          page: 1,
-          search: searchValue,
-          resetList: true,
-        }),
-      );
       toast.success(en.archivedSection.courseDeleted);
     } catch (error) {
       console.log(error);
@@ -61,13 +54,6 @@ function ArchivedCourses() {
   const restoreCourse = async (id: string) => {
     try {
       await dispatch(activateArchivedCourse({ id: parseInt(id, 10) })).unwrap();
-      dispatch(
-        fetchArchivedCourses({
-          page: 1,
-          search: searchValue,
-          resetList: true,
-        }),
-      );
       toast.success(en.archivedSection.courseRestored);
     } catch (error) {
       console.log(error);
