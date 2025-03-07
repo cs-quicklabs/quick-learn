@@ -37,10 +37,10 @@ export function showErrorMessage(error: unknown) {
  * @param wait - The wait time in milliseconds.
  * @returns A debounced function.
  */
+let token: ReturnType<typeof setTimeout> | undefined;
 export function debounce<T>(fn: DebounceFunction<T>, wait: number) {
-  let token: ReturnType<typeof setTimeout> | undefined;
   return (...args: T[]) => {
-    if (token) clearTimeout(token);
+    clearTimeout(token);
     token = setTimeout(() => {
       fn(...args);
     }, wait);

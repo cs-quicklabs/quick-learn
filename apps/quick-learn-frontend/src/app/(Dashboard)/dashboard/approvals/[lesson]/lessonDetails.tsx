@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
 import {
   approveLesson,
@@ -35,20 +35,16 @@ function LessonDetails() {
   const [loading, setLoading] = useState(true);
   const [lesson, setLesson] = useState<TLesson>();
   const [isApproved, setIsApproved] = useState<boolean>(false);
-  const links = useMemo<TBreadcrumb[]>(
-    () =>
-      !lesson
-        ? defaultLinks
-        : [
-            ...defaultLinks,
-            {
-              name: lesson.course.name,
-              link: `${RouteEnum.CONTENT}/courses/${lesson.course_id}`,
-            },
-            { name: lesson.name, link: `${RouteEnum.FLAGGED}/${lesson.id}` },
-          ],
-    [lesson],
-  );
+  const links: TBreadcrumb[] = !lesson
+    ? defaultLinks
+    : [
+        ...defaultLinks,
+        {
+          name: lesson.course.name,
+          link: `${RouteEnum.CONTENT}/courses/${lesson.course_id}`,
+        },
+        { name: lesson.name, link: `${RouteEnum.FLAGGED}/${lesson.id}` },
+      ];
 
   useEffect(() => {
     if (isNaN(+id)) return;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   MagnifyingGlassIcon,
   ClockIcon,
@@ -46,10 +46,9 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
   });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const baseRoute = useMemo(
-    () => (isMember ? '/dashboard/learning-path' : '/dashboard/content'),
-    [isMember],
-  );
+  const baseRoute = isMember
+    ? '/dashboard/learning-path'
+    : '/dashboard/content';
 
   // Load search history on component mount
   useEffect(() => {

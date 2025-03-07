@@ -1,11 +1,5 @@
 'use client';
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  useMemo,
-} from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { en } from '@src/constants/lang/en';
 import { getLeaderBoardStatus } from '@src/apiServices/lessonsService';
 import { useAppSelector } from '@src/store/hooks';
@@ -66,22 +60,19 @@ const LeaderboardTable = () => {
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const currentUser = useAppSelector(selectUser);
-  const observer = useRef<IntersectionObserver>();
-  const lastElementRef = useCallback(
-    (node: HTMLElement | null) => {
-      if (isLoading) return;
-      if (observer.current) observer.current.disconnect();
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastElementRef = (node: HTMLElement | null) => {
+    if (isLoading) return;
+    if (observer.current) observer.current.disconnect();
 
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && page * 25 < total) {
-          setPage((prevPage) => prevPage + 1);
-        }
-      });
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && page * 25 < total) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    });
 
-      if (node) observer.current.observe(node);
-    },
-    [isLoading, page, total],
-  );
+    if (node) observer.current.observe(node);
+  };
 
   // Memoize the current leaderboard based on type
   const currentLeaderboard = useMemo(() => {
@@ -102,16 +93,14 @@ const LeaderboardTable = () => {
       const newData = response.data.items;
       setTotal(response.data.total);
 
-      if (type === 'weekly') {
-        setWeeklyLeaderboard((prev) =>
-          currentPage === 1 ? newData : [...prev, ...newData],
-        );
-      } else if (type === 'monthly') {
-        setMonthlyLeaderboard((prev) =>
-          currentPage === 1 ? newData : [...prev, ...newData],
-        );
-      } else if (type === 'quarterly') {
-        setQuarterlyLeaderboard((prev) =>
+      const setLeaderboard = {
+        weekly: setWeeklyLeaderboard,
+        monthly: setMonthlyLeaderboard,
+        quarterly: setQuarterlyLeaderboard,
+      }[type];
+
+      if (setLeaderboard) {
+        setLeaderboard((prev) =>
           currentPage === 1 ? newData : [...prev, ...newData],
         );
       }

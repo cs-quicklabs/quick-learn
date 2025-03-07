@@ -22,7 +22,7 @@ interface CardProps {
 interface CardContentProps
   extends Omit<CardProps, 'link' | 'className' | 'onClick'> {
   isLongTitle: boolean;
-  titleRef: React.RefObject<HTMLHeadingElement>;
+  titleRef: React.RefObject<HTMLHeadingElement | null>;
 }
 
 // Moved CardContent outside of Card component
@@ -119,7 +119,8 @@ const Card: FC<CardProps> = ({
   onClick,
   metadata,
 }) => {
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const titleRef = useRef<HTMLHeadingElement>(null!);
   const [isLongTitle, setIsLongTitle] = useState(false);
 
   useEffect(() => {

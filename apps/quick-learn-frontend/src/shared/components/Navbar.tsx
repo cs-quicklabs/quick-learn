@@ -25,91 +25,14 @@ import NavbarSearchBox from './NavbarSearchBox';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@src/store/features/userSlice';
 import { getSystemPreferencesState } from '@src/store/features/systemPreferenceSlice';
-import { SystemPreferencesKey } from '../types/contentRepository';
-
-type TLink = {
-  name: string;
-  link: string;
-  isExtended?: boolean;
-  showCount?: boolean;
-  countKey?: SystemPreferencesKey;
-  exclude?: UserTypeIdEnum[];
-};
-
-const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
-const myLearningPath: TLink = {
-  name: 'My Learning Paths',
-  link: RouteEnum.MY_LEARNING_PATH,
-};
-const content: TLink = { name: 'Content', link: RouteEnum.CONTENT };
-const approvals: TLink = {
-  name: 'Approvals',
-  link: RouteEnum.APPROVALS,
-  showCount: true,
-  countKey: SystemPreferencesKey.UNAPPROVED_LESSONS,
-};
-const flagged: TLink = {
-  name: 'Flagged',
-  link: RouteEnum.FLAGGED,
-  showCount: true,
-  countKey: SystemPreferencesKey.FLAGGED_LESSONS,
-};
-const community: TLink = { name: 'Community', link: RouteEnum.COMMUNITY };
-
-const adminUserLinks: TLink[] = [
-  team,
-  myLearningPath,
-  content,
-  approvals,
-  flagged,
-];
-const superAdminUserLinks: TLink[] = [...adminUserLinks, community];
-const editorUserLinks: TLink[] = [team, myLearningPath, content, flagged];
-const memberUserLinks: TLink[] = [myLearningPath];
-
-const menuItems: TLink[] = [
-  {
-    name: 'Account Settings',
-    link: RouteEnum.ACCOUNT_SETTINGS,
-    exclude: [
-      UserTypeIdEnum.ADMIN,
-      UserTypeIdEnum.EDITOR,
-      UserTypeIdEnum.MEMBER,
-    ],
-  },
-  {
-    name: 'My Profile',
-    link: RouteEnum.PROFILE_SETTINGS,
-    exclude: [],
-  },
-  {
-    name: 'Archive',
-    link: RouteEnum.ARCHIVED_USERS,
-    exclude: [UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER],
-  },
-  {
-    name: 'Leaderboard', //displayed to every user_type
-    link: RouteEnum.LEADERBOARD,
-    exclude: [],
-  },
-  {
-    name: 'Orphan Courses', // displayed to superAdmin, Admin, editor
-    link: RouteEnum.ORPHANCOURSES,
-    exclude: [UserTypeIdEnum.MEMBER],
-  },
-  {
-    name: 'Change-Logs',
-    link: RouteEnum.CHANGE_LOGS,
-    isExtended: true,
-    exclude: [],
-  },
-  {
-    name: 'Feature Roadmaps',
-    link: RouteEnum.FEATURE_LOGS,
-    isExtended: true,
-    exclude: [],
-  },
-];
+import {
+  adminUserLinks,
+  editorUserLinks,
+  memberUserLinks,
+  menuItems,
+  superAdminUserLinks,
+  TLink,
+} from '@src/utils/navbarHelper';
 
 function Navbar() {
   const [links, setLinks] = useState<TLink[]>([]);
@@ -122,15 +45,14 @@ function Navbar() {
   );
 
   useEffect(() => {
-    if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
-      setLinks(superAdminUserLinks);
-    } else if (user?.user_type_id === UserTypeIdEnum.ADMIN) {
-      setLinks(adminUserLinks);
-    } else if (user?.user_type_id === UserTypeIdEnum.EDITOR) {
-      setLinks(editorUserLinks);
-    } else if (user?.user_type_id === UserTypeIdEnum.MEMBER) {
-      setLinks(memberUserLinks);
-    }
+    const userLinksMap: Record<string, TLink[]> = {
+      [UserTypeIdEnum.SUPERADMIN]: superAdminUserLinks,
+      [UserTypeIdEnum.ADMIN]: adminUserLinks,
+      [UserTypeIdEnum.EDITOR]: editorUserLinks,
+      [UserTypeIdEnum.MEMBER]: memberUserLinks,
+    };
+
+    setLinks(userLinksMap[user?.user_type_id ?? UserTypeIdEnum.MEMBER]);
   }, [user]);
 
   useEffect(() => {
