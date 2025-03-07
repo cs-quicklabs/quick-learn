@@ -32,8 +32,13 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
-import { useParams, usePathname, useRouter } from 'next/navigation';
-import { memo, useCallback, useEffect, useState, useRef } from 'react';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -121,6 +126,9 @@ function Lesson() {
     course: string;
     lesson: string;
   }>();
+  const checkToolbarOpen = useSearchParams();
+  const isToolbarOpen = checkToolbarOpen.get('edit');
+
   const { roadmap: roadmapId, course: courseId, lesson: lessonId } = params;
 
   // Context and state remain the same
@@ -131,7 +139,7 @@ function Lesson() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isEditing, setIsEditing] = useState<boolean>(
-    lessonId === 'add' || path.includes('edit'),
+    lessonId === 'add' || path.includes('edit') || isToolbarOpen === 'true',
   );
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
@@ -142,30 +150,42 @@ function Lesson() {
 
   const form = useLessonForm();
 
-  const isEdit =
-    path.includes('edit') && user?.user_type_id === UserTypeIdEnum.EDITOR;
+  const isEdit = useMemo(() => {
+    return (
+      path.includes('edit') && user?.user_type_id !== UserTypeIdEnum.MEMBER
+    );
+  }, [path]);
 
-  const url = `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${lessonId}`;
-
-  const links = !roadmap
-    ? [
+  // Memoize links calculation
+  const links = useMemo(() => {
+    const url = `${RouteEnum.CONTENT}/${roadmapId}/${courseId}/${lessonId}`;
+    if (!roadmap) {
+      return [
         ...defaultlinks,
         {
           name: lesson?.course?.name ?? 'Course',
           link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
         },
         { name: lesson?.name ?? en.common.addLesson, link: url },
-      ]
-    : [
-        ...defaultlinks,
-        { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
-        {
-          name: roadmap.courses[0].name,
-          link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
-        },
-        { name: lesson?.name ?? en.common.addLesson, link: url },
       ];
-
+    }
+    return [
+      ...defaultlinks,
+      { name: roadmap.name, link: `${RouteEnum.CONTENT}/${roadmapId}` },
+      {
+        name: roadmap.courses[0].name,
+        link: `${RouteEnum.CONTENT}/${roadmapId}/${courseId}`,
+      },
+      { name: lesson?.name ?? en.common.addLesson, link: url },
+    ];
+  }, [
+    roadmap,
+    lesson?.course?.name,
+    lesson?.name,
+    roadmapId,
+    courseId,
+    lessonId,
+  ]);
   // Optimize initial data fetching
   useEffect(() => {
     const fetchData = async () => {
