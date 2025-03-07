@@ -130,7 +130,7 @@ function Lesson() {
       ),
     [user?.user_type_id],
   );
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isEditing, setIsEditing] = useState<boolean>(
     lessonId === 'add' || path.includes('edit'),
@@ -146,7 +146,7 @@ function Lesson() {
 
   const isEdit = useMemo(() => {
     return (
-      path.includes('edit') && user?.user_type_id === UserTypeIdEnum.EDITOR
+      path.includes('edit') && user?.user_type_id !== UserTypeIdEnum.MEMBER
     );
   }, [path]);
 
