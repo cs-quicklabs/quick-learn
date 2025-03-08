@@ -3,7 +3,7 @@ import ArchivedCell from './ArchivedCell';
 export function ClosedEyeIcon() {
   return (
     <svg
-      className="w-[24px] h-[24px] text-gray-800 dark:text-white"
+      className="w-[24px] h-[24px] text-gray-800"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -28,7 +28,7 @@ export function ClosedEyeIcon() {
 export function OpenEyeIcon() {
   return (
     <svg
-      className="w-[24px] h-[24px] text-gray-800 dark:text-white"
+      className="w-[24px] h-[24px] text-gray-800"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -73,7 +73,7 @@ export function Loader({
 
 export function FullPageLoader() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
       <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-blue-500" />
     </div>
   );
@@ -339,7 +339,7 @@ export function LoadingSkeleton() {
 export function SearchIcon() {
   return (
     <svg
-      className="w-4 h-4 text-gray-500 dark:text-gray-400"
+      className="w-4 h-4 text-gray-500 "
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -381,7 +381,7 @@ export function ReadFileIcon({ colorClass }: { colorClass: string }) {
 export function CalenderIcon() {
   return (
     <svg
-      className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+      className="shrink-0 mr-1.5 h-5 w-5 text-gray-400"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
       fill="currentColor"

@@ -77,14 +77,14 @@ export default function ConformationModal({
                 <div className="mt-4">
                   <button
                     type="button"
-                    className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                    className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-hidden focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                     onClick={() => handleConfirm()}
                   >
                     {confirmText}
                   </button>
                   <button
                     type="button"
-                    className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
+                    className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-hidden bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
                     onClick={() => setOpen(false)}
                   >
                     {cancelText}

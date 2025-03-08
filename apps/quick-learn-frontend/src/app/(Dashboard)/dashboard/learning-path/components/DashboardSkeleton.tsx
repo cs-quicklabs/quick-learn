@@ -3,12 +3,12 @@ import React from 'react';
 
 function DashboardSkeleton() {
   return (
-    <div className="bg-gray-50 relative z-0 flex-1 focus:outline-none h-screen">
+    <div className="bg-gray-50 relative z-0 flex-1 focus:outline-hidden h-screen">
       {/* Roadmaps Section Skeleton */}
       <div className="px-8 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <div className="h-8 bg-gray-200 rounded w-48 mb-2" />
-          <div className="h-4 bg-gray-200 rounded w-24 ml-2 mt-1" />
+          <div className="h-8 bg-gray-200 rounded-sm w-48 mb-2" />
+          <div className="h-4 bg-gray-200 rounded-sm w-24 ml-2 mt-1" />
         </div>
       </div>
 
@@ -27,8 +27,8 @@ function DashboardSkeleton() {
       {/* Courses Section Skeleton */}
       <div className="px-8 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-baseline -mt-2 -ml-2">
-          <div className="h-8 bg-gray-200 rounded w-48 mb-2" />
-          <div className="h-4 bg-gray-200 rounded w-24 ml-2 mt-1" />
+          <div className="h-8 bg-gray-200 rounded-sm w-48 mb-2" />
+          <div className="h-4 bg-gray-200 rounded-sm w-24 ml-2 mt-1" />
         </div>
       </div>
 

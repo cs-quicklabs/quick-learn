@@ -43,7 +43,7 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
       return () => clearTimeout(timer);
     }, [percentage]);
 
-    const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border border-gray-100 group relative transition-shadow duration-200 w-full ${className}`;
+    const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-xs hover:shadow-lg border border-gray-100 group relative transition-shadow duration-200 w-full ${className}`;
 
     function renderContent() {
       if (isCompleted) {

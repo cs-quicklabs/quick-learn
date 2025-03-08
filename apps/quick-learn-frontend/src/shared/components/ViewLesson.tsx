@@ -89,7 +89,7 @@ const ApprovalCheckbox = memo(
         checked={value}
         onChange={() => setValue?.(true)}
         disabled={value}
-        className="w-6 h-6 md:w-8 md:h-8 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
+        className="w-6 h-6 md:w-8 md:h-8 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
       />
       <label
         htmlFor="default-checkbox"
@@ -109,7 +109,7 @@ const PendingAlert = memo(() => (
       className="flex items-center p-4 mb-4 w-full text-sm text-yellow-800 rounded-lg bg-yellow-50"
       role="alert"
     >
-      <InformationCircleIcon className="flex-shrink-0 inline w-4 h-4 me-3" />
+      <InformationCircleIcon className="shrink-0 inline w-4 h-4 me-3" />
       <div className="text-xl">
         <span className="font-medium text-lg">
           {en.approvals.approvalPendingExclamation}

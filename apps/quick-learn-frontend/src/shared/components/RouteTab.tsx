@@ -42,7 +42,7 @@ const RouteTab: React.FC<RouteTabProps> = ({
         {type === 'lesson' && (
           <span
             id="badge-dismiss-dark"
-            className="inline-flex items-center px-2 py-1 text-sm font-medium text-gray-800 bg-gray-100 rounded-sm dark:bg-gray-700 dark:text-gray-300"
+            className="inline-flex items-center px-2 py-1 text-sm font-medium text-gray-800 bg-gray-100 rounded-xs"
           >
             {firstLetterCapital(course_name)}
           </span>

@@ -65,7 +65,7 @@ function AutoResizingTextarea({
       ref={textareaRef}
       value={value}
       onChange={handleChange}
-      className={`w-full text-3xl md:text-5xl font-bold text-center border-none overflow-hidden resize-none focus:outline-none min-h-[2.5rem] md:min-h-[3.5rem] transition-all ${
+      className={`w-full text-3xl md:text-5xl font-bold text-center border-none overflow-hidden resize-none focus:outline-hidden min-h-[2.5rem] md:min-h-[3.5rem] transition-all ${
         !isEditing ? 'focus:ring-0' : ''
       } ${className}`}
       placeholder={placeholder}

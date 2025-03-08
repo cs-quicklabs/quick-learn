@@ -86,8 +86,8 @@ function LessonDetails() {
         <SuperLink
           href={`${RouteEnum.CONTENT}/${roadmapId}/${courseId}/edit/${lessonId}`}
         >
-          <span className="fixed flex items-center bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500">
-            <PencilIcon className="flex-shrink-0 inline w-4 h-4 me-1" />| Edit
+          <span className="fixed flex items-center bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500">
+            <PencilIcon className="shrink-0 inline w-4 h-4 me-1" />| Edit
           </span>
         </SuperLink>
       )}

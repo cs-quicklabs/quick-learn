@@ -140,7 +140,7 @@ const Card: FC<CardProps> = ({
     return () => window.removeEventListener('resize', checkTitleHeight);
   }, [title]);
 
-  const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full relative ${
+  const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-xs hover:shadow-lg border-gray-100 group w-full relative ${
     isCreateCard
       ? 'border-2 border-dashed border-gray-300 hover:border-gray-400'
       : ''

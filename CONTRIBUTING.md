@@ -44,7 +44,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
    yarn test-open
    ```
 
-5. Before creating a PR, build the project in your local system, ensuring no
+5. Before creating a PR, build the project in your local system, ensuring-3 no
    build error:
    ```shell
    yarn build

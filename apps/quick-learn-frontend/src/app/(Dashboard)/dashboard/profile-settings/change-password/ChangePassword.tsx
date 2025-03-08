@@ -88,10 +88,10 @@ function ChangePassword() {
 
   return (
     <div>
-      <h1 className="text-lg font-semibold dark:text-white">
+      <h1 className="text-lg font-semibold">
         {en.ProfileSetting.changePassword}
       </h1>
-      <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+      <p className="text-gray-500 text-sm mb-6">
         {en.ProfileSetting.changePasswordRequest}
       </p>
       <FormFieldsMapper

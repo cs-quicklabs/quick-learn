@@ -137,7 +137,7 @@ const ImageInput: FC<Props> = ({
     <div>
       <label
         htmlFor={name}
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        className="block mb-2 text-sm font-medium text-gray-900 "
       >
         {label}
       </label>
@@ -153,8 +153,8 @@ const ImageInput: FC<Props> = ({
               sizes="(max-width: 5rem) 5rem, 5rem"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
-              <span className="text-xl font-semibold text-gray-600 dark:text-gray-300">
+            <div className="w-full h-full flex items-center justify-center bg-gray-200 ">
+              <span className="text-xl font-semibold text-gray-600 ">
                 {getInitials(firstName, lastName)}
               </span>
             </div>
@@ -162,7 +162,7 @@ const ImageInput: FC<Props> = ({
           <button
             type="button"
             aria-label="Change image"
-            className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity ${
+            className={`absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity ${
               isLoading ? 'opacity-100' : ''
             }`}
             onClick={handleImagedeletion}

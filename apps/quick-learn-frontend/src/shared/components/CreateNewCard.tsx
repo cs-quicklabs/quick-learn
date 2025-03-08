@@ -11,7 +11,7 @@ interface Props {
 const CreateNewCard: FC<Props> = ({
   title,
   onAdd,
-  className = 'inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full',
+  className = 'inline-block col-span-1 rounded-lg bg-white shadow-xs hover:shadow-lg border-gray-100 group w-full',
 }) => {
   return (
     <button type="button" className={className} onClick={() => onAdd(true)}>

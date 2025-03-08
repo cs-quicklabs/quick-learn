@@ -21,7 +21,7 @@ const getMedalEmoji = (rank: number, totalUser: number) => {
         data-tooltip="Complete more than 3 lessons to remove this badge"
       >
         <span>👎</span>
-        <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white px-2 py-1 text-sm text-gray-700 opacity-0 shadow-md transition-opacity group-hover:opacity-100 border border-gray-200">
+        <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-sm bg-white px-2 py-1 text-sm text-gray-700 opacity-0 shadow-md transition-opacity group-hover:opacity-100 border border-gray-200">
           {en.leaderboard.tooltipsText}
         </span>
       </span>

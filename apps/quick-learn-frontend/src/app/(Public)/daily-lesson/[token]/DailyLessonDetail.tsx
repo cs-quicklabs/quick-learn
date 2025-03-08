@@ -182,7 +182,7 @@ function DailyLessonDetail() {
           onChange={handleCheckboxChange}
           className="rounded-md h-5 w-5 border-gray-400 bg-[#F4F4F6]"
         />
-        <p className="text-l font-semibold text-gray-900 dark:text-gray-300">
+        <p className="text-l font-semibold text-gray-900">
           {en.myLearningPath.markRead}
         </p>
       </div>
@@ -237,7 +237,7 @@ function DailyLessonDetail() {
       <div className="fixed flex bottom-5 left-5">
         <button
           type="button"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded-full px-5 py-2.5 text-center me-2 mb-2"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden focus:ring-4 focus:ring-blue-300 rounded-full px-5 py-2.5 text-center me-2 mb-2"
           onClick={navigateUserToLearningPath}
         >
           <span className="flex items-center gap-1 justify-center">

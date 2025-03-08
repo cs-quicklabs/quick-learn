@@ -25,7 +25,7 @@ interface NavbarSearchBoxProps {
 function SearchSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="h-6 bg-gray-200 rounded w-full mb-2" />
+      <div className="h-6 bg-gray-200 rounded-sm w-full mb-2" />
     </div>
   );
 }
@@ -152,7 +152,7 @@ const NavbarSearchBox: React.FC<NavbarSearchBoxProps> = ({ isMember }) => {
       localStorage.removeItem(STORAGE_KEY);
       setSearchHistory({ Roadmaps: [], Courses: [], Lessons: [] });
     } catch (error) {
-      console.error('Error clearing search history:', error);
+      console.error('Error clearing-3 search history:', error);
     }
   };
 

@@ -20,17 +20,17 @@ function LoadingSkeleton() {
     <div className="flex items-center p-4 mt-4">
       <div className="flex-1 min-w-0">
         <div className="flex">
-          <div className="h-5 bg-gray-200 rounded w-48 animate-pulse" />
-          <div className="h-5 bg-gray-200 rounded w-24 ml-1 animate-pulse" />
+          <div className="h-5 bg-gray-200 rounded-sm w-48 animate-pulse" />
+          <div className="h-5 bg-gray-200 rounded-sm w-24 ml-1 animate-pulse" />
         </div>
         <div className="mt-2 flex items-center">
           <div className="h-5 w-5 bg-gray-200 rounded-full mr-1.5 animate-pulse" />
-          <div className="h-5 bg-gray-200 rounded w-64 animate-pulse" />
+          <div className="h-5 bg-gray-200 rounded-sm w-64 animate-pulse" />
         </div>
       </div>
       <div className="flex justify-end space-x-4">
-        <div className="h-5 bg-gray-200 rounded w-16 animate-pulse" />
-        <div className="h-5 bg-gray-200 rounded w-16 animate-pulse" />
+        <div className="h-5 bg-gray-200 rounded-sm w-16 animate-pulse" />
+        <div className="h-5 bg-gray-200 rounded-sm w-16 animate-pulse" />
       </div>
     </div>
   );
