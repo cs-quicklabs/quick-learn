@@ -133,7 +133,10 @@ const Editor: FC<Props> = ({
   }, [isEditing]);
 
   return (
-    <div className="quillHeader flex flex-col h-full" ref={handleRefChange}>
+    <div
+      className="quillHeader flex flex-col h-full mx-4"
+      ref={handleRefChange}
+    >
       <EditorToolbar
         isEditing={isEditing}
         setIsEditing={setIsEditing}

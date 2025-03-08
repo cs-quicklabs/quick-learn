@@ -37,6 +37,7 @@ import {
 function Navbar() {
   const [links, setLinks] = useState<TLink[]>([]);
   const [showConformationModal, setShowConformationModal] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector(selectUser);
   const pathname = usePathname();
@@ -204,17 +205,17 @@ function Navbar() {
             </div>
 
             <div className="flex lg:hidden">
-              <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-white">
+              <DisclosureButton
+                className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-white"
+                onClick={() => setIsOpen(!isOpen)}
+              >
                 <span className="absolute -inset-0.5" />
                 <span className="sr-only">{en.component.openMenu}</span>
-                <Bars3Icon
-                  className="block h-6 w-6 group-data-[open]:hidden"
-                  aria-hidden="true"
-                />
-                <XMarkIcon
-                  className="hidden h-6 w-6 group-data-[open]:block"
-                  aria-hidden="true"
-                />
+                {isOpen ? (
+                  <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                )}
               </DisclosureButton>
             </div>
 

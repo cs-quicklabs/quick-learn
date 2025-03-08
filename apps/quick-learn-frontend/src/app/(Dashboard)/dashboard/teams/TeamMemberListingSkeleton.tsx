@@ -11,8 +11,7 @@ function TeamMemberListingSkeleton() {
             <div className="h-5 w-64 bg-gray-200 rounded-md" />
           </div>
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-            <div className="h-10 w-64 bg-gray-200 rounded-lg" />{' '}
-            {/* Search */}
+            <div className="h-10 w-64 bg-gray-200 rounded-lg" /> {/* Search */}
             <div className="h-10 w-32 bg-gray-200 rounded-lg" />{' '}
             {/* Add Button */}
           </div>
@@ -29,8 +28,7 @@ function TeamMemberListingSkeleton() {
                 <div className="h-5 w-16 bg-gray-200 rounded-md" />
               </div>
             ))}
-            <div className="h-5 w-16 bg-gray-200 rounded-md" />{' '}
-            {/* Show All */}
+            <div className="h-5 w-16 bg-gray-200 rounded-md" /> {/* Show All */}
           </div>
         </div>
 
@@ -107,10 +105,8 @@ function TeamMemberListingSkeleton() {
         <div className="h-5 w-72 bg-gray-200  rounded-md" />{' '}
         {/* Results count */}
         <div className="flex space-x-3">
-          <div className="h-8 w-24 bg-gray-200 rounded-lg" />{' '}
-          {/* Previous */}
-          <div className="h-8 w-24 bg-gray-200 rounded-lg" />{' '}
-          {/* Next */}
+          <div className="h-8 w-24 bg-gray-200 rounded-lg" /> {/* Previous */}
+          <div className="h-8 w-24 bg-gray-200 rounded-lg" /> {/* Next */}
         </div>
       </div>
     </>

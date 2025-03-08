@@ -117,7 +117,7 @@ const CourseTable = () => {
             <div className="w-full sm:w-auto">
               <input
                 type="text"
-                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:outline-none focus:ring-1 focus:border-blue-500 block h-[36px] px-2"
                 placeholder="Search Courses..."
                 value={search}
                 onChange={handleSearchChange}

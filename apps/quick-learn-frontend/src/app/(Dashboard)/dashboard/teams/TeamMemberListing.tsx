@@ -108,7 +108,7 @@ function TeamMemberListing() {
       <section className=" overflow-hidden bg-white shadow-md sm:rounded-xs">
         <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
           <div>
-            <h1 className="mr-3 text-sm font-semibold">{en.teams.team}</h1>
+            <h1 className="mr-3 text-lg font-semibold">{en.teams.team}</h1>
             <p className="text-gray-500 text-sm">
               {en.teams.manageExisting}{' '}
               <span className="font-bond">{totalUsers}</span>{' '}
@@ -118,7 +118,7 @@ function TeamMemberListing() {
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <input
               type="text"
-              className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block touch-none"
+              className="bg-gray-50 w-full sm:w-64 h-[36px] border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 block touch-none px-2"
               placeholder="Search Members"
               value={searchInputValue} // Use local state for input value
               onChange={handleSearchChange}
@@ -148,7 +148,7 @@ function TeamMemberListing() {
                   type="radio"
                   onChange={() => filterByUserType(userType.code)}
                   checked={currentUserType === userType.code}
-                  className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-2 cursor-pointer"
+                  className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:outline-none focus:ring cursor-pointer"
                 />
                 <label
                   htmlFor={userType.code}

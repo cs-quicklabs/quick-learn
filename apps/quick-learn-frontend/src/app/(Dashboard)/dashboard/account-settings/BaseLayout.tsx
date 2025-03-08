@@ -132,9 +132,7 @@ function BaseLayout({
       {isPageLoading && <FullPageLoader />}
       <div>
         <h1 className="text-lg font-semibold">{heading}</h1>
-        <p className="text-gray-500 text-sm mb-4">
-          {subHeading}
-        </p>
+        <p className="text-gray-500 text-sm mb-4">{subHeading}</p>
         <FormFieldsMapper
           fields={addFields}
           schema={addSchema}
@@ -204,7 +202,7 @@ function BaseLayout({
                   </React.Fragment>
                 ) : (
                   <tr
-                    className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 border-b border-gray-200"
+                    className="bg-white even:bg-gray-50 border-b border-gray-200"
                     key={item.id}
                   >
                     <th

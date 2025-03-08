@@ -6,10 +6,8 @@ function EmailPreferenceSkeleton({ isPartial = false }) {
       {/* Header Section */}
       {!isPartial && (
         <div className="space-y-2 mb-6">
-          <div className="h-7 w-28 bg-gray-200 rounded-md" />{' '}
-          {/* Title */}
-          <div className="h-5 w-64 bg-gray-200 rounded-md" />{' '}
-          {/* Subtitle */}
+          <div className="h-7 w-28 bg-gray-200 rounded-md" /> {/* Title */}
+          <div className="h-5 w-64 bg-gray-200 rounded-md" /> {/* Subtitle */}
         </div>
       )}
 

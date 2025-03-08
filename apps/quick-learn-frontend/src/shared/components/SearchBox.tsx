@@ -8,7 +8,7 @@ interface Props {
 
 const SearchBox: FC<Props> = ({ handleChange }) => {
   return (
-    <div className="flex-1 min-w-0 mb-6">
+    <div className="flex-1 min-w-0 mb-6 ">
       <label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only "
@@ -22,7 +22,7 @@ const SearchBox: FC<Props> = ({ handleChange }) => {
         <input
           type="search"
           id="default-search"
-          className="block w-full rounded-md border-gray-300 bg-gray-50 py-1.5 pl-10 text-sm focus:border-blue-500 focus:ring-blue-500"
+          className="block w-full rounded-md border-gray-300 bg-gray-50 py-1.5 pl-10 text-sm  h-[36px] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-700  "
           placeholder="Search"
           onChange={handleChange}
           autoComplete="off"

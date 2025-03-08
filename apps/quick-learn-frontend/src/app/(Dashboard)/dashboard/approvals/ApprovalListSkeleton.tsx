@@ -6,10 +6,8 @@ function ApprovalListSkeleton() {
       {/* Header Section */}
       <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
         <div className="space-y-2 animate-pulse">
-          <div className="h-6 w-48 bg-gray-200 rounded-md" />{' '}
-          {/* Title */}
-          <div className="h-5 w-64 bg-gray-200 rounded-md" />{' '}
-          {/* Subtitle */}
+          <div className="h-6 w-48 bg-gray-200 rounded-md" /> {/* Title */}
+          <div className="h-5 w-64 bg-gray-200 rounded-md" /> {/* Subtitle */}
         </div>
       </div>
 

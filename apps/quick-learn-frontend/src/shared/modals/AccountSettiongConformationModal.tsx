@@ -29,10 +29,7 @@ export default function AccountSettingConformationModal({
       <div className="fixed inset-0 overflow-y-auto flex min-h-full items-center justify-center p-4">
         <DialogPanel className="w-full max-w-2xl transform overflow-hidden rounded-lg bg-white shadow">
           <div className="flex items-center border-b border-gray-200 pl-4 pr-2 py-4">
-            <DialogTitle
-              as="h3"
-              className="text-lg font-bold text-gray-700 0"
-            >
+            <DialogTitle as="h3" className="text-lg font-bold text-gray-700 0">
               {title}
             </DialogTitle>
             <button
