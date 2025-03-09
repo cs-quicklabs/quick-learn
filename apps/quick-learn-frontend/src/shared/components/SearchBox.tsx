@@ -22,7 +22,7 @@ const SearchBox: FC<Props> = ({ handleChange }) => {
         <input
           type="search"
           id="default-search"
-          className="block w-full rounded-md border-gray-300 bg-gray-50 py-1.5 pl-10 text-sm  h-[36px] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-700  "
+          className="block w-full rounded-md border-gray-300 bg-gray-50 py-1.5 pl-10 text-sm  h-[36px] focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-700  "
           placeholder="Search"
           onChange={handleChange}
           autoComplete="off"

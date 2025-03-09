@@ -232,7 +232,7 @@ function Navbar() {
                     </div>
                   </MenuButton>
 
-                  <MenuItems className="absolute right-0 mt-2 w-64 divide-y divide-gray-100 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                  <MenuItems className="absolute right-0 mt-2 w-64 divide-y divide-gray-100 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden">
                     {/* User Info Section */}
                     <div className="px-4 py-3">
                       <p className="text-base text-gray-900 font-medium first-letter:uppercase">

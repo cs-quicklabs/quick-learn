@@ -118,7 +118,7 @@ function TeamMemberListing() {
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <input
               type="text"
-              className="bg-gray-50 w-full sm:w-64 h-[36px] border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 block touch-none px-2"
+              className="bg-gray-50 w-full sm:w-64 h-[36px] border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-hidden focus:ring-1 focus:ring-blue-500 focus:border-blue-500 block touch-none px-2"
               placeholder="Search Members"
               value={searchInputValue} // Use local state for input value
               onChange={handleSearchChange}
@@ -148,7 +148,7 @@ function TeamMemberListing() {
                   type="radio"
                   onChange={() => filterByUserType(userType.code)}
                   checked={currentUserType === userType.code}
-                  className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:outline-none focus:ring cursor-pointer"
+                  className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:outline-hidden focus:ring cursor-pointer"
                 />
                 <label
                   htmlFor={userType.code}
