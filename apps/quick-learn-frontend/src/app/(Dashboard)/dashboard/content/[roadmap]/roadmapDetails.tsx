@@ -339,7 +339,7 @@ function RoadmapDetails() {
             <Tooltip content={en.contentRepository.editRoadmap}>
               <button
                 type="button"
-                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setOpenAddModal(true)}
               >
                 <PencilIcon className="h-4 w-4" />
@@ -349,7 +349,7 @@ function RoadmapDetails() {
             <Tooltip content={en.contentRepository.addOnAlreadyExistingCourse}>
               <button
                 type="button"
-                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setOpenAssignModal(true)}
               >
                 <ArrowRightEndOnRectangleIcon className="h-4 w-4" />
@@ -360,7 +360,7 @@ function RoadmapDetails() {
               <button
                 id="archiveRoadmap"
                 type="button"
-                className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setShowConformationModal(true)}
               >
                 <TrashIcon className="h-4 w-4" />

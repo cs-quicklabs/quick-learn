@@ -85,7 +85,7 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
       height: '105px',
       width: '100%',
       className:
-        'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700',
+        'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 ',
     },
     {
       label: 'Make this course public and available for community.',
@@ -131,7 +131,7 @@ const AddEditCourseModal: FC<AddEditCourseProps> = ({
           <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b border-gray-200 sm:mb-5">
             <DialogTitle
               as="h3"
-              className="text-lg font-semibold text-gray-900 dark:text-white"
+              className="text-lg font-semibold text-gray-900 "
             >
               {isAdd
                 ? en.addEditCourseModal.addCourse

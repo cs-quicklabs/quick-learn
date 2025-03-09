@@ -50,10 +50,10 @@ function EmailPreference() {
   if (isPageLoading) return <EmailPreferenceSkeleton />;
   return (
     <div>
-      <h1 className="text-lg font-semibold dark:text-white">
+      <h1 className="text-lg font-semibold">
         {en.ProfileSetting.preferenceHead}
       </h1>
-      <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+      <p className="text-gray-500 text-sm mb-6">
         {en.ProfileSetting.preferenceSubHead}
       </p>
 
@@ -68,19 +68,19 @@ function EmailPreference() {
               type="checkbox"
               checked={isEmailChecked}
               onChange={handleChange}
-              className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-none transition duration-100"
+              className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-hidden transition duration-100"
             />
           </div>
           <div className="ms-2 text-sm">
             <label
               htmlFor="helper-checkbox"
-              className="font-medium text-gray-900 dark:text-gray-300"
+              className="font-medium text-gray-900"
             >
               {en.ProfileSetting.emailAlerts}
             </label>
             <p
               id="helper-checkbox-text"
-              className="text-sm font-normal text-gray-400 dark:text-gray-300"
+              className="text-sm font-normal text-gray-400"
             >
               {en.ProfileSetting.alertdisable}
             </p>

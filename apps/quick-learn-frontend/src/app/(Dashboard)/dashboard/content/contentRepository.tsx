@@ -123,7 +123,7 @@ function ContentRepository() {
 
       <div className="container mx-auto px-6 md:px-4">
         <div className="flex flex-col items-center justify-center mb-10">
-          <h1 className="text-4xl text-center md:text-5xl font-bold mb-2">
+          <h1 className="text-3xl text-center md:text-5xl font-bold mb-2">
             {en.contentRepository.contentRepository}
           </h1>
           <p className="text-sm text-gray-500">

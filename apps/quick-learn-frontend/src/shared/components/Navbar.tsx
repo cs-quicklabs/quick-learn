@@ -37,6 +37,7 @@ import {
 function Navbar() {
   const [links, setLinks] = useState<TLink[]>([]);
   const [showConformationModal, setShowConformationModal] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector(selectUser);
   const pathname = usePathname();
@@ -151,12 +152,12 @@ function Navbar() {
       />
       <Disclosure
         as="nav"
-        className="bg-gray-800 text-white shadow fixed z-10 w-full top-0"
+        className="bg-gray-800 text-white shadow-sm fixed z-10 w-full top-0"
       >
         <div className="mx-auto px-4 sm:px-4 lg:px-8">
           <div className="flex py-2 justify-between align-center">
             <div className="hidden md:flex px-2 lg:px-0">
-              <div className="flex-shrink-0 flex items-center">
+              <div className="shrink-0 flex items-center">
                 <SuperLink
                   id="homeLogo"
                   href={RouteEnum.MY_LEARNING_PATH}
@@ -204,17 +205,17 @@ function Navbar() {
             </div>
 
             <div className="flex lg:hidden">
-              <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+              <DisclosureButton
+                className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-white"
+                onClick={() => setIsOpen(!isOpen)}
+              >
                 <span className="absolute -inset-0.5" />
                 <span className="sr-only">{en.component.openMenu}</span>
-                <Bars3Icon
-                  className="block h-6 w-6 group-data-[open]:hidden"
-                  aria-hidden="true"
-                />
-                <XMarkIcon
-                  className="hidden h-6 w-6 group-data-[open]:block"
-                  aria-hidden="true"
-                />
+                {isOpen ? (
+                  <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                )}
               </DisclosureButton>
             </div>
 
@@ -231,7 +232,7 @@ function Navbar() {
                     </div>
                   </MenuButton>
 
-                  <MenuItems className="absolute right-0 mt-2 w-64 divide-y divide-gray-100 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <MenuItems className="absolute right-0 mt-2 w-64 divide-y divide-gray-100 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden">
                     {/* User Info Section */}
                     <div className="px-4 py-3">
                       <p className="text-base text-gray-900 font-medium first-letter:uppercase">

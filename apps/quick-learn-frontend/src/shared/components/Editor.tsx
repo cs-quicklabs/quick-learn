@@ -133,14 +133,17 @@ const Editor: FC<Props> = ({
   }, [isEditing]);
 
   return (
-    <div className="quillHeader flex flex-col h-full" ref={handleRefChange}>
+    <div
+      className="quillHeader flex flex-col h-full mx-4"
+      ref={handleRefChange}
+    >
       <EditorToolbar
         isEditing={isEditing}
         setIsEditing={setIsEditing}
         isUpdating={isUpdating}
         isAdd={isAdd}
       />
-      <div className="flex-grow relative">
+      <div className="grow relative">
         <ReactQuill
           // @ts-expect-error - As forwardRef is not supported in react 19 and we have to wait for the next version of react-quill
           ref={quillRef}
