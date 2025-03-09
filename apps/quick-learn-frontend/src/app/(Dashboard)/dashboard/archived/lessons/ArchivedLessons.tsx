@@ -60,13 +60,7 @@ function ArchivedLessons() {
   const restoreLesson = async (id: number) => {
     try {
       await dispatch(activateArchivedLesson({ id })).unwrap();
-      dispatch(
-        fetchArchivedLessons({
-          page: 1,
-          search: searchValue,
-          resetList: true,
-        }),
-      );
+
       toast.success(en.archivedSection.lessonRestoredSuccess);
     } catch (error) {
       console.log(error);
@@ -79,13 +73,6 @@ function ArchivedLessons() {
     const searchTerm = value || '';
     try {
       dispatch(setLessonsSearchValue(searchTerm));
-      dispatch(
-        fetchArchivedLessons({
-          page: 1,
-          search: searchTerm,
-          resetList: true,
-        }),
-      );
     } catch (err) {
       console.log(err);
       toast.error(en.common.somethingWentWrong);
