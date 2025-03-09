@@ -1,5 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { activateLesson } from '@src/apiServices/archivedService';
 import { AxiosErrorObject } from '@src/apiServices/axios';
@@ -25,21 +34,12 @@ import {
   TLesson,
   TRoadmap,
 } from '@src/shared/types/contentRepository';
-import { useDispatch, useSelector } from 'react-redux';
 import { setHideNavbar } from '@src/store/features/uiSlice';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
-import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
   selectRoadmapById,
@@ -126,8 +126,8 @@ function Lesson() {
     course: string;
     lesson: string;
   }>();
-  const checkToolbarOpen = useSearchParams();
-  const isToolbarOpen = checkToolbarOpen.get('edit');
+  const queryParams = useSearchParams();
+  const isToolbarOpen = queryParams.get('edit');
 
   const { roadmap: roadmapId, course: courseId, lesson: lessonId } = params;
 
