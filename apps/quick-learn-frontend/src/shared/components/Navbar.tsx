@@ -282,22 +282,6 @@ function Navbar() {
         </div>
 
         <DisclosurePanel className="lg:hidden">
-          <div className="border-y border-gray-700">
-            {menuItems.map(
-              (item) =>
-                item.isExtended && (
-                  <a
-                    key={item.link + item.name}
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                  >
-                    {item.name}
-                  </a>
-                ),
-            )}
-          </div>
           <div className="space-y-1 px-2 pb-3 pt-2">
             {links.map((item, index) => (
               <DisclosureButton

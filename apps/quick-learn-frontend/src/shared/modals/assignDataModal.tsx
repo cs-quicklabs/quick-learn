@@ -236,10 +236,10 @@ const AssignDataModal: FC<Props> = ({
                         <div className="border border-gray-300 rounded-lg">
                           <button
                             type="button"
-                            className="relative text-black bg-transparent px-3 py-4 cursor-pointer"
+                            className="relative text-black bg-transparent px-3 w-full flex justify-between py-4 cursor-pointer"
                             onClick={() => handleAccordionChange(ele.name)}
                           >
-                            <span className="flex-grow capitalize font-medium font-[16px]">
+                            <span className=" capitalize font-medium">
                               {ele.name}
                             </span>
                             <svg
@@ -248,7 +248,7 @@ const AssignDataModal: FC<Props> = ({
                               viewBox="0 0 24 24"
                               strokeWidth={1.5}
                               stroke="currentColor"
-                              className={`size-6 absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-300 ${
+                              className={`size-6 transition-transform duration-300 ${
                                 isOpen ? 'rotate-180' : 'rotate-0'
                               }`}
                             >
@@ -271,7 +271,7 @@ const AssignDataModal: FC<Props> = ({
                                       id={item.name}
                                       type="checkbox"
                                       value={item.value}
-                                      className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
+                                      className="w-4 h-4 appearance-none bg-gray-100 border border-gray-300 rounded checked:bg-primary-600 focus:ring-primary-500"
                                       {...register('selected')}
                                     />
                                     <label

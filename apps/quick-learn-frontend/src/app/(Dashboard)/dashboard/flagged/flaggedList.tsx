@@ -95,7 +95,7 @@ function FlaggedList() {
             <div className="w-full sm:w-auto">
               <input
                 type="text"
-                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block touch-none"
+                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block touch-none h-[38px] px-2"
                 placeholder="Search Lessons"
                 value={search}
                 onChange={handleSearchChange}
