@@ -2,6 +2,7 @@ export class AddRoadMap {
   visitAccountsPage() {
     return cy.get('[id="headerProfileImage"]').click();
   }
+
   getAccountSettings() {
     cy.get('[id="headerProfileImage"]').click();
     cy.get('[href="/dashboard/account-settings"]').click();

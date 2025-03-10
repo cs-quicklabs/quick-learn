@@ -104,7 +104,7 @@ export class CreateNewRoadMap {
 
   getExistingCoursesList() {
     cy.get('[id="brand-tab"]').contains('Select Courses');
-    cy.get('[data-testid="flowbite-accordion-heading"]').each(($el, index) => {
+    cy.get('#content_list_item').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
   }

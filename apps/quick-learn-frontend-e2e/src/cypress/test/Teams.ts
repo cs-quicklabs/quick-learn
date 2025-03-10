@@ -3,6 +3,7 @@ export class TeamsPage {
   visitTeamPage() {
     return cy.get('[href="/dashboard/teams"]');
   }
+
   getColumnsData() {
     const expectedHeaders = [
       'User',
@@ -58,6 +59,7 @@ export class TeamsPage {
         });
     });
   }
+
   getEditorList() {
     cy.wait(5000);
     cy.get('#editor').click();
@@ -118,6 +120,7 @@ export class TeamsPage {
     this.visitTeamPage().click();
     this.getEditorList();
   }
+
   filterMembersList() {
     this.visitTeamPage().click();
     this.getMembersList();

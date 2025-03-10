@@ -1,6 +1,6 @@
-import { UpdateGeneralSettings } from '../test/UpdateGeneralSettings';
 import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
+import { UpdateGeneralSettings } from '../test/UpdateGeneralSettings';
 
 describe('Login Test', () => {
   const loginPage = new LoginPage();

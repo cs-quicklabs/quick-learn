@@ -137,6 +137,7 @@ function ApprovalList() {
                 placeholder="Search lessons..."
                 value={search}
                 onChange={handleSearchChange}
+                id="search_approval_lesson"
               />
             </div>
           </div>

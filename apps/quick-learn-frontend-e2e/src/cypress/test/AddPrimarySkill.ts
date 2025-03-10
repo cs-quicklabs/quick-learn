@@ -1,19 +1,17 @@
-export class AddPrimarySkill {
-  visitAccountsPage() {
-    return cy.get('button.flex.items-center').click();
-  }
+import { getMenuBar } from '../support/app.po';
 
-  getAccountSettings() {
-    cy.get('button.flex.items-center').click();
-    cy.get('[href="/dashboard/account-settings"]').click();
-  }
+export class AddPrimarySkill {
   openPrimarySkill() {
+    getMenuBar();
+    cy.get('[href="/dashboard/account-settings"]').click();
     cy.get('[href="/dashboard/account-settings/primary-skills"]').click();
     cy.contains('Primary Skills').should('be.visible');
   }
+
   clickSkillField() {
     return cy.get('#primary_skills_input_text').click();
   }
+
   AddPrimarySkill() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     return cy.get('#primary_skills_input_text').type('ReactJs' + Numeric);
@@ -36,6 +34,7 @@ export class AddPrimarySkill {
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem',
       );
   }
+
   editPrimarySkill() {
     const Numeric = Math.floor(10000 + Math.random() * 90000).toString();
     cy.get(':nth-child(1) > .inline-flex > .text-blue-600').click();
@@ -73,14 +72,6 @@ export class AddPrimarySkill {
       'The value should not exceed 30 characters.',
     );
   }
-  // deletePrimarySkill() {
-  //   cy.get(':nth-child(2) > .inline-flex > .ml-2').click();
-  // }
-  // deleteSkillCategories() {
-  //   cy.get(':nth-child(1) > .inline-flex > .ml-2').click();
-  //   cy.get('[class="flex-1 overflow-auto p-0"]');
-  //   cy.get('button.bg-white.uppercase').click();
-  // }
 
   getDeleteSkillButton() {
     cy.get('body').then(($body) => {
@@ -97,6 +88,7 @@ export class AddPrimarySkill {
       }
     });
   }
+
   getErrorMessage() {
     return cy.get('.mt-1');
   }
@@ -107,9 +99,5 @@ export class AddPrimarySkill {
 
   getSuccessMessage() {
     return cy.get('div.Toastify__toast--success');
-  }
-
-  OpenAccountSettings() {
-    this.getAccountSettings();
   }
 }
