@@ -4,7 +4,7 @@ import { FullPageLoader, Loader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { noSpecialCharValidation } from '@src/utils/helpers';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { en } from '@src/constants/lang/en';
@@ -15,21 +15,26 @@ type BaseType = {
 };
 
 type Props = {
-  heading: string;
-  subHeading: string;
-  tableColumnName: string;
-  input: {
+  readonly heading: string;
+  readonly subHeading: string;
+  readonly tableColumnName: string;
+  readonly input: {
     label: string;
     placeholder: string;
   };
-  isAddLoading: boolean;
-  isEditLoading: boolean;
-  data: BaseType[];
-  onAdd: (data: AddSchemaType) => void;
-  onDelete: (id: number) => void;
-  onEdit: (id: number, data: EditSchemaType) => void;
-  isPageLoading?: boolean;
+  readonly isAddLoading: boolean;
+  readonly isEditLoading: boolean;
+  readonly data: BaseType[];
+  readonly onAdd: (data: AddSchemaType) => void;
+  readonly onDelete: (id: number) => void;
+  readonly onEdit: (id: number, data: EditSchemaType) => void;
+  readonly isPageLoading?: boolean;
 };
+
+// Object to track timeouts for each deletion ID
+interface DeletionTimeouts {
+  [key: string]: NodeJS.Timeout;
+}
 
 const addSchema = z.object({
   name: z
@@ -61,10 +66,53 @@ function BaseLayout({
 }: Props) {
   const [list, setList] = useState<BaseType[]>([]);
   const [editRow, setEditRow] = useState<number>(-1);
+  const [pendingDeletions, setPendingDeletions] = useState<
+    Array<number | string>
+  >([]);
+  const deletionTimeoutsRef = useRef<DeletionTimeouts>({});
 
   useEffect(() => {
     setList(data);
   }, [data]);
+
+  // Clear all timeouts on unmount
+  useEffect(() => {
+    // Store ref value in a variable inside the effect
+    const timeouts = deletionTimeoutsRef.current;
+    return () => {
+      // Cleanup all timeouts when component unmounts
+      Object.values(timeouts).forEach((timeout) => {
+        clearTimeout(timeout);
+      });
+    };
+  }, []);
+
+  // This effect will help in detecting when items have been deleted
+  useEffect(() => {
+    // Check if any pending deletion IDs are no longer in the data
+    if (pendingDeletions.length > 0) {
+      const currentIds = data.map((item) => item.id);
+      const completedDeletions = pendingDeletions.filter(
+        (id) => !currentIds.includes(id),
+      );
+
+      if (completedDeletions.length > 0) {
+        // Remove completed deletions from pending list
+        setPendingDeletions((prev) =>
+          prev.filter((id) => !completedDeletions.includes(id)),
+        );
+
+        // Clear timeouts for completed deletions
+        completedDeletions.forEach((id) => {
+          const idStr = String(id);
+          if (deletionTimeoutsRef.current[idStr]) {
+            clearTimeout(deletionTimeoutsRef.current[idStr]);
+            delete deletionTimeoutsRef.current[idStr];
+          }
+        });
+      }
+    }
+  }, [data, pendingDeletions]);
 
   const addFields: FieldConfig[] = [
     {
@@ -127,6 +175,105 @@ function BaseLayout({
     resetEdit();
   };
 
+  const handleDelete = (id: number | string) => {
+    // Add this ID to pending deletions
+    setPendingDeletions((prev) => [...prev, id]);
+
+    // Set a timeout to automatically clear this ID after 500ms
+    // This handles the case where an error occurs and the deletion doesn't complete
+    const idStr = String(id);
+    if (deletionTimeoutsRef.current[idStr]) {
+      clearTimeout(deletionTimeoutsRef.current[idStr]);
+    }
+
+    deletionTimeoutsRef.current[idStr] = setTimeout(() => {
+      setPendingDeletions((prev) => prev.filter((item) => item !== id));
+      delete deletionTimeoutsRef.current[idStr];
+    }, 500);
+
+    // Call the original onDelete function
+    try {
+      onDelete(id as number);
+    } catch (error) {
+      // If there's an error, we'll rely on the timeout to clear the pending state
+      console.error('Error deleting item:', error);
+    }
+  };
+
+  function showEditForm(item: BaseType) {
+    return (
+      <React.Fragment key={item.id}>
+        <tr>
+          <td>
+            <input
+              type="text"
+              id={heading.toLowerCase().replace(' ', '_') + '_name_edit'}
+              className="m-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              {...register('name', {
+                onChange: () => {
+                  trigger('name');
+                },
+              })}
+              disabled={isEditLoading}
+            />
+          </td>
+          <td>
+            <button
+              type="submit"
+              className="ml-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-500"
+              disabled={isEditLoading || !isDirty || !isValid}
+            >
+              {isEditLoading ? <Loader /> : 'Save'}
+            </button>
+          </td>
+        </tr>
+        <tr className="border-b border-gray-200">
+          <td>
+            {errors.name && (
+              <p className="px-2 mb-1 text-red-500 text-sm">
+                {errors.name.message}
+              </p>
+            )}
+          </td>
+        </tr>
+      </React.Fragment>
+    );
+  }
+
+  function renderRow(item: BaseType, index: number, isBeingDeleted: boolean) {
+    return (
+      <tr
+        className="bg-white even:bg-gray-50 border-b border-gray-200"
+        key={item.id}
+      >
+        <th
+          scope="row"
+          className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+        >
+          {item.name}
+        </th>
+        <td className="px-6 py-4 inline-flex">
+          <button
+            type="button"
+            className="font-medium text-blue-600 hover:underline disabled:text-gray-400 disabled:hover:no-underline"
+            onClick={() => onEditClick(index)}
+            disabled={isBeingDeleted}
+          >
+            {en.common.edit}
+          </button>
+          <button
+            type="button"
+            className="ml-2 font-medium text-red-600 hover:underline disabled:text-gray-400 disabled:hover:no-underline"
+            onClick={() => handleDelete(item.id)}
+            disabled={isBeingDeleted}
+          >
+            {en.common.delete}
+          </button>
+        </td>
+      </tr>
+    );
+  }
+
   return (
     <>
       {isPageLoading && <FullPageLoader />}
@@ -161,74 +308,11 @@ function BaseLayout({
             </thead>
             <tbody>
               {list.map((item, index) => {
-                return editRow > -1 && editRow === index ? (
-                  <React.Fragment key={item.id}>
-                    <tr>
-                      <td>
-                        <input
-                          type="text"
-                          id={
-                            heading.toLowerCase().replace(' ', '_') +
-                            '_name_edit'
-                          }
-                          className="m-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                          {...register('name', {
-                            onChange: () => {
-                              trigger('name');
-                            },
-                          })}
-                          disabled={isEditLoading}
-                        />
-                      </td>
-                      <td>
-                        <button
-                          type="submit"
-                          className="ml-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-500"
-                          disabled={isEditLoading || !isDirty || !isValid}
-                        >
-                          {isEditLoading ? <Loader /> : 'Save'}
-                        </button>
-                      </td>
-                    </tr>
-                    <tr className="border-b border-gray-200">
-                      <td>
-                        {errors.name && (
-                          <p className="px-2 mb-1 text-red-500 text-sm">
-                            {errors.name.message}
-                          </p>
-                        )}
-                      </td>
-                    </tr>
-                  </React.Fragment>
-                ) : (
-                  <tr
-                    className="bg-white even:bg-gray-50 border-b border-gray-200"
-                    key={item.id}
-                  >
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                    >
-                      {item.name}
-                    </th>
-                    <td className="px-6 py-4 inline-flex">
-                      <button
-                        type="button"
-                        className="font-medium text-blue-600 hover:underline"
-                        onClick={() => onEditClick(index)}
-                      >
-                        {en.common.edit}
-                      </button>
-                      <button
-                        type="button"
-                        className="ml-2 font-medium text-red-600 hover:underline"
-                        onClick={() => onDelete(item.id as number)}
-                      >
-                        {en.common.delete}
-                      </button>
-                    </td>
-                  </tr>
-                );
+                const isBeingDeleted = pendingDeletions.includes(item.id);
+                const isBeingEdited = editRow > -1 && editRow === index;
+                return isBeingEdited
+                  ? showEditForm(item)
+                  : renderRow(item, index, isBeingDeleted);
               })}
             </tbody>
           </table>
