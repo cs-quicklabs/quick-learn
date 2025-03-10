@@ -125,7 +125,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                         <select
                           {...field}
                           id={String(name)}
-                          className="appearance-none block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 capitalize"
+                          className="appearance-none focus:outline-none focus:border-2 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 capitalize"
                         >
                           <option value="" disabled hidden>
                             {en.common.select}
@@ -150,7 +150,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                             {...field}
                             id={String(name)}
                             type={showPassword ? 'text' : 'password'}
-                            className="block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
+                            className="block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:border-2 focus:outline-none focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
                             placeholder={placeholder}
                           />
                           <button
@@ -174,7 +174,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                           {...field}
                           id={String(name)}
                           type={type}
-                          className="block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
+                          className="block bg-gray-50 border focus:outline-none border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:border-2 focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
                           placeholder={placeholder}
                         />
                       )}

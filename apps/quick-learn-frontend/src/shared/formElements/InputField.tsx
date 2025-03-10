@@ -31,7 +31,7 @@ const InputField: FC<Props> = ({
   placeholder,
   errorMsg,
   disabled = false,
-  className = 'bg-gray-50 border focus:outline-hidden border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600  focus:ring-1 focus:border-primary-600 block w-full p-2.5',
+  className = 'bg-gray-50 border focus:outline-hidden border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5',
   id,
   options,
   height,
@@ -90,14 +90,14 @@ const InputField: FC<Props> = ({
     return (
       <div>
         <label
-          className="block mb-2 text-sm font-medium text-gray-900 focus:outline-none"
+          className="block mb-2 text-sm font-medium text-gray-900 focus:outline-none focus:border-2"
           htmlFor={`${id ?? ''}_select_${name}`}
         >
           {label}
         </label>
         <select
           id={`${id ?? ''}_select_${name}`}
-          className={`${className} focus:outline-none`}
+          className={`${className} focus:outline-none focus:border-2`}
           {...register(name)}
           defaultValue=""
         >
@@ -125,7 +125,7 @@ const InputField: FC<Props> = ({
         </label>
         <textarea
           id={`${id ?? ''}_textarea_${name}`}
-          className={`${className} focus:outline-hidden`}
+          className={`${className} focus:outline-hidden focus:border-2`}
           placeholder={placeholder}
           {...register(name)}
           style={{ height: `${height ?? 'auto'}`, width: `${width ?? 'auto'}` }}
@@ -150,7 +150,7 @@ const InputField: FC<Props> = ({
         <input
           id={`${id ?? ''}_input_${showPassword ? 'text' : 'password' + name}`}
           type={showPassword ? 'text' : 'password'}
-          className={`${className} pr-10  focus:outline-hidden ${
+          className={`${className} pr-10  focus:outline-hidden focus:border-2 ${
             errorMsg ? 'border-red-500' : ''
           } disabled:bg-gray-200`}
           placeholder={placeholder}
