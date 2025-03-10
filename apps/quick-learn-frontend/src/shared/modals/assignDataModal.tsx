@@ -174,7 +174,7 @@ const AssignDataModal: FC<Props> = ({
           <div className="flex items-start justify-between pt-4 px-4 rounded-t">
             <DialogTitle
               as="h3"
-              className="text-xl font-semibold text-gray-900 dark:text-gray-400"
+              className="text-xl font-semibold text-gray-900 "
             >
               {heading}
             </DialogTitle>
@@ -191,7 +191,7 @@ const AssignDataModal: FC<Props> = ({
           </div>
           <div className="mb-4 px-4 md:px-6 mt-3">
             <ul
-              className="flex flex-wrap -mb-px text-sm font-medium justify-between items-center border-b border-gray-200 dark:border-gray-700"
+              className="flex flex-wrap -mb-px text-sm font-medium justify-between items-center border-b border-gray-200 "
               id="myTab"
             >
               <li className="mr-1">
@@ -236,10 +236,10 @@ const AssignDataModal: FC<Props> = ({
                         <div className="border border-gray-300 rounded-lg">
                           <button
                             type="button"
-                            className="relative text-black bg-transparent px-3 py-4 cursor-pointer"
+                            className="relative text-black bg-transparent px-3 w-full flex justify-between py-4 cursor-pointer"
                             onClick={() => handleAccordionChange(ele.name)}
                           >
-                            <span className="flex-grow capitalize font-medium font-[16px]">
+                            <span className="grow capitalize font-medium">
                               {ele.name}
                             </span>
                             <svg
@@ -248,7 +248,7 @@ const AssignDataModal: FC<Props> = ({
                               viewBox="0 0 24 24"
                               strokeWidth={1.5}
                               stroke="currentColor"
-                              className={`size-6 absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-300 ${
+                              className={`size-6 transition-transform duration-300 ${
                                 isOpen ? 'rotate-180' : 'rotate-0'
                               }`}
                             >
@@ -271,12 +271,12 @@ const AssignDataModal: FC<Props> = ({
                                       id={item.name}
                                       type="checkbox"
                                       value={item.value}
-                                      className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
+                                      className="w-4 h-4 bg-gray-100 border-gray-300 rounded-sm text-primary-600 focus:ring-primary-500"
                                       {...register('selected')}
                                     />
                                     <label
                                       htmlFor={item.name}
-                                      className="flex items-center group gap-2 w-full ml-2 text-sm justify-between font-medium text-gray-900 dark:text-gray-300"
+                                      className="flex items-center group gap-2 w-full ml-2 text-sm justify-between font-medium text-gray-900 "
                                     >
                                       <span>
                                         {firstLetterCapital(item.name)}
@@ -327,10 +327,10 @@ const AssignDataModal: FC<Props> = ({
                 ) ??
                   null)}
             </div>
-            <div className="flex items-center p-6 space-x-4 rounded-b dark:border-gray-600">
+            <div className="flex items-center p-6 space-x-4 rounded-b ">
               <button
                 type="submit"
-                className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-500"
+                className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-500"
                 disabled={!isFormDirty || !isValid || isLoading}
               >
                 {isLoading ? (
@@ -345,7 +345,7 @@ const AssignDataModal: FC<Props> = ({
                 onClick={() => setShow(false)}
                 type="button"
                 disabled={isLoading}
-                className="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
+                className="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-hidden bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
               >
                 {en.common.cancel}
               </button>

@@ -105,7 +105,7 @@ function TeamMemberListing() {
 
   return (
     <div className="relative mx-4 md:mx-0">
-      <section className=" overflow-hidden bg-white shadow-md sm:rounded-sm">
+      <section className=" overflow-hidden bg-white shadow-md sm:rounded-xs">
         <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
           <div>
             <h1 className="mr-3 text-lg font-semibold">{en.teams.team}</h1>
@@ -118,7 +118,7 @@ function TeamMemberListing() {
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <input
               type="text"
-              className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block touch-none"
+              className="bg-gray-50 w-full sm:w-64 h-[36px] border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-hidden focus:ring-1 focus:ring-blue-500 focus:border-blue-500 block touch-none px-2"
               placeholder="Search Members"
               value={searchInputValue} // Use local state for input value
               onChange={handleSearchChange}
@@ -128,7 +128,7 @@ function TeamMemberListing() {
               <SuperLink
                 id="addNewMember"
                 href={`${RouteEnum.TEAM_EDIT}/add`}
-                className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
+                className="cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-sm bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300"
               >
                 {en.teams.addNewMember}
               </SuperLink>
@@ -148,7 +148,7 @@ function TeamMemberListing() {
                   type="radio"
                   onChange={() => filterByUserType(userType.code)}
                   checked={currentUserType === userType.code}
-                  className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-2 cursor-pointer"
+                  className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:outline-hidden focus:ring cursor-pointer"
                 />
                 <label
                   htmlFor={userType.code}

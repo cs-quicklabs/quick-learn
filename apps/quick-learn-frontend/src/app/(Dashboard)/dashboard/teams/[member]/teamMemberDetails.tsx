@@ -255,7 +255,7 @@ function TeamMemberDetails() {
               <Tooltip content="Edit User">
                 <SuperLink
                   href={`${RouteEnum.TEAM_EDIT}/${userId}`}
-                  className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                  className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 >
                   <PencilIcon className="h-4 w-4" />
                 </SuperLink>
@@ -266,7 +266,7 @@ function TeamMemberDetails() {
               <Tooltip content="Deactivate User">
                 <button
                   type="button"
-                  className={`text-black bg-gray-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center ${
+                  className={`text-black bg-gray-300 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center ${
                     member?.active === false
                       ? 'cursor-not-allowed'
                       : 'hover:bg-red-800 hover:text-white'
@@ -282,7 +282,7 @@ function TeamMemberDetails() {
             <Tooltip content="User Activities">
               <button
                 type="button"
-                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setUserActivityModal(!userActivityModal)}
               >
                 <CursorArrowRippleIcon className="h-4 w-4" />

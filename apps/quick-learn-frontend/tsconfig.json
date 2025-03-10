@@ -31,6 +31,6 @@
     "../../dist/apps/quick-learn-frontend/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
-  ],
+, "postcss.config.mjs"  ],
   "exclude": ["node_modules", "jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
 }
