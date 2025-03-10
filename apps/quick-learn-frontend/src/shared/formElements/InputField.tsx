@@ -4,6 +4,7 @@ import { OpenEyeIcon, ClosedEyeIcon } from '../components/UIElements';
 import { FieldValues, UseFormRegister } from 'react-hook-form';
 import { RouteEnum } from '@src/constants/route.enum';
 import { SuperLink } from '@src/utils/HiLink';
+import InputCheckbox from '../components/InputCheckbox';
 
 interface Props {
   label?: string;
@@ -30,7 +31,7 @@ const InputField: FC<Props> = ({
   placeholder,
   errorMsg,
   disabled = false,
-  className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:outline-hidden focus:ring-1 focus:border-primary-600 block w-full p-2.5',
+  className = 'bg-gray-50 border focus:outline-hidden border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600  focus:ring-1 focus:border-primary-600 block w-full p-2.5',
   id,
   options,
   height,
@@ -48,13 +49,14 @@ const InputField: FC<Props> = ({
   if (type === 'checkbox') {
     return (
       <div className="flex justify-between items-center">
-        <div className="flex items-start space-x-2">
-          <input
-            id={`${id ?? ''}_checkbox_${name}`}
-            type={type}
-            className="mt-0.5 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500"
-            {...register(name)}
-          />
+        <div className="flex items-center">
+          <div className="group grid size-4 grid-cols-1">
+            <InputCheckbox
+              id={`${id ?? ''}_checkbox_${name}`}
+              type={type}
+              {...register(name)}
+            />
+          </div>
           <div className="ml-3 text-sm">
             <label
               htmlFor={`${id ?? ''}_checkbox_${name}`}
@@ -88,14 +90,14 @@ const InputField: FC<Props> = ({
     return (
       <div>
         <label
-          className="block mb-2 text-sm font-medium text-gray-900"
+          className="block mb-2 text-sm font-medium text-gray-900 focus:outline-none"
           htmlFor={`${id ?? ''}_select_${name}`}
         >
           {label}
         </label>
         <select
           id={`${id ?? ''}_select_${name}`}
-          className={`${className}`}
+          className={`${className} focus:outline-none`}
           {...register(name)}
           defaultValue=""
         >
@@ -123,7 +125,7 @@ const InputField: FC<Props> = ({
         </label>
         <textarea
           id={`${id ?? ''}_textarea_${name}`}
-          className={`${className} `}
+          className={`${className} focus:outline-hidden`}
           placeholder={placeholder}
           {...register(name)}
           style={{ height: `${height ?? 'auto'}`, width: `${width ?? 'auto'}` }}
@@ -148,7 +150,7 @@ const InputField: FC<Props> = ({
         <input
           id={`${id ?? ''}_input_${showPassword ? 'text' : 'password' + name}`}
           type={showPassword ? 'text' : 'password'}
-          className={`${className} pr-10 ${
+          className={`${className} pr-10  focus:outline-hidden ${
             errorMsg ? 'border-red-500' : ''
           } disabled:bg-gray-200`}
           placeholder={placeholder}

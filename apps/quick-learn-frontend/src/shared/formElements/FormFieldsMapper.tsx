@@ -164,7 +164,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             <button
               className={`${
                 bigButton && 'w-full'
-              } py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-hidden bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200`}
+              } py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-hidden bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-1 focus:ring-gray-200`}
               onClick={() => cancelButton()}
               type="button"
               disabled={isLoading}
