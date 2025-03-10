@@ -6,7 +6,7 @@ export class MyLearningPaths {
   }
 
   getMyRoadmapsList() {
-    cy.get('.text-3xl').contains('My Roadmaps');
+    cy.get('h1').contains('My Roadmaps');
     cy.get('[tabindex="0"]').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
@@ -17,7 +17,7 @@ export class MyLearningPaths {
   }
 
   getCoursesList() {
-    cy.get('.text-3xl').contains('My Courses');
+    cy.get('h1').contains('My Courses');
     cy.get('.py-4').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
@@ -25,7 +25,7 @@ export class MyLearningPaths {
   }
 
   getLessonsList() {
-    cy.get('.text-3xl').contains('Lessons').should('be.visible');
+    cy.get('h1').contains('Lessons').should('be.visible');
     cy.get('.py-4').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
@@ -36,12 +36,12 @@ export class MyLearningPaths {
   }
 
   getMyCoursesList() {
-    cy.get('.text-3xl').contains('My Courses');
+    cy.get('h1').contains('My Courses');
     cy.get('[tabindex="0"]').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
     cy.get('[tabindex="0"]').eq(-1).click();
-    cy.get('.text-3xl').contains('Lessons').should('be.visible');
+    cy.get('h1').contains('Lessons').should('be.visible');
   }
 
   getMyLessonsList() {

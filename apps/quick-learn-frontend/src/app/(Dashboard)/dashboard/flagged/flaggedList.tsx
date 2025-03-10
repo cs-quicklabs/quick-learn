@@ -99,7 +99,7 @@ function FlaggedList() {
                 placeholder="Search Lessons"
                 value={search}
                 onChange={handleSearchChange}
-                id="search"
+                id="search_flagged_lesson"
               />
             </div>
           </div>

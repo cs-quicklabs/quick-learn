@@ -1,1 +1,1 @@
-export const getGreeting = () => cy.get('h1');
+export const getMenuBar = () => cy.get('[id="headerProfileImage"]').click();

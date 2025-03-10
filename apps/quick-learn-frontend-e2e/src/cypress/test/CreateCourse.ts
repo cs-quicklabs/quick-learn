@@ -106,10 +106,10 @@ export class CreateNewCourse {
 
   getAddOrMoveCoursesList() {
     cy.get('[id="brand-tab"]').contains('Select Roadmaps');
-    cy.get('[data-testid="flowbite-accordion-heading"]').each(($el, index) => {
+    cy.get('#content_list_item').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('[data-testid="flowbite-accordion-heading"]').eq(1).click();
+    cy.get('#content_list_item').eq(1).click();
   }
 
   EnsureExistingCoursesUnchecked() {

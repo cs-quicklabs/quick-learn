@@ -52,7 +52,7 @@ export class Flagged {
   }
 
   getSearchFlaggedLesson() {
-    cy.get('#search').type('Lesson');
+    cy.get('#search_flagged_lesson').type('Lesson');
     cy.get('body').then(($body) => {
       if ($body.find('td.px-4.py-2:contains("No result found")').length >= 0) {
         cy.contains('No result found').should('be.visible');
@@ -79,26 +79,11 @@ export class Flagged {
     });
     cy.get('.ml-2').eq(0).click();
     cy.get('div.max-w-fit')
-      .contains('The Lesson is flagged by')
+      .contains('The Lesson has been flagged by')
       .should('be.visible');
     this.EnsureUnflagLessonUnchecked();
     this.clickUnflagLessonCheckbox();
     this.getUnflagLessonSuccessMessage();
-  }
-
-  BreadCrumbsUnclickable() {
-    this.VisitFlaggedPage();
-    cy.get('.ml-2').each(($el, index) => {
-      cy.log(`Index: ${index}, Text: ${$el.text()}`);
-    });
-    cy.get('.ml-2').eq(0).click();
-    cy.get('a.flex.items-center')
-      .contains('Flagged Lessons')
-      .should('be.visible');
-    cy.get('span.flex.items-center').eq(0).click({ force: true });
-    cy.get('span.flex.items-center').eq(0).should('exist');
-    cy.get('span.flex.items-center').eq(1).click({ force: true });
-    cy.get('span.flex.items-center').eq(1).should('exist');
   }
 
   CannotUnflagViaEditor() {

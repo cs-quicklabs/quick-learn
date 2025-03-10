@@ -404,9 +404,6 @@ export class LessonService extends PaginationService<LessonEntity> {
     return await this.repository
       .createQueryBuilder('lesson')
       .leftJoinAndSelect('lesson.course', 'course')
-      .innerJoinAndSelect('lesson.created_by_user', 'created_by_user')
-      .leftJoin('course.roadmaps', 'roadmaps')
-      .innerJoin('roadmaps.users', 'users')
       .leftJoinAndSelect('lesson.flagged_lesson', 'flagged_lesson')
       .leftJoinAndSelect('flagged_lesson.user', 'flagged_by_user')
       .where('lesson.id = :id', { id: lessonId })
@@ -497,6 +494,8 @@ export class LessonService extends PaginationService<LessonEntity> {
       await this.fetchLesson(+lesson_id, +course_id),
       await this.updateDailyLessonToken(hashedToken, +course_id, +lesson_id),
     ]);
+
+    console.log('lessonDetail', lessonDetail, +lesson_id, +course_id);
 
     return {
       lesson_detail: lessonDetail,

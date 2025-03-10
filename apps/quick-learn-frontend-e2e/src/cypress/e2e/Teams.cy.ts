@@ -1,6 +1,6 @@
 import { LoginPage } from '../test/Login';
-import { TeamsPage } from '../test/Teams';
 import { validCredentials } from '../fixtures/credential';
+import { TeamsPage } from '../test/Teams';
 
 describe('Login Test', () => {
   const loginPage = new LoginPage();

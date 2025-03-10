@@ -266,6 +266,7 @@ const AssignDataModal: FC<Props> = ({
                                   <div
                                     key={item.value}
                                     className="flex items-center mb-2"
+                                    id="content_list_item"
                                   >
                                     <input
                                       id={item.name}
