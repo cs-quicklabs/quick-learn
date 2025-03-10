@@ -73,6 +73,13 @@ function ArchivedLessons() {
     const searchTerm = value || '';
     try {
       dispatch(setLessonsSearchValue(searchTerm));
+      dispatch(
+        fetchArchivedLessons({
+          page: 1,
+          search: searchTerm,
+          resetList: true,
+        }),
+      );
     } catch (err) {
       console.log(err);
       toast.error(en.common.somethingWentWrong);
