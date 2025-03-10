@@ -40,7 +40,18 @@ const Editor: FC<Props> = ({
   isUpdating = false,
   isAdd = false,
 }) => {
-  const quillRef = useRef<ReactQuillType>(null);
+  const quillRef = useRef<ReactQuillType | null>(null);
+
+  // Add this ref to store the last valu12
+  // Create a custom onChange handler
+  const handleChange = useCallback(
+    (newValue: string) => {
+      if (!!value && newValue !== value && setValue) {
+        setValue(newValue || '');
+      }
+    },
+    [setValue],
+  );
 
   const handleImageUpload = async (file: File) => {
     if (!checkSize(file)) return;
@@ -148,7 +159,7 @@ const Editor: FC<Props> = ({
           // @ts-expect-error - As forwardRef is not supported in react 19 and we have to wait for the next version of react-quill
           ref={quillRef}
           value={value}
-          onChange={setValue}
+          onChange={handleChange}
           theme="snow"
           modules={modules}
           formats={formats}
