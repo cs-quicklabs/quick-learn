@@ -271,38 +271,65 @@ function Lesson() {
     async (field: 'name' | 'content', value: string) => {
       if (lessonId === 'add') return;
 
+      // Get current server-side value for comparison
+      const currentValue =
+        field === 'content'
+          ? (lesson?.new_content ?? lesson?.content ?? '')
+          : (lesson?.name ?? '');
+
+      // Skip the update if values are the same
+      if (value.trim() === currentValue.trim()) {
+        setIsUpdating(false);
+        return;
+      }
+
       try {
-        setIsUpdating(true);
         const res = await updateLesson(lessonId, {
           [field]: value.trim(),
         });
         if (!res.success) throw res;
+
+        // Update the local lesson object to reflect the new value
+        if (field === 'content') {
+          setLesson((prev) =>
+            prev ? { ...prev, new_content: value.trim() } : prev,
+          );
+        } else {
+          setLesson((prev) => (prev ? { ...prev, name: value.trim() } : prev));
+        }
       } catch (err) {
         console.error(err);
       } finally {
         setIsUpdating(false);
       }
     },
-    [lessonId],
+    [lessonId, lesson],
   );
 
   // Optimize onChange handler
   const onChange = useCallback(
     (field: 'name' | 'content', value: string) => {
+      const currentValue =
+        field === 'content'
+          ? (lesson?.new_content ?? lesson?.content ?? '')
+          : (lesson?.name ?? '');
+
       form.setValue(field, value, {
         shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
       });
       // Clear existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (value !== currentValue && lessonId !== 'add') {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        setIsUpdating(true);
+        // Set new timeout for 2 seconds after user stops typing
+        timeoutRef.current = setTimeout(() => {
+          updateContent(field, value);
+        }, 2000);
       }
-      setIsUpdating(true);
-      // Set new timeout for 2 seconds after user stops typing
-      timeoutRef.current = setTimeout(() => {
-        updateContent(field, value);
-      }, 2000);
     },
     [form.setValue, updateContent],
   );
