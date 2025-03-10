@@ -223,6 +223,7 @@ function BaseLayout({
                         type="button"
                         className="ml-2 font-medium text-red-600 hover:underline"
                         onClick={() => onDelete(item.id as number)}
+                        disabled={isEditLoading}
                       >
                         {en.common.delete}
                       </button>
