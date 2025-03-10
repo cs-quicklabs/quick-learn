@@ -4,7 +4,7 @@ import { FullPageLoader, Loader } from '@src/shared/components/UIElements';
 import FormFieldsMapper from '@src/shared/formElements/FormFieldsMapper';
 import { FieldConfig } from '@src/shared/types/formTypes';
 import { noSpecialCharValidation } from '@src/utils/helpers';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { en } from '@src/constants/lang/en';
@@ -30,6 +30,11 @@ type Props = {
   onEdit: (id: number, data: EditSchemaType) => void;
   isPageLoading?: boolean;
 };
+
+// Object to track timeouts for each deletion ID
+interface DeletionTimeouts {
+  [key: string]: NodeJS.Timeout;
+}
 
 const addSchema = z.object({
   name: z
@@ -61,10 +66,51 @@ function BaseLayout({
 }: Props) {
   const [list, setList] = useState<BaseType[]>([]);
   const [editRow, setEditRow] = useState<number>(-1);
+  const [pendingDeletions, setPendingDeletions] = useState<
+    Array<number | string>
+  >([]);
+  const deletionTimeoutsRef = useRef<DeletionTimeouts>({});
 
   useEffect(() => {
     setList(data);
   }, [data]);
+
+  // Clear all timeouts on unmount
+  useEffect(() => {
+    return () => {
+      // Cleanup all timeouts when component unmounts
+      Object.values(deletionTimeoutsRef.current).forEach((timeout) => {
+        clearTimeout(timeout);
+      });
+    };
+  }, []);
+
+  // This effect will help in detecting when items have been deleted
+  useEffect(() => {
+    // Check if any pending deletion IDs are no longer in the data
+    if (pendingDeletions.length > 0) {
+      const currentIds = data.map((item) => item.id);
+      const completedDeletions = pendingDeletions.filter(
+        (id) => !currentIds.includes(id),
+      );
+
+      if (completedDeletions.length > 0) {
+        // Remove completed deletions from pending list
+        setPendingDeletions((prev) =>
+          prev.filter((id) => !completedDeletions.includes(id)),
+        );
+
+        // Clear timeouts for completed deletions
+        completedDeletions.forEach((id) => {
+          const idStr = String(id);
+          if (deletionTimeoutsRef.current[idStr]) {
+            clearTimeout(deletionTimeoutsRef.current[idStr]);
+            delete deletionTimeoutsRef.current[idStr];
+          }
+        });
+      }
+    }
+  }, [data, pendingDeletions]);
 
   const addFields: FieldConfig[] = [
     {
@@ -127,6 +173,31 @@ function BaseLayout({
     resetEdit();
   };
 
+  const handleDelete = (id: number | string) => {
+    // Add this ID to pending deletions
+    setPendingDeletions((prev) => [...prev, id]);
+
+    // Set a timeout to automatically clear this ID after 500ms
+    // This handles the case where an error occurs and the deletion doesn't complete
+    const idStr = String(id);
+    if (deletionTimeoutsRef.current[idStr]) {
+      clearTimeout(deletionTimeoutsRef.current[idStr]);
+    }
+
+    deletionTimeoutsRef.current[idStr] = setTimeout(() => {
+      setPendingDeletions((prev) => prev.filter((item) => item !== id));
+      delete deletionTimeoutsRef.current[idStr];
+    }, 500);
+
+    // Call the original onDelete function
+    try {
+      onDelete(id as number);
+    } catch (error) {
+      // If there's an error, we'll rely on the timeout to clear the pending state
+      console.error('Error deleting item:', error);
+    }
+  };
+
   return (
     <>
       {isPageLoading && <FullPageLoader />}
@@ -161,7 +232,10 @@ function BaseLayout({
             </thead>
             <tbody>
               {list.map((item, index) => {
-                return editRow > -1 && editRow === index ? (
+                const isBeingDeleted = pendingDeletions.includes(item.id);
+                const isBeingEdited = editRow > -1 && editRow === index;
+
+                return isBeingEdited ? (
                   <React.Fragment key={item.id}>
                     <tr>
                       <td>
@@ -214,16 +288,17 @@ function BaseLayout({
                     <td className="px-6 py-4 inline-flex">
                       <button
                         type="button"
-                        className="font-medium text-blue-600 hover:underline"
+                        className="font-medium text-blue-600 hover:underline disabled:text-gray-400 disabled:hover:no-underline"
                         onClick={() => onEditClick(index)}
+                        disabled={isBeingDeleted}
                       >
                         {en.common.edit}
                       </button>
                       <button
                         type="button"
-                        className="ml-2 font-medium text-red-600 hover:underline"
-                        onClick={() => onDelete(item.id as number)}
-                        disabled={isEditLoading}
+                        className="ml-2 font-medium text-red-600 hover:underline disabled:text-gray-400 disabled:hover:no-underline"
+                        onClick={() => handleDelete(item.id)}
+                        disabled={isBeingDeleted}
                       >
                         {en.common.delete}
                       </button>
