@@ -40,27 +40,14 @@ const Editor: FC<Props> = ({
   isUpdating = false,
   isAdd = false,
 }) => {
-  const quillRef = useRef<ReactQuillType>(null);
+  const quillRef = useRef<ReactQuillType | null>(null);
 
-  const initialRenderRef = useRef(true);
-  // Add this ref to store the last value
-  const lastValueRef = useRef(value);
-
+  // Add this ref to store the last valu12
   // Create a custom onChange handler
   const handleChange = useCallback(
     (newValue: string) => {
-      // If this is the initial render, don't trigger setValue
-      if (initialRenderRef.current) {
-        initialRenderRef.current = false;
-        lastValueRef.current = newValue;
-        return;
-      }
-
-      // Only call setValue if the value actually changed
-      // This prevents updates when ReactQuill normalizes content without user changes
-      if (newValue !== lastValueRef.current && setValue) {
-        lastValueRef.current = newValue;
-        setValue(newValue);
+      if (!!value && newValue !== value && setValue) {
+        setValue(newValue || '');
       }
     },
     [setValue],
@@ -130,10 +117,6 @@ const Editor: FC<Props> = ({
       document.body.style.backgroundColor = '';
     };
   }, []);
-
-  useEffect(() => {
-    lastValueRef.current = value;
-  }, [value]);
 
   const handleRefChange = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
