@@ -3,10 +3,11 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { CloseIcon, Loader } from '../components/UIElements';
+import { ChevronDownIcon, CloseIcon, Loader } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { TAssignModalMetadata } from '../types/contentRepository';
 import { firstLetterCapital } from '@src/utils/helpers';
+import InputCheckbox from '../components/InputCheckbox';
 
 interface Props {
   show: boolean;
@@ -236,28 +237,15 @@ const AssignDataModal: FC<Props> = ({
                         <div className="border border-gray-300 rounded-lg">
                           <button
                             type="button"
-                            className="relative text-black bg-transparent px-3 w-full flex justify-between py-4 cursor-pointer"
+                            className="relative text-black bg-transparent px-3 w-full flex justify-between py-4 cursor-pointer hover:bg-gray-100"
                             onClick={() => handleAccordionChange(ele.name)}
                           >
-                            <span className="grow capitalize font-medium">
+                            <span className=" capitalize font-medium">
                               {ele.name}
                             </span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className={`size-6 transition-transform duration-300 ${
-                                isOpen ? 'rotate-180' : 'rotate-0'
-                              }`}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                              />
-                            </svg>
+                            <ChevronDownIcon
+                              className={isOpen ? 'rotate-180' : 'rotate-0'}
+                            />
                           </button>
                           {isOpen && (
                             <div className="py-6 px-5">
@@ -268,13 +256,14 @@ const AssignDataModal: FC<Props> = ({
                                     className="flex items-center mb-2"
                                     id="content_list_item"
                                   >
-                                    <input
-                                      id={item.name}
-                                      type="checkbox"
-                                      value={item.value}
-                                      className="w-4 h-4 bg-gray-100 border-gray-300 rounded-sm text-primary-600 focus:ring-primary-500"
-                                      {...register('selected')}
-                                    />
+                                    <div className="group grid size-4 grid-cols-1">
+                                      <InputCheckbox
+                                        id={item.name}
+                                        value={item.value}
+                                        {...register('selected')}
+                                      />
+                                    </div>
+
                                     <label
                                       htmlFor={item.name}
                                       className="flex items-center group gap-2 w-full ml-2 text-sm justify-between font-medium text-gray-900 "
@@ -346,7 +335,7 @@ const AssignDataModal: FC<Props> = ({
                 onClick={() => setShow(false)}
                 type="button"
                 disabled={isLoading}
-                className="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-hidden bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
+                className="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-hidden bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-1 focus:ring-gray-200"
               >
                 {en.common.cancel}
               </button>

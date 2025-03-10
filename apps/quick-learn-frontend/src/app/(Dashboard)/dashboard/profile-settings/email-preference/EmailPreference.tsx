@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import EmailPreferenceSkeleton from './EmailPreferenceSkeleton';
 import { en } from '@src/constants/lang/en';
+import InputCheckbox from '@src/shared/components/InputCheckbox';
 
 function EmailPreference() {
   const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
@@ -62,14 +63,15 @@ function EmailPreference() {
       ) : (
         <div className="flex mt-6">
           <div className="flex items-center h-5">
-            <input
-              id="helper-checkbox"
-              aria-describedby="helper-checkbox-text"
-              type="checkbox"
-              checked={isEmailChecked}
-              onChange={handleChange}
-              className="appearance-none h-5 w-5 border border-gray-300 rounded-lg bg-white checked:bg-blue-500 checked:border-blue-500 focus:outline-hidden transition duration-100"
-            />
+            <div className="group grid size-4 grid-cols-1">
+              <InputCheckbox
+                id="helper-checkbox"
+                aria-describedby="helper-checkbox-text"
+                type="checkbox"
+                checked={isEmailChecked}
+                onChange={handleChange}
+              />
+            </div>
           </div>
           <div className="ms-2 text-sm">
             <label

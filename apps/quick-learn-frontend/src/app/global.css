@@ -129,6 +129,8 @@ input:-webkit-autofill:active {
   max-width: 85%;
 }
 
+
+
 .quill .ql-container .ql-editor a,
 .quill .ql-container .ql-editor p {
   font-size: 1.25rem;
@@ -167,6 +169,13 @@ input:-webkit-autofill:active {
   background-color: #eee;
   margin: 1rem auto;
 }
+
+.ql-snow .ql-editor .ql-code-block-container{
+  background-color: #ccc;
+  color:black
+}
+
+
 .quill .ql-container ul,
 .quill .ql-container ol {
   padding-left: 2.5rem;

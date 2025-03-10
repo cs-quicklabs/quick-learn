@@ -10,6 +10,7 @@ import { TLesson } from '../types/contentRepository';
 import { TBreadcrumb } from '../types/breadcrumbType';
 import { FlagIcon } from '@heroicons/react/24/outline';
 import dynamic from 'next/dynamic';
+import InputCheckbox from './InputCheckbox';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), {
   ssr: false,
@@ -83,9 +84,8 @@ const ApprovalCheckbox = memo(
     text?: string;
   }) => (
     <div className="flex items-center p-16 mb-16 w-full max-w-5xl justify-center mx-auto">
-      <input
+      <InputCheckbox
         id="default-checkbox"
-        type="checkbox"
         checked={value}
         onChange={() => setValue?.(true)}
         disabled={value}
@@ -180,7 +180,7 @@ const ViewLesson: FC<Props> = ({
         )}
 
         {setIsFlagged && (
-          <>
+          <div className="mx-4">
             <div className="mx-auto max-w-fit flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
               <div className="h-5 w-5">
                 <FlagIcon />
@@ -198,7 +198,7 @@ const ViewLesson: FC<Props> = ({
               setValue={setIsFlagged}
               text={en.approvals.unFlagThisLesson}
             />
-          </>
+          </div>
         )}
 
         {isPending && <PendingAlert />}
