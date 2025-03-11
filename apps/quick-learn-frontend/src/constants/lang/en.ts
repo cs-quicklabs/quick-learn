@@ -124,6 +124,7 @@ export const en = {
     assignToRoadmap: 'Move or add this course to another Roadmap',
     archiveCourse: 'Archive Course',
     allLesson: 'All Lessons',
+    archivedCourseBy: 'archived this course on',
   },
 
   /**

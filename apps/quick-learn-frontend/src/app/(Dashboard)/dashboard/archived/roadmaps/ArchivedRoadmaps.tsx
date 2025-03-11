@@ -18,6 +18,8 @@ import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
+import { RouteEnum } from '@src/constants/route.enum';
+import { useRouter } from 'next/navigation';
 
 function ArchivedRoadmaps() {
   const dispatch = useAppDispatch();
@@ -32,6 +34,7 @@ function ArchivedRoadmaps() {
 
   const [restoreId, setRestoreId] = useState<number | false>(false);
   const [deleteId, setDeleteId] = useState<number | false>(false);
+  const router = useRouter();
 
   const getNextRoadmaps = () => {
     if (!isLoading && hasMore) {
@@ -143,6 +146,9 @@ function ArchivedRoadmaps() {
                 deactivationDate={item.updated_at}
                 onClickDelete={() => setDeleteId(Number(item.id))}
                 onClickRestore={() => setRestoreId(Number(item.id))}
+                onClickNavigate={() => {
+                  router.push(`${RouteEnum.ARCHIVED_ROADMAPS}/${item.id}`);
+                }}
                 alternateButton
               />
             ))}
