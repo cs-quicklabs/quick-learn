@@ -11,6 +11,7 @@ interface Props {
   deactivatedBy: string;
   onClickRestore: () => void | null;
   onClickDelete: () => void | null;
+  onClickNavigate?: () => void;
   alternateButton?: boolean;
   isLoading?: boolean;
 }
@@ -43,6 +44,7 @@ const ArchivedCell: FC<Props> = ({
   deactivatedBy,
   onClickDelete,
   onClickRestore,
+  onClickNavigate,
   alternateButton,
   isLoading = false,
 }) => {
@@ -53,14 +55,17 @@ const ArchivedCell: FC<Props> = ({
   return (
     <div className="md:flex md:items-center p-4 bg-gray-100 rounded-lg border border-gray-100 mb-3 md:bg-transparent md:border-none md:mb-0">
       <div className="flex-1 min-w-0 mb-3 md:mb-0">
-        <div className="md:flex text-sm font-medium text-gray-600">
-          <p className="truncate first-letter:uppercase">{title}</p>
+        <button
+          onClick={onClickNavigate}
+          className="md:flex text-sm font-medium text-gray-600 hover:cursor-pointer hover:underline"
+        >
+          <p className="truncate first-letter:uppercase ">{title}</p>
           {subtitle && (
             <p className="md:ml-1 font-normal truncate text-gray-500 first-letter:uppercase">
               {subtitle}
             </p>
           )}
-        </div>
+        </button>
         <div className="mt-2">
           <div className="flex items-center text-sm text-gray-500">
             <CalenderIcon />
