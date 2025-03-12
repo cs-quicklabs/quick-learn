@@ -29,12 +29,6 @@ function RoadmapDetailsSkeleton() {
           <div className="h-4 bg-gray-200 rounded-sm w-80 mx-auto mb-4" />
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center justify-center gap-2 mt-2">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-10 w-10 bg-gray-200 rounded-full" />
-          ))}
-        </div>
       </div>
 
       {/* Courses Grid */}
