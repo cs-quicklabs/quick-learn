@@ -18,6 +18,8 @@ import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
+import { useRouter } from 'next/navigation';
+import { RouteEnum } from '@src/constants/route.enum';
 
 function InactiveUsers() {
   const dispatch = useAppDispatch();
@@ -32,6 +34,7 @@ function InactiveUsers() {
 
   const [restoreId, setRestoreId] = useState<number | false>(false);
   const [deleteId, setDeleteId] = useState<number | false>(false);
+  const router = useRouter();
 
   const getNextUsers = () => {
     if (!isLoading && hasMore) {
@@ -107,6 +110,9 @@ function InactiveUsers() {
             deactivationDate={item.updated_at}
             onClickDelete={() => setDeleteId(item.id)}
             onClickRestore={() => setRestoreId(item.id)}
+            onClickNavigate={() =>
+              router.push(`${RouteEnum.ARCHIVED_USERS}/${item.id}`)
+            }
             alternateButton
           />
         ))}

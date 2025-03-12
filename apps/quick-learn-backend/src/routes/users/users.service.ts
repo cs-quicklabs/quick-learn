@@ -359,7 +359,7 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     // Select specific fields
-    const selectFields = ['user'];
+    const selectFields = ['user', 'updated_by'];
 
     if (assignRoadmapRelation) {
       selectFields.push('assigned_roadmaps');

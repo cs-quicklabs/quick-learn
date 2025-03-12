@@ -24,7 +24,9 @@ const ViewArchivedLesson = () => {
   const [currlesson, setCurrLesson] = useState<TLesson>();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const defaultLinks = [{ name: 'Home', link: RouteEnum.ARCHIVED_LESSONS }];
+  const defaultLinks = [
+    { name: 'Archived Lesson', link: RouteEnum.ARCHIVED_LESSONS },
+  ];
 
   const links: TBreadcrumb[] = !currlesson
     ? defaultLinks
@@ -93,7 +95,7 @@ const ViewArchivedLesson = () => {
           isLoading={loading}
         />
       </div>
-      <ViewLesson lesson={currlesson} links={links} disableLink={true} />
+      <ViewLesson lesson={currlesson} links={links} />
     </div>
   );
 };
