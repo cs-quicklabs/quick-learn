@@ -196,7 +196,7 @@ function CourseDetails() {
           </p>
           <p className="text-sm text-gray-500 text-center">
             {courseData.is_community_available
-              ? 'This course is community available'
+              ? 'This course is available to the community '
               : ''}
           </p>
           <p className="text-sm text-gray-500 text-center">
