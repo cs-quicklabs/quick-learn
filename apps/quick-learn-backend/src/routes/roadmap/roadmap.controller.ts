@@ -83,7 +83,7 @@ export class RoadmapController {
     @Query('courseId') courseId?: string,
     @Query('archived') archived?: string,
   ) {
-    console.log(param.id , archived)
+    console.log(param.id, archived);
     const isArchived = archived === 'true';
     const roadmaps =
       await this.service.getRoadmapDetailsWithCourseAndLessonsCount(

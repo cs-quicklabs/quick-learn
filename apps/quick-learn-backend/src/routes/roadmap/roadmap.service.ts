@@ -228,12 +228,14 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   async getRoadmapDetailsWithCourseAndLessonsCount(
     roadmapId: number,
     courseId?: number,
-    isArchived: boolean = false,
+    isArchived = false,
   ): Promise<RoadmapEntity> {
     const queryBuilder = this.repository
       .createQueryBuilder('roadmap')
       .where('roadmap.id = :id', { id: roadmapId })
-      .andWhere('roadmap.archived = :archivedRoadmap', { archivedRoadmap: isArchived })
+      .andWhere('roadmap.archived = :archivedRoadmap', {
+        archivedRoadmap: isArchived,
+      })
       .leftJoin('roadmap.users', 'users')
       .loadRelationCountAndMap(
         'roadmap.userCount',

@@ -92,7 +92,7 @@ export class CourseController {
   async getRoadmapDetails(@Param() param: CourseParamDto) {
     const data = await this.service.getCourseDetails(
       { id: +param.id },
-      ['lessons', 'lessons.created_by_user','updated_by'],
+      ['lessons', 'lessons.created_by_user', 'updated_by'],
       { countParticipant: true },
     );
     return new SuccessResponse(en.GetCourseDetails, data);
