@@ -13,7 +13,11 @@ import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
 import { TUser } from '@src/shared/types/userTypes';
 import { activateArchivedUser, deleteArchivedUser } from '@src/store/features';
 import { useAppDispatch } from '@src/store/hooks';
-import { calculateRoadmapProgress, getInitials } from '@src/utils/helpers';
+import {
+  calculateRoadmapProgress,
+  getInitials,
+  getUserType,
+} from '@src/utils/helpers';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -23,6 +27,11 @@ import ProgressCard from '@src/shared/components/ProgressCard';
 import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import ConformationModal from '@src/shared/modals/conformationModal';
+import {
+  CalendarDateRangeIcon,
+  EnvelopeIcon,
+  UserIcon,
+} from '@heroicons/react/24/outline';
 
 const ViewArchivedUser = () => {
   const { user } = useParams<{ user: string }>();
@@ -137,30 +146,41 @@ const ViewArchivedUser = () => {
               <div className="w-20 h-20 mb-2 rounded-full flex items-center justify-center bg-gray-400">
                 {renderProfileIcon()}
               </div>
-              <h2 className="text-xl font-bold mb-2">
+              <h2 className="text-xl font-bold mb-2 capitalize">
                 {archivedUser.display_name}
               </h2>
-              <p className="text-gray-700">
-                Email: <span className="font-medium">{archivedUser.email}</span>
+              <p className=" flex text-gray-700 gap-2 items-center">
+                <EnvelopeIcon height={20} width={20} />
+                <span className="font-medium">{archivedUser.email}</span>
               </p>
-              <p className="text-gray-700">
-                Name:{' '}
-                <span className="font-medium">{`${archivedUser.first_name} ${archivedUser.last_name}`}</span>
-              </p>
-              <p className="text-gray-700">
-                Active:{' '}
-                <span className="font-medium">
-                  {archivedUser.active ? 'Yes' : 'No'}
+              <p className="text-gray-700 flex gap-2">
+                <UserIcon height={20} width={20} />
+                User Type:{' '}
+                <span className="font-medium capitalize">
+                  {getUserType(archivedUser.user_type_id)}
                 </span>
               </p>
-              <p className="text-gray-700">
+              <p className="text-gray-700 flex gap-2">
+                <CalendarDateRangeIcon height={20} width={20} />
+                Last Login:{' '}
+                <span className="font-medium ">
+                  {format(
+                    archivedUser.last_login_timestamp,
+                    DateFormats.fullDate,
+                  )}
+                </span>
+              </p>
+              <p className="text-gray-700 flex gap-2">
+                <CalendarDateRangeIcon height={20} width={20} />
                 Created At:{' '}
                 <span className="font-medium">
                   {format(archivedUser.created_at, DateFormats.fullDate)}
                 </span>
               </p>
-              <p className="text-gray-700">
-                Updated At:{' '}
+
+              <p className="text-gray-700 flex gap-2">
+                <CalendarDateRangeIcon height={20} width={20} />
+                Archived on:{' '}
                 <span className="font-medium">
                   {format(archivedUser.updated_at, DateFormats.fullDate)}
                 </span>
