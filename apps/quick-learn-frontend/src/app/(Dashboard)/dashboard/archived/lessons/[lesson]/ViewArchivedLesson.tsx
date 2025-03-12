@@ -5,6 +5,7 @@ import { RouteEnum } from '@src/constants/route.enum';
 import ArchivedDialogbox from '@src/shared/components/ArchivedDialogbox';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import ViewLesson from '@src/shared/components/ViewLesson';
+import ConformationModal from '@src/shared/modals/conformationModal';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson } from '@src/shared/types/contentRepository';
 import {
@@ -20,7 +21,9 @@ import { toast } from 'react-toastify';
 const ViewArchivedLesson = () => {
   const { lesson } = useParams<{ lesson: string }>();
   const id = lesson;
-  const [loading, setLoading] = useState(true);
+  const [confirmationData, setConfirmationData] = useState<{
+    type: 'restore' | 'delete';
+  } | null>(null);
   const [currlesson, setCurrLesson] = useState<TLesson>();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -44,18 +47,15 @@ const ViewArchivedLesson = () => {
 
   useEffect(() => {
     if (isNaN(+id)) return;
-    setLoading(true);
     getLessonDetails(id)
       .then((res) => setCurrLesson(res.data))
       .catch((err) => {
         showApiErrorInToast(err);
         router.push(RouteEnum.ARCHIVED_LESSONS);
-      })
-      .finally(() => setLoading(false));
+      });
   }, [id]);
 
   const restoreLesson = async () => {
-    setLoading(true);
     try {
       await dispatch(activateArchivedLesson({ id: +id })).unwrap();
 
@@ -65,12 +65,10 @@ const ViewArchivedLesson = () => {
       toast.error(en.common.somethingWentWrong);
     } finally {
       router.push(RouteEnum.ARCHIVED_LESSONS);
-      setLoading(false);
     }
   };
 
   const handleDeleteLesson = async () => {
-    setLoading(true);
     try {
       await dispatch(deleteArchivedLesson({ id: +id })).unwrap();
       toast.success(en.archivedSection.lessonDeletedSuccess);
@@ -79,20 +77,53 @@ const ViewArchivedLesson = () => {
       toast.error(en.common.somethingWentWrong);
     } finally {
       router.push(RouteEnum.ARCHIVED_LESSONS);
-      setLoading(false);
+    }
+  };
+
+  const handleConfirmation = async () => {
+    if (!confirmationData) return;
+
+    try {
+      if (confirmationData.type === 'restore') {
+        await dispatch(activateArchivedLesson({ id: +id })).unwrap();
+        toast.success(en.archivedSection.lessonRestoredSuccess);
+      } else {
+        await dispatch(deleteArchivedLesson({ id: +id })).unwrap();
+        toast.success(en.archivedSection.lessonDeletedSuccess);
+      }
+    } catch (error) {
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      router.push(RouteEnum.ARCHIVED_LESSONS);
+      setConfirmationData(null);
     }
   };
 
   if (!currlesson) return null;
   return (
     <div>
-      {loading && <FullPageLoader />}
+      <ConformationModal
+        title={
+          confirmationData?.type === 'restore'
+            ? en.archivedSection.confirmActivateLesson
+            : en.archivedSection.confirmDeleteLesson
+        }
+        subTitle={
+          confirmationData?.type === 'restore'
+            ? en.archivedSection.confirmActivateLessonSubtext
+            : en.archivedSection.confirmDeleteLessonSubtext
+        }
+        open={Boolean(confirmationData)}
+        setOpen={() => setConfirmationData(null)}
+        onConfirm={handleConfirmation}
+      />
       <div className="flex justify-center mb-4">
         <ArchivedDialogbox
           type="lesson"
-          onClickRestore={restoreLesson}
-          onClickDelete={handleDeleteLesson}
-          isLoading={loading}
+          archivedAt={currlesson.updated_at}
+          archivedBy={currlesson?.updated_by?.display_name ?? 'SUPER ADMIN'}
+          onRestore={() => setConfirmationData({ type: 'restore' })}
+          onDelete={() => setConfirmationData({ type: 'delete' })}
         />
       </div>
       <ViewLesson lesson={currlesson} links={links} />
