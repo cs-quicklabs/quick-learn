@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import Sidebar, { TNavLink } from '@src/shared/components/Sidebar';
 import { RouteEnum } from '@src/constants/route.enum';
 import { ChildrenProp } from '@src/shared/interfaces/propInterface';
@@ -36,12 +36,6 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
       icon: <DocumentTextIcon />,
     },
   ];
-  useEffect(() => {
-    document.body.style.backgroundColor = 'white';
-    return () => {
-      document.body.style.backgroundColor = '';
-    };
-  }, []);
   return (
     <div>
       {!hasParams ? (
@@ -51,14 +45,12 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
               <Sidebar navLinks={navLinks} />
             </aside>
             <main className="max-w-[45rem] px-4 pb-12 lg:col-span-8">
-              <div className="overflow-hidden bg-white">{children}</div>
+              <div className="overflow-hidden">{children}</div>
             </main>
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden bg-white max-h-full pb-4 ">
-          {children}
-        </div>
+        <div className="overflow-hidden max-h-full pb-4 ">{children}</div>
       )}
     </div>
   );

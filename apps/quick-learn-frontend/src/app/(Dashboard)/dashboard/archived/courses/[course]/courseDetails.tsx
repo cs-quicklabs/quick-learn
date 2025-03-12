@@ -14,10 +14,8 @@ import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TCourse } from '@src/shared/types/contentRepository';
 import { useSelector } from 'react-redux';
 import { selectAllCourses } from '@src/store/features/roadmapsSlice';
-
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
-
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CourseDetailsSkeleton from './courseDetailSkeleton';
@@ -287,7 +285,6 @@ function CourseDetails() {
                       date: format(created_at, DateFormats.shortDate),
                     }}
                     stats={!approved ? en.lesson.pendingApproval : undefined}
-                    className="bg-gray-400"
                     showWarning={!approved}
                   />
                 ),
