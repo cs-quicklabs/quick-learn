@@ -31,7 +31,6 @@ function CourseDetailsSkeleton() {
         <div className="mt-1 text-center">
           <div className="h-4 bg-gray-200 rounded-sm w-48 mx-auto mb-4" />
         </div>
-
       </div>
 
       {/* Lessons Grid */}
