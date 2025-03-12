@@ -1,9 +1,4 @@
 'use client';
-import {
-  ArrowRightEndOnRectangleIcon,
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
 import { getRoadmap } from '@src/apiServices/contentRepositoryService';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
@@ -21,22 +16,32 @@ import {
 import { AppDispatch } from '@src/store/store';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
-import Tooltip from '@src/shared/components/Tooltip';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import RoadmapDetailsSkeleton from './roadmapDetailsSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { AxiosErrorObject } from '@src/apiServices/axios';
+import ArchivedDialogbox from '@src/shared/components/ArchivedDialogBox';
+import ConformationModal from '@src/shared/modals/conformationModal';
+import {
+  activateArchivedRoadmap,
+  deleteArchivedRoadmap,
+} from '@src/store/features';
+import { toast } from 'react-toastify';
 
 const defaultlinks: TBreadcrumb[] = [
-  { name: en.contentRepository.contentRepository, link: RouteEnum.CONTENT },
+  {
+    name: en.contentRepository.archiveRoadmap,
+    link: RouteEnum.ARCHIVED_ROADMAPS,
+  },
 ];
 
 function RoadmapDetails() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { roadmap: roadmapId } = useParams<{ roadmap: string }>();
-  console.log(roadmapId);
+  const [restoreId, setRestoreId] = useState<number | false>(false);
+  const [deleteId, setDeleteId] = useState<number | false>(false);
 
   // Get roadmap from store
   const roadmapFromStore = useSelector(
@@ -62,10 +67,36 @@ function RoadmapDetails() {
     return defaultlinks;
   });
 
+  const handleDeleteRoadmap = async (id: number) => {
+    try {
+      await dispatch(deleteArchivedRoadmap({ id })).unwrap();
+      toast.success(en.archivedSection.roadmapDeletedSuccess);
+      router.push(RouteEnum.ARCHIVED_ROADMAPS);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setDeleteId(false);
+    }
+  };
+
+  const restoreRoadmap = async (id: number) => {
+    try {
+      await dispatch(activateArchivedRoadmap({ id })).unwrap();
+      toast.success(en.archivedSection.roadmapRestoredSuccess);
+      router.push(RouteEnum.ARCHIVED_ROADMAPS);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setRestoreId(false);
+    }
+  };
+
   useEffect(() => {
     const fetchRoadmap = async () => {
       try {
-        const res = await getRoadmap(roadmapId);
+        const res = await getRoadmap(roadmapId, undefined, true);
         const fetchedRoadmap = res.data;
         setRoadmapData(fetchedRoadmap);
         setCourses(fetchedRoadmap.courses || []);
@@ -102,6 +133,39 @@ function RoadmapDetails() {
 
   return (
     <>
+      <ConformationModal
+        title={
+          restoreId
+            ? en.archivedSection.confirmActivateRoadmap
+            : en.archivedSection.confirmDeleteRoadmap
+        }
+        subTitle={
+          restoreId
+            ? en.archivedSection.confirmActivateRoadmapSubtext
+            : en.archivedSection.confirmDeleteRoadmapSubtext
+        }
+        open={Boolean(restoreId || deleteId)}
+        //@ts-expect-error will never be 'true'
+        setOpen={restoreId ? setRestoreId : setDeleteId}
+        onConfirm={() =>
+          restoreId
+            ? restoreRoadmap(restoreId)
+            : handleDeleteRoadmap(deleteId as number)
+        }
+      />
+      <div className="flex flex-col items-center">
+        <ArchivedDialogbox
+          type="Roadmap"
+          archivedBy={
+            roadmapData.updated_by
+              ? `${roadmapData.updated_by.first_name} ${roadmapData.updated_by.last_name}`
+              : 'Unknown'
+          }
+          archivedAt={roadmapData.updated_at}
+          onRestore={() => setRestoreId(parseInt(roadmapId, 10))} // Show confirmation modal for restore
+          onDelete={() => setDeleteId(parseInt(roadmapId, 10))}
+        />
+      </div>
       <Breadcrumb links={links} />
       <div className="container mx-auto px-4">
         {/* Roadmap Header */}
@@ -120,6 +184,9 @@ function RoadmapDetails() {
               format(roadmapData.created_at, DateFormats.shortDate)}
           </p>
           <p className="text-sm text-gray-500 text-center">
+            {roadmapData.description}
+          </p>
+          <p className="text-sm text-gray-500 text-center">
             ({roadmapData.courses?.length ?? 0} {en.contentRepository.courses},
             &nbsp;
             {roadmapData.courses?.reduce(
@@ -129,37 +196,6 @@ function RoadmapDetails() {
             {en.common.lessons}, &nbsp;
             {roadmapData.userCount ?? 0} {en.common.participants})
           </p>
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <Tooltip content={en.contentRepository.editRoadmap}>
-              <button
-                type="button"
-                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-              >
-                <PencilIcon className="h-4 w-4" />
-              </button>
-            </Tooltip>
-
-            <Tooltip content={en.contentRepository.addOnAlreadyExistingCourse}>
-              <button
-                type="button"
-                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-              >
-                <ArrowRightEndOnRectangleIcon className="h-4 w-4" />
-              </button>
-            </Tooltip>
-
-            <Tooltip content={en.contentRepository.archiveRoadmap}>
-              <button
-                id="archiveRoadmap"
-                type="button"
-                className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-              >
-                <TrashIcon className="h-4 w-4" />
-              </button>
-            </Tooltip>
-          </div>
         </div>
 
         {/* Courses Section */}
@@ -182,7 +218,6 @@ function RoadmapDetails() {
                   title={item.name}
                   description={item.description}
                   stats={`${item.lessons_count || 0} ${en.common.lessons}`}
-                  link={`${RouteEnum.CONTENT}/${roadmapId}/${item.id}`}
                 />
               ))}
             </div>

@@ -1,10 +1,10 @@
 import React from 'react';
 import RoadmapDetails from './roadmapDetail';
 
-// export const metadata = {
-//   title: 'Edit Roadmap • Quick Learn',
-//   description: 'Edit roadmap quick learn',
-// };
+export const metadata = {
+  title: 'Archived Roadmap • Quick Learn',
+  description: 'Archived roadmap quick learn',
+};
 
 function Page() {
   return <RoadmapDetails />;

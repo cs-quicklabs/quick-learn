@@ -228,11 +228,12 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   async getRoadmapDetailsWithCourseAndLessonsCount(
     roadmapId: number,
     courseId?: number,
+    isArchived: boolean = false,
   ): Promise<RoadmapEntity> {
     const queryBuilder = this.repository
       .createQueryBuilder('roadmap')
       .where('roadmap.id = :id', { id: roadmapId })
-      .andWhere('roadmap.archived = :archived', { archived: false })
+      .andWhere('roadmap.archived = :archivedRoadmap', { archivedRoadmap: isArchived })
       .leftJoin('roadmap.users', 'users')
       .loadRelationCountAndMap(
         'roadmap.userCount',
@@ -244,10 +245,11 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       .leftJoinAndSelect(
         'roadmap.courses',
         'courses',
-        'courses.archived = :archived',
-        { archived: false },
+        'courses.archived = :archivedCourse',
+        { archivedCourse: false },
       )
-      .leftJoinAndSelect('roadmap.created_by', 'created_by');
+      .leftJoinAndSelect('roadmap.created_by', 'created_by')
+      .leftJoinAndSelect('roadmap.updated_by', 'updated_by');
 
     if (courseId) {
       queryBuilder.andWhere('courses.id = :courseId', { courseId });
@@ -262,8 +264,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         (qb) =>
           qb.andWhere('lessons.archived = :archived', { archived: false }),
       )
-      .orderBy('courses.created_at', 'DESC')
-      .addOrderBy('roadmap.created_at', 'DESC');
+      .orderBy('courses.created_at', 'DESC');
 
     const roadmap = await queryBuilder.getOne();
 

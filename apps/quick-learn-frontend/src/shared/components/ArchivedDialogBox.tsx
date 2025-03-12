@@ -4,19 +4,17 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { format } from 'date-fns';
 
 interface ArchivedDialogboxProps {
-  title: string;
+  type: string;
   archivedBy: string;
   archivedAt: string;
-  course: string;
   onRestore: () => void; // Added handler for restore
   onDelete: () => void; // Added handler for delete
 }
 
 export default function ArchivedDialogbox({
-  title,
+  type,
   archivedBy,
   archivedAt,
-  course,
   onRestore,
   onDelete,
 }: ArchivedDialogboxProps) {
@@ -30,9 +28,9 @@ export default function ArchivedDialogbox({
           />
         </div>
         <div className=" text-center sm:mt-0 sm:ml-4 sm:text-left">
-          <h3 className="text-lg font-medium">{title}</h3>
+          <h3 className="text-lg font-medium">Archived {type}</h3>
           <div className="mt-2 mb-4 text-sm">
-            {`This ${course} has been archived by ${archivedBy} on ${format(archivedAt, DateFormats.shortDate)}.
+            {`This ${type} has been archived by ${archivedBy} on ${format(archivedAt, DateFormats.shortDate)}.
             This is no longer visible to users but can be restored at any time.`}
           </div>
         </div>
@@ -43,7 +41,7 @@ export default function ArchivedDialogbox({
           onClick={onRestore}
           className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-md text-xs px-3 py-1.5 me-2 text-center inline-flex items-center "
         >
-          Restore {course}
+          Restore {type}
         </button>
         <button
           type="button"

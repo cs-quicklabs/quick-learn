@@ -1,9 +1,4 @@
 'use client';
-import {
-  ArrowRightEndOnRectangleIcon,
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
 import { getCourse } from '@src/apiServices/contentRepositoryService';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
@@ -61,13 +56,7 @@ function CourseDetails() {
     try {
       await dispatch(deleteArchivedCourse({ id: parseInt(id, 10) })).unwrap();
       toast.success(en.archivedSection.courseDeleted);
-
-      // Force navigation with window.location instead of router
-      if (roadmapId) {
-        router.push(`${RouteEnum.ARCHIVED_COURSES}/${roadmapId}`);
-      } else {
-        router.push(RouteEnum.ARCHIVED_COURSES);
-      }
+      router.push(RouteEnum.ARCHIVED_COURSES);
     } catch (error) {
       console.log(error);
       toast.error(en.common.somethingWentWrong);
@@ -80,13 +69,7 @@ function CourseDetails() {
     try {
       await dispatch(activateArchivedCourse({ id: parseInt(id, 10) })).unwrap();
       toast.success(en.archivedSection.courseRestored);
-
-      // Force navigation with window.location instead of router
-      if (roadmapId) {
-        router.push(`${RouteEnum.ARCHIVED_COURSES}/${roadmapId}`);
-      } else {
-        router.push(RouteEnum.ARCHIVED_COURSES);
-      }
+      router.push(RouteEnum.ARCHIVED_COURSES);
     } catch (error) {
       console.log(error);
       toast.error(en.common.somethingWentWrong);
@@ -179,14 +162,13 @@ function CourseDetails() {
       />
       <div className="flex flex-col items-center">
         <ArchivedDialogbox
-          title="Archived Course"
+          type="Course"
           archivedBy={
             courseData.updated_by
               ? `${courseData.updated_by.first_name} ${courseData.updated_by.last_name}`
               : 'unknown'
           }
           archivedAt={courseData.updated_at}
-          course="Course"
           onRestore={() => setRestoreId(courseId)} // Show confirmation modal for restore
           onDelete={() => setDeleteId(courseId)}
         />
@@ -210,43 +192,17 @@ function CourseDetails() {
               format(courseData.created_at, DateFormats.shortDate)}
           </p>
           <p className="text-sm text-gray-500 text-center">
-            <span className="capitalize">
-              {courseData.updated_by
-                ? `${courseData.updated_by.first_name} ${courseData.updated_by.last_name}`
-                : 'Admin'}
-            </span>
-            &nbsp;{en.contentRepository.archivedCourseBy}&nbsp;
-            {courseData.updated_at &&
-              format(courseData.updated_at, DateFormats.shortDate)}
+            {courseData.description}
+          </p>
+          <p className="text-sm text-gray-500 text-center">
+            {courseData.is_community_available
+              ? 'This course is community available'
+              : ''}
           </p>
           <p className="text-sm text-gray-500 text-center">
             ({courseData.lessons?.length ?? 0} {en.common.lessons}, &nbsp;
             {courseData.userCount ?? 0} {en.common.participants})
           </p>
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <button
-              type="button"
-              className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-            >
-              <PencilIcon className="h-4 w-4" />
-            </button>
-
-            <button
-              type="button"
-              className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-            >
-              <ArrowRightEndOnRectangleIcon className="h-4 w-4" />
-            </button>
-
-            <button
-              type="button"
-              className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-            >
-              <TrashIcon className="h-4 w-4" />
-            </button>
-          </div>
         </div>
 
         {/* Lessons Section */}

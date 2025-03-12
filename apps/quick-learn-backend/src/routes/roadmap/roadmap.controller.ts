@@ -81,11 +81,15 @@ export class RoadmapController {
   async getRoadmapDetails(
     @Param() param: RoadmapParamDto,
     @Query('courseId') courseId?: string,
+    @Query('archived') archived?: string,
   ) {
+    console.log(param.id , archived)
+    const isArchived = archived === 'true';
     const roadmaps =
       await this.service.getRoadmapDetailsWithCourseAndLessonsCount(
         +param.id,
         courseId ? +courseId : undefined,
+        isArchived,
       );
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
