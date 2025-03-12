@@ -19,8 +19,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 const ViewArchivedLesson = () => {
-  const { lesson } = useParams<{ lesson: string }>();
-  const id = lesson;
+  const { lesson: id } = useParams<{ lesson: string }>();
   const [confirmationData, setConfirmationData] = useState<{
     type: 'restore' | 'delete';
   } | null>(null);
@@ -53,32 +52,8 @@ const ViewArchivedLesson = () => {
         showApiErrorInToast(err);
         router.push(RouteEnum.ARCHIVED_LESSONS);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
-  const restoreLesson = async () => {
-    try {
-      await dispatch(activateArchivedLesson({ id: +id })).unwrap();
-
-      toast.success(en.archivedSection.lessonRestoredSuccess);
-    } catch (error) {
-      console.log(error);
-      toast.error(en.common.somethingWentWrong);
-    } finally {
-      router.push(RouteEnum.ARCHIVED_LESSONS);
-    }
-  };
-
-  const handleDeleteLesson = async () => {
-    try {
-      await dispatch(deleteArchivedLesson({ id: +id })).unwrap();
-      toast.success(en.archivedSection.lessonDeletedSuccess);
-    } catch (error) {
-      console.log(error);
-      toast.error(en.common.somethingWentWrong);
-    } finally {
-      router.push(RouteEnum.ARCHIVED_LESSONS);
-    }
-  };
 
   const handleConfirmation = async () => {
     if (!confirmationData) return;
@@ -92,6 +67,7 @@ const ViewArchivedLesson = () => {
         toast.success(en.archivedSection.lessonDeletedSuccess);
       }
     } catch (error) {
+      console.log(error);
       toast.error(en.common.somethingWentWrong);
     } finally {
       router.push(RouteEnum.ARCHIVED_LESSONS);
@@ -99,7 +75,7 @@ const ViewArchivedLesson = () => {
     }
   };
 
-  if (!currlesson) return null;
+  if (!currlesson) return <FullPageLoader />;
   return (
     <div>
       <ConformationModal

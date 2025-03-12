@@ -1,12 +1,8 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogPanel } from '@headlessui/react';
-import { CloseIcon, ReadFileIcon } from '../components/UIElements';
-import { format, subMonths } from 'date-fns';
-import { DateFormats } from '@src/constants/dateFormats';
-import { en } from '@src/constants/lang/en';
+import { CloseIcon } from '../components/UIElements';
 import { TUser } from '../types/userTypes';
 import { TUserDailyProgress } from '../types/contentRepository';
-import Tooltip from '../components/Tooltip';
 import ActivityGraphWrapper from '../components/ActivityGraphWrapper';
 
 interface Props {
@@ -71,11 +67,6 @@ export interface ActivityList {
   token?: string;
 }
 
-const getColorClass = (status: string | undefined): string => {
-  if (!status) return 'text-green-500';
-  return status === 'COMPLETED' ? 'text-blue-500' : 'text-red-500';
-};
-
 const ActivityGraph: React.FC<Props> = ({
   userProgressData,
   userDailyProgressData,
@@ -85,7 +76,6 @@ const ActivityGraph: React.FC<Props> = ({
   isDialog = true,
 }: Props) => {
   const [userProgressArray, setUserProgressArray] = useState<OutputData[]>([]);
-  const [selectedTab, setSelectedTab] = useState(0);
   const [userActivityList, setUserActivityList] = useState<ActivityList[]>([]);
 
   const getDateCounts = (courses: Course[]): DateCount[] => {
@@ -146,15 +136,6 @@ const ActivityGraph: React.FC<Props> = ({
 
     return result;
   };
-
-  function getLastSixMonths() {
-    const months = [];
-    for (let i = 0; i < 6; i += 1) {
-      const date = subMonths(new Date(), i);
-      months.unshift(format(date, 'MMM'));
-    }
-    return months;
-  }
 
   const mergeArrays = (
     array1: Lesson[],

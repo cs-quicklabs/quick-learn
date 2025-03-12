@@ -32,6 +32,7 @@ import {
   EnvelopeIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
+import SkeletonArchiveLoader from './SkeletonArhiveUser';
 
 const ViewArchivedUser = () => {
   const { user } = useParams<{ user: string }>();
@@ -48,6 +49,7 @@ const ViewArchivedUser = () => {
 
   useEffect(() => {
     fetchTeamMemberDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchTeamMemberDetails = () => {
@@ -80,6 +82,7 @@ const ViewArchivedUser = () => {
         toast.success(en.successUserDelete);
       }
     } catch (error) {
+      console.log(error);
       toast.error(
         confirmationData.type === 'restore'
           ? en.errorActivatingUser
@@ -212,7 +215,7 @@ const ViewArchivedUser = () => {
                       id={item?.id}
                       name={item?.name || ''}
                       title={item?.description || ''}
-                      link={`#`}
+                      link="#"
                       percentage={calculateRoadmapProgress(item, userProgress)}
                     />
                   );
@@ -223,7 +226,7 @@ const ViewArchivedUser = () => {
           </div>
         </div>
       ) : (
-        <p className="text-gray-500">Loading user details...</p>
+        <SkeletonArchiveLoader />
       )}
     </div>
   );

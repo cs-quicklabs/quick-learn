@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { ActivityList, OutputData } from '../modals/ActivityGraph';
 import { ReadFileIcon } from './UIElements';
 import { format, subMonths } from 'date-fns';

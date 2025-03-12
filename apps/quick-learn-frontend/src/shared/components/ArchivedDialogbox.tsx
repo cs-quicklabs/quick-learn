@@ -2,6 +2,7 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { DateFormats } from '@src/constants/dateFormats';
 import { format } from 'date-fns';
+
 interface ArchivedDialogboxProps {
   type: string;
   archivedBy: string;
