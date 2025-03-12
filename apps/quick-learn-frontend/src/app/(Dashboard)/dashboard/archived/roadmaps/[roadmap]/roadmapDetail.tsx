@@ -132,7 +132,7 @@ function RoadmapDetails() {
   const hasCourses = courses.length > 0;
 
   return (
-    <>
+    <div className="mx-4 md:mx-0">
       <ConformationModal
         title={
           restoreId
@@ -230,7 +230,7 @@ function RoadmapDetails() {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

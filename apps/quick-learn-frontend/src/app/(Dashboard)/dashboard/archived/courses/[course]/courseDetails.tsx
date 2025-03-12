@@ -139,7 +139,7 @@ function CourseDetails() {
   const hasLessons = courseData.lessons && courseData.lessons.length > 0;
 
   return (
-    <>
+    <div className="mx-4 md:mx-0">
       <ConformationModal
         title={
           restoreId
@@ -255,7 +255,7 @@ function CourseDetails() {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
