@@ -4,7 +4,7 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { format } from 'date-fns';
 import { en } from '@src/constants/lang/en';
 
-interface ArchivedDialogboxProps {
+interface ArchivedBannerProps {
   readonly type: string;
   readonly archivedBy: string;
   readonly archivedAt: string;
@@ -12,13 +12,13 @@ interface ArchivedDialogboxProps {
   readonly onDelete: () => void; // Added handler for delete
 }
 
-export default function ArchivedDialogbox({
+export default function ArchivedBanner({
   type,
   archivedBy,
   archivedAt,
   onRestore,
   onDelete,
-}: ArchivedDialogboxProps) {
+}: ArchivedBannerProps) {
   return (
     <div className="p-4 mb-4 max-w-2xl text-red-800 border border-red-300 rounded-md bg-red-50">
       <div className="sm:flex sm:items-start">

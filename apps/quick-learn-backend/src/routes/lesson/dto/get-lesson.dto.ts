@@ -10,4 +10,9 @@ export class GetLessonDto {
   @IsString()
   @IsIn(['true', 'false'])
   flagged?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['true', 'false'])
+  isArchived?: string;
 }

@@ -50,6 +50,7 @@ const Editor: FC<Props> = ({
         setValue(newValue || '');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [setValue],
   );
 

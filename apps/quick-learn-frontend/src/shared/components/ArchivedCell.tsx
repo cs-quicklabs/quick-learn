@@ -56,9 +56,9 @@ const ArchivedCell: FC<Props> = ({
         <button
           type="button"
           onClick={onClickNavigate}
-          className="md:flex text-sm font-medium text-gray-600 hover:cursor-pointer hover:underline"
+          className="md:flex text-sm font-medium text-gray-600 hover:cursor-pointer hover:underline  text-left"
         >
-          <p className="truncate first-letter:uppercase ">{title}</p>
+          <p className="truncate first-letter:uppercase">{title}</p>
           {subtitle && (
             <p className="md:ml-1 font-normal truncate text-gray-500 first-letter:uppercase">
               {subtitle}

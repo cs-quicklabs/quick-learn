@@ -36,7 +36,6 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
       icon: <DocumentTextIcon />,
     },
   ];
-
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
     return () => {
@@ -58,7 +57,7 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden max-h-full pb-4 ">{children}</div>
+        <div className="max-h-full pb-4">{children}</div>
       )}
     </div>
   );

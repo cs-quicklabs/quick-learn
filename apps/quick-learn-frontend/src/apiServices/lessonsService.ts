@@ -50,9 +50,10 @@ export const getUnapprovedLessons = async ({
 export const getLessonDetails = async (
   id: string,
   approved = true,
+  isArchived = false,
 ): Promise<AxiosSuccessResponse<TLesson>> => {
   const response = await axiosInstance.get<AxiosSuccessResponse<TLesson>>(
-    `${ContentRepositoryApiEnum.LESSON}/${id}?approved=${approved}`,
+    `${ContentRepositoryApiEnum.LESSON}/${id}?approved=${approved}&isArchived=${isArchived}`,
   );
   return response.data;
 };

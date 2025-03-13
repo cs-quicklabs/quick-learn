@@ -242,7 +242,9 @@ function CourseDetails() {
           dispatch(updateRoadmap(updatedRoadmap));
         }
 
-        router.push(RouteEnum.CONTENT);
+        router.push(
+          `${RouteEnum.CONTENT}/${!isNaN(+roadmapId) ? roadmapId : ''}`,
+        );
 
         setShowConformationModal(false);
       })
