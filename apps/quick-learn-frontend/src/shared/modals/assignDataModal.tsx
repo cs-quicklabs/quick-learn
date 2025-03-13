@@ -320,16 +320,10 @@ const AssignDataModal: FC<Props> = ({
             <div className="flex items-center p-6 space-x-4 rounded-b ">
               <button
                 type="submit"
-                className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-500"
+                className="text-white bg-primary-700 flex justify-center hover:bg-primary-800 focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:bg-gray-500"
                 disabled={!isFormDirty || !isValid || isLoading}
               >
-                {isLoading ? (
-                  <div className="pl-3 text-center">
-                    <Loader />
-                  </div>
-                ) : (
-                  en.common.save
-                )}
+                {isLoading ? <Loader /> : en.common.save}
               </button>
               <button
                 onClick={() => setShow(false)}
