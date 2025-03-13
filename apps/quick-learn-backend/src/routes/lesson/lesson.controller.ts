@@ -138,6 +138,9 @@ export class LessonController {
       relations.push('flagged_lesson');
       relations.push('flagged_lesson.user');
     }
+    if (getLessonDto.isArchived === 'true') {
+      relations.push('archive_by_user');
+    }
 
     const lesson = await this.service.get(conditions, relations);
     if (!lesson) {

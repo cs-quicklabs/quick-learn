@@ -21,7 +21,7 @@ import { UserEntity } from '@src/entities';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
 import { PaginationDto } from '../users/dto';
 import { ActivateRoadmapDto } from './dto/activate-roadmap.dto';
-import { RoadmapParamDto } from './dto/roadmap-param.dto';
+import { RoadmapParamDto, RoadmapQueryDto } from './dto/roadmap-param.dto';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@src/common/decorators/roles.decorator';
@@ -80,13 +80,13 @@ export class RoadmapController {
   @ApiOperation({ summary: 'Get roadmap details' })
   async getRoadmapDetails(
     @Param() param: RoadmapParamDto,
-    @Query() query: RoadmapParamDto,
+    @Query() query: RoadmapQueryDto,
   ) {
     const isArchived = query.archived === 'true';
     const roadmaps =
       await this.service.getRoadmapDetailsWithCourseAndLessonsCount(
-        +param.id,
-        query.courseId ? +query.courseId : undefined,
+        Number(param.id),
+        query.courseId ? Number(query.courseId) : undefined,
         isArchived,
       );
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);

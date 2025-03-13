@@ -46,7 +46,7 @@ const ViewArchivedLesson = () => {
 
   useEffect(() => {
     if (isNaN(+id)) return;
-    getLessonDetails(id)
+    getLessonDetails(id, true, true)
       .then((res) => setCurrLesson(res.data))
       .catch((err) => {
         showApiErrorInToast(err);
@@ -97,7 +97,9 @@ const ViewArchivedLesson = () => {
         <ArchivedBanner
           type="lesson"
           archivedAt={currlesson.updated_at}
-          archivedBy={currlesson?.updated_by?.display_name ?? 'SUPER ADMIN'}
+          archivedBy={
+            currlesson?.archive_by_user?.display_name ?? 'SUPER ADMIN'
+          }
           onRestore={() => setConfirmationData({ type: 'restore' })}
           onDelete={() => setConfirmationData({ type: 'delete' })}
         />
