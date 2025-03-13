@@ -27,8 +27,10 @@ import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import {
-  CalendarDateRangeIcon,
+  ArchiveBoxXMarkIcon,
+  ArrowLeftEndOnRectangleIcon,
   EnvelopeIcon,
+  PencilSquareIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
 import SkeletonArchiveLoader from './SkeletonArhiveUser';
@@ -161,16 +163,16 @@ const ViewArchivedUser = () => {
                 <EnvelopeIcon height={20} width={20} />
                 <span className="font-medium">{archivedUser.email}</span>
               </p>
-              <p className="text-gray-700 flex gap-2">
+              <p className="text-gray-700 flex items-center gap-2">
                 <UserIcon height={20} width={20} />
-                User Type:{' '}
+                <span className="hidden lg:inline-block">User Type:</span>
                 <span className="font-medium capitalize">
                   {getUserType(archivedUser.user_type_id)}
                 </span>
               </p>
-              <p className="text-gray-700 flex gap-2">
-                <CalendarDateRangeIcon height={20} width={20} />
-                Last Login:{' '}
+              <p className="text-gray-700 flex items-center gap-2">
+                <ArrowLeftEndOnRectangleIcon height={20} width={20} />
+                <span className="hidden lg:inline-block">Last Login:</span>
                 <span className="font-medium ">
                   {format(
                     archivedUser.last_login_timestamp,
@@ -178,17 +180,16 @@ const ViewArchivedUser = () => {
                   )}
                 </span>
               </p>
-              <p className="text-gray-700 flex gap-2">
-                <CalendarDateRangeIcon height={20} width={20} />
-                Created At:{' '}
+              <p className="text-gray-700 flex items-center gap-2">
+                <PencilSquareIcon height={20} width={20} />
+                <span className="hidden lg:inline-block">Created At:</span>
                 <span className="font-medium">
                   {format(archivedUser.created_at, DateFormats.fullDate)}
                 </span>
               </p>
-
-              <p className="text-gray-700 flex gap-2">
-                <CalendarDateRangeIcon height={20} width={20} />
-                Archived on:{' '}
+              <p className="text-gray-700 flex items-center gap-2">
+                <ArchiveBoxXMarkIcon height={20} width={20} />
+                <span className="hidden lg:inline-block">Archived on:</span>
                 <span className="font-medium">
                   {format(archivedUser.updated_at, DateFormats.fullDate)}
                 </span>
@@ -208,7 +209,7 @@ const ViewArchivedUser = () => {
             </div>
           </div>
           <div className="lg:px-20 mt-10">
-            <span className="text-xl font-bold my-6">Assigned Roadmaps</span>
+            <div className="text-xl font-bold my-4">Assigned Roadmaps</div>
             {/* display Roadmaps */}
             <div className=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               {archivedUser?.assigned_roadmaps?.map((item) => {
