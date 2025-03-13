@@ -136,7 +136,7 @@ const ViewArchivedUser = () => {
       <div className="flex justify-center mb-4">
         {archivedUser && (
           <ArchivedBanner
-            type="User"
+            type="user"
             archivedBy={archivedUser?.updated_by?.first_name ?? 'SUPER ADMIN'}
             archivedAt={archivedUser?.updated_at ?? ''}
             onRestore={() => setConfirmationData({ type: 'restore' })}
@@ -211,6 +211,9 @@ const ViewArchivedUser = () => {
           <div className="lg:px-20 mt-10">
             <div className="text-xl font-bold my-4">Assigned Roadmaps</div>
             {/* display Roadmaps */}
+            {archivedUser.assigned_roadmaps?.length === 0 && (
+              <p className="text-xl text-center">{en.dashboard.noRoadmaps}</p>
+            )}
             <div className=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
               {archivedUser?.assigned_roadmaps?.map((item) => {
                 if (item.courses) {
