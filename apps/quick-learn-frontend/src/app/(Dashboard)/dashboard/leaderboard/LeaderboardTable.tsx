@@ -156,7 +156,7 @@ const LeaderboardTable = () => {
           </td>
           <td className="pl-10 md:pl-16 py-2 whitespace-nowrap">
             {learningScore <= 0 || user.lessons_completed_count === 0
-              ? '-1'
+              ? '1'
               : learningScore}
           </td>
         </tr>
