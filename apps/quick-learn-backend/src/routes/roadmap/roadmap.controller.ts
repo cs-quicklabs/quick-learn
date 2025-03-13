@@ -80,14 +80,13 @@ export class RoadmapController {
   @ApiOperation({ summary: 'Get roadmap details' })
   async getRoadmapDetails(
     @Param() param: RoadmapParamDto,
-    @Query('courseId') courseId?: string,
-    @Query('archived') archived?: string,
+    @Query() query: RoadmapParamDto,
   ) {
-    const isArchived = archived === 'true';
+    const isArchived = query.archived === 'true';
     const roadmaps =
       await this.service.getRoadmapDetailsWithCourseAndLessonsCount(
         +param.id,
-        courseId ? +courseId : undefined,
+        query.courseId ? +query.courseId : undefined,
         isArchived,
       );
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);

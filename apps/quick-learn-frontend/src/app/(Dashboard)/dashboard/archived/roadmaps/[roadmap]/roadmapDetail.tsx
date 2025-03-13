@@ -21,13 +21,13 @@ import { useEffect, useState } from 'react';
 import RoadmapDetailsSkeleton from './roadmapDetailsSkeleton';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { AxiosErrorObject } from '@src/apiServices/axios';
-import ArchivedDialogbox from '@src/shared/components/ArchivedDialogBox';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import {
   activateArchivedRoadmap,
   deleteArchivedRoadmap,
 } from '@src/store/features';
 import { toast } from 'react-toastify';
+import ArchivedBanner from '@src/shared/components/ArchivedBanner';
 
 const defaultlinks: TBreadcrumb[] = [
   {
@@ -154,7 +154,7 @@ function RoadmapDetails() {
         }
       />
       <div className="flex flex-col items-center">
-        <ArchivedDialogbox
+        <ArchivedBanner
           type="roadmap"
           archivedBy={
             roadmapData.updated_by

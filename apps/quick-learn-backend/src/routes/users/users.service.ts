@@ -359,7 +359,9 @@ export class UsersService extends PaginationService<UserEntity> {
     }
 
     // Select specific fields
-    const selectFields = ['user', 'updated_by'];
+    const selectFields = ['user', 'updated_by', 'skill'];
+    queryBuilder.leftJoinAndSelect('user.updated_by', 'updated_by');
+    queryBuilder.leftJoinAndSelect('user.skill', 'skill');
 
     if (assignRoadmapRelation) {
       selectFields.push('assigned_roadmaps');

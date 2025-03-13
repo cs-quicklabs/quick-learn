@@ -6,7 +6,6 @@ import {
 import { getUserDetails } from '@src/apiServices/teamService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import ArchivedDialogbox from '@src/shared/components/ArchivedDialogbox';
 import ActivityGraph, { Course } from '@src/shared/modals/ActivityGraph';
 import { TUserDailyProgress } from '@src/shared/types/contentRepository';
 import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
@@ -33,6 +32,7 @@ import {
   UserIcon,
 } from '@heroicons/react/24/outline';
 import SkeletonArchiveLoader from './SkeletonArhiveUser';
+import ArchivedBanner from '@src/shared/components/ArchivedBanner';
 
 const ViewArchivedUser = () => {
   const { user } = useParams<{ user: string }>();
@@ -133,9 +133,9 @@ const ViewArchivedUser = () => {
       />
       <div className="flex justify-center mb-4">
         {archivedUser && (
-          <ArchivedDialogbox
+          <ArchivedBanner
             type="User"
-            archivedBy={archivedUser?.updated_by.display_name ?? 'SUPER ADMIN'}
+            archivedBy={archivedUser?.updated_by?.first_name ?? 'SUPER ADMIN'}
             archivedAt={archivedUser?.updated_at ?? ''}
             onRestore={() => setConfirmationData({ type: 'restore' })}
             onDelete={() => setConfirmationData({ type: 'delete' })}
@@ -149,9 +149,14 @@ const ViewArchivedUser = () => {
               <div className="w-20 h-20 mb-2 rounded-full flex items-center justify-center bg-gray-400">
                 {renderProfileIcon()}
               </div>
-              <h2 className="text-xl font-bold mb-2 capitalize">
-                {archivedUser.display_name}
-              </h2>
+              <div className="flex gap-2 items-center">
+                <h2 className="text-xl font-bold mb-2 capitalize">
+                  {archivedUser.display_name}
+                </h2>
+                <p className="text-sm text-slate-600 font-medium">
+                  ({archivedUser?.skill?.name ?? ''})
+                </p>
+              </div>
               <p className=" flex text-gray-700 gap-2 items-center">
                 <EnvelopeIcon height={20} width={20} />
                 <span className="font-medium">{archivedUser.email}</span>

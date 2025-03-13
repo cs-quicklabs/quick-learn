@@ -2,7 +2,7 @@
 import { getLessonDetails } from '@src/apiServices/lessonsService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import ArchivedDialogbox from '@src/shared/components/ArchivedDialogbox';
+import ArchivedBanner from '@src/shared/components/ArchivedBanner';
 import { FullPageLoader } from '@src/shared/components/UIElements';
 import ViewLesson from '@src/shared/components/ViewLesson';
 import ConformationModal from '@src/shared/modals/conformationModal';
@@ -94,7 +94,7 @@ const ViewArchivedLesson = () => {
         onConfirm={handleConfirmation}
       />
       <div className="flex justify-center mb-4">
-        <ArchivedDialogbox
+        <ArchivedBanner
           type="lesson"
           archivedAt={currlesson.updated_at}
           archivedBy={currlesson?.updated_by?.display_name ?? 'SUPER ADMIN'}
