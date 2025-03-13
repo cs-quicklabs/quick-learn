@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useSelector } from 'react-redux';
 import {
@@ -19,6 +19,8 @@ import {
 import { useAppDispatch } from '@src/store/hooks';
 import { setHideNavbar, selectUser } from '@src/store/features';
 import { UserTypeIdEnum } from 'lib/shared/src';
+import { PencilIcon } from '@heroicons/react/24/outline';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 const defaultLinks = [{ name: 'Flagged Lessons', link: RouteEnum.FLAGGED }];
 
@@ -28,12 +30,11 @@ function LessonDetails() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const user = useSelector(selectUser);
-  const isAdmin = useMemo<boolean>(() => {
-    if (!user) return false;
-    return [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
+  const isAdmin =
+    user?.user_type_id !== undefined &&
+    [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
       user.user_type_id,
     );
-  }, [user]);
 
   useEffect(() => {
     dispatch(setHideNavbar(true));
@@ -45,6 +46,7 @@ function LessonDetails() {
   const [loading, setLoading] = useState(true);
   const [lesson, setLesson] = useState<TLesson>();
   const [isFlagged, setIsFlagged] = useState<boolean>(false);
+
   useEffect(() => {
     if (!lesson) {
       setLinks(defaultLinks);
@@ -85,7 +87,22 @@ function LessonDetails() {
       });
   }
 
-  if (!lesson) return null;
+  const editLink = () => {
+    if (!lesson) return;
+
+    if (lesson.approved) {
+      // If lesson is approved, same link for all users
+      router.push(
+        `${RouteEnum.CONTENT}/courses/${lesson.course_id}/${lesson.id}?edit=true`,
+      );
+    } else {
+      router.push(
+        `${RouteEnum.CONTENT}/courses/${lesson.course_id}/edit/${lesson.id}`,
+      );
+    }
+  };
+
+  if (!lesson) return <LessonSkeleton />;
 
   return (
     <div className="-mt-8">
@@ -96,6 +113,12 @@ function LessonDetails() {
         isFlagged={isAdmin && isFlagged}
         setIsFlagged={isAdmin ? markAsUnFlagged : undefined}
       />
+
+      <button type="button" onClick={editLink}>
+        <span className="fixed flex items-center bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500">
+          <PencilIcon className="flex-shrink-0 inline w-4 h-4 me-1" />| Edit
+        </span>
+      </button>
     </div>
   );
 }

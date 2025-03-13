@@ -42,7 +42,7 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { format } from 'date-fns';
-import { Tooltip } from 'flowbite-react';
+import Tooltip from '@src/shared/components/Tooltip';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CourseDetailsSkeleton from './CourseDetailsSkeleton';
@@ -242,7 +242,9 @@ function CourseDetails() {
           dispatch(updateRoadmap(updatedRoadmap));
         }
 
-        router.push(RouteEnum.CONTENT);
+        router.push(
+          `${RouteEnum.CONTENT}/${!isNaN(+roadmapId) ? roadmapId : ''}`,
+        );
 
         setShowConformationModal(false);
       })
@@ -274,18 +276,22 @@ function CourseDetails() {
         isloading={isLoading}
         initialData={courseData}
       />
-      <AssignDataModal
-        show={openAssignModal}
-        setShow={setOpenAssignModal}
-        heading={en.courseDetails.addExistingRoadmaps}
-        sub_heading={en.common.selectRoadmaps}
-        isLoading={isLoading}
-        data={roadmapCategoriesData}
-        initialValues={{
-          selected: courseData.roadmaps?.map((item) => String(item.id)) || [],
-        }}
-        onSubmit={assignRoadmaps}
-      />
+
+      {openAssignModal && (
+        <AssignDataModal
+          show={openAssignModal}
+          setShow={setOpenAssignModal}
+          heading={en.courseDetails.addExistingRoadmaps}
+          sub_heading={en.common.selectRoadmaps}
+          isLoading={isLoading}
+          data={roadmapCategoriesData}
+          initialValues={{
+            selected: courseData.roadmaps?.map((item) => String(item.id)) || [],
+          }}
+          onSubmit={assignRoadmaps}
+        />
+      )}
+
       <ConformationModal
         title={en.courseDetails.archiveConfirmHeading}
         subTitle={en.courseDetails.archiveConfirmSubHeading}
@@ -321,7 +327,7 @@ function CourseDetails() {
             <Tooltip content={en.contentRepository.editCourse}>
               <button
                 type="button"
-                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setOpenAddModal(true)}
               >
                 <PencilIcon className="h-4 w-4" />
@@ -331,7 +337,7 @@ function CourseDetails() {
             <Tooltip content={en.contentRepository.assignToRoadmap}>
               <button
                 type="button"
-                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setOpenAssignModal(true)}
               >
                 <ArrowRightEndOnRectangleIcon className="h-4 w-4" />
@@ -341,7 +347,7 @@ function CourseDetails() {
             <Tooltip content={en.contentRepository.archiveCourse}>
               <button
                 type="button"
-                className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                className="text-black bg-gray-300 hover:bg-red-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setShowConformationModal(true)}
               >
                 <TrashIcon className="h-4 w-4" />

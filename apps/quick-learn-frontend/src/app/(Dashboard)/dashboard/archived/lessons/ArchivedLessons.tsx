@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchArchivedLessons,
@@ -18,6 +18,8 @@ import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
+import { useRouter } from 'next/navigation';
+import { RouteEnum } from '@src/constants/route.enum';
 
 function ArchivedLessons() {
   const dispatch = useAppDispatch();
@@ -32,77 +34,53 @@ function ArchivedLessons() {
 
   const [restoreId, setRestoreId] = useState<number | false>(false);
   const [deleteId, setDeleteId] = useState<number | false>(false);
+  const router = useRouter();
 
-  const getNextLessons = useCallback(() => {
+  const getNextLessons = () => {
     if (!isLoading && hasMore) {
       dispatch(fetchArchivedLessons({ page, search: searchValue }));
     }
-  }, [dispatch, hasMore, isLoading, page, searchValue]);
+  };
+  const handleDeleteLesson = async (id: number) => {
+    try {
+      await dispatch(deleteArchivedLesson({ id })).unwrap();
+      toast.success(en.archivedSection.lessonDeletedSuccess);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setDeleteId(false);
+    }
+  };
 
-  const handleDeleteLesson = useCallback(
-    async (id: number) => {
-      try {
-        await dispatch(deleteArchivedLesson({ id })).unwrap();
-        dispatch(
-          fetchArchivedLessons({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.lessonDeletedSuccess);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setDeleteId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
+  const restoreLesson = async (id: number) => {
+    try {
+      await dispatch(activateArchivedLesson({ id })).unwrap();
 
-  const restoreLesson = useCallback(
-    async (id: number) => {
-      try {
-        await dispatch(activateArchivedLesson({ id })).unwrap();
-        dispatch(
-          fetchArchivedLessons({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.lessonRestoredSuccess);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setRestoreId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
-
-  const handleQueryChange = useMemo(
-    () =>
-      debounce(async (value: string) => {
-        const searchTerm = value || '';
-        try {
-          dispatch(setLessonsSearchValue(searchTerm));
-          dispatch(
-            fetchArchivedLessons({
-              page: 1,
-              search: searchTerm,
-              resetList: true,
-            }),
-          );
-        } catch (err) {
-          console.log(err);
-          toast.error(en.common.somethingWentWrong);
-        }
-      }, 300),
-    [dispatch],
-  );
+      toast.success(en.archivedSection.lessonRestoredSuccess);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setRestoreId(false);
+    }
+  };
+  const handleQueryChange = debounce(async (value: string) => {
+    const searchTerm = value || '';
+    try {
+      dispatch(setLessonsSearchValue(searchTerm));
+      dispatch(
+        fetchArchivedLessons({
+          page: 1,
+          search: searchTerm,
+          resetList: true,
+        }),
+      );
+    } catch (err) {
+      console.log(err);
+      toast.error(en.common.somethingWentWrong);
+    }
+  }, 300);
 
   useEffect(() => {
     dispatch(fetchArchivedLessons({ page: 1, search: '', resetList: true }));
@@ -170,6 +148,9 @@ function ArchivedLessons() {
                 deactivationDate={item.updated_at}
                 onClickDelete={() => setDeleteId(item.id)}
                 onClickRestore={() => setRestoreId(item.id)}
+                onClickNavigate={() =>
+                  router.push(`${RouteEnum.ARCHIVED_LESSONS}/${item.id}`)
+                }
                 alternateButton
               />
             ))}

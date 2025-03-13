@@ -22,7 +22,7 @@ interface CardProps {
 interface CardContentProps
   extends Omit<CardProps, 'link' | 'className' | 'onClick'> {
   isLongTitle: boolean;
-  titleRef: React.RefObject<HTMLHeadingElement>;
+  titleRef: React.RefObject<HTMLHeadingElement | null>;
 }
 
 // Moved CardContent outside of Card component
@@ -119,7 +119,8 @@ const Card: FC<CardProps> = ({
   onClick,
   metadata,
 }) => {
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const titleRef = useRef<HTMLHeadingElement>(null!);
   const [isLongTitle, setIsLongTitle] = useState(false);
 
   useEffect(() => {
@@ -139,7 +140,7 @@ const Card: FC<CardProps> = ({
     return () => window.removeEventListener('resize', checkTitleHeight);
   }, [title]);
 
-  const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-sm hover:shadow-lg border-gray-100 group w-full relative ${
+  const baseClassName = `inline-block col-span-1 rounded-lg bg-white shadow-xs hover:shadow-lg border-gray-100 group w-full relative ${
     isCreateCard
       ? 'border-2 border-dashed border-gray-300 hover:border-gray-400'
       : ''

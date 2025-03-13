@@ -61,7 +61,7 @@ function TeamTable() {
                     </SuperLink>
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    <div className="inline-flex items-center bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded capitalize">
+                    <div className="inline-flex items-center bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded-sm capitalize">
                       <CustomClipBoardIcon color="#1e40af" />
                       <span>{user.user_type.name || 'Role'}</span>
                     </div>

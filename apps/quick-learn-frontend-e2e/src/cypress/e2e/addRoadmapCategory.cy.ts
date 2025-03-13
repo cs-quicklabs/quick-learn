@@ -2,7 +2,7 @@ import { AddRoadMap } from '../test/AddRoadMapCategories';
 import { LoginPage } from '../test/Login';
 import { validCredentials } from '../fixtures/credential';
 
-describe('Roadmap create, edit and delete', () => {
+describe('Roadmap Category create, edit and delete', () => {
   const loginPage = new LoginPage();
 
   beforeEach(() => {

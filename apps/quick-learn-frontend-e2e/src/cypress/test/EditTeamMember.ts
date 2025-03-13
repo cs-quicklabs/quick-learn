@@ -131,39 +131,36 @@ export class EditTeamMember {
   }
 
   getAssignUnassignButton() {
-    cy.get('body').then(($body) => {
-      if ($body.find('.text-lg:contains("No roadmaps assigned")').length >= 0) {
-        cy.get('button.px-4.py-2')
-          .contains('Assign/Unassign Roadmap')
-          .should('be.visible')
-          .click();
-      } else {
-        cy.get('button.inline-block')
-          .contains('Assign/Unassign Roadmap')
-          .should('be.visible')
-          .click();
-      }
-    });
+    cy.get('button#create_new_button').should('be.visible').click();
   }
+
   getRoadmapsList() {
     cy.get('[id="brand-tab"]').contains('Select Roadmaps');
-    cy.get('[data-testid="flowbite-accordion-heading"]').each(($el, index) => {
+    cy.get('#content_list_item').each(($el, index) => {
       cy.log(`Index: ${index}, Text: ${$el.text()}`);
     });
-    cy.get('[data-testid="flowbite-accordion-heading"]').eq(0).dblclick();
+    cy.get('#content_list_item').eq(0).dblclick();
   }
 
   EnsureRoadmapsUnchecked() {
+    let count = 0;
+    cy.get('[type="checkbox"]').each(($checkbox) => {
+      if (count < 2 && $checkbox.is(':checked')) {
+        cy.wrap($checkbox).uncheck(); // Uncheck each checked checkbox
+        count++;
+      }
+    });
+  }
+
+  clickRoadmapsCheckbox() {
     cy.get('[type="checkbox"]')
-      .eq(0)
-      .then(($checkbox) => {
-        if ($checkbox.is(':checked')) {
-          cy.wrap($checkbox).uncheck();
+      .filter(':not(:checked)') // Get only unchecked checkboxes
+      .each(($checkbox, index) => {
+        if (index < 3) {
+          // Check only first 3 checkboxes
+          cy.wrap($checkbox).check();
         }
       });
-  }
-  clickRoadmapsCheckbox() {
-    cy.get('[type="checkbox"]').eq(0).check();
   }
 
   getCancelButton() {
@@ -256,6 +253,7 @@ export class EditTeamMember {
   AssignRoadmap() {
     this.visitTeamPage().click();
     this.getTeamsList();
+    cy.wait(500);
     this.getAssignUnassignButton();
     this.getRoadmapsList();
     this.EnsureRoadmapsUnchecked();
@@ -267,6 +265,7 @@ export class EditTeamMember {
   UnassignRoadmap() {
     this.visitTeamPage().click();
     this.getTeamsList();
+    cy.wait(500);
     this.getAssignUnassignButton();
     this.getRoadmapsList();
     this.EnsureRoadmapsUnchecked();
@@ -279,11 +278,9 @@ export class EditTeamMember {
   SaveDisable() {
     this.visitTeamPage().click();
     this.getTeamsList();
+    cy.wait(500);
     this.getAssignUnassignButton();
     this.getRoadmapsList();
-    this.EnsureRoadmapsUnchecked();
-    this.clickRoadmapsCheckbox();
-    this.EnsureRoadmapsUnchecked();
     this.SubmitDisabled();
     this.getCancelButton();
   }

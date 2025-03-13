@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchArchivedUsers,
@@ -18,6 +18,8 @@ import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
+import { useRouter } from 'next/navigation';
+import { RouteEnum } from '@src/constants/route.enum';
 
 function InactiveUsers() {
   const dispatch = useAppDispatch();
@@ -32,68 +34,51 @@ function InactiveUsers() {
 
   const [restoreId, setRestoreId] = useState<number | false>(false);
   const [deleteId, setDeleteId] = useState<number | false>(false);
+  const router = useRouter();
 
-  const getNextUsers = useCallback(() => {
+  const getNextUsers = () => {
     if (!isLoading && hasMore) {
       dispatch(fetchArchivedUsers({ page, search: searchValue }));
     }
-  }, [dispatch, hasMore, isLoading, page, searchValue]);
+  };
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      await dispatch(deleteArchivedUser({ userId: +userId })).unwrap();
+      toast.success(en.successUserDelete);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.errorDeletingUser);
+    } finally {
+      setDeleteId(false);
+    }
+  };
+  const restoreUser = async (userId: number) => {
+    try {
+      await dispatch(activateArchivedUser({ userId })).unwrap();
+      toast.success(en.successUserActivate);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.errorActivatingUser);
+    } finally {
+      setRestoreId(false);
+    }
+  };
 
-  const handleDeleteUser = useCallback(
-    async (userId: number) => {
-      try {
-        await dispatch(deleteArchivedUser({ userId: +userId })).unwrap();
-        dispatch(
-          fetchArchivedUsers({ page: 1, search: searchValue, resetList: true }),
-        );
-        toast.success(en.successUserDelete);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.errorDeletingUser);
-      } finally {
-        setDeleteId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
-
-  const restoreUser = useCallback(
-    async (userId: number) => {
-      try {
-        await dispatch(activateArchivedUser({ userId })).unwrap();
-        dispatch(
-          fetchArchivedUsers({ page: 1, search: searchValue, resetList: true }),
-        );
-        toast.success(en.successUserActivate);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.errorActivatingUser);
-      } finally {
-        setRestoreId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
-
-  const handleQueryChange = useMemo(
-    () =>
-      debounce(async (value: string) => {
-        const searchText = value || '';
-        try {
-          dispatch(setUsersSearchValue(searchText));
-          dispatch(
-            fetchArchivedUsers({
-              page: 1,
-              search: searchText,
-              resetList: true,
-            }),
-          );
-        } catch (err) {
-          console.log('Something went wrong!', err);
-        }
-      }, 300),
-    [dispatch],
-  );
+  const handleQueryChange = debounce(async (value: string) => {
+    const searchText = value || '';
+    try {
+      dispatch(setUsersSearchValue(searchText));
+      dispatch(
+        fetchArchivedUsers({
+          page: 1,
+          search: searchText,
+          resetList: true,
+        }),
+      );
+    } catch (err) {
+      console.log('Something went wrong!', err);
+    }
+  }, 300);
 
   useEffect(() => {
     dispatch(fetchArchivedUsers({ page: 1, search: '', resetList: true }));
@@ -125,6 +110,9 @@ function InactiveUsers() {
             deactivationDate={item.updated_at}
             onClickDelete={() => setDeleteId(item.id)}
             onClickRestore={() => setRestoreId(item.id)}
+            onClickNavigate={() =>
+              router.push(`${RouteEnum.ARCHIVED_USERS}/${item.id}`)
+            }
             alternateButton
           />
         ))}

@@ -4,7 +4,7 @@ import { DateFormats } from '@src/constants/dateFormats';
 import { RouteEnum } from '@src/constants/route.enum';
 import { SuperLink } from '@src/utils/HiLink';
 import { format } from 'date-fns';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Skeleton from './Skeleton';
 import BasicPagination from '@src/shared/components/BasicPagination';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
@@ -42,15 +42,10 @@ const CourseTable = () => {
     debouncedSearch(searchTerm);
   };
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((searchTerm: string) => {
-        dispatch(setCurrentPageOrphanList(1));
-        dispatch(fetchOrphanCourses({ page: 1, q: searchTerm }));
-      }, 500),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatch, fetchOrphanCourses],
-  );
+  const debouncedSearch = debounce((searchTerm: string) => {
+    dispatch(setCurrentPageOrphanList(1));
+    dispatch(fetchOrphanCourses({ page: 1, q: searchTerm }));
+  }, 500);
 
   const renderTableData = () => {
     return course && course.length > 0 ? (
@@ -59,11 +54,11 @@ const CourseTable = () => {
           <tr
             id={`row${index}`}
             key={course.id}
-            className="border-b w-full border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="border-b w-full border-gray-200 hover:bg-gray-100"
           >
             <th
               scope="row"
-              className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap"
             >
               <div className="flex items-center">
                 <SuperLink
@@ -107,7 +102,7 @@ const CourseTable = () => {
 
   return (
     <div className="mx-4 md:mx-0">
-      <div className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
+      <div className="relative overflow-hidden bg-white shadow-md sm:rounded-xs">
         <div className=" mx-auto max-w-screen-2xl overflow-auto">
           <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
             <div>
@@ -122,7 +117,7 @@ const CourseTable = () => {
             <div className="w-full sm:w-auto">
               <input
                 type="text"
-                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:outline-hidden focus:ring-1 focus:border-blue-500 block h-[36px] px-2"
                 placeholder="Search Courses..."
                 value={search}
                 onChange={handleSearchChange}

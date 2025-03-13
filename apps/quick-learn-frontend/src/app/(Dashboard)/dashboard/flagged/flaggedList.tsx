@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { en } from '@src/constants/lang/en';
 import { DateFormats } from '@src/constants/dateFormats';
@@ -48,21 +48,14 @@ function FlaggedList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  const fetchLessons = useCallback(
-    (pageNum: number, searchTerm: string) => {
-      dispatch(fetchFlaggedLessons({ page: pageNum, q: searchTerm }));
-    },
-    [dispatch],
-  );
+  const fetchLessons = (pageNum: number, searchTerm: string) => {
+    dispatch(fetchFlaggedLessons({ page: pageNum, q: searchTerm }));
+  };
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((searchTerm: string) => {
-        dispatch(setCurrentPageFlaggedList(1));
-        fetchLessons(1, searchTerm);
-      }, 500),
-    [dispatch, fetchLessons],
-  );
+  const debouncedSearch = debounce((searchTerm: string) => {
+    dispatch(setCurrentPageFlaggedList(1));
+    fetchLessons(1, searchTerm);
+  }, 500);
 
   const formatDate = (date: string | Date) => {
     if (!date) return '-';
@@ -102,11 +95,11 @@ function FlaggedList() {
             <div className="w-full sm:w-auto">
               <input
                 type="text"
-                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block touch-none"
+                className="bg-gray-50 w-full sm:w-64 h-[36px] border border-gray-300 focus:ring-1 text-gray-900 text-sm rounded-lg focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 block touch-none px-2"
                 placeholder="Search Lessons"
                 value={search}
                 onChange={handleSearchChange}
-                id="search"
+                id="search_flagged_lesson"
               />
             </div>
           </div>

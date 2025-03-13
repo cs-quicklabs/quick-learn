@@ -3,7 +3,7 @@ import ArchivedCell from './ArchivedCell';
 export function ClosedEyeIcon() {
   return (
     <svg
-      className="w-[24px] h-[24px] text-gray-800 dark:text-white"
+      className="w-[24px] h-[24px] text-gray-800"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -28,7 +28,7 @@ export function ClosedEyeIcon() {
 export function OpenEyeIcon() {
   return (
     <svg
-      className="w-[24px] h-[24px] text-gray-800 dark:text-white"
+      className="w-[24px] h-[24px] text-gray-800"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -73,7 +73,7 @@ export function Loader({
 
 export function FullPageLoader() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
       <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-blue-500" />
     </div>
   );
@@ -339,7 +339,7 @@ export function LoadingSkeleton() {
 export function SearchIcon() {
   return (
     <svg
-      className="w-4 h-4 text-gray-500 dark:text-gray-400"
+      className="w-4 h-4 text-gray-500 "
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -381,7 +381,7 @@ export function ReadFileIcon({ colorClass }: { colorClass: string }) {
 export function CalenderIcon() {
   return (
     <svg
-      className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+      className="shrink-0 mr-1.5 h-5 w-5 text-gray-400"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
       fill="currentColor"
@@ -477,3 +477,40 @@ export const EmptyStateIcons = {
     </svg>
   ),
 };
+export const ChevronDownIcon = ({ className = '' }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className={`size-6 ${className}`}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="m19.5 8.25-7.5 7.5-7.5-7.5"
+    />
+  </svg>
+);
+
+export const CheckboxIcon = ({
+  className = 'pointer-events-none col-start-2 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25',
+}) => (
+  <svg fill="none" viewBox="0 0 14 14" className={className}>
+    <path
+      d="M3 8L6 11L11 3.5"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="opacity-0 group-has-checked:opacity-100"
+    />
+    <path
+      d="M3 7H11"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="opacity-0 group-has-indeterminate:opacity-100"
+    />
+  </svg>
+);

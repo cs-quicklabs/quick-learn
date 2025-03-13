@@ -156,7 +156,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             disabled={buttonDisabled || isLoading || !isValid || !isDirty}
             className={`${
               bigButton && 'w-full'
-            } text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center align-middle disabled:bg-gray-500`}
+            } text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center align-middle disabled:bg-gray-500`}
           >
             {isLoading ? <Loader /> : buttonText}
           </button>
@@ -164,7 +164,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             <button
               className={`${
                 bigButton && 'w-full'
-              } py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200`}
+              } py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-hidden bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-1 focus:ring-gray-200`}
               onClick={() => cancelButton()}
               type="button"
               disabled={isLoading}

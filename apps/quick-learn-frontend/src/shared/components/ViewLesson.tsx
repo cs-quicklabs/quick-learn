@@ -10,6 +10,7 @@ import { TLesson } from '../types/contentRepository';
 import { TBreadcrumb } from '../types/breadcrumbType';
 import { FlagIcon } from '@heroicons/react/24/outline';
 import dynamic from 'next/dynamic';
+import InputCheckbox from './InputCheckbox';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), {
   ssr: false,
@@ -30,7 +31,7 @@ const LessonHeader = memo(
   }) => (
     <div className="px-4 mb-4 text-center sm:px-6 md:mb-8 lg:px-8">
       <div className="items-baseline">
-        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase">
+        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight first-letter:uppercase mb-3">
           {name}
         </h1>
         {showCreatedBy && (
@@ -83,13 +84,12 @@ const ApprovalCheckbox = memo(
     text?: string;
   }) => (
     <div className="flex items-center p-16 mb-16 w-full max-w-5xl justify-center mx-auto">
-      <input
+      <InputCheckbox
         id="default-checkbox"
-        type="checkbox"
         checked={value}
         onChange={() => setValue?.(true)}
         disabled={value}
-        className="w-6 h-6 md:w-8 md:h-8 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
+        className="w-6 h-6 md:w-8 md:h-8 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
       />
       <label
         htmlFor="default-checkbox"
@@ -109,7 +109,7 @@ const PendingAlert = memo(() => (
       className="flex items-center p-4 mb-4 w-full text-sm text-yellow-800 rounded-lg bg-yellow-50"
       role="alert"
     >
-      <InformationCircleIcon className="flex-shrink-0 inline w-4 h-4 me-3" />
+      <InformationCircleIcon className="shrink-0 inline w-4 h-4 me-3" />
       <div className="text-xl">
         <span className="font-medium text-lg">
           {en.approvals.approvalPendingExclamation}
@@ -168,7 +168,7 @@ const ViewLesson: FC<Props> = ({
       <div>
         <LessonHeader
           name={lesson?.name}
-          full_name={lesson?.created_by_user?.display_name ?? en.common.unknown}
+          full_name={lesson?.created_by_user?.display_name ?? 'Admin'}
           createdAt={lesson?.created_at}
           showCreatedBy={showCreatedBy}
         />
@@ -180,7 +180,7 @@ const ViewLesson: FC<Props> = ({
         )}
 
         {setIsFlagged && (
-          <>
+          <div className="mx-4">
             <div className="mx-auto max-w-fit flex items-center gap-2 rounded-md bg-yellow-100 p-5 text-yellow-800">
               <div className="h-5 w-5">
                 <FlagIcon />
@@ -198,7 +198,7 @@ const ViewLesson: FC<Props> = ({
               setValue={setIsFlagged}
               text={en.approvals.unFlagThisLesson}
             />
-          </>
+          </div>
         )}
 
         {isPending && <PendingAlert />}

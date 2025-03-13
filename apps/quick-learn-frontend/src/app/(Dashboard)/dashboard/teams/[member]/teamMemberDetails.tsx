@@ -29,7 +29,7 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
-import { Tooltip } from 'flowbite-react';
+import Tooltip from '@src/shared/components/Tooltip';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import TeamMemberDetailsSkeleton from './TeamMemberDetailsSkeleton';
 import {
@@ -211,26 +211,30 @@ function TeamMemberDetails() {
         setOpen={setShowConformationModal}
         onConfirm={onDeactivateUser}
       />
-      <AssignDataModal
-        show={openAssignModal}
-        setShow={setOpenAssignModal}
-        heading={en.teamMemberDetails.assignNewRoadmap}
-        note={en.teamMemberDetails.checkboxAssign}
-        sub_heading={en.common.selectRoadmaps}
-        data={allRoadmapCategories.map((item) => ({
-          name: item.name,
-          list: item.roadmaps.map((roadmap) => ({
-            name: roadmap.name,
-            value: +roadmap.id,
-          })),
-        }))}
-        isLoading={isPageLoading}
-        initialValues={{
-          selected:
-            member?.assigned_roadmaps?.map((item) => item.id.toString()) || [],
-        }}
-        onSubmit={assignCourses}
-      />
+
+      {openAssignModal && (
+        <AssignDataModal
+          show={openAssignModal}
+          setShow={setOpenAssignModal}
+          heading={en.teamMemberDetails.assignNewRoadmap}
+          note={en.teamMemberDetails.checkboxAssign}
+          sub_heading={en.common.selectRoadmaps}
+          data={allRoadmapCategories.map((item) => ({
+            name: item.name,
+            list: item.roadmaps.map((roadmap) => ({
+              name: roadmap.name,
+              value: +roadmap.id,
+            })),
+          }))}
+          isLoading={isPageLoading}
+          initialValues={{
+            selected:
+              member?.assigned_roadmaps?.map((item) => item.id.toString()) ||
+              [],
+          }}
+          onSubmit={assignCourses}
+        />
+      )}
 
       {/* Rest of the component remains the same */}
       <Breadcrumb links={links} />
@@ -251,7 +255,7 @@ function TeamMemberDetails() {
               <Tooltip content="Edit User">
                 <SuperLink
                   href={`${RouteEnum.TEAM_EDIT}/${userId}`}
-                  className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                  className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 >
                   <PencilIcon className="h-4 w-4" />
                 </SuperLink>
@@ -262,7 +266,7 @@ function TeamMemberDetails() {
               <Tooltip content="Deactivate User">
                 <button
                   type="button"
-                  className={`text-black bg-gray-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center ${
+                  className={`text-black bg-gray-300 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center ${
                     member?.active === false
                       ? 'cursor-not-allowed'
                       : 'hover:bg-red-800 hover:text-white'
@@ -278,7 +282,7 @@ function TeamMemberDetails() {
             <Tooltip content="User Activities">
               <button
                 type="button"
-                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+                className="text-black bg-gray-300 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
                 onClick={() => setUserActivityModal(!userActivityModal)}
               >
                 <CursorArrowRippleIcon className="h-4 w-4" />

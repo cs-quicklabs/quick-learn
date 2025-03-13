@@ -214,6 +214,18 @@ const archivedSlice = createSlice({
         state.users.isLoading = false;
         state.users.isInitialLoad = false;
       })
+      .addCase(deleteArchivedUser.fulfilled, (state, action) => {
+        const userId = action.payload;
+        state.users.items = state.users.items.filter(
+          (user) => user.id !== userId,
+        );
+      })
+      .addCase(activateArchivedUser.fulfilled, (state, action) => {
+        const userId = action.payload;
+        state.users.items = state.users.items.filter(
+          (user) => user.id !== userId,
+        );
+      })
 
       // Roadmaps reducers
       .addCase(fetchArchivedRoadmaps.pending, (state) => {
@@ -234,6 +246,18 @@ const archivedSlice = createSlice({
       .addCase(fetchArchivedRoadmaps.rejected, (state) => {
         state.roadmaps.isLoading = false;
         state.roadmaps.isInitialLoad = false;
+      })
+      .addCase(deleteArchivedRoadmap.fulfilled, (state, action) => {
+        const roadmapId = action.payload;
+        state.roadmaps.items = state.roadmaps.items.filter(
+          (roadmap) => roadmap.id !== roadmapId,
+        );
+      })
+      .addCase(activateArchivedRoadmap.fulfilled, (state, action) => {
+        const roadmapId = action.payload;
+        state.roadmaps.items = state.roadmaps.items.filter(
+          (roadmap) => roadmap.id !== roadmapId,
+        );
       })
 
       // Courses reducers
@@ -257,6 +281,18 @@ const archivedSlice = createSlice({
         state.courses.isLoading = false;
         state.courses.isInitialLoad = false;
       })
+      .addCase(deleteArchivedCourse.fulfilled, (state, action) => {
+        const courseId = action.payload;
+        state.courses.items = state.courses.items.filter(
+          (course) => course.id !== courseId,
+        );
+      })
+      .addCase(activateArchivedCourse.fulfilled, (state, action) => {
+        const courseId = action.payload;
+        state.courses.items = state.courses.items.filter(
+          (course) => course.id !== courseId,
+        );
+      })
 
       // Lessons reducers
       .addCase(fetchArchivedLessons.pending, (state) => {
@@ -277,6 +313,18 @@ const archivedSlice = createSlice({
       .addCase(fetchArchivedLessons.rejected, (state) => {
         state.lessons.isLoading = false;
         state.lessons.isInitialLoad = false;
+      })
+      .addCase(deleteArchivedLesson.fulfilled, (state, action) => {
+        const lessonId = action.payload;
+        state.lessons.items = state.lessons.items.filter(
+          (lesson) => lesson.id !== lessonId,
+        );
+      })
+      .addCase(activateArchivedLesson.fulfilled, (state, action) => {
+        const lessonId = action.payload;
+        state.lessons.items = state.lessons.items.filter(
+          (lesson) => lesson.id !== lessonId,
+        );
       });
   },
 });

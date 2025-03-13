@@ -25,95 +25,19 @@ import NavbarSearchBox from './NavbarSearchBox';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@src/store/features/userSlice';
 import { getSystemPreferencesState } from '@src/store/features/systemPreferenceSlice';
-import { SystemPreferencesKey } from '../types/contentRepository';
-
-type TLink = {
-  name: string;
-  link: string;
-  isExtended?: boolean;
-  showCount?: boolean;
-  countKey?: SystemPreferencesKey;
-  exclude?: UserTypeIdEnum[];
-};
-
-const team: TLink = { name: 'Team', link: RouteEnum.TEAM };
-const myLearningPath: TLink = {
-  name: 'My Learning Paths',
-  link: RouteEnum.MY_LEARNING_PATH,
-};
-const content: TLink = { name: 'Content', link: RouteEnum.CONTENT };
-const approvals: TLink = {
-  name: 'Approvals',
-  link: RouteEnum.APPROVALS,
-  showCount: true,
-  countKey: SystemPreferencesKey.UNAPPROVED_LESSONS,
-};
-const flagged: TLink = {
-  name: 'Flagged',
-  link: RouteEnum.FLAGGED,
-  showCount: true,
-  countKey: SystemPreferencesKey.FLAGGED_LESSONS,
-};
-const community: TLink = { name: 'Community', link: RouteEnum.COMMUNITY };
-
-const adminUserLinks: TLink[] = [
-  team,
-  myLearningPath,
-  content,
-  approvals,
-  flagged,
-];
-const superAdminUserLinks: TLink[] = [...adminUserLinks, community];
-const editorUserLinks: TLink[] = [team, myLearningPath, content, flagged];
-const memberUserLinks: TLink[] = [myLearningPath];
-
-const menuItems: TLink[] = [
-  {
-    name: 'Account Settings',
-    link: RouteEnum.ACCOUNT_SETTINGS,
-    exclude: [
-      UserTypeIdEnum.ADMIN,
-      UserTypeIdEnum.EDITOR,
-      UserTypeIdEnum.MEMBER,
-    ],
-  },
-  {
-    name: 'My Profile',
-    link: RouteEnum.PROFILE_SETTINGS,
-    exclude: [],
-  },
-  {
-    name: 'Archive',
-    link: RouteEnum.ARCHIVED_USERS,
-    exclude: [UserTypeIdEnum.EDITOR, UserTypeIdEnum.MEMBER],
-  },
-  {
-    name: 'Leaderboard', //displayed to every user_type
-    link: RouteEnum.LEADERBOARD,
-    exclude: [],
-  },
-  {
-    name: 'Orphan Courses', // displayed to superAdmin, Admin, editor
-    link: RouteEnum.ORPHANCOURSES,
-    exclude: [UserTypeIdEnum.MEMBER],
-  },
-  {
-    name: 'Change-Logs',
-    link: RouteEnum.CHANGE_LOGS,
-    isExtended: true,
-    exclude: [],
-  },
-  {
-    name: 'Feature Roadmaps',
-    link: RouteEnum.FEATURE_LOGS,
-    isExtended: true,
-    exclude: [],
-  },
-];
+import {
+  adminUserLinks,
+  editorUserLinks,
+  memberUserLinks,
+  menuItems,
+  superAdminUserLinks,
+  TLink,
+} from '@src/utils/navbarHelper';
 
 function Navbar() {
   const [links, setLinks] = useState<TLink[]>([]);
   const [showConformationModal, setShowConformationModal] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector(selectUser);
   const pathname = usePathname();
@@ -122,15 +46,14 @@ function Navbar() {
   );
 
   useEffect(() => {
-    if (user?.user_type_id === UserTypeIdEnum.SUPERADMIN) {
-      setLinks(superAdminUserLinks);
-    } else if (user?.user_type_id === UserTypeIdEnum.ADMIN) {
-      setLinks(adminUserLinks);
-    } else if (user?.user_type_id === UserTypeIdEnum.EDITOR) {
-      setLinks(editorUserLinks);
-    } else if (user?.user_type_id === UserTypeIdEnum.MEMBER) {
-      setLinks(memberUserLinks);
-    }
+    const userLinksMap: Record<string, TLink[]> = {
+      [UserTypeIdEnum.SUPERADMIN]: superAdminUserLinks,
+      [UserTypeIdEnum.ADMIN]: adminUserLinks,
+      [UserTypeIdEnum.EDITOR]: editorUserLinks,
+      [UserTypeIdEnum.MEMBER]: memberUserLinks,
+    };
+
+    setLinks(userLinksMap[user?.user_type_id ?? UserTypeIdEnum.MEMBER]);
   }, [user]);
 
   useEffect(() => {
@@ -229,12 +152,12 @@ function Navbar() {
       />
       <Disclosure
         as="nav"
-        className="bg-gray-800 text-white shadow fixed z-10 w-full top-0"
+        className="bg-gray-800 text-white shadow-sm fixed z-10 w-full top-0"
       >
         <div className="mx-auto px-4 sm:px-4 lg:px-8">
           <div className="flex py-2 justify-between align-center">
             <div className="hidden md:flex px-2 lg:px-0">
-              <div className="flex-shrink-0 flex items-center">
+              <div className="shrink-0 flex items-center">
                 <SuperLink
                   id="homeLogo"
                   href={RouteEnum.MY_LEARNING_PATH}
@@ -282,17 +205,17 @@ function Navbar() {
             </div>
 
             <div className="flex lg:hidden">
-              <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+              <DisclosureButton
+                className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-white"
+                onClick={() => setIsOpen(!isOpen)}
+              >
                 <span className="absolute -inset-0.5" />
                 <span className="sr-only">{en.component.openMenu}</span>
-                <Bars3Icon
-                  className="block h-6 w-6 group-data-[open]:hidden"
-                  aria-hidden="true"
-                />
-                <XMarkIcon
-                  className="hidden h-6 w-6 group-data-[open]:block"
-                  aria-hidden="true"
-                />
+                {isOpen ? (
+                  <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                )}
               </DisclosureButton>
             </div>
 
@@ -309,7 +232,7 @@ function Navbar() {
                     </div>
                   </MenuButton>
 
-                  <MenuItems className="absolute right-0 mt-2 w-64 divide-y divide-gray-100 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <MenuItems className="absolute right-0 mt-2 w-64 divide-y divide-gray-100 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden">
                     {/* User Info Section */}
                     <div className="px-4 py-3">
                       <p className="text-base text-gray-900 font-medium first-letter:uppercase">
@@ -360,22 +283,6 @@ function Navbar() {
         </div>
 
         <DisclosurePanel className="lg:hidden">
-          <div className="border-y border-gray-700">
-            {menuItems.map(
-              (item) =>
-                item.isExtended && (
-                  <a
-                    key={item.link + item.name}
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                  >
-                    {item.name}
-                  </a>
-                ),
-            )}
-          </div>
           <div className="space-y-1 px-2 pb-3 pt-2">
             {links.map((item, index) => (
               <DisclosureButton

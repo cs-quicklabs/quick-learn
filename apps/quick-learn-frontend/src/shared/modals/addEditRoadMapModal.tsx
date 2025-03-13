@@ -1,6 +1,6 @@
 'use client';
 import { FC, useEffect } from 'react';
-import { Modal } from 'flowbite-react';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { CloseIcon } from '../components/UIElements';
 import { en } from '@src/constants/lang/en';
 import { z } from 'zod';
@@ -84,7 +84,7 @@ const AddEditRoadMapModal: FC<AddEditRoadMapProps> = ({
       height: '105px',
       width: '100%',
       className:
-        'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700',
+        'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500',
     },
   ];
 
@@ -107,40 +107,54 @@ const AddEditRoadMapModal: FC<AddEditRoadMapProps> = ({
   }, [open, reset, setValue, initialData]);
 
   return (
-    <Modal show={open} popup>
-      <Modal.Body className="p-4 sm:p-5">
-        <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b border-gray-200 sm:mb-5">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {isAdd
-              ? en.addEditRoadMapModal.addRoadmap
-              : en.addEditRoadMapModal.editRoadmap}
-          </h3>
-          <button
-            type="button"
-            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-            onClick={() => setOpen(false)}
-          >
-            <CloseIcon className="w-3 h-3" />
-          </button>
-        </div>
-        <FormProvider {...methods}>
-          <FormFieldsMapper
-            fields={addEditRoadmapFields}
-            schema={AddEditRoadmapSchema}
-            onSubmit={onSubmit}
-            methods={methods}
-            isLoading={isloading}
-            buttonText={
-              isAdd
+    <Dialog
+      as="div"
+      className="relative z-10"
+      open={open}
+      onClose={() => setOpen(false)}
+    >
+      {/* Background overlay */}
+      <div className="fixed inset-0 bg-gray-900 opacity-50" />
+
+      {/* Modal panel */}
+      <div className="fixed inset-0 overflow-y-auto flex min-h-full items-center justify-center p-4">
+        <DialogPanel className="w-full max-w-2xl transform overflow-hidden rounded-lg bg-white p-4 shadow-xl">
+          <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b border-gray-200 sm:mb-5">
+            <DialogTitle
+              as="h3"
+              className="text-lg font-semibold text-gray-900 "
+            >
+              {isAdd
                 ? en.addEditRoadMapModal.addRoadmap
-                : en.addEditRoadMapModal.editRoadmap
-            }
-            cancelButton={() => setOpen(false)}
-            id="addRoadmapForm"
-          />
-        </FormProvider>
-      </Modal.Body>
-    </Modal>
+                : en.addEditRoadMapModal.editRoadmap}
+            </DialogTitle>
+            <button
+              type="button"
+              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+              onClick={() => setOpen(false)}
+            >
+              <CloseIcon className="w-3 h-3" />
+            </button>
+          </div>
+          <FormProvider {...methods}>
+            <FormFieldsMapper
+              fields={addEditRoadmapFields}
+              schema={AddEditRoadmapSchema}
+              onSubmit={onSubmit}
+              methods={methods}
+              isLoading={isloading}
+              buttonText={
+                isAdd
+                  ? en.addEditRoadMapModal.addRoadmap
+                  : en.addEditRoadMapModal.editRoadmap
+              }
+              cancelButton={() => setOpen(false)}
+              id="addRoadmapForm"
+            />
+          </FormProvider>
+        </DialogPanel>
+      </div>
+    </Dialog>
   );
 };
 

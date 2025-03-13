@@ -27,6 +27,7 @@ export const en = {
     add: 'Add New',
     unknown: 'Unknown',
     on: 'on',
+    deletePermanently: 'Delete Permanently',
 
     //dashboard
     loading: 'Loading...',
@@ -124,6 +125,7 @@ export const en = {
     assignToRoadmap: 'Move or add this course to another Roadmap',
     archiveCourse: 'Archive Course',
     allLesson: 'All Lessons',
+    archivedCourseBy: 'archived this course on',
   },
 
   /**

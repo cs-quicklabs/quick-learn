@@ -49,7 +49,7 @@ export class EmailService {
       this.configService.get('ENV', { infer: true }) ===
       EnvironmentEnum.Developemnt;
     this.emailService = new EmailNotification(options, email, isDevelopment);
-    this.frontendURL = this.configService.get('app.frontendDomain', {
+    this.frontendURL = this.configService.get<string>('app.frontendDomain', {
       infer: true,
     });
   }

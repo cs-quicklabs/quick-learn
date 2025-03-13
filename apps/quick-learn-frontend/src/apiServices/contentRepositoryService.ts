@@ -34,11 +34,24 @@ export const getRoadmaps = async (): Promise<
 export const getRoadmap = async (
   id: string,
   courseId?: string,
+  archived?: boolean,
 ): Promise<AxiosSuccessResponse<TRoadmap>> => {
-  const url =
-    ContentRepositoryApiEnum.ROADMAP +
-    `/${id}` +
-    (courseId ? `?courseId=${courseId}` : '');
+  let url = ContentRepositoryApiEnum.ROADMAP + `/${id}`;
+  const params = new URLSearchParams();
+
+  if (courseId) {
+    params.append('courseId', courseId);
+  }
+
+  if (archived) {
+    params.append('archived', 'true');
+  }
+
+  const queryString = params.toString();
+  if (queryString) {
+    url += `?${queryString}`;
+  }
+
   const response = await axiosInstance.get<AxiosSuccessResponse<TRoadmap>>(url);
   return response.data;
 };

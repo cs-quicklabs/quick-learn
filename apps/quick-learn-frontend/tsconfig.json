@@ -16,7 +16,7 @@
         "name": "next"
       }
     ],
-    "types": ["jest", "node", "flowbite"],
+    "types": ["jest", "node"],
     "paths": {
       "@src/*": ["apps/quick-learn-frontend/src/*"],
       "@quick-learn/shared": ["../../lib/shared/src/index.ts"]
@@ -31,6 +31,6 @@
     "../../dist/apps/quick-learn-frontend/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
-  ],
+, "postcss.config.mjs"  ],
   "exclude": ["node_modules", "jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
 }

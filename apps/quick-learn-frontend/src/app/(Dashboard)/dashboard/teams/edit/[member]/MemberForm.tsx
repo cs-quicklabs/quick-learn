@@ -5,7 +5,7 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { RouteEnum } from '@src/constants/route.enum';
 import { useParams, useRouter } from 'next/navigation';
 import { Loader, ShowInfoIcon } from '@src/shared/components/UIElements';
-import { Tooltip } from 'flowbite-react';
+import Tooltip from '@src/shared/components/Tooltip';
 import { z } from 'zod';
 import { en } from '@src/constants/lang/en';
 
@@ -110,10 +110,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                   {label}
                   {tooltip && (
                     <div className="flex items-center ml-1">
-                      <Tooltip
-                        content={tooltip}
-                        className="py-1 px-2 max-w-sm text-xs font-normal text-white bg-gray-900 rounded-sm shadow-sm tooltip"
-                      >
+                      <Tooltip content={tooltip}>
                         <ShowInfoIcon />
                       </Tooltip>
                     </div>
@@ -128,7 +125,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                         <select
                           {...field}
                           id={String(name)}
-                          className="appearance-none block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 capitalize"
+                          className="appearance-none focus:outline-none focus:border-2 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 capitalize"
                         >
                           <option value="" disabled hidden>
                             {en.common.select}
@@ -153,7 +150,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                             {...field}
                             id={String(name)}
                             type={showPassword ? 'text' : 'password'}
-                            className="block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
+                            className="block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:border-2 focus:outline-none focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
                             placeholder={placeholder}
                           />
                           <button
@@ -177,7 +174,7 @@ function MemberForm<T extends z.ZodTypeAny>({
                           {...field}
                           id={String(name)}
                           type={type}
-                          className="block bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
+                          className="block bg-gray-50 border focus:outline-none border-gray-300 text-gray-900 sm:text-sm rounded-sm focus:border-2 focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5"
                           placeholder={placeholder}
                         />
                       )}

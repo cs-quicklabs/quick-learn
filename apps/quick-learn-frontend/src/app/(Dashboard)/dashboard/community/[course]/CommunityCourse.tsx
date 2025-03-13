@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { getCommunityCourse } from '@src/apiServices/contentRepositoryService';
 import { TCourse } from '@src/shared/types/contentRepository';
@@ -18,7 +18,7 @@ function CommunityCourse() {
   const params = useParams<{ course: string }>();
   const courseId = params.course;
 
-  const getCourseDetails = useCallback(() => {
+  const getCourseDetails = () => {
     if (!courseId) return;
     getCommunityCourse(courseId)
       .then((res) => {
@@ -28,11 +28,12 @@ function CommunityCourse() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [courseId]);
+  };
 
   useEffect(() => {
     getCourseDetails();
-  }, [courseId, getCourseDetails]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isLoading) {
     return <CommunityCourseDetailsSkeleton />;
@@ -79,8 +80,9 @@ function CommunityCourse() {
                 description={lesson.content}
                 link={`${RouteEnum.COMMUNITY}/${courseId}/${lesson.id}`}
                 metadata={{
-                  addedBy:
-                    `${lesson.created_by_user.first_name} ${lesson.created_by_user.last_name}`.trim(),
+                  addedBy: lesson.created_by
+                    ? `${lesson.created_by_user.first_name} ${lesson.created_by_user.last_name}`.trim()
+                    : en.common.unknown,
                   date: formattedDate,
                 }}
               />

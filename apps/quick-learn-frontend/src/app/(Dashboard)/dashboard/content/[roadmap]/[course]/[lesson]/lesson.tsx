@@ -1,5 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
+import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { activateLesson } from '@src/apiServices/archivedService';
 import { AxiosErrorObject } from '@src/apiServices/axios';
@@ -25,16 +34,12 @@ import {
   TLesson,
   TRoadmap,
 } from '@src/shared/types/contentRepository';
-import { useDispatch, useSelector } from 'react-redux';
 import { setHideNavbar } from '@src/store/features/uiSlice';
 import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import { UserTypeIdEnum } from 'lib/shared/src';
-import { useParams, usePathname, useRouter } from 'next/navigation';
-import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
   selectRoadmapById,
@@ -42,6 +47,7 @@ import {
 } from '@src/store/features/roadmapsSlice';
 import { selectUser } from '@src/store/features/userSlice';
 import { useAppSelector } from '@src/store/hooks';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 // Move constants outside component to prevent recreating on each render
 const defaultlinks: TBreadcrumb[] = [
@@ -59,31 +65,33 @@ const lessonSchema = z.object({
 type LessonFormData = z.infer<typeof lessonSchema>;
 
 // Separate components for better performance
-const SaveButton = memo(
-  ({ isAdmin, disabled }: { isAdmin: boolean; disabled: boolean }) => (
-    <button
-      type="submit"
-      className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
-      disabled={disabled}
-    >
-      {isAdmin
-        ? en.common.saveAndPublish
-        : en.common.lessonSaveAndApprovalButton}
-    </button>
-  ),
+const SaveButton = ({
+  isAdmin,
+  disabled,
+}: {
+  isAdmin: boolean;
+  disabled: boolean;
+}) => (
+  <button
+    type="submit"
+    className="fixed bottom-4 right-4 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
+    disabled={disabled}
+  >
+    {isAdmin ? en.common.saveAndPublish : en.common.lessonSaveAndApprovalButton}
+  </button>
 );
 
 SaveButton.displayName = 'SaveButton';
 
-const ArchiveButton = memo(({ onClick }: { onClick: () => void }) => (
+const ArchiveButton = ({ onClick }: { onClick: () => void }) => (
   <button
     type="button"
-    className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
+    className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
     onClick={onClick}
   >
     {en.common.Archive}
   </button>
-));
+);
 
 ArchiveButton.displayName = 'ArchiveButton';
 
@@ -119,25 +127,25 @@ function Lesson() {
     course: string;
     lesson: string;
   }>();
+  const queryParams = useSearchParams();
+  const isToolbarOpen = queryParams.get('edit');
+
   const { roadmap: roadmapId, course: courseId, lesson: lessonId } = params;
 
   // Context and state remain the same
   const user = useSelector(selectUser);
-  const isAdmin = useMemo(
-    () =>
-      [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
-        user?.user_type_id ?? -1,
-      ),
-    [user?.user_type_id],
+  const isAdmin = [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
+    user?.user_type_id ?? -1,
   );
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isEditing, setIsEditing] = useState<boolean>(
-    lessonId === 'add' || path.includes('edit'),
+    lessonId === 'add' || path.includes('edit') || isToolbarOpen === 'true',
   );
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isSkeleton, setIsSkeleton] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
@@ -146,7 +154,7 @@ function Lesson() {
 
   const isEdit = useMemo(() => {
     return (
-      path.includes('edit') && user?.user_type_id === UserTypeIdEnum.EDITOR
+      path.includes('edit') && user?.user_type_id !== UserTypeIdEnum.MEMBER
     );
   }, [path]);
 
@@ -184,6 +192,7 @@ function Lesson() {
   // Optimize initial data fetching
   useEffect(() => {
     const fetchData = async () => {
+      setIsSkeleton(true);
       try {
         if (!(isNaN(+roadmapId) || isNaN(+courseId))) {
           const roadmapData = await getRoadmap(roadmapId, courseId);
@@ -202,6 +211,8 @@ function Lesson() {
       } catch (err) {
         showApiErrorInToast(err as AxiosErrorObject);
         router.replace(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
+      } finally {
+        setIsSkeleton(false);
       }
     };
 
@@ -271,38 +282,65 @@ function Lesson() {
     async (field: 'name' | 'content', value: string) => {
       if (lessonId === 'add') return;
 
+      // Get current server-side value for comparison
+      const currentValue =
+        field === 'content'
+          ? (lesson?.new_content ?? lesson?.content ?? '')
+          : (lesson?.name ?? '');
+
+      // Skip the update if values are the same
+      if (value.trim() === currentValue.trim()) {
+        setIsUpdating(false);
+        return;
+      }
+
       try {
-        setIsUpdating(true);
         const res = await updateLesson(lessonId, {
           [field]: value.trim(),
         });
         if (!res.success) throw res;
+
+        // Update the local lesson object to reflect the new value
+        if (field === 'content') {
+          setLesson((prev) =>
+            prev ? { ...prev, new_content: value.trim() } : prev,
+          );
+        } else {
+          setLesson((prev) => (prev ? { ...prev, name: value.trim() } : prev));
+        }
       } catch (err) {
         console.error(err);
       } finally {
         setIsUpdating(false);
       }
     },
-    [lessonId],
+    [lessonId, lesson],
   );
 
   // Optimize onChange handler
   const onChange = useCallback(
     (field: 'name' | 'content', value: string) => {
+      const currentValue =
+        field === 'content'
+          ? (lesson?.new_content ?? lesson?.content ?? '')
+          : (lesson?.name ?? '');
+
       form.setValue(field, value, {
         shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
       });
       // Clear existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (value !== currentValue && lessonId !== 'add') {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        setIsUpdating(true);
+        // Set new timeout for 2 seconds after user stops typing
+        timeoutRef.current = setTimeout(() => {
+          updateContent(field, value);
+        }, 2000);
       }
-      setIsUpdating(true);
-      // Set new timeout for 2 seconds after user stops typing
-      timeoutRef.current = setTimeout(() => {
-        updateContent(field, value);
-      }, 2000);
     },
     [form.setValue, updateContent],
   );
@@ -333,6 +371,8 @@ function Lesson() {
       setIsArchiving(false);
     }
   }, [lessonId, roadmapId, courseId, router]);
+
+  if (isSkeleton) return <LessonSkeleton isEdit />;
 
   return (
     <div className="-mt-4">
@@ -367,7 +407,10 @@ function Lesson() {
                   isEditing={isEditing}
                   setIsEditing={setIsEditing}
                   value={field.value}
-                  setValue={(e) => onChange(field.name, e)}
+                  setValue={(newValue) => {
+                    onChange(field.name, newValue);
+                    field.onChange(newValue);
+                  }}
                   isUpdating={isUpdating}
                   isAdd={lessonId === 'add'}
                 />

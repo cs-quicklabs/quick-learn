@@ -200,7 +200,7 @@ function Dashboard() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="bg-gray-50 relative z-0 flex-1 min-h-0 focus:outline-none"
+      className="bg-gray-50 relative z-0 flex-1 min-h-0 focus:outline-hidden"
     >
       <div className=" mt-[85px] mb-5 mx-6">
         <SmallScreenTabs

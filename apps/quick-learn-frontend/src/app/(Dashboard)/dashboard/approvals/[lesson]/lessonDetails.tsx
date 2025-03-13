@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
 import {
   approveLesson,
@@ -17,6 +17,7 @@ import {
 } from '@src/utils/toastUtils';
 import { useAppDispatch } from '@src/store/hooks';
 import { setHideNavbar } from '@src/store/features/uiSlice';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 const defaultLinks = [{ name: 'Approvals', link: RouteEnum.APPROVALS }];
 
@@ -35,20 +36,16 @@ function LessonDetails() {
   const [loading, setLoading] = useState(true);
   const [lesson, setLesson] = useState<TLesson>();
   const [isApproved, setIsApproved] = useState<boolean>(false);
-  const links = useMemo<TBreadcrumb[]>(
-    () =>
-      !lesson
-        ? defaultLinks
-        : [
-            ...defaultLinks,
-            {
-              name: lesson.course.name,
-              link: `${RouteEnum.CONTENT}/courses/${lesson.course_id}`,
-            },
-            { name: lesson.name, link: `${RouteEnum.FLAGGED}/${lesson.id}` },
-          ],
-    [lesson],
-  );
+  const links: TBreadcrumb[] = !lesson
+    ? defaultLinks
+    : [
+        ...defaultLinks,
+        {
+          name: lesson.course.name,
+          link: `${RouteEnum.CONTENT}/courses/${lesson.course_id}`,
+        },
+        { name: lesson.name, link: `${RouteEnum.FLAGGED}/${lesson.id}` },
+      ];
 
   useEffect(() => {
     if (isNaN(+id)) return;
@@ -75,7 +72,7 @@ function LessonDetails() {
       });
   }
 
-  if (!lesson) return null;
+  if (!lesson) return <LessonSkeleton />;
 
   return (
     <div className="-mt-8">

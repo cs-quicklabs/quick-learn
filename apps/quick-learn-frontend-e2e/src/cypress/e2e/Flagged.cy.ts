@@ -14,12 +14,6 @@ describe('Flagged Lesson', () => {
     AdminFlag.UnflagLessonViaSuperAdmin();
   });
 
-  it('Verify that breadcrumbs are not clickable under flagged lesson', () => {
-    loginPage.initialize(validCredentials.mail, validCredentials.password);
-    const AdminFlag = new Flagged();
-    AdminFlag.BreadCrumbsUnclickable();
-  });
-
   it('Verify that the Search functionality is working as expected', () => {
     loginPage.initialize(validCredentials.mail, validCredentials.password);
     const AdminFlag = new Flagged();

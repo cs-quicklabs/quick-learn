@@ -1,8 +1,20 @@
-@import '../../../../node_modules/tailwindcss/base.css';
-@import '../../../../node_modules/tailwindcss/components.css';
-@import '../../../../node_modules/tailwindcss/utilities.css';
+@import 'react-quill-new/dist/quill.snow.css';  
+@import "tailwindcss";
 
-@import '~react-quill-new/dist/quill.snow.css';
+@theme{
+  
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+}
 
 div[role='dialog'] {
   align-content: center !important;
@@ -34,29 +46,6 @@ body {
   line-height: inherit;
   margin: 0;
 }
-h1,
-h2,
-p,
-pre {
-  margin: 0;
-}
-*,
-::before,
-::after {
-  box-sizing: border-box;
-  border-width: 0;
-  border-style: solid;
-  border-color: currentColor;
-}
-h1,
-h2 {
-  font-size: inherit;
-  font-weight: inherit;
-}
-a {
-  color: inherit;
-  text-decoration: inherit;
-}
 pre {
   font-family:
     ui-monospace,
@@ -79,6 +68,14 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color 5000s;
   -webkit-text-fill-color: #000000 !important;
+}
+
+/* Tooltip css */
+.tooltip .tooltiptext {
+  visibility: hidden;
+}
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 
 /* Quill  toolbar and editor css */
@@ -132,6 +129,8 @@ input:-webkit-autofill:active {
   max-width: 85%;
 }
 
+
+
 .quill .ql-container .ql-editor a,
 .quill .ql-container .ql-editor p {
   font-size: 1.25rem;
@@ -170,6 +169,13 @@ input:-webkit-autofill:active {
   background-color: #eee;
   margin: 1rem auto;
 }
+
+.ql-snow .ql-editor .ql-code-block-container{
+  background-color: #ccc;
+  color:black
+}
+
+
 .quill .ql-container ul,
 .quill .ql-container ol {
   padding-left: 2.5rem;
@@ -209,6 +215,16 @@ input:-webkit-autofill:active {
     letter-spacing: normal;
     max-width: 85%;
   }
+  .quill .ql-container .ql-editor {
+  min-height: 100vh;
+  font:
+    400 16px/28px 'Open Sans',
+    sans-serif;
+  line-height: 2rem !important;
+  max-width: 100%;
+  padding-left: 0%;
+  padding-right: 0;
+}
 
   .quill .ql-container .ql-editor a,
   .quill .ql-container .ql-editor p {
@@ -238,5 +254,9 @@ input:-webkit-autofill:active {
     padding-right: 0.5rem;
     margin-bottom: 1rem;
     font-size: 1rem;
+  }
+
+  [class^='ql-indent-']:not(.ql-indent-1):not(.ql-indent-2):not(.ql-indent-3) {
+    white-space: nowrap;
   }
 }

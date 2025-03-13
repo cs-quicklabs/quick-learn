@@ -13,10 +13,8 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
 import ViewLesson from '@src/shared/components/ViewLesson';
-import { Button } from 'flowbite-react';
 import { TUser } from '@src/shared/types/userTypes';
 import { HomeIcon } from '@heroicons/react/20/solid';
 import { FlagIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
@@ -24,6 +22,7 @@ import { UserTypeIdEnum } from 'lib/shared/src';
 import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 function DailyLessonDetail() {
   const [link, setLink] = useState<TBreadcrumb[]>([]);
@@ -183,7 +182,7 @@ function DailyLessonDetail() {
           onChange={handleCheckboxChange}
           className="rounded-md h-5 w-5 border-gray-400 bg-[#F4F4F6]"
         />
-        <p className="text-l font-semibold text-gray-900 dark:text-gray-300">
+        <p className="text-l font-semibold text-gray-900">
           {en.myLearningPath.markRead}
         </p>
       </div>
@@ -236,19 +235,23 @@ function DailyLessonDetail() {
 
     return (
       <div className="fixed flex bottom-5 left-5">
-        <Button color="blue" pill onClick={navigateUserToLearningPath}>
+        <button
+          type="button"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden focus:ring-4 focus:ring-blue-300 rounded-full px-5 py-2.5 text-center me-2 mb-2"
+          onClick={navigateUserToLearningPath}
+        >
           <span className="flex items-center gap-1 justify-center">
             <HomeIcon height="1rem" width="1rem" />
             <span className="hidden md:flex">
               {en.lesson.NavigateToLearningPath}
             </span>
           </span>
-        </Button>
+        </button>
       </div>
     );
   };
 
-  if (!lessonDetails) return <FullPageLoader />;
+  if (!lessonDetails) return <LessonSkeleton />;
 
   return (
     <div className="max-w-screen-2xl mx-auto mt-12 py-3 mb-12 sm:py-5 md:mb-0">

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/store/hooks';
 import {
   fetchArchivedCourses,
@@ -18,6 +18,8 @@ import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
+import { RouteEnum } from '@src/constants/route.enum';
+import { useRouter } from 'next/navigation';
 
 function ArchivedCourses() {
   const dispatch = useAppDispatch();
@@ -32,79 +34,54 @@ function ArchivedCourses() {
 
   const [restoreId, setRestoreId] = useState<string | false>(false);
   const [deleteId, setDeleteId] = useState<string | false>(false);
+  const router = useRouter();
 
-  const getNextCourses = useCallback(() => {
+  const getNextCourses = () => {
     if (!isLoading && hasMore) {
       dispatch(fetchArchivedCourses({ page, search: searchValue }));
     }
-  }, [dispatch, hasMore, isLoading, page, searchValue]);
+  };
 
-  const handleDeleteCourse = useCallback(
-    async (id: string) => {
-      try {
-        await dispatch(deleteArchivedCourse({ id: parseInt(id, 10) })).unwrap();
-        dispatch(
-          fetchArchivedCourses({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.courseDeleted);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setDeleteId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
+  const handleDeleteCourse = async (id: string) => {
+    try {
+      await dispatch(deleteArchivedCourse({ id: parseInt(id, 10) })).unwrap();
+      toast.success(en.archivedSection.courseDeleted);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setDeleteId(false);
+    }
+  };
 
-  const restoreCourse = useCallback(
-    async (id: string) => {
-      try {
-        await dispatch(
-          activateArchivedCourse({ id: parseInt(id, 10) }),
-        ).unwrap();
-        dispatch(
-          fetchArchivedCourses({
-            page: 1,
-            search: searchValue,
-            resetList: true,
-          }),
-        );
-        toast.success(en.archivedSection.courseRestored);
-      } catch (error) {
-        console.log(error);
-        toast.error(en.common.somethingWentWrong);
-      } finally {
-        setRestoreId(false);
-      }
-    },
-    [dispatch, searchValue],
-  );
+  const restoreCourse = async (id: string) => {
+    try {
+      await dispatch(activateArchivedCourse({ id: parseInt(id, 10) })).unwrap();
+      toast.success(en.archivedSection.courseRestored);
+    } catch (error) {
+      console.log(error);
+      toast.error(en.common.somethingWentWrong);
+    } finally {
+      setRestoreId(false);
+    }
+  };
 
-  const handleQueryChange = useMemo(
-    () =>
-      debounce(async (value: string) => {
-        const searchText = value || '';
-        try {
-          dispatch(setCoursesSearchValue(searchText));
-          dispatch(
-            fetchArchivedCourses({
-              page: 1,
-              search: searchText,
-              resetList: true,
-            }),
-          );
-        } catch (err) {
-          console.log(err);
-          toast.error(en.common.somethingWentWrong);
-        }
-      }, 300),
-    [dispatch],
-  );
+  const handleQueryChange = debounce(async (value: string) => {
+    const searchText = value || '';
+    try {
+      dispatch(setCoursesSearchValue(searchText));
+      dispatch(
+        fetchArchivedCourses({
+          page: 1,
+          search: searchText,
+          resetList: true,
+        }),
+      );
+    } catch (err) {
+      console.log(err);
+      toast.error(en.common.somethingWentWrong);
+    }
+  }, 300);
 
   useEffect(() => {
     dispatch(fetchArchivedCourses({ page: 1, search: '', resetList: true }));
@@ -170,6 +147,9 @@ function ArchivedCourses() {
                 deactivationDate={item.updated_at}
                 onClickDelete={() => setDeleteId(String(item.id))}
                 onClickRestore={() => setRestoreId(String(item.id))}
+                onClickNavigate={() => {
+                  router.push(`${RouteEnum.ARCHIVED_COURSES}/${item.id}`);
+                }}
                 alternateButton
               />
             ))}

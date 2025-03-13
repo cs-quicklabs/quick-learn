@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateFormats } from '@src/constants/dateFormats';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
@@ -37,21 +37,14 @@ function ApprovalList() {
 
   const [search, setSearch] = useState('');
 
-  const fetchLessons = useCallback(
-    (pageNum: number, searchTerm: string) => {
-      dispatch(fetchUnapprovedLessons({ page: pageNum, q: searchTerm }));
-    },
-    [dispatch],
-  );
+  const fetchLessons = (pageNum: number, searchTerm: string) => {
+    dispatch(fetchUnapprovedLessons({ page: pageNum, q: searchTerm }));
+  };
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((searchTerm: string) => {
-        dispatch(setCurrentPageApprovalList(1));
-        fetchLessons(1, searchTerm);
-      }, 500),
-    [dispatch, fetchLessons],
-  );
+  const debouncedSearch = debounce((searchTerm: string) => {
+    dispatch(setCurrentPageApprovalList(1));
+    fetchLessons(1, searchTerm);
+  }, 500);
 
   useEffect(() => {
     fetchLessons(1, '');
@@ -92,11 +85,11 @@ function ApprovalList() {
       <tr
         id={`row${index}`}
         key={lesson.id}
-        className="border-b border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        className="border-b border-gray-200 hover:bg-gray-100"
       >
         <th
           scope="row"
-          className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap"
         >
           <div className="flex items-center">
             <SuperLink
@@ -118,7 +111,7 @@ function ApprovalList() {
             ? lesson.created_by_user.first_name +
               ' ' +
               lesson.created_by_user.last_name
-            : en.common.unknown}
+            : 'Admin'}
         </td>
       </tr>
     ));
@@ -128,7 +121,7 @@ function ApprovalList() {
 
   return (
     <div className="px-4 mx-auto max-w-screen-2xl lg:px-8">
-      <div className="relative overflow-hidden bg-white shadow-md sm:rounded-sm">
+      <div className="relative overflow-hidden bg-white shadow-md sm:rounded-xs">
         <div>
           <div className="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
             <div>
@@ -140,10 +133,11 @@ function ApprovalList() {
             <div className="w-full sm:w-auto">
               <input
                 type="text"
-                className="bg-gray-50 w-full sm:w-64 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block touch-none"
+                className="bg-gray-50 w-full sm:w-64 h-[36px] border border-gray-300 focus:ring-1 text-gray-900 text-sm rounded-lg focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 block touch-none px-2"
                 placeholder="Search lessons..."
                 value={search}
                 onChange={handleSearchChange}
+                id="search_approval_lesson"
               />
             </div>
           </div>
