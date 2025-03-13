@@ -4,7 +4,7 @@ import { getRoadmap } from '@src/apiServices/contentRepositoryService';
 import { getLessonDetails } from '@src/apiServices/lessonsService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import { FullPageLoader } from '@src/shared/components/UIElements';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 import ViewLesson from '@src/shared/components/ViewLesson';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson, TRoadmap } from '@src/shared/types/contentRepository';
@@ -76,8 +76,7 @@ function LessonDetails() {
     }
   }, [roadmapId, courseId, lessonId, router]);
 
-  if (!user) return <FullPageLoader />;
-  if (!lesson) return <FullPageLoader />;
+  if (!user || !lesson) return <LessonSkeleton />;
 
   return (
     <>

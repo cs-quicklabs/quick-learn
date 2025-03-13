@@ -13,7 +13,6 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { RouteEnum } from '@src/constants/route.enum';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import { en } from '@src/constants/lang/en';
 import ViewLesson from '@src/shared/components/ViewLesson';
 import { TUser } from '@src/shared/types/userTypes';
@@ -23,6 +22,7 @@ import { UserTypeIdEnum } from 'lib/shared/src';
 import { format } from 'date-fns';
 import { DateFormats } from '@src/constants/dateFormats';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 function DailyLessonDetail() {
   const [link, setLink] = useState<TBreadcrumb[]>([]);
@@ -251,7 +251,7 @@ function DailyLessonDetail() {
     );
   };
 
-  if (!lessonDetails) return <FullPageLoader />;
+  if (!lessonDetails) return <LessonSkeleton />;
 
   return (
     <div className="max-w-screen-2xl mx-auto mt-12 py-3 mb-12 sm:py-5 md:mb-0">
