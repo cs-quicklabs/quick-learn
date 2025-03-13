@@ -6,7 +6,6 @@ import { getLearningPathLessionDetails } from '@src/apiServices/learningPathServ
 import { getLessonStatus, markAsDone } from '@src/apiServices/lessonsService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
-import { FullPageLoader } from '@src/shared/components/UIElements';
 import ViewLesson from '@src/shared/components/ViewLesson';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { TLesson } from '@src/shared/types/contentRepository';
@@ -16,6 +15,7 @@ import {
   showApiErrorInToast,
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 function LessonDetails() {
   const { roadmap, course, lesson, member } = useParams<{
@@ -117,7 +117,7 @@ function LessonDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, lesson, course, roadmap, member]);
 
-  if (!lessonDetails) return <FullPageLoader />;
+  if (!lessonDetails) return <LessonSkeleton />;
   return (
     <>
       <ViewLesson lesson={lessonDetails} links={links} />

@@ -17,6 +17,7 @@ import {
 } from '@src/utils/toastUtils';
 import { useAppDispatch } from '@src/store/hooks';
 import { setHideNavbar } from '@src/store/features/uiSlice';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 const defaultLinks = [{ name: 'Approvals', link: RouteEnum.APPROVALS }];
 
@@ -71,7 +72,7 @@ function LessonDetails() {
       });
   }
 
-  if (!lesson) return null;
+  if (!lesson) return <LessonSkeleton />;
 
   return (
     <div className="-mt-8">

@@ -20,6 +20,7 @@ import { useAppDispatch } from '@src/store/hooks';
 import { setHideNavbar, selectUser } from '@src/store/features';
 import { UserTypeIdEnum } from 'lib/shared/src';
 import { PencilIcon } from '@heroicons/react/24/outline';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 const defaultLinks = [{ name: 'Flagged Lessons', link: RouteEnum.FLAGGED }];
 
@@ -101,7 +102,7 @@ function LessonDetails() {
     }
   };
 
-  if (!lesson) return null;
+  if (!lesson) return <LessonSkeleton />;
 
   return (
     <div className="-mt-8">

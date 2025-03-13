@@ -47,6 +47,7 @@ import {
 } from '@src/store/features/roadmapsSlice';
 import { selectUser } from '@src/store/features/userSlice';
 import { useAppSelector } from '@src/store/hooks';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 // Move constants outside component to prevent recreating on each render
 const defaultlinks: TBreadcrumb[] = [
@@ -144,6 +145,7 @@ function Lesson() {
   const [lesson, setLesson] = useState<TLesson>();
   const [roadmap, setRoadmap] = useState<TRoadmap>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isSkeleton, setIsSkeleton] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
@@ -186,9 +188,11 @@ function Lesson() {
     courseId,
     lessonId,
   ]);
+
   // Optimize initial data fetching
   useEffect(() => {
     const fetchData = async () => {
+      setIsSkeleton(true);
       try {
         if (!(isNaN(+roadmapId) || isNaN(+courseId))) {
           const roadmapData = await getRoadmap(roadmapId, courseId);
@@ -207,6 +211,8 @@ function Lesson() {
       } catch (err) {
         showApiErrorInToast(err as AxiosErrorObject);
         router.replace(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
+      } finally {
+        setIsSkeleton(false);
       }
     };
 
@@ -365,6 +371,8 @@ function Lesson() {
       setIsArchiving(false);
     }
   }, [lessonId, roadmapId, courseId, router]);
+
+  if (isSkeleton) return <LessonSkeleton isEdit />;
 
   return (
     <div className="-mt-4">

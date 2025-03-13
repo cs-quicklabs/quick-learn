@@ -7,6 +7,7 @@ import ViewLesson from '@src/shared/components/ViewLesson';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
 import { RouteEnum } from '@src/constants/route.enum';
 import { showApiErrorInToast } from '@src/utils/toastUtils';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 
 const defaultlinks: TBreadcrumb[] = [
   { name: 'Community Repository', link: RouteEnum.COMMUNITY },
@@ -42,6 +43,9 @@ function Lesson() {
     getLessonData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!lessonData) return <LessonSkeleton />;
+
   return (
     <div>{lessonData && <ViewLesson lesson={lessonData} links={links} />}</div>
   );
