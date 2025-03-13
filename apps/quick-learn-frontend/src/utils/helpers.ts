@@ -17,6 +17,8 @@ import {
   getLastMonthRange,
   getLastQuarterRange,
   getLastWeekRange,
+  UserTypeIdEnum,
+  UserTypeCodeEnum,
 } from 'lib/shared/src';
 
 type RangeType = 'weekly' | 'monthly' | 'quarterly';
@@ -216,4 +218,19 @@ export const getRecords = (type: string) => {
 export const firstLetterCapital = (text: string | undefined) => {
   if (typeof text !== 'string' || text.length === 0) return '';
   return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
+export const getUserType = (id: number) => {
+  switch (id) {
+    case UserTypeIdEnum.SUPERADMIN:
+      return UserTypeCodeEnum.SUPERADMIN;
+    case UserTypeIdEnum.ADMIN:
+      return UserTypeCodeEnum.ADMIN;
+    case UserTypeIdEnum.EDITOR:
+      return UserTypeCodeEnum.EDITOR;
+    case UserTypeIdEnum.MEMBER:
+      return UserTypeCodeEnum.MEMBER;
+    default:
+      return null; // or handle unknown user type
+  }
 };

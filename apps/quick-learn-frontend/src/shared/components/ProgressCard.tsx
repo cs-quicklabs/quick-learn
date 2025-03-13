@@ -12,7 +12,7 @@ interface ProgressCardProps {
   name: string;
   title: string;
   percentage?: number;
-  link: string;
+  link?: string;
   className?: string;
   isCompleted?: LessonProgress;
   isLesson?: boolean;
@@ -115,7 +115,8 @@ const ProgressCard = forwardRef<HTMLAnchorElement, ProgressCardProps>(
 
     return (
       <SuperLink
-        href={link}
+        href={link ?? '#'}
+        aria-disabled={!link}
         id={id.toString()}
         className={baseClassName}
         ref={ref}
