@@ -3,7 +3,7 @@ import { getLessonDetails } from '@src/apiServices/lessonsService';
 import { en } from '@src/constants/lang/en';
 import { RouteEnum } from '@src/constants/route.enum';
 import ArchivedBanner from '@src/shared/components/ArchivedBanner';
-import { FullPageLoader } from '@src/shared/components/UIElements';
+import LessonSkeleton from '@src/shared/components/LessonSkeleton';
 import ViewLesson from '@src/shared/components/ViewLesson';
 import ConformationModal from '@src/shared/modals/conformationModal';
 import { TBreadcrumb } from '@src/shared/types/breadcrumbType';
@@ -23,24 +23,24 @@ const ViewArchivedLesson = () => {
   const [confirmationData, setConfirmationData] = useState<{
     type: 'restore' | 'delete';
   } | null>(null);
-  const [currlesson, setCurrLesson] = useState<TLesson>();
+  const [currLesson, setCurrLesson] = useState<TLesson>();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const defaultLinks = [
     { name: 'Archived Lesson', link: RouteEnum.ARCHIVED_LESSONS },
   ];
 
-  const links: TBreadcrumb[] = !currlesson
+  const links: TBreadcrumb[] = !currLesson
     ? defaultLinks
     : [
         ...defaultLinks,
         {
-          name: currlesson.course.name,
-          link: `${RouteEnum.CONTENT}/courses/${currlesson.course_id}`,
+          name: currLesson.course.name,
+          link: `${RouteEnum.CONTENT}/courses/${currLesson.course_id}`,
         },
         {
-          name: currlesson.name,
-          link: `${RouteEnum.FLAGGED}/${currlesson.id}`,
+          name: currLesson.name,
+          link: `${RouteEnum.FLAGGED}/${currLesson.id}`,
         },
       ];
 
@@ -75,7 +75,7 @@ const ViewArchivedLesson = () => {
     }
   };
 
-  if (!currlesson) return <FullPageLoader />;
+  if (!currLesson) return <LessonSkeleton />;
   return (
     <div className="px-4 -mt-8">
       <ConformationModal
@@ -96,15 +96,15 @@ const ViewArchivedLesson = () => {
       <div className="flex justify-center mb-4 relative">
         <ArchivedBanner
           type="lesson"
-          archivedAt={currlesson.updated_at}
+          archivedAt={currLesson.updated_at}
           archivedBy={
-            currlesson?.archive_by_user?.display_name ?? 'SUPER ADMIN'
+            currLesson?.archive_by_user?.display_name ?? 'SUPER ADMIN'
           }
           onRestore={() => setConfirmationData({ type: 'restore' })}
           onDelete={() => setConfirmationData({ type: 'delete' })}
         />
       </div>
-      <ViewLesson lesson={currlesson} links={links} />
+      <ViewLesson lesson={currLesson} links={links} />
     </div>
   );
 };
