@@ -18,6 +18,8 @@ import { en } from '@src/constants/lang/en';
 import { toast } from 'react-toastify';
 import EmptyState from '@src/shared/components/EmptyStatePlaceholder';
 import { LoadingSkeleton } from '@src/shared/components/UIElements';
+import { RouteEnum } from '@src/constants/route.enum';
+import { useRouter } from 'next/navigation';
 
 function ArchivedCourses() {
   const dispatch = useAppDispatch();
@@ -32,6 +34,7 @@ function ArchivedCourses() {
 
   const [restoreId, setRestoreId] = useState<string | false>(false);
   const [deleteId, setDeleteId] = useState<string | false>(false);
+  const router = useRouter();
 
   const getNextCourses = () => {
     if (!isLoading && hasMore) {
@@ -144,6 +147,9 @@ function ArchivedCourses() {
                 deactivationDate={item.updated_at}
                 onClickDelete={() => setDeleteId(String(item.id))}
                 onClickRestore={() => setRestoreId(String(item.id))}
+                onClickNavigate={() => {
+                  router.push(`${RouteEnum.ARCHIVED_COURSES}/${item.id}`);
+                }}
                 alternateButton
               />
             ))}

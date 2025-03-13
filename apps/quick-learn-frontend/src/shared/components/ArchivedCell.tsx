@@ -36,7 +36,6 @@ function LoadingSkeleton() {
     </div>
   );
 }
-
 const ArchivedCell: FC<Props> = ({
   title,
   subtitle,
@@ -51,7 +50,6 @@ const ArchivedCell: FC<Props> = ({
   if (isLoading) {
     return <LoadingSkeleton />;
   }
-
   return (
     <div className="md:flex md:items-center p-4 bg-gray-100 rounded-lg border border-gray-100 mb-3 md:bg-transparent md:border-none md:mb-0">
       <div className="flex-1 min-w-0 mb-3 md:mb-0">
@@ -101,5 +99,4 @@ const ArchivedCell: FC<Props> = ({
     </div>
   );
 };
-
 export default ArchivedCell;

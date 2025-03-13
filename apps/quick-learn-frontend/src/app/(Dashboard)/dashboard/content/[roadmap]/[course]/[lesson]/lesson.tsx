@@ -399,7 +399,10 @@ function Lesson() {
                   isEditing={isEditing}
                   setIsEditing={setIsEditing}
                   value={field.value}
-                  setValue={(e) => onChange(field.name, e)}
+                  setValue={(newValue) => {
+                    onChange(field.name, newValue);
+                    field.onChange(newValue);
+                  }}
                   isUpdating={isUpdating}
                   isAdd={lessonId === 'add'}
                 />

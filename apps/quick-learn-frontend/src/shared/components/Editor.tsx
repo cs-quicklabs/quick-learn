@@ -46,7 +46,7 @@ const Editor: FC<Props> = ({
   // Create a custom onChange handler
   const handleChange = useCallback(
     (newValue: string) => {
-      if (!!value && newValue !== value && setValue) {
+      if (setValue) {
         setValue(newValue || '');
       }
     },
