@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import Sidebar, { TNavLink } from '@src/shared/components/Sidebar';
 import { RouteEnum } from '@src/constants/route.enum';
 import { ChildrenProp } from '@src/shared/interfaces/propInterface';
@@ -9,8 +9,11 @@ import {
   OpenBookIcon,
   ProfileIdentificationCard,
 } from '@src/shared/components/UIElements';
+import { useParams } from 'next/navigation';
 
 const Layout: FC<ChildrenProp> = ({ children }) => {
+  const params = useParams();
+  const hasParams = Object.keys(params).length > 0;
   const navLinks: TNavLink[] = [
     {
       title: 'Archived Users',
@@ -42,17 +45,22 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto pb-10 lg:py-6 lg:px-8">
-      <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
-        <aside className="px-2 py-4 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
-          <Sidebar navLinks={navLinks} />
-        </aside>
-        <main className="max-w-[45rem] px-4 pb-12 lg:col-span-8">
-          <div className="overflow-hidden bg-white">{children}</div>
-        </main>
-      </div>
+    <div>
+      {!hasParams ? (
+        <div className="max-w-7xl mx-auto pb-10 lg:px-8">
+          <div className="lg:grid lg:grid-cols-12 lg:py-6 lg:gap-x-5">
+            <aside className="px-2 py-4 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
+              <Sidebar navLinks={navLinks} />
+            </aside>
+            <main className="max-w-[45rem] px-4 pb-12 lg:col-span-8">
+              <div className="overflow-hidden">{children}</div>
+            </main>
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-hidden max-h-full pb-4 ">{children}</div>
+      )}
     </div>
   );
 };
-
 export default Layout;
