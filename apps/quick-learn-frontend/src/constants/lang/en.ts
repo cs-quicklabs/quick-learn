@@ -27,6 +27,7 @@ export const en = {
     add: 'Add New',
     unknown: 'Unknown',
     on: 'on',
+    deletePermanently: 'Delete Permanently',
 
     //dashboard
     loading: 'Loading...',

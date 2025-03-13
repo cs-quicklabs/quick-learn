@@ -162,7 +162,7 @@ function CourseDetails() {
       />
       <div className="flex flex-col items-center">
         <ArchivedDialogbox
-          type="Course"
+          type="course"
           archivedBy={
             courseData.updated_by
               ? `${courseData.updated_by.first_name} ${courseData.updated_by.last_name}`
@@ -250,7 +250,7 @@ function CourseDetails() {
             <EmptyState
               type="lessons"
               customTitle={en.lesson.notfound}
-              customDescription="Create first lesson to get started"
+              customDescription="There are no lessons yet"
             />
           )}
         </div>

@@ -2,13 +2,14 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { DateFormats } from '@src/constants/dateFormats';
 import { format } from 'date-fns';
+import { en } from '@src/constants/lang/en';
 
 interface ArchivedDialogboxProps {
-  type: string;
-  archivedBy: string;
-  archivedAt: string;
-  onRestore: () => void; // Added handler for restore
-  onDelete: () => void; // Added handler for delete
+  readonly type: string;
+  readonly archivedBy: string;
+  readonly archivedAt: string;
+  readonly onRestore: () => void; // Added handler for restore
+  readonly onDelete: () => void; // Added handler for delete
 }
 
 export default function ArchivedDialogbox({
@@ -41,7 +42,7 @@ export default function ArchivedDialogbox({
           onClick={onRestore}
           className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-md text-xs px-3 py-1.5 me-2 text-center inline-flex items-center "
         >
-          Restore {type}
+          {en.common.restore} {type}
         </button>
         <button
           type="button"
@@ -49,7 +50,7 @@ export default function ArchivedDialogbox({
           onClick={onDelete}
           className="text-red-800 bg-transparent border border-red-800 hover:bg-red-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-md text-xs px-3 py-1.5 text-center"
         >
-          Delete Permanently
+          {en.common.deletePermanently}
         </button>
       </div>
     </div>

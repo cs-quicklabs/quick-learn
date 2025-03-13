@@ -1,5 +1,5 @@
 'use client';
-import React, { FC } from 'react';
+import { FC, useEffect } from 'react';
 import Sidebar, { TNavLink } from '@src/shared/components/Sidebar';
 import { RouteEnum } from '@src/constants/route.enum';
 import { ChildrenProp } from '@src/shared/interfaces/propInterface';
@@ -36,6 +36,14 @@ const Layout: FC<ChildrenProp> = ({ children }) => {
       icon: <DocumentTextIcon />,
     },
   ];
+
+  useEffect(() => {
+    document.body.style.backgroundColor = 'white';
+    return () => {
+      document.body.style.backgroundColor = '';
+    };
+  }, []);
+
   return (
     <div>
       {!hasParams ? (

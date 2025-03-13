@@ -1,4 +1,3 @@
-import React from 'react';
 import CourseDetails from './courseDetails';
 
 export const metadata = {

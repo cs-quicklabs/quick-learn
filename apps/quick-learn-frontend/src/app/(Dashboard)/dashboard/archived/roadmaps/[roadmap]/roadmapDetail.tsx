@@ -155,7 +155,7 @@ function RoadmapDetails() {
       />
       <div className="flex flex-col items-center">
         <ArchivedDialogbox
-          type="Roadmap"
+          type="roadmap"
           archivedBy={
             roadmapData.updated_by
               ? `${roadmapData.updated_by.first_name} ${roadmapData.updated_by.last_name}`
