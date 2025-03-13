@@ -77,7 +77,7 @@ const ViewArchivedLesson = () => {
 
   if (!currlesson) return <FullPageLoader />;
   return (
-    <div>
+    <div className="px-4 -mt-8">
       <ConformationModal
         title={
           confirmationData?.type === 'restore'
@@ -93,7 +93,7 @@ const ViewArchivedLesson = () => {
         setOpen={() => setConfirmationData(null)}
         onConfirm={handleConfirmation}
       />
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center mb-4 relative">
         <ArchivedBanner
           type="lesson"
           archivedAt={currlesson.updated_at}
