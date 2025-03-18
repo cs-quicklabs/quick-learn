@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class FileService {
   private readonly s3Client: S3Client;
+  private endPoint: string;
 
   constructor(private readonly configService: ConfigService) {
     this.s3Client = this.createS3Client();
@@ -14,7 +15,7 @@ export class FileService {
     const region = this.configService.getOrThrow('file.awsS3Region', {
       infer: true,
     });
-    const endpoint = this.configService.getOrThrow('file.endPoint', {
+    this.endPoint = this.configService.getOrThrow<string>('file.endPoint', {
       infer: true,
     });
     const accessKeyId = this.configService.getOrThrow('file.accessKeyId', {
@@ -27,7 +28,7 @@ export class FileService {
 
     return new S3Client({
       region,
-      endpoint,
+      endpoint: this.endPoint,
       credentials: { accessKeyId, secretAccessKey },
     });
   }
@@ -39,6 +40,7 @@ export class FileService {
 
   async deleteFiles(fileKeys: string[]): Promise<void> {
     const deletePromises = fileKeys.map((url: string) => {
+      if (!url.startsWith(this.endPoint)) return null;
       const fileName = this.extractFileName(url);
 
       const params = {
