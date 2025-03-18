@@ -42,7 +42,6 @@ const Editor: FC<Props> = ({
 }) => {
   const quillRef = useRef<ReactQuillType | null>(null);
 
-  // Add this ref to store the last valu12
   // Create a custom onChange handler
   const handleChange = useCallback(
     (newValue: string) => {
@@ -50,10 +49,10 @@ const Editor: FC<Props> = ({
         setValue(newValue || '');
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setValue],
+    [setValue, isEditing],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleImageUpload = async (file: File) => {
     if (!checkSize(file)) return;
     if (!quillRef.current) return;
@@ -91,7 +90,49 @@ const Editor: FC<Props> = ({
     };
   }, []);
 
-  const modules = {
+  // Direct paste handler - simpler approach
+  useEffect(() => {
+    if (!quillRef.current || !isEditing) return;
+
+    const editor = quillRef.current.getEditor();
+    const editorElement = editor.root;
+
+    const handleDirectPaste = (e: ClipboardEvent) => {
+      if (!e.clipboardData) return;
+
+      // Look for images in clipboard data
+      const { items } = e.clipboardData;
+      let imageFound = false;
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const item of Array.from(items)) {
+        // Process image items directly
+        if (item.type.indexOf('image') !== -1) {
+          imageFound = true;
+          e.preventDefault();
+          e.stopPropagation();
+
+          const file = item.getAsFile();
+          if (file) {
+            handleImageUpload(file);
+          }
+          break;
+        }
+      }
+
+      if (!imageFound) return null;
+    };
+
+    // Use capture phase to intercept the event before Quill's handlers
+    editorElement.addEventListener('paste', handleDirectPaste, true);
+
+    return () => {
+      editorElement.removeEventListener('paste', handleDirectPaste, true);
+    };
+  }, [isEditing, handleImageUpload]);
+
+  // Use a ref to initialize the modules only once
+  const modulesRef = useRef({
     toolbar: {
       container: '#toolbar',
       history: {
@@ -105,9 +146,8 @@ const Editor: FC<Props> = ({
     },
     clipboard: {
       matchVisual: false,
-      matchers: [],
     },
-  };
+  });
 
   useEffect(() => {
     document.body.style.backgroundColor = 'white';
@@ -162,7 +202,7 @@ const Editor: FC<Props> = ({
           value={value}
           onChange={handleChange}
           theme="snow"
-          modules={modules}
+          modules={modulesRef.current}
           formats={formats}
           readOnly={!isEditing}
           placeholder={placeholder}
