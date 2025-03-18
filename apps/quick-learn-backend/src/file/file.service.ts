@@ -15,7 +15,7 @@ export class FileService {
     const region = this.configService.getOrThrow('file.awsS3Region', {
       infer: true,
     });
-     this.endPoint = this.configService.getOrThrow<string>('file.endPoint', {
+    this.endPoint = this.configService.getOrThrow<string>('file.endPoint', {
       infer: true,
     });
     const accessKeyId = this.configService.getOrThrow('file.accessKeyId', {
@@ -40,7 +40,7 @@ export class FileService {
 
   async deleteFiles(fileKeys: string[]): Promise<void> {
     const deletePromises = fileKeys.map((url: string) => {
-      if (!(url.startsWith(this.endPoint))) return null;
+      if (!url.startsWith(this.endPoint)) return null;
       const fileName = this.extractFileName(url);
 
       const params = {
