@@ -105,7 +105,7 @@ const Editor: FC<Props> = ({
       let imageFound = false;
 
       // eslint-disable-next-line no-restricted-syntax
-      for (const item of items) {
+      for (const item of Array.from(items)) {
         // Process image items directly
         if (item.type.indexOf('image') !== -1) {
           imageFound = true;
