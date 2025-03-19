@@ -54,18 +54,18 @@ export class Migration1742364731131 implements MigrationInterface {
     if (!sessionTable) return;
 
     // Check if the default 'userId' column exists
-    const userIdColumn = sessionTable.findColumnByName('user');
+    const userIdColumn = sessionTable.findColumnByName('userId');
     if (userIdColumn) {
       // Drop existing foreign key if it exists
       const foreignKey = sessionTable.foreignKeys.find((fk) =>
-        fk.columnNames.includes('user'),
+        fk.columnNames.includes('userId'),
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('session', foreignKey);
       }
 
       // Rename from 'userId' to 'user_id'
-      await queryRunner.renameColumn('session', 'user', 'user_id');
+      await queryRunner.renameColumn('session', 'userId', 'user_id');
 
       // Create new foreign key with correct name
       await queryRunner.createForeignKey(
@@ -126,17 +126,18 @@ export class Migration1742364731131 implements MigrationInterface {
       );
     }
 
-      const teamResult = await queryRunner.query(
-      `SELECT id FROM team ORDER BY id LIMIT 1`
+    const teamResult = await queryRunner.query(
+      `SELECT id FROM team ORDER BY id LIMIT 1`,
     );
 
     // Check if team exists, otherwise use 1 as fallback
-    const defaultTeamId = teamResult && teamResult.length > 0 ? teamResult[0].id : 1;
+    const defaultTeamId =
+      teamResult && teamResult.length > 0 ? teamResult[0].id : 1;
 
     // Populate existing records with the first team_id
     for (const table of tablesToUpdate) {
       await queryRunner.query(
-        `UPDATE ${table} SET team_id = ${defaultTeamId} WHERE team_id IS NULL`
+        `UPDATE ${table} SET team_id = ${defaultTeamId} WHERE team_id IS NULL`,
       );
     }
 
