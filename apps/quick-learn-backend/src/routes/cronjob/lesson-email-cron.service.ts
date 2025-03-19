@@ -242,7 +242,7 @@ export class LessonEmailService {
         user_id,
         lesson_id,
         course_id,
-        expiresAt: token.expiryTime,
+        expires_at: token.expiryTime,
         token: token.token,
       });
     } catch (error) {
