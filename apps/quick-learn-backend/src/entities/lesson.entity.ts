@@ -11,6 +11,7 @@ import { UserEntity } from './user.entity';
 import { BaseEntity } from './BaseEntity';
 import { UserLessonProgressEntity } from './user-lesson-progress.entity';
 import { FlaggedLessonEntity } from './flagged-lesson.enitity';
+import { TeamEntity } from './team.entity';
 
 @Entity('lesson')
 export class LessonEntity extends BaseEntity {
@@ -70,4 +71,11 @@ export class LessonEntity extends BaseEntity {
 
   @OneToOne(() => FlaggedLessonEntity, (flagged) => flagged.lesson)
   flagged_lesson: FlaggedLessonEntity;
+
+  @Column({ type: 'int', nullable: false })
+  team_id: number;
+
+  @OneToOne(() => TeamEntity)
+  @JoinColumn({ name: 'team_id' })
+  team: TeamEntity;
 }

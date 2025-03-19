@@ -18,10 +18,10 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
    */
   async getAllTokenByUserId(userId: number) {
     return await this.repository
-      .createQueryBuilder('lesson_tokens')
-      .leftJoinAndSelect('lesson_tokens.lesson', 'lesson')
-      .where('lesson_tokens.user_id = :userId', { userId })
-      .select(['lesson_tokens', 'lesson.name'])
+      .createQueryBuilder('lesson_token')
+      .leftJoinAndSelect('lesson_token.lesson', 'lesson')
+      .where('lesson_token.user_id = :userId', { userId })
+      .select(['lesson_token', 'lesson.name'])
       .getMany();
   }
 
@@ -91,7 +91,7 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
     }
 
     // CHECK IF TOKEN HAS EXPIRED
-    if (tokenEntity.expiresAt < new Date()) {
+    if (tokenEntity.expires_at < new Date()) {
       throw new BadRequestException(en.lessonTokenExpired);
     }
 

@@ -5,10 +5,12 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn,
   DeleteDateColumn,
+  OneToOne,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { LessonEntity } from './lesson.entity';
 import { CourseEntity } from './course.entity';
+import { TeamEntity } from './team.entity';
 
 @Entity('user_lesson_progress')
 export class UserLessonProgressEntity {
@@ -41,4 +43,11 @@ export class UserLessonProgressEntity {
   @ManyToOne(() => CourseEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'course_id' })
   course: CourseEntity;
+
+  @Column({ type: 'int', nullable: false })
+  team_id: number;
+
+  @OneToOne(() => TeamEntity)
+  @JoinColumn({ name: 'team_id' })
+  team: TeamEntity;
 }

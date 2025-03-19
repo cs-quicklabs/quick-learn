@@ -6,11 +6,13 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { RoadmapCategoryEntity } from './roadmap-category.entity';
 import { CourseEntity } from './course.entity';
 import { UserEntity } from './user.entity';
+import { TeamEntity } from './team.entity';
 
 @Entity('roadmap')
 export class RoadmapEntity extends BaseEntity {
@@ -50,7 +52,7 @@ export class RoadmapEntity extends BaseEntity {
     onDelete: 'CASCADE',
   })
   @JoinTable({
-    name: 'roadmap_courses',
+    name: 'roadmap_course',
     joinColumn: {
       name: 'roadmap_id',
       referencedColumnName: 'id',
@@ -78,4 +80,11 @@ export class RoadmapEntity extends BaseEntity {
 
   @OneToMany(() => UserEntity, (user) => user.updated_by)
   updated_users: UserEntity[];
+
+  @Column({ type: 'int', nullable: false })
+  team_id: number;
+
+  @OneToOne(() => TeamEntity)
+  @JoinColumn({ name: 'team_id' })
+  team: TeamEntity;
 }

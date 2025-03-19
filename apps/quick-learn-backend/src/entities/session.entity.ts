@@ -1,4 +1,4 @@
-import { Column, Entity, Index, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { UserEntity } from './user.entity';
 
@@ -10,6 +10,7 @@ export class SessionEntity extends BaseEntity {
     eager: true,
   })
   @Index()
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
   @Column()
