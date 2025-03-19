@@ -3,14 +3,15 @@ import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 export const AppDataSource = new DataSource({
-  type: process.env.DATABASE_TYPE,
-  host: process.env.DATABASE_HOST,
-  port: process.env.DATABASE_PORT
-    ? parseInt(process.env.DATABASE_PORT, 10)
-    : 5432,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
+  type: process.env.DATABASE_TYPE || 'postgres',
+  host: process.env.DATABASE_HOST || 'localhost',
+  port:
+    process.env.DATABASE_PORT || '5432'
+      ? parseInt(process.env.DATABASE_PORT, 10)
+      : 5432,
+  username: process.env.DATABASE_USERNAME || 'ujjwalsai',
+  password: process.env.DATABASE_PASSWORD || 'password',
+  database: process.env.DATABASE_NAME || 'quickquickquick',
   synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
   dropSchema: false,
   keepConnectionAlive: true,
@@ -18,7 +19,7 @@ export const AppDataSource = new DataSource({
   entities: [...Entities],
   autoLoadEntities: true,
   subscribers: [__dirname + '/../**/*.subscriber{.ts,.js}'],
-  migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+  migrations: [__dirname + '/migrations/**/1742364731131-migration.ts'],
   cli: {
     entitiesDir: 'src',
     migrationsDir: 'src/database/migrations',

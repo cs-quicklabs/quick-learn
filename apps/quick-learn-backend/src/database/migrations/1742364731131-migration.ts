@@ -54,18 +54,18 @@ export class Migration1742364731131 implements MigrationInterface {
     if (!sessionTable) return;
 
     // Check if the default 'userId' column exists
-    const userIdColumn = sessionTable.findColumnByName('userId');
+    const userIdColumn = sessionTable.findColumnByName('user');
     if (userIdColumn) {
       // Drop existing foreign key if it exists
       const foreignKey = sessionTable.foreignKeys.find((fk) =>
-        fk.columnNames.includes('userId'),
+        fk.columnNames.includes('user'),
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('session', foreignKey);
       }
 
       // Rename from 'userId' to 'user_id'
-      await queryRunner.renameColumn('session', 'userId', 'user_id');
+      await queryRunner.renameColumn('session', 'user', 'user_id');
 
       // Create new foreign key with correct name
       await queryRunner.createForeignKey(
@@ -126,28 +126,19 @@ export class Migration1742364731131 implements MigrationInterface {
       );
     }
 
-    // Populate existing records with a default team_id (modify accordingly)
-    await queryRunner.query(
-      `UPDATE course SET team_id = 1 WHERE team_id IS NULL`,
+      const teamResult = await queryRunner.query(
+      `SELECT id FROM team ORDER BY id LIMIT 1`
     );
-    await queryRunner.query(
-      `UPDATE leaderboard SET team_id = 1 WHERE team_id IS NULL`,
-    );
-    await queryRunner.query(
-      `UPDATE lesson_token SET team_id = 1 WHERE team_id IS NULL`,
-    );
-    await queryRunner.query(
-      `UPDATE lesson SET team_id = 1 WHERE team_id IS NULL`,
-    );
-    await queryRunner.query(
-      `UPDATE quarterly_leaderboard SET team_id = 1 WHERE team_id IS NULL`,
-    );
-    await queryRunner.query(
-      `UPDATE roadmap SET team_id = 1 WHERE team_id IS NULL`,
-    );
-    await queryRunner.query(
-      `UPDATE user_lesson_progress SET team_id = 1 WHERE team_id IS NULL`,
-    );
+
+    // Check if team exists, otherwise use 1 as fallback
+    const defaultTeamId = teamResult && teamResult.length > 0 ? teamResult[0].id : 1;
+
+    // Populate existing records with the first team_id
+    for (const table of tablesToUpdate) {
+      await queryRunner.query(
+        `UPDATE ${table} SET team_id = ${defaultTeamId} WHERE team_id IS NULL`
+      );
+    }
 
     for (const table of tablesToUpdate) {
       await queryRunner.changeColumn(
