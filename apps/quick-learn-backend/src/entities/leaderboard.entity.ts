@@ -44,7 +44,7 @@ export class LeaderboardEntity {
   @Column({ type: 'int', nullable: false })
   team_id: number;
 
-  @ManyToOne(() => TeamEntity)
+  @ManyToOne(() => TeamEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 }

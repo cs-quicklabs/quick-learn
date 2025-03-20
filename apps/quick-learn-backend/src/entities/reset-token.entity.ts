@@ -16,7 +16,7 @@ export class ResetTokenEntity extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   user_id: number;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 

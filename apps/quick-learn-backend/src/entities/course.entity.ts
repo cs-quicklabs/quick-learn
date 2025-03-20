@@ -71,7 +71,7 @@ export class CourseEntity extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   team_id: number;
 
-  @ManyToOne(() => TeamEntity)
+  @ManyToOne(() => TeamEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 }

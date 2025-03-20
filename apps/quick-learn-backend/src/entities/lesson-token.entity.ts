@@ -50,6 +50,6 @@ export class LessonTokenEntity extends BaseEntity {
   team_id: number;
 
   @ManyToOne(() => TeamEntity)
-  @JoinColumn({ name: 'team_id' })
+  @ManyToOne(() => TeamEntity, { onDelete: 'CASCADE' })
   team: TeamEntity;
 }
