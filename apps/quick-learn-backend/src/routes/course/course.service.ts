@@ -212,7 +212,7 @@ export class CourseService extends PaginationService<CourseEntity> {
     return await this.repository
       .createQueryBuilder('course')
       .innerJoin('course.roadmaps', 'roadmap')
-      .innerJoin('user_roadmaps', 'ur', 'ur.roadmap_id = roadmap.id')
+      .innerJoin('user_roadmap', 'ur', 'ur.roadmap_id = roadmap.id')
       .where('ur.user_id = :userId', { userId })
       .andWhere('course.archived = :archived', { archived: false })
       .leftJoin('course.lessons', 'lesson')

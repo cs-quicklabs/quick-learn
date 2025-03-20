@@ -145,7 +145,7 @@ export class AuthService {
 
       await this.resetTokenService.create({
         token: generateResetToken,
-        user_id: checkUserExists.uuid,
+        user_id: checkUserExists.id,
         expiry_date: expiryDate,
       });
 
@@ -175,7 +175,7 @@ export class AuthService {
     // change user password
     // Todo: uuid should be used as a foreign key. uuid is generated column not primary key
     const user = await this.usersService.findOne({
-      uuid: findValidToken.user_id,
+      uuid: findValidToken.user_id.toString(),
     });
 
     if (!user) {

@@ -310,7 +310,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       await queryRunner.manager
         .createQueryBuilder()
         .delete()
-        .from('roadmap_courses')
+        .from('roadmap_course')
         .where('roadmap_id = :id', { id: roadmap.id })
         .execute();
 
@@ -318,7 +318,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       await queryRunner.manager
         .createQueryBuilder()
         .delete()
-        .from('user_roadmaps')
+        .from('user_roadmap')
         .where('roadmap_id = :id', { id: roadmap.id })
         .execute();
 
