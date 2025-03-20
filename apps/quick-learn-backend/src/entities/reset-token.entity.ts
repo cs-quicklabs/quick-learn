@@ -13,7 +13,7 @@ export class ResetTokenEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 64 })
   token: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'int', nullable: false })
   user_id: number;
 
   @ManyToOne(() => UserEntity)
