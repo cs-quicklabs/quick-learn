@@ -5,7 +5,6 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn,
   DeleteDateColumn,
-  OneToOne,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { LessonEntity } from './lesson.entity';
@@ -47,7 +46,7 @@ export class UserLessonProgressEntity {
   @Column({ type: 'int', nullable: false })
   team_id: number;
 
-  @OneToOne(() => TeamEntity)
+  @ManyToOne(() => TeamEntity)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 }

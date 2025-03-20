@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToOne,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { LeaderboardQuarterEnum } from '@src/common/constants/constants';
@@ -52,7 +51,7 @@ export class QuarterlyLeaderboardEntity {
   @Column({ type: 'int', nullable: false })
   team_id: number;
 
-  @OneToOne(() => TeamEntity)
+  @ManyToOne(() => TeamEntity)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 }

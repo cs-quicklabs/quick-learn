@@ -49,7 +49,7 @@ export class LessonTokenEntity extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   team_id: number;
 
-  @OneToOne(() => TeamEntity)
+  @ManyToOne(() => TeamEntity)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 }

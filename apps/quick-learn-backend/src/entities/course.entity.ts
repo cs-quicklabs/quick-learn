@@ -5,7 +5,6 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
 } from 'typeorm';
 import { CourseCategoryEntity } from './course-category.entity';
 import { RoadmapEntity } from './roadmap.entity';
@@ -72,7 +71,7 @@ export class CourseEntity extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   team_id: number;
 
-  @OneToOne(() => TeamEntity)
+  @ManyToOne(() => TeamEntity)
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 }
