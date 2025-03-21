@@ -59,11 +59,13 @@ export class LessonController {
    */
   async getUnapprovedLessons(
     @Query() paginationDto: PaginationDto,
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
     const lessons = await this.service.getUnapprovedLessons(
       Number(paginationDto.page),
       Number(paginationDto.limit),
       String(paginationDto.q),
+      user,
     );
     return new SuccessResponse(en.getLessons, lessons);
   }
@@ -74,8 +76,9 @@ export class LessonController {
   @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   async findAllArchivedLessons(
     @Query() paginationDto: PaginationDto,
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    const lessons = await this.service.getArchivedLessons(paginationDto, [
+    const lessons = await this.service.getArchivedLessons(paginationDto, user, [
       'course',
       'created_by_user',
       'archive_by_user',
@@ -90,11 +93,13 @@ export class LessonController {
   @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   async findAllFlaggedLessons(
     @Query() paginationDto: BasePaginationDto,
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
     const lessons = await this.service.findAllFlaggedLesson(
       Number(paginationDto.page),
       Number(paginationDto.limit),
       paginationDto.q,
+      user,
     );
     return new SuccessResponse(en.getLessons, lessons);
   }

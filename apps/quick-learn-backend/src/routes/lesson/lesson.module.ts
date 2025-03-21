@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LessonEntity, FlaggedLessonEntity } from '@src/entities';
+import { LessonEntity, FlaggedLessonEntity, UserEntity } from '@src/entities';
 import { LessonController } from './lesson.controller';
 import { LessonService } from './lesson.service';
 import { CourseModule } from '../course/course.module';
@@ -14,7 +14,7 @@ import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LessonEntity, FlaggedLessonEntity]),
+    TypeOrmModule.forFeature([LessonEntity, FlaggedLessonEntity, UserEntity]),
     CourseModule,
     forwardRef(() => UsersModule),
     FileModule,

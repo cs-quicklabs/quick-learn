@@ -20,6 +20,8 @@ import { ListRoadmapQueryDto } from './dto/list-roadmap-query.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { UserTypeIdEnum } from '@quick-learn/shared';
+import { CurrentUser } from '@src/common/decorators/current-user.decorators';
+import { UserEntity } from '@src/entities';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/roadmap-categories
 @ApiTags('Roadmap Category')
@@ -38,11 +40,15 @@ export class RoadmapCategoryController {
   @Post()
   @ApiOperation({ summary: 'Adding roadmap category' })
   async create(
+    @CurrentUser() user: UserEntity,
     @Body() createRoadmapCategoryDto: CreateRoadmapCategoryDto,
   ): Promise<SuccessResponse> {
-    await this.roadmapCategoryService.create(createRoadmapCategoryDto);
+    await this.roadmapCategoryService.createRoadmapCategory(
+      createRoadmapCategoryDto,
+      user,
+    );
     const roadmapCategories = await this.roadmapCategoryService.getMany(
-      {},
+      { team_id: user.team_id },
       { name: 'ASC' },
     );
     return new SuccessResponse('Successfully created roadmap category.', {
@@ -52,11 +58,15 @@ export class RoadmapCategoryController {
 
   @Get()
   @ApiOperation({ summary: 'Get all roadmap categories' })
-  async findAll(@Query() listRoadmapQueryDto: ListRoadmapQueryDto) {
+  async findAll(
+    @Query() listRoadmapQueryDto: ListRoadmapQueryDto,
+    @CurrentUser() user: UserEntity,
+  ) {
     const roadmapCategories =
       await this.roadmapCategoryService.getRoadmapCategoryWithRoadmapAndCourses(
         listRoadmapQueryDto.is_roadmap,
         listRoadmapQueryDto.is_courses,
+        user,
       );
     return new SuccessResponse('Successfully retreived roadmap categories.', {
       categories: roadmapCategories,

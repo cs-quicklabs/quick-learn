@@ -57,6 +57,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     userId: number,
     lessonId: number,
     courseId: number,
+    user: number,
   ): Promise<UserLessonProgressEntity> {
     await this.validateLesson(lessonId, courseId);
 
@@ -64,6 +65,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
       user_id: userId,
       lesson_id: lessonId,
       course_id: courseId,
+      team_id: user,
     });
 
     if (existingProgress) {
@@ -74,6 +76,7 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
         lesson_id: lessonId,
         course_id: courseId,
         completed_date: new Date(),
+        team_id: user,
       });
     }
   }

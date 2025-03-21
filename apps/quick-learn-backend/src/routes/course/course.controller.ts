@@ -55,8 +55,9 @@ export class CourseController {
   @ApiOperation({ summary: 'Get Archived Courses' })
   async findAllArchivedCourses(
     @Query() paginationDto: PaginationDto,
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    const courses = await this.service.getArchivedCourses(paginationDto, [
+    const courses = await this.service.getArchivedCourses(paginationDto, user, [
       'updated_by',
       'course_category',
     ]);

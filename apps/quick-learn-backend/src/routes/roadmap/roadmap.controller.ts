@@ -37,8 +37,8 @@ export class RoadmapController {
 
   @Get()
   @ApiOperation({ summary: 'Get all roadmaps' })
-  async getRoadmap() {
-    const roadmaps = await this.service.getAllRoadmaps();
+  async getRoadmap(@CurrentUser() user: UserEntity) {
+    const roadmaps = await this.service.getAllRoadmaps(user);
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
 
@@ -56,8 +56,11 @@ export class RoadmapController {
   @UseGuards(RolesGuard)
   @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @ApiOperation({ summary: 'Get Archived Roadmaps' })
-  async findAllArchivedRoadmaps(@Query() paginationDto: PaginationDto) {
-    const roadmaps = await this.service.findAllArchived(paginationDto);
+  async findAllArchivedRoadmaps(
+    @Query() paginationDto: PaginationDto,
+    @CurrentUser() user: UserEntity,
+  ) {
+    const roadmaps = await this.service.findAllArchived(paginationDto, user);
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
 
