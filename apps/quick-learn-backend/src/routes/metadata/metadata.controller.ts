@@ -18,8 +18,8 @@ export class MetadataController {
 
   @Get('content-repository')
   @ApiOperation({ summary: 'Get content repository metadata' })
-  async getAllRoadmaps() {
-    const metadata = await this.service.getContentRepositoryMetadata();
+  async getAllRoadmaps(@CurrentUser() user: UserEntity) {
+    const metadata = await this.service.getContentRepositoryMetadata(user);
     return new SuccessResponse(en.GetContentRepositoryMetadata, metadata);
   }
   @Get('system-preferences')

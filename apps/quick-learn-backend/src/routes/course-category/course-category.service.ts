@@ -58,14 +58,15 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
     await this.repository.delete({ id });
   }
 
-  async getCourseCategoriesWithCourses() {
+  async getCourseCategoriesWithCourses(user: UserEntity) {
     return await this.repository
       .createQueryBuilder('course_category')
+      .where('course_category.team_id = :teamId', { teamId: user.team_id })
       .leftJoinAndSelect(
         'course_category.courses',
         'courses',
         'courses.archived = :archived',
-        { archived: false },
+        { archived: false, teamId: user.team_id },
       )
       .orderBy('course_category.name', 'ASC')
       .leftJoin('courses.lessons', 'lessons')
@@ -74,7 +75,10 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
         'courses.lessons',
         'lessons',
         (qb) =>
-          qb.andWhere('lessons.archived = :archived', { archived: false }),
+          qb.andWhere('lessons.archived = :archived', {
+            archived: false,
+            teamId: user.team_id,
+          }),
       )
       .leftJoin('courses.roadmaps', 'roadmaps')
       .loadRelationCountAndMap(

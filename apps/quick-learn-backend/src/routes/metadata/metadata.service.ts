@@ -12,11 +12,11 @@ export class MetadataService {
     private readonly lessonService: LessonService,
   ) {}
 
-  async getContentRepositoryMetadata() {
+  async getContentRepositoryMetadata(user: UserEntity) {
     const metadata = {};
     const [roadmapCategories, courseCategories] = await Promise.all([
-      this.roadmapCategoryService.getRoadmapCatergoriesWithRoadmap(),
-      this.courseCategoryService.getCourseCategoriesWithCourses(),
+      this.roadmapCategoryService.getRoadmapCatergoriesWithRoadmap(user),
+      this.courseCategoryService.getCourseCategoriesWithCourses(user),
     ]);
 
     metadata['roadmap_categories'] = roadmapCategories;
