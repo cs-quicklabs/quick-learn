@@ -99,16 +99,14 @@ export class AuthService {
 
     const hash = Helpers.generateRandomhash();
 
-    const refreshTokenExpires = ms(
-      loginDto.rememberMe
-        ? this.refreshTokenRememberMeExpiresIn
-        : this.refreshTokenExpiresIn,
-    );
+    const expiresIn = loginDto.rememberMe
+      ? this.refreshTokenRememberMeExpiresIn
+      : this.refreshTokenExpiresIn;
 
     const session = await this.sessionService.create({
       user,
       hash,
-      expires: `${Date.now() + refreshTokenExpires}`,
+      expires: `${Date.now() + expiresIn}`,
     });
 
     return await this.getTokensData({
