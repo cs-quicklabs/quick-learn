@@ -181,6 +181,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    */
   async getArchivedLessons(
     paginationDto: PaginationDto,
+    user: UserEntity,
     relations: string[] = [],
   ): Promise<PaginatedResult<LessonEntity>> {
     const { page = 1, limit = 10, q = '' } = paginationDto;
@@ -188,7 +189,8 @@ export class LessonService extends PaginationService<LessonEntity> {
 
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
-      .where('lesson.archived = :archived', { archived: true });
+      .where('lesson.archived = :archived', { archived: true })
+      .andWhere('lesson.team_id = :team_id', { team_id: user.team_id });
 
     // Join all relations
     relations.forEach((relation) => {
@@ -313,14 +315,16 @@ export class LessonService extends PaginationService<LessonEntity> {
    * Retrieves all unapproved lessons
    * @returns A promise that resolves to a list of LessonEntity
    */
-  async getUnapprovedLessons(page = 1, limit = 10, q = '') {
+  async getUnapprovedLessons(page = 1, limit = 10, q = '', user: UserEntity) {
     let options:
       | FindOptionsWhere<LessonEntity>
       | FindOptionsWhere<LessonEntity>[] = {
       archived: false,
       approved: false,
+      team_id: user.team_id,
       course: {
         archived: false,
+        team_id: user.team_id,
       },
     };
 
@@ -329,11 +333,13 @@ export class LessonService extends PaginationService<LessonEntity> {
         {
           ...options,
           name: ILike(`%${q}%`),
+          team_id: user.team_id,
         },
         {
           ...options,
           created_by_user: {
             full_name: ILike(`%${q}%`),
+            team_id: user.team_id,
           },
         },
       ];
@@ -439,6 +445,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     page = 1,
     limit = 10,
     search = '',
+    user: UserEntity,
   ): Promise<PaginatedResult<FlaggedLessonEntity>> {
     // Add search condition if search term exists
     let findOptions:
@@ -446,9 +453,11 @@ export class LessonService extends PaginationService<LessonEntity> {
       | FindOptionsWhere<FlaggedLessonEntity>[] = {
       lesson: {
         archived: false,
+        team_id: user.team_id,
       },
       course: {
         archived: false,
+        team_id: user.team_id,
       },
     };
     if (search) {
@@ -458,12 +467,14 @@ export class LessonService extends PaginationService<LessonEntity> {
           lesson: {
             name: ILike(`%${search}%`),
             archived: false,
+            team_id: user.team_id,
           },
         },
         {
           ...findOptions,
           user: {
             full_name: ILike(`%${search}%`),
+            team_id: user.team_id,
           },
         },
       ];
@@ -513,28 +524,32 @@ export class LessonService extends PaginationService<LessonEntity> {
     await this.flaggedLessionService.delete({ lesson_id: id });
   }
 
-  async getUnApprovedLessonCount() {
+  async getUnApprovedLessonCount(user: UserEntity) {
     return await this.count(
       {
         archived: false,
         approved: false,
+        team_id: user.team_id,
         course: {
           archived: false,
+          team_id: user.team_id,
         },
       },
       ['course'],
     );
   }
 
-  async getFlaggedLessonCount() {
+  async getFlaggedLessonCount(user: UserEntity) {
     return await this.count(
       {
         archived: false,
+        team_id: user.team_id,
         flagged_lesson: {
           id: MoreThan(0),
         },
         course: {
           archived: false,
+          team_id: user.team_id,
         },
       },
       ['flagged_lesson'],

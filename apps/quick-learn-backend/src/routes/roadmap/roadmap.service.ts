@@ -23,9 +23,10 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
     super(roadmapRepository);
   }
 
-  async getAllRoadmaps(): Promise<RoadmapEntity[]> {
+  async getAllRoadmaps(user: UserEntity): Promise<RoadmapEntity[]> {
     return this.repository
       .createQueryBuilder('roadmap')
+      .andWhere('roadmap.team_id = :team_id', { team_id: user.team_id })
       .andWhere('roadmap.archived = :archived', { archived: false })
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
       .leftJoinAndSelect(
@@ -91,6 +92,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
 
   async findAllArchived(
     paginationDto: PaginationDto,
+    user: UserEntity,
   ): Promise<PaginatedResult<RoadmapEntity>> {
     const queryBuilder = this.repository
       .createQueryBuilder('roadmap')
@@ -106,7 +108,8 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
             courseArchived: false,
           }),
       )
-      .where('roadmap.archived = :archived', { archived: true });
+      .where('roadmap.archived = :archived', { archived: true })
+      .andWhere('roadmap.team_id = :team_id', { team_id: user.team_id });
 
     // Add search functionality
     if (paginationDto.q) {

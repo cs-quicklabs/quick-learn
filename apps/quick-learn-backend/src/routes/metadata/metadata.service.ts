@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RoadmapCategoryService } from '../roadmap-category/roadmap-category.service';
 import { CourseCategoryService } from '../course-category/course-category.service';
 import { LessonService } from '../lesson/lesson.service';
+import { UserEntity } from '@src/entities';
 
 @Injectable()
 export class MetadataService {
@@ -24,10 +25,10 @@ export class MetadataService {
     return metadata;
   }
 
-  async getLessonMetaData() {
+  async getLessonMetaData(user: UserEntity) {
     const [unapproved_lessons, flagged_lessons] = await Promise.all([
-      await this.lessonService.getUnApprovedLessonCount(),
-      await this.lessonService.getFlaggedLessonCount(),
+      await this.lessonService.getUnApprovedLessonCount(user),
+      await this.lessonService.getFlaggedLessonCount(user),
     ]);
     return {
       unapproved_lessons,

@@ -383,6 +383,7 @@ export class CourseService extends PaginationService<CourseEntity> {
    */
   async getArchivedCourses(
     paginationDto: PaginationDto,
+    user: UserEntity,
     relations: string[] = [],
   ): Promise<PaginatedResult<CourseEntity> | CourseEntity[]> {
     const { page = 1, limit = 10, q = '', mode = 'paginate' } = paginationDto;
@@ -392,7 +393,10 @@ export class CourseService extends PaginationService<CourseEntity> {
 
     const allRelations = [...new Set([...courseRelations, ...relations])];
 
-    const baseWhere: FindOptionsWhere<CourseEntity> = { archived: true };
+    const baseWhere: FindOptionsWhere<CourseEntity> = {
+      archived: true,
+      team_id: user.team_id,
+    };
 
     const whereConditions: FindOptionsWhere<CourseEntity>[] = [];
 
@@ -404,6 +408,7 @@ export class CourseService extends PaginationService<CourseEntity> {
           ...baseWhere,
           course_category: {
             name: ILike(`%${q}%`),
+            team_id: user.team_id,
           },
         },
       );
