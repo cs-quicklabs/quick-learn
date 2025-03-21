@@ -88,6 +88,7 @@ export class LessonService extends PaginationService<LessonEntity> {
         approved_by: user.id,
         content: payload.content,
         new_content: '',
+        team_id: user.team_id,
       };
     }
 

@@ -130,6 +130,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
     // Check for existing roadmap with same name
     const existingRoadmap = await this.get({
       name: ILike(`%${createRoadmapDto.name}%`),
+      team_id: user.team_id,
     });
 
     if (existingRoadmap) {
@@ -149,6 +150,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       ...createRoadmapDto,
       roadmap_category_id: +createRoadmapDto.roadmap_category_id,
       created_by_user_id: user.id,
+      team_id: user.team_id,
     });
   }
 

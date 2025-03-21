@@ -97,7 +97,10 @@ export class CourseService extends PaginationService<CourseEntity> {
     user: UserEntity,
     createCourseDto: CreateCourseDto,
   ): Promise<CourseEntity> {
-    const course = await this.get({ name: ILike(createCourseDto.name) });
+    const course = await this.get({
+      name: ILike(createCourseDto.name),
+      team_id: user.team_id,
+    });
 
     if (course) {
       throw new BadRequestException(en.courseAlreadyExists);
@@ -124,6 +127,7 @@ export class CourseService extends PaginationService<CourseEntity> {
       roadmaps: [roadmap],
       course_category_id: courseCategory.id,
       created_by_user_id: user.id,
+      team_id: user.team_id,
     });
   }
 
