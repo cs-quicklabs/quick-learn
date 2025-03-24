@@ -8,9 +8,16 @@ import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 import { en } from '@src/lang/en';
 import { LeaderboardEntity } from '@src/entities/leaderboard.entity';
 
+interface ILeaderboardPaginationParams {
+  page: number;
+  limit: number;
+  type: LeaderboardTypeEnum;
+  team_id: number;
+}
+
 @Injectable()
 export class LeaderboardService extends PaginationService<LeaderboardEntity> {
-  private logger = new Logger(LeaderboardService.name);
+  private readonly logger = new Logger(LeaderboardService.name);
   constructor(
     @InjectRepository(LeaderboardEntity)
     repo: Repository<LeaderboardEntity>,
@@ -36,33 +43,46 @@ export class LeaderboardService extends PaginationService<LeaderboardEntity> {
     });
   }
 
-  async getLeaderboardData(type: LeaderboardTypeEnum, page = 1, limit = 10) {
+  async getLeaderboardData({
+    type,
+    page = 1,
+    limit = 10,
+    team_id,
+  }: ILeaderboardPaginationParams) {
     switch (type) {
       case LeaderboardTypeEnum.WEEKLY:
       case LeaderboardTypeEnum.MONTHLY:
-        return this.getLeaderboardWeekAndMonthRanking(type, page, limit);
+        return this.getLeaderboardWeekAndMonthRanking({
+          type,
+          page,
+          limit,
+          team_id,
+        });
 
       case LeaderboardTypeEnum.QUARTERLY:
         return this.QuarterlyLeaderboardService.getLastQuarterRanking(
           page,
           limit,
+          team_id,
         );
 
       default:
         throw new Error(`Invalid leaderboard type: ${type}`);
     }
   }
-  async getLeaderboardWeekAndMonthRanking(
-    type: LeaderboardTypeEnum,
+  async getLeaderboardWeekAndMonthRanking({
+    type,
     page = 1,
     limit = 10,
-  ) {
+    team_id,
+  }: ILeaderboardPaginationParams) {
     return this.paginate(
       {
         limit,
         page,
       },
       {
+        team_id,
         type,
       },
       ['user'],
