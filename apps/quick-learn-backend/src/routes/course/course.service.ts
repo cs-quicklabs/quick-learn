@@ -54,7 +54,7 @@ export class CourseService extends PaginationService<CourseEntity> {
         });
 
         // Remove from options to avoid double-filtering
-        const {...otherOptions } = options;
+        const { ...otherOptions } = options;
         options = otherOptions;
       }
       Object.keys(options).forEach((key) => {
