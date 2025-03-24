@@ -460,7 +460,7 @@ export class CourseService extends PaginationService<CourseEntity> {
       'lessons',
     ]); // Get course without lessons to delete all images from s3
 
-    if (imageUsed && imageUsed.length) {
+    if (imageUsed?.length) {
       await this.FileService.deleteFiles(imageUsed);
     }
     // Using the repository's delete method for hard delete
@@ -470,8 +470,8 @@ export class CourseService extends PaginationService<CourseEntity> {
   async getUserCourseDetails(
     userId: number,
     id: number,
+    userTeamId: number,
     roadmap?: number,
-    userTeamId?: number,
   ) {
     const course = this.repository
       .createQueryBuilder('course')
@@ -499,7 +499,7 @@ export class CourseService extends PaginationService<CourseEntity> {
     }
 
     const courseDetails = await course.getOne();
-    if (!courseDetails.lessons.length) {
+    if (!courseDetails?.lessons?.length) {
       courseDetails.lessons = [];
     } else {
       courseDetails.lessons = await this.filterSanitisedLessons(

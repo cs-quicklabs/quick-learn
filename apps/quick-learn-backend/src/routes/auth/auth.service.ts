@@ -43,6 +43,7 @@ export class AuthService {
   private refreshTokenRememberMeExpiresIn: number;
   private authSecret: string;
   private authRefreshSecret: string;
+  private frontendURL: string;
   constructor(
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
@@ -66,6 +67,12 @@ export class AuthService {
     this.authRefreshSecret = this.configService.getOrThrow<string>(
       'auth.refreshSecret',
       { infer: true },
+    );
+    this.frontendURL = this.configService.getOrThrow<string>(
+      'app.frontendDomain',
+      {
+        infer: true,
+      },
     );
   }
 
@@ -149,10 +156,7 @@ export class AuthService {
         expiry_date: expiryDate,
       });
 
-      const frontendURL = this.configService.get('app.frontendDomain', {
-        infer: true,
-      });
-      const resetURL = `${frontendURL}/reset-password?token=${generateResetToken}`;
+      const resetURL = `${this.frontendURL}/reset-password?token=${generateResetToken}`;
       return this.emailService.forgetPasswordEmail(resetURL, email);
     }
     return new SuccessResponse(

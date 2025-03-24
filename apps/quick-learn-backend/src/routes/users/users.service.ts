@@ -268,14 +268,14 @@ export class UsersService extends PaginationService<UserEntity> {
   async getCourseDetails(
     userId: number,
     id: number,
+    userTeamId: number,
     roadmap?: number,
-    userTeamId?: number,
   ) {
     const course = await this.courseService.getUserCourseDetails(
       userId,
       id,
-      roadmap,
       userTeamId,
+      roadmap,
     );
 
     if (!course) {

@@ -40,10 +40,10 @@ export class CourseController {
   @Roles(UserTypeId.SUPER_ADMIN)
   @Get('/community-course')
   @ApiOperation({ summary: 'Get all community courses' })
-  async getCommunityCourses(@CurrentUser() user: UserEntity) {
+  async getCommunityCourses() {
     const data = await this.service.getContentRepoCourses(
       { mode: 'all' },
-      { is_community_available: true, archived: false, team_id: user.team_id },
+      { is_community_available: true, archived: false },
       ['created_by'],
     );
     return new SuccessResponse(en.getCommunityCourse, data);

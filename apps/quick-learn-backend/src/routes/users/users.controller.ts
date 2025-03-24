@@ -134,8 +134,8 @@ export class UsersController {
     const roadmaps = await this.usersService.getCourseDetails(
       !isNaN(param.userId) ? param.userId : user.id,
       +param.id,
-      roadmapId ? +roadmapId : undefined,
       user.team_id,
+      roadmapId ? +roadmapId : undefined,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
