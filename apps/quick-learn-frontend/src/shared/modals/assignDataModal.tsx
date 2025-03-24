@@ -260,6 +260,7 @@ const AssignDataModal: FC<Props> = ({
                                       <InputCheckbox
                                         id={item.name}
                                         value={item.value}
+                                        className="h-4 w-4"
                                         {...register('selected')}
                                       />
                                     </div>

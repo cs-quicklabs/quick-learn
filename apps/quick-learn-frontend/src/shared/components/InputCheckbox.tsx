@@ -16,7 +16,8 @@ function InputCheckbox(props: CheckboxProps = {}) {
     id = 'checkbox',
     type = 'checkbox',
     value = '',
-    className = 'col-start-2 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-primary-600 checked:bg-primary-600 indeterminate:border-primary-600 indeterminate:bg-primary-600 focus:outline-2 focus:outline-offset-1 focus:outline-primary-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto',
+    className = '',
+
     checked,
     onChange,
     disabled,
@@ -30,7 +31,7 @@ function InputCheckbox(props: CheckboxProps = {}) {
         id={id}
         type={type}
         value={value}
-        className={className}
+        className={` appearance-none rounded-sm border border-gray-300 bg-white checked:border-primary-600 checked:bg-primary-600 indeterminate:border-primary-600 indeterminate:bg-primary-600 focus:outline-2 focus:outline-offset-1 focus:outline-primary-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto ${className}`}
         checked={checked}
         onChange={onChange}
         disabled={disabled}

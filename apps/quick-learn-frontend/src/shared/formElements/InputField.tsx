@@ -55,6 +55,7 @@ const InputField: FC<Props> = ({
               id={`${id ?? ''}_checkbox_${name}`}
               type={type}
               {...register(name)}
+              className="h-4 w-4"
             />
           </div>
           <div className="ml-3 text-sm">

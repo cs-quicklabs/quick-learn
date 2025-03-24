@@ -68,6 +68,7 @@ function EmailPreference() {
                 id="helper-checkbox"
                 aria-describedby="helper-checkbox-text"
                 type="checkbox"
+                className="h-[18px] w-[18px]"
                 checked={isEmailChecked}
                 onChange={handleChange}
               />
