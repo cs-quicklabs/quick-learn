@@ -47,6 +47,16 @@ export class CourseService extends PaginationService<CourseEntity> {
     const { page, limit, mode } = paginationDto;
     // Apply filters from options
     if (options) {
+      if (options.team_id) {
+        // Explicitly handle team_id filter
+        queryBuilder.andWhere('courses.team_id = :teamId', {
+          teamId: options.team_id,
+        });
+
+        // Remove from options to avoid double-filtering
+        const {...otherOptions } = options;
+        options = otherOptions;
+      }
       Object.keys(options).forEach((key) => {
         queryBuilder.andWhere(`courses.${key} = :${key}`, {
           [key]: options[key],
@@ -266,8 +276,9 @@ export class CourseService extends PaginationService<CourseEntity> {
   async updateCourse(
     id: number,
     updateCourseDto: Partial<CourseEntity>,
+    user: number,
   ): Promise<void> {
-    const course = await this.getCourseDetails({ id });
+    const course = await this.getCourseDetails({ id, team_id: user }); // Get course without lessons to verify existence
     let courseByname: CourseEntity;
 
     if (updateCourseDto?.name) {
@@ -309,14 +320,16 @@ export class CourseService extends PaginationService<CourseEntity> {
   async assignRoadmapCourse(
     id: number,
     assignRoadmapsToCourseDto: AssignRoadmapsToCourseDto,
+    user: number,
   ): Promise<void> {
-    const course = await this.get({ id });
+    const course = await this.get({ id, team_id: user });
     if (!course) {
       throw new BadRequestException(en.CourseNotFound);
     }
 
     const roadmaps = await this.roadmapService.getMany({
       id: In(assignRoadmapsToCourseDto.roadmaps),
+      team_id: user,
     });
 
     const compareRoadmapLength =
@@ -430,8 +443,14 @@ export class CourseService extends PaginationService<CourseEntity> {
     );
   }
 
-  async deleteCourse(id: number): Promise<void> {
+  async deleteCourse(id: number, user: number): Promise<void> {
     const course = await this.getCourseDetails({ id }, []); // Get course without lessons to verify existence
+
+    if (course.team_id !== user) {
+      throw new BadRequestException(
+        'You do not have permission to delete this course',
+      );
+    }
 
     if (!course) {
       throw new BadRequestException(en.CourseNotFound);
@@ -448,7 +467,12 @@ export class CourseService extends PaginationService<CourseEntity> {
     await this.repository.delete({ id });
   }
 
-  async getUserCourseDetails(userId: number, id: number, roadmap?: number) {
+  async getUserCourseDetails(
+    userId: number,
+    id: number,
+    roadmap?: number,
+    userTeamId?: number,
+  ) {
     const course = this.repository
       .createQueryBuilder('course')
       .leftJoinAndSelect('course.course_category', 'course_category')
@@ -464,6 +488,8 @@ export class CourseService extends PaginationService<CourseEntity> {
       .innerJoin('roadmaps.users', 'users')
       .where('course.id = :id', { id })
       .andWhere('users.id = :userId', { userId })
+      .andWhere('users.team_id = :teamId', { teamId: userTeamId })
+      .andWhere('course.team_id = :teamId', { teamId: userTeamId })
       .andWhere('course.archived= :archived', { archived: false });
 
     if (roadmap) {
@@ -484,10 +510,16 @@ export class CourseService extends PaginationService<CourseEntity> {
     return courseDetails;
   }
 
-  async getSearchedCourses(userId: number, isMember = false, query = '') {
+  async getSearchedCourses(
+    userId: number,
+    isMember = false,
+    query = '',
+    userTeamId: number,
+  ) {
     const queryBuilder = this.repository
       .createQueryBuilder('course')
       .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .andWhere('course.team_id = :teamId', { teamId: userTeamId })
       .leftJoin(
         'course.roadmaps',
         'roadmaps',
@@ -505,10 +537,11 @@ export class CourseService extends PaginationService<CourseEntity> {
     return queryBuilder.select(['course.id', 'course.name']).limit(3).getMany();
   }
 
-  async getOrphanCourses(page = 1, limit = 10, q = '') {
+  async getOrphanCourses(page = 1, limit = 10, q = '', user: number) {
     const queryBuilder = this.repository
       .createQueryBuilder('course')
       .where('course.archived = :courseArchived', { courseArchived: false })
+      .andWhere('course.team_id = :teamId', { teamId: user })
       .leftJoin('course.roadmaps', 'roadmap')
       .andWhere('roadmap.id IS NULL')
       .leftJoinAndSelect('course.created_by', 'created_by')

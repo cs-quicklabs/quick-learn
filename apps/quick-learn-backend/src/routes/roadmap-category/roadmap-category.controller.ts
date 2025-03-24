@@ -75,8 +75,8 @@ export class RoadmapCategoryController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get the roadmap category details.' })
-  findOne(@Param('id') id: string) {
-    return this.roadmapCategoryService.get({ id: +id });
+  findOne(@Param('id') id: string, @CurrentUser() user: UserEntity) {
+    return this.roadmapCategoryService.get({ id: +id, team_id: user.team_id });
   }
 
   @UseGuards(RolesGuard)
@@ -87,10 +87,12 @@ export class RoadmapCategoryController {
   async update(
     @Param('id') id: string,
     @Body() updateRoadmapCategoryDto: UpdateRoadmapCategoryDto,
+    @CurrentUser() user: UserEntity,
   ) {
     await this.roadmapCategoryService.updateRoadmapCategory(
       +id,
       updateRoadmapCategoryDto,
+      user.team_id,
     );
     return new SuccessResponse(en.successUpdateRoadmap);
   }
@@ -99,8 +101,8 @@ export class RoadmapCategoryController {
   @Roles(UserTypeIdEnum.SUPERADMIN)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete the roadmap category.' })
-  async remove(@Param('id') id: string) {
-    await this.roadmapCategoryService.deleteRoadmapCategory(+id);
+  async remove(@Param('id') id: string, @CurrentUser() user: UserEntity) {
+    await this.roadmapCategoryService.deleteRoadmapCategory(+id, user.team_id);
     return new SuccessResponse(en.successDeleteRoadmap);
   }
 }

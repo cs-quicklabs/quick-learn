@@ -39,8 +39,14 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
   async createCourseCategory(
     id: number,
     createCourseCategoryDto: UpdateCourseCategoryDto,
+    user: number,
   ) {
     const courseCategory = await this.get({ id });
+    if (courseCategory.team_id !== user) {
+      throw new BadRequestException(
+        'You do not have permission to update this course category',
+      );
+    }
     const foundCourseCategory = await this.get({
       name: ILike(createCourseCategoryDto.name),
     });
@@ -50,8 +56,13 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
     return await this.update({ id }, createCourseCategoryDto);
   }
 
-  async deleteCourseCategory(id: number): Promise<void> {
+  async deleteCourseCategory(id: number, user: number): Promise<void> {
     const courseCategory = await this.get({ id }, ['courses']);
+    if (courseCategory.team_id !== user) {
+      throw new BadRequestException(
+        'You do not have permission to delete this course category',
+      );
+    }
     if (courseCategory.courses.length > 0) {
       throw new BadRequestException(en.courseCategriesHasData);
     }

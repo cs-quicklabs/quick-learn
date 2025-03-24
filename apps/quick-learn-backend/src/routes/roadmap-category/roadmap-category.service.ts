@@ -41,8 +41,9 @@ export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEnti
   async updateRoadmapCategory(
     id: number,
     updateRoadmapCategoryDto: UpdateRoadmapCategoryDto,
+    user: number,
   ) {
-    const roadmapCategory = await this.get({ id });
+    const roadmapCategory = await this.get({ id, team_id: user });
     const roadmapCategoryByName = await this.get({
       name: ILike(updateRoadmapCategoryDto.name),
     });
@@ -55,8 +56,8 @@ export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEnti
     await this.update({ id }, updateRoadmapCategoryDto);
   }
 
-  async deleteRoadmapCategory(id: number): Promise<void> {
-    const roadmapCategory = await this.get({ id }, ['roadmaps']);
+  async deleteRoadmapCategory(id: number, user: number): Promise<void> {
+    const roadmapCategory = await this.get({ id, team_id: user }, ['roadmaps']);
     if (roadmapCategory.roadmaps.length > 0) {
       throw new BadRequestException(en.roadmapCategriesHasData);
     }

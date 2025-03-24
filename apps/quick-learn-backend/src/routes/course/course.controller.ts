@@ -40,10 +40,10 @@ export class CourseController {
   @Roles(UserTypeId.SUPER_ADMIN)
   @Get('/community-course')
   @ApiOperation({ summary: 'Get all community courses' })
-  async getCommunityCourses() {
+  async getCommunityCourses(@CurrentUser() user: UserEntity) {
     const data = await this.service.getContentRepoCourses(
       { mode: 'all' },
-      { is_community_available: true, archived: false },
+      { is_community_available: true, archived: false, team_id: user.team_id },
       ['created_by'],
     );
     return new SuccessResponse(en.getCommunityCourse, data);
@@ -68,20 +68,27 @@ export class CourseController {
   @Roles(UserTypeId.SUPER_ADMIN, UserTypeId.ADMIN, UserTypeId.EDITOR)
   @Get('orphan')
   @ApiOperation({ summary: 'Get Orphan courses' })
-  async orphanCourse(@Query() params: BasePaginationDto) {
+  async orphanCourse(
+    @Query() params: BasePaginationDto,
+    @CurrentUser() user: UserEntity,
+  ) {
     const response = await this.service.getOrphanCourses(
       params.page,
       params.limit,
       params.q,
+      user.team_id,
     );
     return new SuccessResponse('Successfully got Orphan courses', response);
   }
 
   @Get('/community/:id')
   @ApiOperation({ summary: 'Get course details' })
-  async getcourseDetails(@Param() param: CourseParamDto) {
+  async getcourseDetails(
+    @Param() param: CourseParamDto,
+    @CurrentUser() user: UserEntity,
+  ) {
     const data = await this.service.getCourseDetails(
-      { id: +param.id, is_community_available: true },
+      { id: +param.id, is_community_available: true, team_id: user.team_id },
       ['lessons', 'lessons.created_by_user'],
       { isCommunity: true },
     );
@@ -90,9 +97,12 @@ export class CourseController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get course details' })
-  async getRoadmapDetails(@Param() param: CourseParamDto) {
+  async getRoadmapDetails(
+    @Param() param: CourseParamDto,
+    @CurrentUser() user: UserEntity,
+  ) {
     const data = await this.service.getCourseDetails(
-      { id: +param.id },
+      { id: +param.id, team_id: user.team_id },
       ['lessons', 'lessons.created_by_user', 'updated_by'],
       { countParticipant: true },
     );
@@ -115,8 +125,9 @@ export class CourseController {
   async updateRoadmap(
     @Param('id') id: string,
     @Body() updateCourseDto: UpdateCourseDto,
+    @CurrentUser() user: UserEntity,
   ) {
-    await this.service.updateCourse(+id, updateCourseDto);
+    await this.service.updateCourse(+id, updateCourseDto, user.team_id);
     return new SuccessResponse(en.UpdateCourse);
   }
 
@@ -125,10 +136,12 @@ export class CourseController {
   async assignRoadmapCourse(
     @Param() param: CourseParamDto,
     @Body() assignRoadmapsToCourseDto: AssignRoadmapsToCourseDto,
+    @CurrentUser() user: UserEntity,
   ) {
     await this.service.assignRoadmapCourse(
       +param.id,
       assignRoadmapsToCourseDto,
+      user.team_id,
     );
     return new SuccessResponse(en.UpdateCourse);
   }
@@ -151,8 +164,11 @@ export class CourseController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a course permanently' })
-  async deleteCourse(@Param() param: CourseParamDto): Promise<SuccessResponse> {
-    await this.service.deleteCourse(+param.id);
+  async deleteCourse(
+    @Param() param: CourseParamDto,
+    @CurrentUser() user: UserEntity,
+  ): Promise<SuccessResponse> {
+    await this.service.deleteCourse(+param.id, user.team_id);
     return new SuccessResponse(en.CourseDeleted);
   }
 }

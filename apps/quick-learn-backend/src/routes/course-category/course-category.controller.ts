@@ -67,8 +67,14 @@ export class CourseCategoryController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get the course category details.' })
-  findOne(@Param() param: CourseCategoryParamDto) {
-    return this.courseCategoryService.get({ id: +param.id });
+  findOne(
+    @Param() param: CourseCategoryParamDto,
+    @CurrentUser() user: UserEntity,
+  ) {
+    return this.courseCategoryService.get({
+      id: +param.id,
+      team_id: user.team_id,
+    });
   }
 
   @Patch(':id')
@@ -78,10 +84,12 @@ export class CourseCategoryController {
   async update(
     @Param() param: CourseCategoryParamDto,
     @Body() updateCourseCategoryDto: UpdateCourseCategoryDto,
+    @CurrentUser() user: UserEntity,
   ) {
     await this.courseCategoryService.createCourseCategory(
       +param.id,
       updateCourseCategoryDto,
+      user.team_id,
     );
     return new SuccessResponse(en.successUpdateCourse);
   }
@@ -90,8 +98,14 @@ export class CourseCategoryController {
   @UseGuards(RolesGuard)
   @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'Delete the course category.' })
-  async remove(@Param() param: CourseCategoryParamDto) {
-    await this.courseCategoryService.deleteCourseCategory(+param.id);
+  async remove(
+    @Param() param: CourseCategoryParamDto,
+    @CurrentUser() user: UserEntity,
+  ) {
+    await this.courseCategoryService.deleteCourseCategory(
+      +param.id,
+      user.team_id,
+    );
     return new SuccessResponse(en.successDeleteCourse);
   }
 }

@@ -12,7 +12,7 @@ export class ProfileService {
   constructor(private readonly usersService: UsersService) {}
 
   async updateUserProfile(user: UserEntity, newDetails: UpdateProfileDto) {
-    await this.usersService.updateUser(user.id, newDetails, true);
+    await this.usersService.updateUser(user.id, newDetails, true, user.team_id);
     return new SuccessResponse('Profile updated successfully');
   }
 

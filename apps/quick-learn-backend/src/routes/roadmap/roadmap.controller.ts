@@ -68,7 +68,7 @@ export class RoadmapController {
   @ApiOperation({ summary: 'Activate or archive roadmap' })
   async activateRoadmap(
     @Body() activateRoadmapDto: ActivateRoadmapDto,
-    @CurrentUser('id') userID: number,
+    @CurrentUser() userID: UserEntity,
   ): Promise<SuccessResponse> {
     const { active, id } = activateRoadmapDto;
     const updatedRoadmap = await this.service.updateRoadmap(
@@ -84,6 +84,7 @@ export class RoadmapController {
   async getRoadmapDetails(
     @Param() param: RoadmapParamDto,
     @Query() query: RoadmapQueryDto,
+    @CurrentUser() user: UserEntity,
   ) {
     const isArchived = query.archived === 'true';
     const roadmaps =
@@ -91,6 +92,7 @@ export class RoadmapController {
         Number(param.id),
         query.courseId ? Number(query.courseId) : undefined,
         isArchived,
+        user.team_id,
       );
     return new SuccessResponse(en.GetAllRoapmaps, roadmaps);
   }
@@ -100,7 +102,7 @@ export class RoadmapController {
   async updateRoadmap(
     @Param() param: RoadmapParamDto,
     @Body() updateRoadmapDto: UpdateRoadmapDto,
-    @CurrentUser('id') userID: number,
+    @CurrentUser() userID: UserEntity,
   ) {
     const roadmap = await this.service.updateRoadmap(
       +param.id,
@@ -115,15 +117,23 @@ export class RoadmapController {
   async assignCoursesRoadmap(
     @Param() param: RoadmapParamDto,
     @Body() assignCoursesToRoadmapDto: AssignCoursesToRoadmapDto,
+    @CurrentUser() user: UserEntity,
   ) {
-    await this.service.assignRoadmap(+param.id, assignCoursesToRoadmapDto);
+    await this.service.assignRoadmap(
+      +param.id,
+      assignCoursesToRoadmapDto,
+      user.team_id,
+    );
     return new SuccessResponse(en.RoadmapCoursesAssigned);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Permanently delete roadmap' })
-  async deleteRoadmap(@Param() param: RoadmapParamDto) {
-    await this.service.deleteRoadmap(+param.id);
+  async deleteRoadmap(
+    @Param() param: RoadmapParamDto,
+    @CurrentUser() user: UserEntity,
+  ) {
+    await this.service.deleteRoadmap(+param.id, user.team_id);
     return new SuccessResponse(en.successDeleteRoadmap);
   }
 }

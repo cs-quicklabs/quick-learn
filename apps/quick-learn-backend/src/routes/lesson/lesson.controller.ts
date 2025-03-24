@@ -44,8 +44,8 @@ export class LessonController {
    * Retrieves all lessons.
    * @returns A list of lessons.
    */
-  async getLessons(): Promise<SuccessResponse> {
-    const lessons = await this.service.getMany();
+  async getLessons(@CurrentUser() user: UserEntity): Promise<SuccessResponse> {
+    const lessons = await this.service.getMany({ team_id: user.team_id });
     return new SuccessResponse(en.getLessons, lessons);
   }
 
@@ -131,8 +131,9 @@ export class LessonController {
   async get(
     @Param() param: LessonParamDto,
     @Query() getLessonDto: GetLessonDto,
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    const conditions = { id: +param.id };
+    const conditions = { id: +param.id, team_id: user.team_id };
     const relations = ['created_by_user', 'course'];
     if (getLessonDto.approved)
       conditions['approved'] = getLessonDto.approved == 'true';
@@ -189,7 +190,7 @@ export class LessonController {
     @Param() param: LessonParamDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    await this.service.approveLesson(+param.id, user.id);
+    await this.service.approveLesson(+param.id, user.id, user.team_id);
     return new SuccessResponse(en.approveLesson);
   }
 
@@ -204,8 +205,11 @@ export class LessonController {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns A promise that resolves to a success response.
    */
-  async unFlag(@Param() param: LessonParamDto): Promise<SuccessResponse> {
-    await this.service.unFlagLesson(+param.id);
+  async unFlag(
+    @Param() param: LessonParamDto,
+    @CurrentUser() user: UserEntity,
+  ): Promise<SuccessResponse> {
+    await this.service.unFlagLesson(+param.id, user.team_id);
     return new SuccessResponse(en.successUnflagLesson);
   }
 
@@ -237,7 +241,7 @@ export class LessonController {
       return new SuccessResponse(en.archiveLesson);
     }
 
-    await this.service.unarchiveLesson(body.id);
+    await this.service.unarchiveLesson(body.id, user.team_id);
     return new SuccessResponse(en.unarchiveLesson);
   }
 
@@ -245,8 +249,11 @@ export class LessonController {
   @UseGuards(RolesGuard)
   @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
   @ApiOperation({ summary: 'Permanently delete a lesson' })
-  async deleteLesson(@Param() param: LessonParamDto): Promise<SuccessResponse> {
-    await this.service.deleteLesson(+param.id);
+  async deleteLesson(
+    @Param() param: LessonParamDto,
+    @CurrentUser() user: UserEntity,
+  ): Promise<SuccessResponse> {
+    await this.service.deleteLesson(+param.id, user.team_id);
     return new SuccessResponse(en.lessonDeleted);
   }
 

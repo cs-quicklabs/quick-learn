@@ -179,12 +179,17 @@ export class UsersService extends PaginationService<UserEntity> {
       : results;
   }
 
-  async getUserRoadmaps(userId: number, includeCourses = false) {
+  async getUserRoadmaps(
+    userId: number,
+    includeCourses = false,
+    userTeamId: number,
+  ) {
     const queryBuilder = this.repository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.assigned_roadmaps', 'roadmap')
       .leftJoinAndSelect('roadmap.roadmap_category', 'roadmap_category')
       .where('user.id = :userId', { userId })
+      .andWhere('user.team_id = :teamId', { teamId: userTeamId })
       .andWhere('roadmap.archived = :archived', { archived: false });
 
     if (includeCourses) {
@@ -234,8 +239,12 @@ export class UsersService extends PaginationService<UserEntity> {
     return user.assigned_roadmaps;
   }
 
-  async getRoadmapDetails(userId: number, id: number) {
-    const roadmap = await this.roadmapService.getUserRoadmapDetails(userId, id);
+  async getRoadmapDetails(userId: number, id: number, userTeamId: number) {
+    const roadmap = await this.roadmapService.getUserRoadmapDetails(
+      userId,
+      id,
+      userTeamId,
+    );
 
     if (!roadmap) {
       throw new BadRequestException(en.RoadmapNotFound);
@@ -256,11 +265,17 @@ export class UsersService extends PaginationService<UserEntity> {
     return roadmap;
   }
 
-  async getCourseDetails(userId: number, id: number, roadmap?: number) {
+  async getCourseDetails(
+    userId: number,
+    id: number,
+    roadmap?: number,
+    userTeamId?: number,
+  ) {
     const course = await this.courseService.getUserCourseDetails(
       userId,
       id,
       roadmap,
+      userTeamId,
     );
 
     if (!course) {
@@ -440,14 +455,30 @@ export class UsersService extends PaginationService<UserEntity> {
     usertype_id: number,
     query: string,
     userId: number,
+    userTeamId: number,
   ) {
     //get confirm usertype
     const isMember = usertype_id === UserTypeId.MEMBER;
 
     const [roadmaps, courses, lessons] = await Promise.all([
-      this.roadmapService.findSearchedRoadmap(userId, isMember, query),
-      this.courseService.getSearchedCourses(userId, isMember, query),
-      this.lessonService.getSearchedLessons(userId, isMember, query),
+      this.roadmapService.findSearchedRoadmap(
+        userId,
+        isMember,
+        query,
+        userTeamId,
+      ),
+      this.courseService.getSearchedCourses(
+        userId,
+        isMember,
+        query,
+        userTeamId,
+      ),
+      this.lessonService.getSearchedLessons(
+        userId,
+        isMember,
+        query,
+        userTeamId,
+      ),
     ]);
 
     return { Roadmaps: roadmaps, Courses: courses, Lessons: lessons };
@@ -457,8 +488,9 @@ export class UsersService extends PaginationService<UserEntity> {
     userId: UserEntity['id'],
     payload: Partial<UserEntity>,
     imageDeleteRequired = false,
+    team_id?: number,
   ) {
-    const user = await this.findOne({ id: userId });
+    const user = await this.findOne({ id: userId, team_id: team_id });
 
     if (!user) {
       throw new BadRequestException(en.userNotFound);
@@ -493,9 +525,10 @@ export class UsersService extends PaginationService<UserEntity> {
   async assignRoadmaps(
     userId: UserEntity['id'],
     assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
+    userTeamId: number,
   ) {
     // Find the user by userId
-    const user = await this.findOne({ id: userId });
+    const user = await this.findOne({ id: userId, team_id: userTeamId });
 
     if (!user) {
       throw new BadRequestException(en.userNotFound);

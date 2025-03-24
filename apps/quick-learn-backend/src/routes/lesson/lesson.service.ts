@@ -43,9 +43,12 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the course doesn't exist
    * @returns The lesson entity
    */
-  private async getLesson(lessonId: number): Promise<LessonEntity> {
+  private async getLesson(
+    lessonId: number,
+    user: number,
+  ): Promise<LessonEntity> {
     const lesson = await this.repository.findOne({
-      where: { id: lessonId },
+      where: { id: lessonId, team_id: user },
     });
 
     if (!lesson) {
@@ -62,7 +65,11 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @returns The created lesson entity
    */
   async createLesson(user: UserEntity, payload: CreateLessonDto) {
-    const course = await this.courseService.get({ id: +payload.course_id });
+    console.log(user);
+    const course = await this.courseService.get({
+      id: +payload.course_id,
+      team_id: user.team_id,
+    });
 
     if (!course) {
       throw new BadRequestException(en.invalidCourse);
@@ -73,6 +80,7 @@ export class LessonService extends PaginationService<LessonEntity> {
       new_content: payload.content,
       content: '',
       created_by: user.id,
+      team_id: user.team_id,
     });
 
     // checking if the user is admin or not
@@ -159,8 +167,12 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns nothing
    */
-  async approveLesson(lessonId: LessonEntity['id'], userId: UserEntity['id']) {
-    const lesson = await this.getLesson(lessonId);
+  async approveLesson(
+    lessonId: LessonEntity['id'],
+    userId: UserEntity['id'],
+    team_id: number,
+  ) {
+    const lesson = await this.getLesson(lessonId, team_id);
 
     await this.update(
       { id: lessonId },
@@ -225,8 +237,8 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @param userId - The id of the user unarchiving the lesson
    * @throws BadRequestException if the lesson doesn't exist
    */
-  async unarchiveLesson(lessonId: LessonEntity['id']) {
-    await this.getLesson(lessonId);
+  async unarchiveLesson(lessonId: LessonEntity['id'], user: number) {
+    await this.getLesson(lessonId, user);
 
     await this.update(
       { id: lessonId },
@@ -257,8 +269,8 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @param id - The id of the lesson to delete
    * @throws BadRequestException if the lesson doesn't exist
    */
-  async deleteLesson(id: number): Promise<void> {
-    const lesson = await this.getLesson(id);
+  async deleteLesson(id: number, user: number): Promise<void> {
+    const lesson = await this.getLesson(id, user);
 
     const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
       lesson.content,
@@ -373,11 +385,17 @@ export class LessonService extends PaginationService<LessonEntity> {
     );
   }
 
-  async getSearchedLessons(userId: number, isMember = false, query = '') {
+  async getSearchedLessons(
+    userId: number,
+    isMember = false,
+    query = '',
+    userTeamId: number,
+  ) {
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
       .andWhere('lesson.approved= :approved', { approved: true })
       .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
+      .andWhere('lesson.team_id = :teamId', { teamId: userTeamId })
       .leftJoin(
         'lesson.course',
         'course',
@@ -516,8 +534,11 @@ export class LessonService extends PaginationService<LessonEntity> {
     };
   }
 
-  async unFlagLesson(id: number): Promise<void> {
-    const isValid = await this.flaggedLessionService.get({ lesson_id: id });
+  async unFlagLesson(id: number, user: number): Promise<void> {
+    const isValid = await this.flaggedLessionService.get({
+      lesson_id: id,
+      user_id: user,
+    });
 
     if (!isValid) throw new BadRequestException(en.invalidLesson);
 
