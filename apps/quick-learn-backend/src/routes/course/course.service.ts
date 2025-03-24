@@ -47,16 +47,6 @@ export class CourseService extends PaginationService<CourseEntity> {
     const { page, limit, mode } = paginationDto;
     // Apply filters from options
     if (options) {
-      if (options.team_id) {
-        // Explicitly handle team_id filter
-        queryBuilder.andWhere('courses.team_id = :teamId', {
-          teamId: options.team_id,
-        });
-
-        // Remove from options to avoid double-filtering
-        const { ...otherOptions } = options;
-        options = otherOptions;
-      }
       Object.keys(options).forEach((key) => {
         queryBuilder.andWhere(`courses.${key} = :${key}`, {
           [key]: options[key],

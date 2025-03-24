@@ -131,9 +131,8 @@ export class LessonController {
   async get(
     @Param() param: LessonParamDto,
     @Query() getLessonDto: GetLessonDto,
-    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    const conditions = { id: +param.id, team_id: user.team_id };
+    const conditions = { id: +param.id };
     const relations = ['created_by_user', 'course'];
     if (getLessonDto.approved)
       conditions['approved'] = getLessonDto.approved == 'true';

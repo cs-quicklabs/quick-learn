@@ -83,12 +83,9 @@ export class CourseController {
 
   @Get('/community/:id')
   @ApiOperation({ summary: 'Get course details' })
-  async getcourseDetails(
-    @Param() param: CourseParamDto,
-    @CurrentUser() user: UserEntity,
-  ) {
+  async getcourseDetails(@Param() param: CourseParamDto) {
     const data = await this.service.getCourseDetails(
-      { id: +param.id, is_community_available: true, team_id: user.team_id },
+      { id: +param.id, is_community_available: true },
       ['lessons', 'lessons.created_by_user'],
       { isCommunity: true },
     );
