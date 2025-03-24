@@ -461,24 +461,24 @@ export class UsersService extends PaginationService<UserEntity> {
     const isMember = usertype_id === UserTypeId.MEMBER;
 
     const [roadmaps, courses, lessons] = await Promise.all([
-      this.roadmapService.findSearchedRoadmap(
+      this.roadmapService.findSearchedRoadmap({
         userId,
         isMember,
         query,
         userTeamId,
-      ),
-      this.courseService.getSearchedCourses(
+      }),
+      this.courseService.getSearchedCourses({
         userId,
         isMember,
         query,
         userTeamId,
-      ),
-      this.lessonService.getSearchedLessons(
+      }),
+      this.lessonService.getSearchedLessons({
         userId,
         isMember,
         query,
         userTeamId,
-      ),
+      }),
     ]);
 
     return { Roadmaps: roadmaps, Courses: courses, Lessons: lessons };

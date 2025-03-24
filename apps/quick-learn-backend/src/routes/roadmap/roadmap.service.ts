@@ -10,7 +10,7 @@ import { en } from '@src/lang/en';
 import { AssignCoursesToRoadmapDto } from './dto/assing-courses-to-roadmap';
 import { CourseService } from '../course/course.service';
 import { PaginationDto } from '../users/dto';
-import { PaginatedResult } from '@src/common/interfaces';
+import { IGlobalSearchParams, PaginatedResult } from '@src/common/interfaces';
 
 @Injectable()
 export class RoadmapService extends PaginationService<RoadmapEntity> {
@@ -53,12 +53,12 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
       .getMany();
   }
 
-  async findSearchedRoadmap(
-    userId: number,
+  async findSearchedRoadmap({
+    userId,
     isMember = false,
     query = '',
-    userTeamId: number,
-  ) {
+    userTeamId,
+  }: IGlobalSearchParams) {
     const queryBuilder = this.repository
       .createQueryBuilder('roadmap')
       .andWhere('roadmap.archived = :roadmapArchived', {

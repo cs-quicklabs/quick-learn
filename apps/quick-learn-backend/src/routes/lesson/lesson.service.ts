@@ -7,7 +7,11 @@ import { CourseService } from '../course/course.service';
 import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
-import { IDailyLessonTokenData, PaginatedResult } from '@src/common/interfaces';
+import {
+  IDailyLessonTokenData,
+  IGlobalSearchParams,
+  PaginatedResult,
+} from '@src/common/interfaces';
 import { Repository, ILike, MoreThan, FindOptionsWhere } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
@@ -385,12 +389,12 @@ export class LessonService extends PaginationService<LessonEntity> {
     );
   }
 
-  async getSearchedLessons(
-    userId: number,
+  async getSearchedLessons({
+    userId,
     isMember = false,
     query = '',
-    userTeamId: number,
-  ) {
+    userTeamId,
+  }: IGlobalSearchParams) {
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
       .andWhere('lesson.approved= :approved', { approved: true })

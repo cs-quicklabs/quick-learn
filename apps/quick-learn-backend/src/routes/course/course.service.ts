@@ -21,7 +21,7 @@ import { en } from '@src/lang/en';
 import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 import Helpers from '@src/common/utils/helper';
 import { PaginationDto } from '../users/dto';
-import { PaginatedResult } from '@src/common/interfaces';
+import { IGlobalSearchParams, PaginatedResult } from '@src/common/interfaces';
 import { FileService } from '@src/file/file.service';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
@@ -510,12 +510,12 @@ export class CourseService extends PaginationService<CourseEntity> {
     return courseDetails;
   }
 
-  async getSearchedCourses(
-    userId: number,
+  async getSearchedCourses({
+    userId,
     isMember = false,
     query = '',
-    userTeamId: number,
-  ) {
+    userTeamId,
+  }: IGlobalSearchParams) {
     const queryBuilder = this.repository
       .createQueryBuilder('course')
       .andWhere('course.archived = :courseArchived', { courseArchived: false })

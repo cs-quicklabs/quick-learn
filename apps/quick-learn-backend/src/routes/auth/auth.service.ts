@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { LessThan, MoreThan } from 'typeorm';
+import { MoreThan } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '@src/entities/user.entity';
 import ms from 'ms';
@@ -173,9 +173,8 @@ export class AuthService {
     }
 
     // change user password
-    // Todo: uuid should be used as a foreign key. uuid is generated column not primary key
     const user = await this.usersService.findOne({
-      uuid: findValidToken.user_id.toString(),
+      id: findValidToken.user_id,
     });
 
     if (!user) {
@@ -190,16 +189,15 @@ export class AuthService {
       throw new BadRequestException(en.usingsamePassword);
     }
 
-    // TODO: delete expired tokens using cronjobs
-    await this.resetTokenService.delete({
-      token: resetToken,
-      active: true,
-    });
-
-    // TODO: delete expired tokens using cronjobs
-    await this.resetTokenService.delete({
-      expiry_date: LessThan(new Date()),
-    });
+    await this.resetTokenService.update(
+      {
+        token: findValidToken.token,
+        id: findValidToken.id,
+      },
+      {
+        active: false,
+      },
+    );
 
     user.password = await this.usersService.hashPassword(newPassword);
     await this.usersService.save(user);
