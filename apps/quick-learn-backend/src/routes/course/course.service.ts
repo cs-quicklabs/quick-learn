@@ -21,7 +21,7 @@ import { en } from '@src/lang/en';
 import { AssignRoadmapsToCourseDto } from './dto/assign-roadmaps-to-course.dto';
 import Helpers from '@src/common/utils/helper';
 import { PaginationDto } from '../users/dto';
-import { PaginatedResult } from '@src/common/interfaces';
+import { IGlobalSearchParams, PaginatedResult } from '@src/common/interfaces';
 import { FileService } from '@src/file/file.service';
 
 const courseRelations = ['roadmaps', 'course_category', 'created_by'];
@@ -97,23 +97,28 @@ export class CourseService extends PaginationService<CourseEntity> {
     user: UserEntity,
     createCourseDto: CreateCourseDto,
   ): Promise<CourseEntity> {
-    const course = await this.get({ name: ILike(createCourseDto.name) });
+    const [course, courseCategory, roadmap] = await Promise.all([
+      this.get({
+        name: ILike(createCourseDto.name),
+        team_id: user.team_id,
+      }),
+      this.courseCategoryService.get({
+        id: +createCourseDto.course_category_id,
+        team_id: user.team_id,
+      }),
+      this.roadmapService.get({
+        id: +createCourseDto.roadmap_id,
+        team_id: user.team_id,
+      }),
+    ]);
 
     if (course) {
       throw new BadRequestException(en.courseAlreadyExists);
     }
 
-    const courseCategory = await this.courseCategoryService.get({
-      id: +createCourseDto.course_category_id,
-    });
-
     if (!courseCategory) {
       throw new BadRequestException(en.InvalidCourseCategory);
     }
-
-    const roadmap = await this.roadmapService.get({
-      id: +createCourseDto.roadmap_id,
-    });
 
     if (!roadmap) {
       throw new BadRequestException(en.InvalidRoadmap);
@@ -124,6 +129,7 @@ export class CourseService extends PaginationService<CourseEntity> {
       roadmaps: [roadmap],
       course_category_id: courseCategory.id,
       created_by_user_id: user.id,
+      team_id: user.team_id,
     });
   }
 
@@ -152,6 +158,7 @@ export class CourseService extends PaginationService<CourseEntity> {
     if (!course) {
       throw new BadRequestException(en.invalidCourse);
     }
+
     if (conditions?.countParticipant) {
       const courseCount = await this.getCourseParticipantCount(course.id);
       course['userCount'] = courseCount;
@@ -211,8 +218,8 @@ export class CourseService extends PaginationService<CourseEntity> {
   async getUserAssignedRoadmapCourses(userId: number): Promise<CourseEntity[]> {
     return await this.repository
       .createQueryBuilder('course')
-      .innerJoin('course.roadmaps', 'roadmap')
-      .innerJoin('user_roadmap', 'ur', 'ur.roadmap_id = roadmap.id')
+      .leftJoin('course.roadmaps', 'roadmap')
+      .leftJoin('user_roadmap', 'ur', 'ur.roadmap_id = roadmap.id')
       .where('ur.user_id = :userId', { userId })
       .andWhere('course.archived = :archived', { archived: false })
       .leftJoin('course.lessons', 'lesson')
@@ -262,8 +269,9 @@ export class CourseService extends PaginationService<CourseEntity> {
   async updateCourse(
     id: number,
     updateCourseDto: Partial<CourseEntity>,
+    user: number,
   ): Promise<void> {
-    const course = await this.getCourseDetails({ id });
+    const course = await this.getCourseDetails({ id, team_id: user }); // Get course without lessons to verify existence
     let courseByname: CourseEntity;
 
     if (updateCourseDto?.name) {
@@ -305,14 +313,16 @@ export class CourseService extends PaginationService<CourseEntity> {
   async assignRoadmapCourse(
     id: number,
     assignRoadmapsToCourseDto: AssignRoadmapsToCourseDto,
+    user: number,
   ): Promise<void> {
-    const course = await this.get({ id });
+    const course = await this.get({ id, team_id: user });
     if (!course) {
       throw new BadRequestException(en.CourseNotFound);
     }
 
     const roadmaps = await this.roadmapService.getMany({
       id: In(assignRoadmapsToCourseDto.roadmaps),
+      team_id: user,
     });
 
     const compareRoadmapLength =
@@ -352,33 +362,11 @@ export class CourseService extends PaginationService<CourseEntity> {
   }
 
   /**
-   * Archives a course
-   */
-  async archiveCourse(id: number, currentUser: UserEntity): Promise<void> {
-    // For archiving, we don't need lessons
-    const course = await this.repository.findOne({
-      where: { id },
-      relations: ['course_category'], // Only include necessary relations
-    });
-
-    if (!course) {
-      throw new BadRequestException(en.CourseNotFound);
-    }
-
-    await this.update(
-      { id },
-      {
-        archived: true,
-        updated_by_id: currentUser.id,
-      },
-    );
-  }
-
-  /**
    * Gets archived courses with pagination
    */
   async getArchivedCourses(
     paginationDto: PaginationDto,
+    user: UserEntity,
     relations: string[] = [],
   ): Promise<PaginatedResult<CourseEntity> | CourseEntity[]> {
     const { page = 1, limit = 10, q = '', mode = 'paginate' } = paginationDto;
@@ -388,7 +376,10 @@ export class CourseService extends PaginationService<CourseEntity> {
 
     const allRelations = [...new Set([...courseRelations, ...relations])];
 
-    const baseWhere: FindOptionsWhere<CourseEntity> = { archived: true };
+    const baseWhere: FindOptionsWhere<CourseEntity> = {
+      archived: true,
+      team_id: user.team_id,
+    };
 
     const whereConditions: FindOptionsWhere<CourseEntity>[] = [];
 
@@ -400,6 +391,7 @@ export class CourseService extends PaginationService<CourseEntity> {
           ...baseWhere,
           course_category: {
             name: ILike(`%${q}%`),
+            team_id: user.team_id,
           },
         },
       );
@@ -421,8 +413,8 @@ export class CourseService extends PaginationService<CourseEntity> {
     );
   }
 
-  async deleteCourse(id: number): Promise<void> {
-    const course = await this.getCourseDetails({ id }, []); // Get course without lessons to verify existence
+  async deleteCourse(id: number, team_id: number): Promise<void> {
+    const course = await this.getCourseDetails({ id, team_id }, []); // Get course without lessons to verify existence
 
     if (!course) {
       throw new BadRequestException(en.CourseNotFound);
@@ -432,14 +424,19 @@ export class CourseService extends PaginationService<CourseEntity> {
       'lessons',
     ]); // Get course without lessons to delete all images from s3
 
-    if (imageUsed && imageUsed.length) {
+    if (imageUsed?.length) {
       await this.FileService.deleteFiles(imageUsed);
     }
     // Using the repository's delete method for hard delete
     await this.repository.delete({ id });
   }
 
-  async getUserCourseDetails(userId: number, id: number, roadmap?: number) {
+  async getUserCourseDetails(
+    userId: number,
+    id: number,
+    userTeamId: number,
+    roadmap?: number,
+  ) {
     const course = this.repository
       .createQueryBuilder('course')
       .leftJoinAndSelect('course.course_category', 'course_category')
@@ -452,9 +449,11 @@ export class CourseService extends PaginationService<CourseEntity> {
         'lessons.approved',
       ])
       .leftJoin('course.roadmaps', 'roadmaps')
-      .innerJoin('roadmaps.users', 'users')
+      .leftJoin('roadmaps.users', 'users')
       .where('course.id = :id', { id })
       .andWhere('users.id = :userId', { userId })
+      .andWhere('users.team_id = :teamId', { teamId: userTeamId })
+      .andWhere('course.team_id = :teamId', { teamId: userTeamId })
       .andWhere('course.archived= :archived', { archived: false });
 
     if (roadmap) {
@@ -464,7 +463,7 @@ export class CourseService extends PaginationService<CourseEntity> {
     }
 
     const courseDetails = await course.getOne();
-    if (!courseDetails.lessons.length) {
+    if (!courseDetails?.lessons?.length) {
       courseDetails.lessons = [];
     } else {
       courseDetails.lessons = await this.filterSanitisedLessons(
@@ -475,10 +474,16 @@ export class CourseService extends PaginationService<CourseEntity> {
     return courseDetails;
   }
 
-  async getSearchedCourses(userId: number, isMember = false, query = '') {
+  async getSearchedCourses({
+    userId,
+    isMember = false,
+    query = '',
+    userTeamId,
+  }: IGlobalSearchParams) {
     const queryBuilder = this.repository
       .createQueryBuilder('course')
       .andWhere('course.archived = :courseArchived', { courseArchived: false })
+      .andWhere('course.team_id = :teamId', { teamId: userTeamId })
       .leftJoin(
         'course.roadmaps',
         'roadmaps',
@@ -496,10 +501,11 @@ export class CourseService extends PaginationService<CourseEntity> {
     return queryBuilder.select(['course.id', 'course.name']).limit(3).getMany();
   }
 
-  async getOrphanCourses(page = 1, limit = 10, q = '') {
+  async getOrphanCourses(teamId: number, page = 1, limit = 10, q = '') {
     const queryBuilder = this.repository
       .createQueryBuilder('course')
       .where('course.archived = :courseArchived', { courseArchived: false })
+      .andWhere('course.team_id = :teamId', { teamId })
       .leftJoin('course.roadmaps', 'roadmap')
       .andWhere('roadmap.id IS NULL')
       .leftJoinAndSelect('course.created_by', 'created_by')

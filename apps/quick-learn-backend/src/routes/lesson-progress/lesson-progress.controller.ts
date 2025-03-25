@@ -1,15 +1,7 @@
 import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { LessonProgressService } from './lesson-progress.service';
-import {
-  Controller,
-  Post,
-  Param,
-  Body,
-  Request,
-  Get,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Param, Body, Get, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from '@src/entities';
@@ -17,17 +9,24 @@ import { en } from '@src/lang/en';
 import { Public } from '@src/common/decorators/public.decorator';
 import { LessonProgressCompleteDto } from './dto/lesson-progress-complete.dto';
 import { LessonProgressCheckDto } from './dto/lesson-progress-check.dto';
+import { UsersService } from '../users/users.service';
 
 @ApiTags('Lesson Progress')
 @Controller({ path: 'lesson-progress', version: '1' })
 @UseGuards(JwtAuthGuard)
 export class LessonProgressController {
-  constructor(private readonly lessonProgressService: LessonProgressService) {}
+  constructor(
+    private readonly lessonProgressService: LessonProgressService,
+    private readonly userService: UsersService,
+  ) {}
 
   @Get('progress/:courseId')
-  async getLessonProgress(@Param('courseId') courseId: number, @Request() req) {
+  async getLessonProgress(
+    @Param('courseId') courseId: number,
+    @CurrentUser() user: UserEntity,
+  ) {
     const data = await this.lessonProgressService.getLessonProgressArray(
-      req.user.id,
+      user.id,
       courseId,
     );
     return new SuccessResponse(en.courseCompletedLessons, data);
@@ -41,7 +40,7 @@ export class LessonProgressController {
   })
   @Get('/user-progress{/:userID}')
   async getAllUserProgress(
-    @CurrentUser() curentUser,
+    @CurrentUser() curentUser: UserEntity,
     @Param('userID') userID?: string,
   ) {
     const data =
@@ -99,6 +98,7 @@ export class LessonProgressController {
       currentUser,
       +param.lessonId,
       dto.courseId,
+      user.team_id,
     );
     if (dto.isCompleted) {
       return new SuccessResponse(en.successfullyCompletedLesson, {
@@ -117,10 +117,12 @@ export class LessonProgressController {
     @Param() param: LessonProgressCompleteDto,
   ) {
     const currentUser = param.userId;
+    const userDetail = await this.userService.findOne({ id: param.userId });
     const response = await this.lessonProgressService.markLessonAsCompleted(
       currentUser,
       +param.lessonId,
       dto.courseId,
+      userDetail.team_id,
     );
     if (dto.isCompleted) {
       return new SuccessResponse(en.successfullyCompletedLesson, {

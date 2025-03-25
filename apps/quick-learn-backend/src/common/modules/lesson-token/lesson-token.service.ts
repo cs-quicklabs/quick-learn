@@ -43,7 +43,19 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
       .getRawMany();
   }
 
-  async getUsersTokenBetweenDates(thisDate: { start: string; end: string }) {
+  async getUsersTokenBetweenDates(thisDate: {
+    start: string;
+    end: string;
+  }): Promise<
+    {
+      user_id: number;
+      lesson_count: number;
+      first_name: string;
+      last_name: string;
+      email: string;
+      team_id: number;
+    }[]
+  > {
     return await this.repository
       .createQueryBuilder('lesson_token')
       .where(
@@ -60,6 +72,7 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
         'user.first_name AS first_name',
         'user.last_name AS last_name',
         'user.email AS email',
+        'user.team_id AS team_id',
       ])
       .groupBy('user.id')
       .getRawMany();

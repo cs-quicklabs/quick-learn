@@ -32,6 +32,7 @@ export class QuarterlyLeaderboardService extends PaginationService<QuarterlyLead
   }
 
   async getLastQuarterRanking(
+    team_id: number,
     page = 1,
     limit = 10,
   ): Promise<PaginatedResult<QuarterlyLeaderboardEntity>> {
@@ -41,7 +42,8 @@ export class QuarterlyLeaderboardService extends PaginationService<QuarterlyLead
     const queryBuilder = this.repository
       .createQueryBuilder('quarterly_leaderboard')
       .leftJoinAndSelect('quarterly_leaderboard.user', 'user')
-      .where(
+      .where('quarterly_leaderboard.team_id = :teamId', { teamId: team_id })
+      .andWhere(
         'quarterly_leaderboard.quarter = :quarter AND quarterly_leaderboard.year = :year',
         { quarter: lastQuarter, year: currYear },
       )
@@ -68,6 +70,7 @@ export class QuarterlyLeaderboardService extends PaginationService<QuarterlyLead
         rank: index + 1,
         quarter: lastQuarter,
         year: currYear,
+        team_id: entry.team_id,
       })),
     );
   }
