@@ -40,14 +40,16 @@ export class CourseCategoryController {
     @Body() createCourseCategoryDto: CreateCourseCategoryDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    await this.courseCategoryService.createCourseCategories(
+    await this.courseCategoryService.createCourseCategory(
       createCourseCategoryDto,
       user,
     );
+
     const courseCategories = await this.courseCategoryService.getMany(
       { team_id: user.team_id },
       { name: 'ASC' },
     );
+
     return new SuccessResponse('Successfully added course category', {
       categories: courseCategories,
     });
@@ -86,7 +88,7 @@ export class CourseCategoryController {
     @Body() updateCourseCategoryDto: UpdateCourseCategoryDto,
     @CurrentUser() user: UserEntity,
   ) {
-    await this.courseCategoryService.createCourseCategory(
+    await this.courseCategoryService.updateCourseCategory(
       +param.id,
       updateCourseCategoryDto,
       user.team_id,

@@ -61,12 +61,10 @@ export class LessonController {
     @Query() paginationDto: PaginationDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    const lessons = await this.service.getUnapprovedLessons(
-      Number(paginationDto.page),
-      Number(paginationDto.limit),
-      String(paginationDto.q),
-      user,
-    );
+    const lessons = await this.service.getUnapprovedLessons({
+      ...paginationDto,
+      team_id: user.team_id,
+    });
     return new SuccessResponse(en.getLessons, lessons);
   }
 
@@ -95,12 +93,10 @@ export class LessonController {
     @Query() paginationDto: BasePaginationDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    const lessons = await this.service.findAllFlaggedLesson(
-      Number(paginationDto.page),
-      Number(paginationDto.limit),
-      paginationDto.q,
-      user,
-    );
+    const lessons = await this.service.findAllFlaggedLesson({
+      ...paginationDto,
+      team_id: user.team_id,
+    });
     return new SuccessResponse(en.getLessons, lessons);
   }
 
@@ -131,11 +127,14 @@ export class LessonController {
   async get(
     @Param() param: LessonParamDto,
     @Query() getLessonDto: GetLessonDto,
+    @CurrentUser('team_id') team_id: number,
   ): Promise<SuccessResponse> {
-    const conditions = { id: +param.id };
+    const conditions = { id: +param.id, team_id };
     const relations = ['created_by_user', 'course'];
+
     if (getLessonDto.approved)
       conditions['approved'] = getLessonDto.approved == 'true';
+
     if (getLessonDto.flagged) {
       conditions['flagged_lesson'] = {
         id: MoreThan(0),
@@ -143,6 +142,7 @@ export class LessonController {
       relations.push('flagged_lesson');
       relations.push('flagged_lesson.user');
     }
+
     if (getLessonDto.isArchived === 'true') {
       relations.push('archive_by_user');
     }
@@ -208,7 +208,7 @@ export class LessonController {
     @Param() param: LessonParamDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    await this.service.unFlagLesson(+param.id, user.team_id);
+    await this.service.unFlagLesson(+param.id, user);
     return new SuccessResponse(en.successUnflagLesson);
   }
 
@@ -225,7 +225,7 @@ export class LessonController {
     @Param() param: LessonParamDto,
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    await this.service.archiveLesson(+param.id, user.id);
+    await this.service.archiveLesson(+param.id, user);
     return new SuccessResponse(en.archiveLesson);
   }
 
@@ -236,7 +236,7 @@ export class LessonController {
     @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
     if (!body.active) {
-      await this.service.archiveLesson(user.id, body.id);
+      await this.service.archiveLesson(body.id, user);
       return new SuccessResponse(en.archiveLesson);
     }
 
@@ -246,7 +246,7 @@ export class LessonController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @ApiOperation({ summary: 'Permanently delete a lesson' })
   async deleteLesson(
     @Param() param: LessonParamDto,

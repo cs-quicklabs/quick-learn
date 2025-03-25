@@ -4,3 +4,10 @@ export interface IGlobalSearchParams {
   query: string;
   userTeamId: number;
 }
+
+export interface IPaginationParams {
+  q: string;
+  page: number;
+  limit: number;
+  team_id: number;
+}

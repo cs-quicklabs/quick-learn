@@ -44,37 +44,39 @@ export class LeaderboardService extends PaginationService<LeaderboardEntity> {
   }
 
   async getLeaderboardData({
+    team_id,
     type,
     page = 1,
     limit = 10,
-    team_id,
   }: ILeaderboardPaginationParams) {
+    console.log('type', type); // type WEEKLY
     switch (type) {
       case LeaderboardTypeEnum.WEEKLY:
       case LeaderboardTypeEnum.MONTHLY:
         return this.getLeaderboardWeekAndMonthRanking({
+          team_id,
           type,
           page,
           limit,
-          team_id,
         });
 
       case LeaderboardTypeEnum.QUARTERLY:
         return this.QuarterlyLeaderboardService.getLastQuarterRanking(
+          team_id,
           page,
           limit,
-          team_id,
         );
 
       default:
         throw new Error(`Invalid leaderboard type: ${type}`);
     }
   }
+
   async getLeaderboardWeekAndMonthRanking({
+    team_id,
     type,
     page = 1,
     limit = 10,
-    team_id,
   }: ILeaderboardPaginationParams) {
     return this.paginate(
       {
@@ -101,9 +103,11 @@ export class LeaderboardService extends PaginationService<LeaderboardEntity> {
         lessons_completed_count: entry.lesson_completed_count,
         rank: index + 1,
         type,
+        team_id: entry.team_id,
       })),
     );
   }
+
   async deleteLeaderboardData(type: LeaderboardTypeEnum) {
     try {
       return await this.delete({

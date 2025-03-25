@@ -16,7 +16,7 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
     super(courseCategoryRepository);
   }
 
-  async createCourseCategories(
+  async createCourseCategory(
     createCourseCategoryDto: CreateCourseCategoryDto,
     user: UserEntity,
   ) {
@@ -36,24 +36,27 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
     return await this.repository.save(courseCategory);
   }
 
-  async createCourseCategory(
+  async updateCourseCategory(
     id: number,
-    createCourseCategoryDto: UpdateCourseCategoryDto,
-    user: number,
+    updateCourseCategoryDto: UpdateCourseCategoryDto,
+    team_id: number,
   ) {
-    const courseCategory = await this.get({ id });
-    if (courseCategory.team_id !== user) {
-      throw new BadRequestException(
-        'You do not have permission to update this course category',
-      );
+    const courseCategory = await this.get({ id, team_id });
+
+    if (courseCategory) {
+      throw new BadRequestException(en.InvalidCourseCategory);
     }
+
     const foundCourseCategory = await this.get({
-      name: ILike(createCourseCategoryDto.name),
+      name: ILike(updateCourseCategoryDto.name),
+      team_id,
     });
+
     if (foundCourseCategory && foundCourseCategory.id !== courseCategory.id) {
       throw new BadRequestException('Course Category already exists');
     }
-    return await this.update({ id }, createCourseCategoryDto);
+
+    return await this.update({ id }, updateCourseCategoryDto);
   }
 
   async deleteCourseCategory(id: number, user: number): Promise<void> {
@@ -69,15 +72,15 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
     await this.repository.delete({ id });
   }
 
-  async getCourseCategoriesWithCourses(user: UserEntity) {
+  async getCourseCategoriesWithCourses({ team_id }: UserEntity) {
     return await this.repository
       .createQueryBuilder('course_category')
-      .where('course_category.team_id = :teamId', { teamId: user.team_id })
+      .where('course_category.team_id = :teamId', { teamId: team_id })
       .leftJoinAndSelect(
         'course_category.courses',
         'courses',
         'courses.archived = :archived',
-        { archived: false, teamId: user.team_id },
+        { archived: false },
       )
       .orderBy('course_category.name', 'ASC')
       .leftJoin('courses.lessons', 'lessons')
@@ -88,7 +91,6 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
         (qb) =>
           qb.andWhere('lessons.archived = :archived', {
             archived: false,
-            teamId: user.team_id,
           }),
       )
       .leftJoin('courses.roadmaps', 'roadmaps')

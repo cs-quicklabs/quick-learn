@@ -73,10 +73,10 @@ export class CourseController {
     @CurrentUser() user: UserEntity,
   ) {
     const response = await this.service.getOrphanCourses(
+      user.team_id,
       params.page,
       params.limit,
       params.q,
-      user.team_id,
     );
     return new SuccessResponse('Successfully got Orphan courses', response);
   }
@@ -159,13 +159,15 @@ export class CourseController {
     );
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeId.SUPER_ADMIN)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a course permanently' })
   async deleteCourse(
     @Param() param: CourseParamDto,
-    @CurrentUser() user: UserEntity,
+    @CurrentUser('team_id') teamId: number,
   ): Promise<SuccessResponse> {
-    await this.service.deleteCourse(+param.id, user.team_id);
+    await this.service.deleteCourse(+param.id, teamId);
     return new SuccessResponse(en.CourseDeleted);
   }
 }

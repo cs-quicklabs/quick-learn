@@ -22,10 +22,10 @@ export class LeaderboardController {
   ): Promise<SuccessResponse> {
     const { type, page, limit } = params;
     const leaderboardData = await this.leaderboardService.getLeaderboardData({
+      team_id,
       type,
       page,
       limit,
-      team_id,
     });
     return new SuccessResponse(en.successLeaderboardData, leaderboardData);
   }
