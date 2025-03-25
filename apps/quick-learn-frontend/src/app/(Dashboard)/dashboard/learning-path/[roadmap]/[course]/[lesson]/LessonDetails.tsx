@@ -16,6 +16,7 @@ import {
   showApiMessageInToast,
 } from '@src/utils/toastUtils';
 import LessonSkeleton from '@src/shared/components/LessonSkeleton';
+import InputCheckbox from '@src/shared/components/InputCheckbox';
 
 function LessonDetails() {
   const { roadmap, course, lesson, member } = useParams<{
@@ -144,14 +145,16 @@ function LessonDetails() {
           </p>
         </div>
       ) : (
-        <div className="flex justify-center items-center gap-4 mb-48 mt-12">
-          <input
-            type="checkbox"
-            checked={isChecked}
-            onChange={handleCheckboxChange}
-            className="rounded-md h-6 w-6 md:h-8 md:w-8 border-gray-400 bg-[#F4F4F6]"
-          />
-          <p className="text-xl md:text-2xl font-semibold text-gray-900">
+        <div className="flex justify-center gap-4 mb-48 mt-12 items-center md:items-start">
+          <div className="group grid size-5 grid-cols-1 md:grid-cols-2 text-center">
+            <InputCheckbox
+              type="checkbox"
+              checked={isChecked}
+              onChange={handleCheckboxChange}
+              className="h-6 w-6 md:h-8 md:w-8"
+            />
+          </div>
+          <p className="text-xl md:text-2xl ms:3 md:ms-5 font-semibold text-gray-900">
             {en.myLearningPath.markRead}
           </p>
         </div>
