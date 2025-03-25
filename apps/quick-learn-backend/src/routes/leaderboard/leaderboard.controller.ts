@@ -5,6 +5,7 @@ import { en } from '@src/lang/en';
 import { ApiTags } from '@nestjs/swagger';
 import { LeaderboardQueryDto } from './dto/leaderboard-query.dto';
 import { JwtAuthGuard } from '../auth/guards';
+import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 @ApiTags('Leaderboard')
 @Controller({
   path: 'leaderboard',
@@ -17,12 +18,15 @@ export class LeaderboardController {
   @Get('/list')
   async getLeaderboardDataTable(
     @Query() params: LeaderboardQueryDto,
+    @CurrentUser('team_id') team_id: number,
   ): Promise<SuccessResponse> {
-    const leaderboardData = await this.leaderboardService.getLeaderboardData(
-      params.type,
-      Number(params.page),
-      Number(params.limit),
-    );
+    const { type, page, limit } = params;
+    const leaderboardData = await this.leaderboardService.getLeaderboardData({
+      team_id,
+      type,
+      page,
+      limit,
+    });
     return new SuccessResponse(en.successLeaderboardData, leaderboardData);
   }
 }

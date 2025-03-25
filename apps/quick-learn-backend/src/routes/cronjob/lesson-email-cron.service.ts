@@ -147,6 +147,7 @@ export class LessonEmailService {
         user.id,
         randomLesson.lesson_id,
         randomLesson.course_id,
+        user.team_id,
       );
 
       const lessonURL = await this.generateURL({
@@ -233,6 +234,7 @@ export class LessonEmailService {
     user_id: number,
     lesson_id: number,
     course_id: number,
+    team_id: number,
   ) {
     try {
       const token = await this.generateLessonToken();
@@ -244,6 +246,7 @@ export class LessonEmailService {
         course_id,
         expires_at: token.expiryTime,
         token: token.token,
+        team_id,
       });
     } catch (error) {
       this.logger.error(

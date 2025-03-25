@@ -8,9 +8,16 @@ import { LeaderboardTypeEnum } from '@src/common/constants/constants';
 import { en } from '@src/lang/en';
 import { LeaderboardEntity } from '@src/entities/leaderboard.entity';
 
+interface ILeaderboardPaginationParams {
+  page: number;
+  limit: number;
+  type: LeaderboardTypeEnum;
+  team_id: number;
+}
+
 @Injectable()
 export class LeaderboardService extends PaginationService<LeaderboardEntity> {
-  private logger = new Logger(LeaderboardService.name);
+  private readonly logger = new Logger(LeaderboardService.name);
   constructor(
     @InjectRepository(LeaderboardEntity)
     repo: Repository<LeaderboardEntity>,
@@ -36,14 +43,26 @@ export class LeaderboardService extends PaginationService<LeaderboardEntity> {
     });
   }
 
-  async getLeaderboardData(type: LeaderboardTypeEnum, page = 1, limit = 10) {
+  async getLeaderboardData({
+    team_id,
+    type,
+    page = 1,
+    limit = 10,
+  }: ILeaderboardPaginationParams) {
+    console.log('type', type); // type WEEKLY
     switch (type) {
       case LeaderboardTypeEnum.WEEKLY:
       case LeaderboardTypeEnum.MONTHLY:
-        return this.getLeaderboardWeekAndMonthRanking(type, page, limit);
+        return this.getLeaderboardWeekAndMonthRanking({
+          team_id,
+          type,
+          page,
+          limit,
+        });
 
       case LeaderboardTypeEnum.QUARTERLY:
         return this.QuarterlyLeaderboardService.getLastQuarterRanking(
+          team_id,
           page,
           limit,
         );
@@ -52,17 +71,20 @@ export class LeaderboardService extends PaginationService<LeaderboardEntity> {
         throw new Error(`Invalid leaderboard type: ${type}`);
     }
   }
-  async getLeaderboardWeekAndMonthRanking(
-    type: LeaderboardTypeEnum,
+
+  async getLeaderboardWeekAndMonthRanking({
+    team_id,
+    type,
     page = 1,
     limit = 10,
-  ) {
+  }: ILeaderboardPaginationParams) {
     return this.paginate(
       {
         limit,
         page,
       },
       {
+        team_id,
         type,
       },
       ['user'],
@@ -81,9 +103,11 @@ export class LeaderboardService extends PaginationService<LeaderboardEntity> {
         lessons_completed_count: entry.lesson_completed_count,
         rank: index + 1,
         type,
+        team_id: entry.team_id,
       })),
     );
   }
+
   async deleteLeaderboardData(type: LeaderboardTypeEnum) {
     try {
       return await this.delete({

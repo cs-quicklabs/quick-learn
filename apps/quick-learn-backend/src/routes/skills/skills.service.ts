@@ -5,6 +5,7 @@ import { SkillEntity } from '@src/entities/skill.entity';
 import { ILike, Repository } from 'typeorm';
 import { BasicCrudService } from '@src/common/services';
 import { UpdateSkillDto } from './dto/update-skill.dto';
+import { UserEntity } from '@src/entities';
 
 @Injectable()
 export class SkillsService extends BasicCrudService<SkillEntity> {
@@ -12,16 +13,19 @@ export class SkillsService extends BasicCrudService<SkillEntity> {
     super(repo);
   }
 
-  async create(createSkillDto: CreateSkillDto) {
+  async createSkill(createSkillDto: CreateSkillDto, user: UserEntity) {
     const foundSkill = await this.repository.count({
-      where: { name: ILike(createSkillDto.name) },
+      where: { name: ILike(createSkillDto.name), team_id: user.team_id },
     });
 
     if (foundSkill) {
       throw new BadRequestException('Primary skill already exists.');
     }
 
-    const skill = this.repository.create(createSkillDto);
+    const skill = this.repository.create({
+      ...createSkillDto,
+      team_id: user.team_id,
+    });
     return await this.repository.save(skill);
   }
 
