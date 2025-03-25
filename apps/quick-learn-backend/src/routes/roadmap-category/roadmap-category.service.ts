@@ -41,39 +41,50 @@ export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEnti
   async updateRoadmapCategory(
     id: number,
     updateRoadmapCategoryDto: UpdateRoadmapCategoryDto,
-    user: number,
+    team_id: UserEntity['team_id'],
   ) {
-    const roadmapCategory = await this.get({ id, team_id: user });
+    const roadmapCategory = await this.get({ id, team_id });
     const roadmapCategoryByName = await this.get({
       name: ILike(updateRoadmapCategoryDto.name),
+      team_id,
     });
+
     if (
       roadmapCategoryByName &&
       roadmapCategoryByName.id !== roadmapCategory.id
     ) {
       throw new BadRequestException('Roadmap Category already exists.');
     }
+
     await this.update({ id }, updateRoadmapCategoryDto);
   }
 
-  async deleteRoadmapCategory(id: number, user: number): Promise<void> {
-    const roadmapCategory = await this.get({ id, team_id: user }, ['roadmaps']);
+  async deleteRoadmapCategory(
+    id: number,
+    team_id: UserEntity['team_id'],
+  ): Promise<void> {
+    const roadmapCategory = await this.get({ id, team_id }, ['roadmaps']);
     if (roadmapCategory.roadmaps.length > 0) {
       throw new BadRequestException(en.roadmapCategriesHasData);
     }
 
     await this.repository.delete({ id });
   }
-  async getRoadmapCategoryWithRoadmapAndCourses(is_courses, is_roadmap, user) {
+
+  async getRoadmapCategoryWithRoadmapAndCourses(
+    is_courses: boolean,
+    is_roadmap: boolean,
+    { team_id }: UserEntity,
+  ) {
     const queryBuilder = this.repository.createQueryBuilder('category');
     queryBuilder.where('category.team_id = :team_id', {
-      team_id: user.team_id,
+      team_id,
     });
 
     if (is_roadmap) {
       queryBuilder
         .leftJoinAndSelect('category.roadmaps', 'roadmaps')
-        .andWhere('roadmaps.team_id = :team_id', { team_id: user.team_id })
+        .andWhere('roadmaps.team_id = :team_id', { team_id })
         .andWhere('roadmaps.archived = :archived', { archived: false });
     }
     if (is_courses) {
@@ -99,7 +110,7 @@ export class RoadmapCategoryService extends BasicCrudService<RoadmapCategoryEnti
         'category.roadmaps',
         'roadmaps',
         'roadmaps.archived = :archived',
-        { archived: false, teamId: user.team_id },
+        { archived: false },
       )
       .orderBy('category.name', 'ASC')
       .addOrderBy('category.created_at', 'DESC')

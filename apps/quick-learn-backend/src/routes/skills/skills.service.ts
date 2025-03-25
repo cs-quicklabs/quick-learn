@@ -6,6 +6,7 @@ import { ILike, Repository } from 'typeorm';
 import { BasicCrudService } from '@src/common/services';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { UserEntity } from '@src/entities';
+import { en } from '@src/lang/en';
 
 @Injectable()
 export class SkillsService extends BasicCrudService<SkillEntity> {
@@ -29,18 +30,26 @@ export class SkillsService extends BasicCrudService<SkillEntity> {
     return await this.repository.save(skill);
   }
 
-  async updateSkill(id: number, updateSkillDto: UpdateSkillDto) {
-    const skill = await this.get({ id });
-    const skillByName = await this.get({ name: ILike(updateSkillDto.name) });
-    const skillNameId = skillByName && skillByName.id !== skill.id;
-    if (skillNameId) {
-      throw new BadRequestException('Skill already exists.');
+  async updateSkill(
+    id: number,
+    updateSkillDto: UpdateSkillDto,
+    team_id: UserEntity['team_id'],
+  ) {
+    const skill = await this.get({ id, team_id });
+    const skillByName = await this.get({
+      name: ILike(updateSkillDto.name),
+      team_id,
+    });
+    const isDifferentSkill = skillByName && skillByName.id !== skill.id;
+
+    if (isDifferentSkill) {
+      throw new BadRequestException(en.skillAlreadyExists);
     }
     await this.update({ id }, updateSkillDto);
   }
 
-  async deleteSkill(id: number) {
-    const skill = await this.get({ id }, ['users']);
+  async deleteSkill(id: number, team_id: UserEntity['team_id']) {
+    const skill = await this.get({ id, team_id }, ['users']);
     if (skill.users.length) {
       throw new BadRequestException('Skill is assigned to user.');
     }

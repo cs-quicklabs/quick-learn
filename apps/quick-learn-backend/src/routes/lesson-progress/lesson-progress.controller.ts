@@ -1,15 +1,7 @@
 import { SuccessResponse } from '@src/common/dto';
 import { JwtAuthGuard } from '../auth/guards';
 import { LessonProgressService } from './lesson-progress.service';
-import {
-  Controller,
-  Post,
-  Param,
-  Body,
-  Request,
-  Get,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Param, Body, Get, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '@src/common/decorators/current-user.decorators';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from '@src/entities';
@@ -29,9 +21,12 @@ export class LessonProgressController {
   ) {}
 
   @Get('progress/:courseId')
-  async getLessonProgress(@Param('courseId') courseId: number, @Request() req) {
+  async getLessonProgress(
+    @Param('courseId') courseId: number,
+    @CurrentUser() user: UserEntity,
+  ) {
     const data = await this.lessonProgressService.getLessonProgressArray(
-      req.user.id,
+      user.id,
       courseId,
     );
     return new SuccessResponse(en.courseCompletedLessons, data);
@@ -45,7 +40,7 @@ export class LessonProgressController {
   })
   @Get('/user-progress{/:userID}')
   async getAllUserProgress(
-    @CurrentUser() curentUser,
+    @CurrentUser() curentUser: UserEntity,
     @Param('userID') userID?: string,
   ) {
     const data =

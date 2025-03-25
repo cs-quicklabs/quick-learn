@@ -68,13 +68,13 @@ export class RoadmapController {
   @ApiOperation({ summary: 'Activate or archive roadmap' })
   async activateRoadmap(
     @Body() activateRoadmapDto: ActivateRoadmapDto,
-    @CurrentUser() userID: UserEntity,
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
     const { active, id } = activateRoadmapDto;
     const updatedRoadmap = await this.service.updateRoadmap(
       id,
       { active },
-      userID,
+      user,
     );
     return new SuccessResponse(en.RoadmapStatusUpdated, updatedRoadmap);
   }

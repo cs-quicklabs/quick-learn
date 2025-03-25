@@ -10,7 +10,6 @@ import { PaginationDto } from '../users/dto';
 import {
   IDailyLessonTokenData,
   IGlobalSearchParams,
-  IPaginationParams,
   PaginatedResult,
 } from '@src/common/interfaces';
 import { Repository, ILike, MoreThan, FindOptionsWhere } from 'typeorm';

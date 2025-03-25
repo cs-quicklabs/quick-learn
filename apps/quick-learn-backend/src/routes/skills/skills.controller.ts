@@ -69,8 +69,9 @@ export class SkillsController {
   async update(
     @Param('id') id: string,
     @Body() updateSkillDto: UpdateSkillDto,
+    @CurrentUser('team_id') team_id: number,
   ) {
-    await this.skillsService.updateSkill(+id, updateSkillDto);
+    await this.skillsService.updateSkill(+id, updateSkillDto, team_id);
     return new SuccessResponse(en.successSkillUpdate);
   }
 
@@ -79,8 +80,11 @@ export class SkillsController {
   @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiOperation({ summary: 'Delete skill by id' })
-  async remove(@Param('id') id: string) {
-    await this.skillsService.deleteSkill(+id);
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser('team_id') team_id: number,
+  ) {
+    await this.skillsService.deleteSkill(+id, team_id);
     return new SuccessResponse(en.successSkillDelete);
   }
 }

@@ -137,19 +137,20 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
     user: UserEntity,
   ): Promise<RoadmapEntity> {
     // Check for existing roadmap with same name
-    const existingRoadmap = await this.get({
-      name: ILike(`%${createRoadmapDto.name}%`),
-      team_id: user.team_id,
-    });
+    const [existingRoadmap, roadmapCategory] = await Promise.all([
+      this.get({
+        name: ILike(`%${createRoadmapDto.name}%`),
+        team_id: user.team_id,
+      }),
+      this.roadmapCategoryService.get({
+        id: +createRoadmapDto.roadmap_category_id,
+        team_id: user.team_id,
+      }),
+    ]);
 
     if (existingRoadmap) {
       throw new BadRequestException(en.RoadmapAlreadyExists);
     }
-
-    // Verify roadmap category exists
-    const roadmapCategory = await this.roadmapCategoryService.get({
-      id: +createRoadmapDto.roadmap_category_id,
-    });
 
     if (!roadmapCategory) {
       throw new BadRequestException(en.InvalidRoadmapCategory);
@@ -166,12 +167,12 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   async updateRoadmap(
     id: number,
     updateRoadmapDto: UpdateRoadmapDto,
-    userID: UserEntity,
+    user: UserEntity,
   ): Promise<RoadmapEntity> {
     const roadmap = await this.getRoadmapById(
       id,
       ['roadmap_category'],
-      userID.team_id,
+      user.team_id,
     );
 
     const handleActiveStatus =
@@ -182,7 +183,7 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
         { id },
         {
           archived: !updateRoadmapDto.active,
-          updated_by_id: userID.id,
+          updated_by_id: user.id,
         },
       );
       return await this.getRoadmapById(id);
@@ -228,7 +229,12 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
     relations = ['roadmap_category', 'courses', 'created_by', 'updated_by'],
     team_id?: number,
   ): Promise<RoadmapEntity> {
-    const roadmap = await this.get({ id, team_id: team_id }, relations);
+    const conditions = { id };
+    if (team_id) {
+      conditions['team_id'] = team_id;
+    }
+
+    const roadmap = await this.get(conditions, relations);
     if (!roadmap) {
       throw new BadRequestException(en.RoadmapNotFound);
     }
@@ -298,13 +304,13 @@ export class RoadmapService extends PaginationService<RoadmapEntity> {
   async assignRoadmap(
     id: number,
     assignCourses: AssignCoursesToRoadmapDto,
-    user: number,
+    team_id: UserEntity['team_id'],
   ): Promise<void> {
-    const roadmap = await this.getRoadmapById(id, [], user);
+    const roadmap = await this.getRoadmapById(id, [], team_id);
 
     const courses = await this.courseService.getMany({
       id: In(assignCourses.courses),
-      team_id: user,
+      team_id: team_id,
     });
 
     if (courses.length !== assignCourses.courses.length) {
