@@ -26,7 +26,7 @@ function InputCheckbox(props: CheckboxProps = {}) {
   } = props;
 
   return (
-    <div className="group grid size-4 grid-cols-1">
+    <>
       <input
         id={id}
         type={type}
@@ -38,8 +38,8 @@ function InputCheckbox(props: CheckboxProps = {}) {
         aria-describedby={ariaDescribedby}
         {...rest}
       />
-      <CheckboxIcon className="-ml-4" />
-    </div>
+      <CheckboxIcon />
+    </>
   );
 }
 

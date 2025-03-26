@@ -50,12 +50,14 @@ const InputField: FC<Props> = ({
     return (
       <div className="flex justify-between items-center">
         <div className="flex items-center">
-          <InputCheckbox
-            id={`${id ?? ''}_checkbox_${name}`}
-            type={type}
-            {...register(name)}
-            className="h-4 w-4"
-          />
+          <div className="group grid size-4 grid-cols-1">
+            <InputCheckbox
+              id={`${id ?? ''}_checkbox_${name}`}
+              type={type}
+              {...register(name)}
+              className="h-4 w-4"
+            />
+          </div>
           <div className="ml-3 text-sm">
             <label
               htmlFor={`${id ?? ''}_checkbox_${name}`}
