@@ -58,5 +58,5 @@ yarn.lock
 newrelic_agent.log
 newrelic_agent.log.*
 
-# ignore cursor folders
+# ignoring cursor settings
 .cursor

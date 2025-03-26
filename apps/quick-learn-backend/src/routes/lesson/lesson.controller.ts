@@ -127,9 +127,8 @@ export class LessonController {
   async get(
     @Param() param: LessonParamDto,
     @Query() getLessonDto: GetLessonDto,
-    @CurrentUser('team_id') team_id: number,
   ): Promise<SuccessResponse> {
-    const conditions = { id: +param.id, team_id };
+    const conditions = { id: +param.id };
     const relations = ['created_by_user', 'course'];
 
     if (getLessonDto.approved)
