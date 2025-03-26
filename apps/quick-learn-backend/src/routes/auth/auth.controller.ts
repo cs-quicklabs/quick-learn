@@ -43,9 +43,8 @@ export class AuthController {
   ): Promise<SuccessResponse> {
     const { token, tokenExpires, refreshToken, role } =
       await this.authService.login(loginDto);
-
     Helpers.setCookies(res, 'access_token', token, tokenExpires);
-    Helpers.setCookies(res, 'refresh_token', refreshToken);
+    Helpers.setCookies(res, 'refresh_token', refreshToken, tokenExpires);
     Helpers.setCookies(res, 'user_role', role.toString());
     return new SuccessResponse(en.successfullyLoggedIn);
   }
@@ -90,7 +89,11 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@CurrentUser() user: UserEntity): SuccessResponse {
+  getProfile(
+    @CurrentUser() user: UserEntity,
+    @Res({ passthrough: true }) res: Response,
+  ): SuccessResponse {
+    Helpers.setCookies(res, 'user_role', user.user_type_id.toString());
     return new SuccessResponse(en.successfullyGotUser, user);
   }
 
