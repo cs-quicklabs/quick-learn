@@ -43,7 +43,7 @@ export class CourseCategoryService extends BasicCrudService<CourseCategoryEntity
   ) {
     const courseCategory = await this.get({ id, team_id });
 
-    if (courseCategory) {
+    if (!courseCategory) {
       throw new BadRequestException(en.InvalidCourseCategory);
     }
 
