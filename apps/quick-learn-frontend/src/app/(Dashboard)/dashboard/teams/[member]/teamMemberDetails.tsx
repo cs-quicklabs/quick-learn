@@ -200,9 +200,11 @@ function TeamMemberDetails() {
     { id: 'courses', label: en.common.courses, count: allCourses.length },
   ];
 
-  return isPageLoading && !openAssignModal ? (
-    <TeamMemberDetailsSkeleton />
-  ) : (
+  if (isPageLoading && !openAssignModal) {
+    return <TeamMemberDetailsSkeleton />;
+  }
+
+  return (
     <>
       <ConformationModal
         title="Are you sure you want to deactivate this user?"
