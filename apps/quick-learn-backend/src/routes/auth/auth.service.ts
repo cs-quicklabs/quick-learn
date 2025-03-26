@@ -284,7 +284,7 @@ export class AuthService {
     return {
       token,
       refreshToken,
-      tokenExpires: this.accessTokenExpiresIn,
+      tokenExpires: expires,
       role: data.role,
     };
   }
