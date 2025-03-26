@@ -1,6 +1,7 @@
 import TeamMemberListing from './TeamMemberListing';
+import { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Team • Quick Learn',
   description: 'Team List quick learn',
 };
