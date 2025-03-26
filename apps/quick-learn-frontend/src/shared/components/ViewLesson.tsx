@@ -10,7 +10,7 @@ import { TLesson } from '../types/contentRepository';
 import { TBreadcrumb } from '../types/breadcrumbType';
 import { FlagIcon } from '@heroicons/react/24/outline';
 import dynamic from 'next/dynamic';
-import { CheckboxIcon } from './UIElements';
+import InputCheckbox from './InputCheckbox';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), {
   ssr: false,
@@ -85,15 +85,13 @@ const ApprovalCheckbox = memo(
   }) => (
     <div className="flex items-center md:items-start p-16 mb-16 w-full max-w-5xl justify-center mx-auto">
       <div className="group grid size-5 grid-cols-1 md:grid-cols-2 text-center">
-        <input
+        <InputCheckbox
           id="default-checkbox"
-          type="checkbox"
           checked={value}
           onChange={() => setValue?.(true)}
           disabled={value}
-          className="appearance-none h-6 w-6 md:h-8 md:w-8 rounded-sm border border-gray-300 bg-white checked:border-primary-600 checked:bg-primary-600 indeterminate:border-primary-600 indeterminate:bg-primary-600 focus:outline-2 focus:outline-offset-1 focus:outline-primary-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+          className="w-6 h-6 md:w-8 md:h-8"
         />
-        <CheckboxIcon className="size-6" />
       </div>
 
       <label

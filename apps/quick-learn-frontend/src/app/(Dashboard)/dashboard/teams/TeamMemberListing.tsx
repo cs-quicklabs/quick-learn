@@ -148,7 +148,7 @@ function TeamMemberListing() {
                   type="radio"
                   onChange={() => filterByUserType(userType.code)}
                   checked={currentUserType === userType.code}
-                  className="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-primary-600 checked:bg-primary-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
+                  className="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:outline-hidden focus:ring cursor-pointer"
                 />
                 <label
                   htmlFor={userType.code}
