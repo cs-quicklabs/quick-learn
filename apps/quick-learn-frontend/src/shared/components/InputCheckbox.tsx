@@ -17,7 +17,6 @@ function InputCheckbox(props: CheckboxProps = {}) {
     type = 'checkbox',
     value = '',
     className = '',
-
     checked,
     onChange,
     disabled,
@@ -38,7 +37,7 @@ function InputCheckbox(props: CheckboxProps = {}) {
         aria-describedby={ariaDescribedby}
         {...rest}
       />
-      <CheckboxIcon />
+      <CheckboxIcon className="size-3.5" />
     </>
   );
 }
