@@ -13,6 +13,7 @@ const nextConfig = {
     svgr: false,
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
