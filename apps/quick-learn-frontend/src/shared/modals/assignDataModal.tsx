@@ -261,6 +261,8 @@ const AssignDataModal: FC<Props> = ({
                                         id={item.name}
                                         value={item.value}
                                         {...register('selected')}
+                                        className="h-4 w-4"
+                                        checkBoxclass="size-3.5"
                                       />
                                     </div>
 

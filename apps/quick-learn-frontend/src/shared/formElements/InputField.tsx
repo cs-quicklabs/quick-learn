@@ -55,6 +55,8 @@ const InputField: FC<Props> = ({
               id={`${id ?? ''}_checkbox_${name}`}
               type={type}
               {...register(name)}
+              className="h-[18px] w-[18px]"
+              checkBoxclass="size-3.5"
             />
           </div>
           <div className="ml-3 text-sm">

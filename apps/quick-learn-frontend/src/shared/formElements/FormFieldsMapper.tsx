@@ -156,7 +156,7 @@ function FormFieldsMapper<T extends z.ZodTypeAny>({
             disabled={buttonDisabled || isLoading || !isValid || !isDirty}
             className={`${
               bigButton && 'w-full'
-            } text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center align-middle disabled:bg-gray-500`}
+            } text-white bg-primary-600 hover:bg-primary-700 flex items-center justify-center focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 align-middle disabled:bg-gray-500`}
           >
             {isLoading ? <Loader /> : buttonText}
           </button>
