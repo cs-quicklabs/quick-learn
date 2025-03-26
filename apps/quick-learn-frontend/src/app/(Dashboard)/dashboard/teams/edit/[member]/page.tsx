@@ -1,6 +1,7 @@
 import AddUpdateMemberPage from './AddUpdateMember';
+import { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Teams • Quick Learn',
   description: 'Teams quick learn',
 };

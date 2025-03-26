@@ -58,7 +58,6 @@ function LessonDetails() {
       setCompletedOn(res.data.completed_date);
       setIsChecked(res.data.isRead);
       await dispatch(fetchUserProgress());
-      console.log(`Lesson ${checked ? 'completed' : 'not completed'}`);
     } catch (error) {
       console.error('Error marking lesson as completed:', error);
     }
