@@ -44,7 +44,7 @@ export class QuarterlyLeaderboardEntity {
   })
   created_at: Date;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
