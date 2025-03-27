@@ -201,6 +201,9 @@ export const en = {
     archiveConfirmDescription:
       'When this lesson is archived, it will be moved to archived lessons. Users will not be able to access this lesson anymore.',
     NavigateToLearningPath: 'Navigate to Learning Path',
+    goBack: 'Go back?',
+    goBackDescription:
+      'Are you sure you want to go back? Your changes will be lost.',
   },
 
   /**

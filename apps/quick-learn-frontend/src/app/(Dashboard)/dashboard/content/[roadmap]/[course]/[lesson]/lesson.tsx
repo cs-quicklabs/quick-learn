@@ -149,6 +149,8 @@ function Lesson() {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [actionType, setActionType] = useState<'back' | 'refresh' | null>(null);
 
   const form = useLessonForm();
 
@@ -188,6 +190,59 @@ function Lesson() {
     courseId,
     lessonId,
   ]);
+
+  useEffect(() => {
+    // Prevent immediate back navigation
+    history.pushState(null, '', location.href);
+
+    const checkFormChanges = () => {
+      // Only apply for 'add' page
+      if (!window.location.pathname.includes('add')) return false;
+
+      // Get current form values
+      const { name = '', content = '' } = form.getValues() || {};
+
+      // Check if there are actual changes from initial state
+      return form.isDirty && (name.trim() !== '' || content.trim() !== '');
+    };
+
+    const handleBackButton = (event: PopStateEvent) => {
+      if (checkFormChanges()) {
+        event.preventDefault(); // Prevent default back navigation
+        setActionType('back');
+        setShowModal(true);
+
+        // Re-push state to prevent default back navigation
+        history.pushState(null, '', location.href);
+      } else {
+        // If no changes, allow normal back navigation
+        router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`);
+      }
+    };
+
+    const handleRefresh = (event: BeforeUnloadEvent) => {
+      if (checkFormChanges()) {
+        event.preventDefault(); // Show browser's default "Are you sure?" dialog
+      }
+    };
+
+    window.addEventListener('popstate', handleBackButton);
+    window.addEventListener('beforeunload', handleRefresh);
+
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+      window.removeEventListener('beforeunload', handleRefresh);
+    };
+  }, [form.isDirty, form.getValues, roadmapId, courseId]);
+
+  const handleConfirmBack = () => {
+    setShowModal(false);
+    if (actionType === 'back') {
+      router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`); // Now go back
+    } else if (actionType === 'refresh') {
+      window.location.reload();
+    }
+  };
 
   // Optimize initial data fetching
   useEffect(() => {
@@ -437,6 +492,14 @@ function Lesson() {
           open={showArchiveModal}
           setOpen={setShowArchiveModal}
           onConfirm={handleArchiveLesson}
+        />
+
+        <ConformationModal
+          title={en.lesson.goBack}
+          subTitle={en.lesson.goBackDescription}
+          open={showModal}
+          setOpen={setShowModal}
+          onConfirm={handleConfirmBack}
         />
       </div>
     </div>
