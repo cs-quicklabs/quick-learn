@@ -551,7 +551,6 @@ export class LessonService extends PaginationService<LessonEntity> {
     const isValid = await this.flaggedLessionService.get(
       {
         lesson_id: id,
-        user_id: user.id,
         user: {
           team_id: user.team_id,
         },
