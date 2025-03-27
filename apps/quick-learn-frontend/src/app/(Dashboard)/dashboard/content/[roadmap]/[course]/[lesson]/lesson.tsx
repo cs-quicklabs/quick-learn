@@ -150,7 +150,12 @@ function Lesson() {
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [actionType, setActionType] = useState<'back' | 'refresh' | null>(null);
+  const [actionType, setActionType] = useState<
+    'back' | 'refresh' | 'breadcrumb' | null
+  >(null);
+  const [pendingBreadcrumbLink, setPendingBreadcrumbLink] = useState<
+    string | null
+  >(null);
 
   const form = useLessonForm();
 
@@ -191,27 +196,38 @@ function Lesson() {
     lessonId,
   ]);
 
+  const checkFormChanges = () => {
+    // Only apply for 'add' page
+    if (!window.location.pathname.includes('add')) return false;
+
+    // Get current form values
+    const { name = '', content = '' } = form.getValues() || {};
+
+    // Check if there are actual changes from initial state
+    return form.isDirty && (name.trim() !== '' || content.trim() !== '');
+  };
+
+  const handleBreadcrumbClick = (link: string) => {
+    if (checkFormChanges()) {
+      // Set pending link and show confirmation modal
+      setPendingBreadcrumbLink(link);
+      setActionType('breadcrumb');
+      setShowModal(true);
+    } else {
+      // If no changes, navigate directly
+      router.push(link);
+    }
+  };
+
   useEffect(() => {
     // Prevent immediate back navigation
     history.pushState(null, '', location.href);
-
-    const checkFormChanges = () => {
-      // Only apply for 'add' page
-      if (!window.location.pathname.includes('add')) return false;
-
-      // Get current form values
-      const { name = '', content = '' } = form.getValues() || {};
-
-      // Check if there are actual changes from initial state
-      return form.isDirty && (name.trim() !== '' || content.trim() !== '');
-    };
 
     const handleBackButton = (event: PopStateEvent) => {
       if (checkFormChanges()) {
         event.preventDefault(); // Prevent default back navigation
         setActionType('back');
         setShowModal(true);
-
         // Re-push state to prevent default back navigation
         history.pushState(null, '', location.href);
       } else {
@@ -241,6 +257,8 @@ function Lesson() {
       router.push(`${RouteEnum.CONTENT}/${roadmapId}/${courseId}`); // Now go back
     } else if (actionType === 'refresh') {
       window.location.reload();
+    } else if (actionType === 'breadcrumb' && pendingBreadcrumbLink) {
+      router.push(pendingBreadcrumbLink);
     }
   };
 
@@ -432,7 +450,7 @@ function Lesson() {
   return (
     <div className="-mt-4">
       {(loading || isArchiving) && <FullPageLoader />}
-      <Breadcrumb links={links} />
+      <Breadcrumb links={links} onLinkClick={handleBreadcrumbClick} />
       <div className="mx-auto max-w-screen-lg bg-white">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Controller
