@@ -66,7 +66,6 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @returns The created lesson entity
    */
   async createLesson(user: UserEntity, payload: CreateLessonDto) {
-    console.log(user);
     const course = await this.courseService.get({
       id: +payload.course_id,
       team_id: user.team_id,
@@ -537,8 +536,6 @@ export class LessonService extends PaginationService<LessonEntity> {
       await this.fetchLesson(+lesson_id, +course_id),
       await this.updateDailyLessonToken(hashedToken, +course_id, +lesson_id),
     ]);
-
-    console.log('lessonDetail', lessonDetail, +lesson_id, +course_id);
 
     return {
       lesson_detail: lessonDetail,

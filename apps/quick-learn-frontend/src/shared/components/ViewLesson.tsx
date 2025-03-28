@@ -52,7 +52,7 @@ const LessonContent = memo(({ content }: { content: string }) => {
   const modules = {
     toolbar: false, // This disables the toolbar
     clipboard: {
-      matchVisual: false,
+      matchVisual: true,
     },
   };
 

@@ -49,7 +49,6 @@ export class LeaderboardService extends PaginationService<LeaderboardEntity> {
     page = 1,
     limit = 10,
   }: ILeaderboardPaginationParams) {
-    console.log('type', type); // type WEEKLY
     switch (type) {
       case LeaderboardTypeEnum.WEEKLY:
       case LeaderboardTypeEnum.MONTHLY:

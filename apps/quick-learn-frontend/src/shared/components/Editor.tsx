@@ -145,7 +145,7 @@ const Editor: FC<Props> = ({
       },
     },
     clipboard: {
-      matchVisual: false,
+      matchVisual: true,
     },
   });
 
