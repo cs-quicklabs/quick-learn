@@ -7,7 +7,11 @@ import { CourseService } from '../course/course.service';
 import { en } from '@src/lang/en';
 import { UserTypeIdEnum } from '@quick-learn/shared';
 import { PaginationDto } from '../users/dto';
-import { IDailyLessonTokenData, PaginatedResult } from '@src/common/interfaces';
+import {
+  IDailyLessonTokenData,
+  IGlobalSearchParams,
+  PaginatedResult,
+} from '@src/common/interfaces';
 import { Repository, ILike, MoreThan, FindOptionsWhere } from 'typeorm';
 import Helpers from '@src/common/utils/helper';
 import { FileService } from '@src/file/file.service';
@@ -43,9 +47,9 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the course doesn't exist
    * @returns The lesson entity
    */
-  private async getLesson(lessonId: number): Promise<LessonEntity> {
+  private async getLesson(id: number, team_id: number): Promise<LessonEntity> {
     const lesson = await this.repository.findOne({
-      where: { id: lessonId },
+      where: { id, team_id },
     });
 
     if (!lesson) {
@@ -62,7 +66,10 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @returns The created lesson entity
    */
   async createLesson(user: UserEntity, payload: CreateLessonDto) {
-    const course = await this.courseService.get({ id: +payload.course_id });
+    const course = await this.courseService.get({
+      id: +payload.course_id,
+      team_id: user.team_id,
+    });
 
     if (!course) {
       throw new BadRequestException(en.invalidCourse);
@@ -73,6 +80,7 @@ export class LessonService extends PaginationService<LessonEntity> {
       new_content: payload.content,
       content: '',
       created_by: user.id,
+      team_id: user.team_id,
     });
 
     // checking if the user is admin or not
@@ -88,6 +96,7 @@ export class LessonService extends PaginationService<LessonEntity> {
         approved_by: user.id,
         content: payload.content,
         new_content: '',
+        team_id: user.team_id,
       };
     }
 
@@ -107,7 +116,7 @@ export class LessonService extends PaginationService<LessonEntity> {
     id: LessonEntity['id'],
     updateLessonDto: UpdateLessonDto,
   ) {
-    const lesson = await this.get({ id });
+    const lesson = await this.get({ id, team_id: user.team_id });
     if (!lesson) throw new BadRequestException(en.lessonNotFound);
 
     const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
@@ -158,11 +167,15 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @throws BadRequestException if the lesson doesn't exist
    * @returns nothing
    */
-  async approveLesson(lessonId: LessonEntity['id'], userId: UserEntity['id']) {
-    const lesson = await this.getLesson(lessonId);
+  async approveLesson(
+    lessonId: LessonEntity['id'],
+    userId: UserEntity['id'],
+    team_id: number,
+  ) {
+    const lesson = await this.getLesson(lessonId, team_id);
 
     await this.update(
-      { id: lessonId },
+      { id: lessonId, team_id },
       {
         approved_by: userId,
         approved: true,
@@ -180,6 +193,7 @@ export class LessonService extends PaginationService<LessonEntity> {
    */
   async getArchivedLessons(
     paginationDto: PaginationDto,
+    { team_id }: UserEntity,
     relations: string[] = [],
   ): Promise<PaginatedResult<LessonEntity>> {
     const { page = 1, limit = 10, q = '' } = paginationDto;
@@ -187,7 +201,8 @@ export class LessonService extends PaginationService<LessonEntity> {
 
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
-      .where('lesson.archived = :archived', { archived: true });
+      .where('lesson.archived = :archived', { archived: true })
+      .andWhere('lesson.team_id = :team_id', { team_id });
 
     // Join all relations
     relations.forEach((relation) => {
@@ -219,12 +234,11 @@ export class LessonService extends PaginationService<LessonEntity> {
   /**
    * Unarchives an existing lesson
    * @param lessonId - The id of the lesson that needs to be unarchived
-   * @param userId - The id of the user unarchiving the lesson
+   * @param teamId - The id of the user unarchiving the lesson
    * @throws BadRequestException if the lesson doesn't exist
    */
-  async unarchiveLesson(lessonId: LessonEntity['id']) {
-    await this.getLesson(lessonId);
-
+  async unarchiveLesson(lessonId: LessonEntity['id'], teamId: number) {
+    await this.getLesson(lessonId, teamId);
     await this.update(
       { id: lessonId },
       {
@@ -234,16 +248,12 @@ export class LessonService extends PaginationService<LessonEntity> {
     );
   }
 
-  async archiveLesson(userId: UserEntity['id'], lessonId: LessonEntity['id']) {
-    const lesson = await this.get({ id: lessonId });
-    if (!lesson) {
-      throw new BadRequestException(en.lessonNotFound);
-    }
-
+  async archiveLesson(lessonId: LessonEntity['id'], user: UserEntity) {
+    const lesson = await this.getLesson(lessonId, user.team_id);
     await this.update(
-      { id: lessonId },
+      { id: lesson.id },
       {
-        archive_by: userId,
+        archive_by: user.id,
         archived: true,
       },
     );
@@ -254,8 +264,8 @@ export class LessonService extends PaginationService<LessonEntity> {
    * @param id - The id of the lesson to delete
    * @throws BadRequestException if the lesson doesn't exist
    */
-  async deleteLesson(id: number): Promise<void> {
-    const lesson = await this.getLesson(id);
+  async deleteLesson(id: number, teamId: number): Promise<void> {
+    const lesson = await this.getLesson(id, teamId);
 
     const existingContentImageUrl = Helpers.extractImageUrlsFromHtml(
       lesson.content,
@@ -312,14 +322,23 @@ export class LessonService extends PaginationService<LessonEntity> {
    * Retrieves all unapproved lessons
    * @returns A promise that resolves to a list of LessonEntity
    */
-  async getUnapprovedLessons(page = 1, limit = 10, q = '') {
+  async getUnapprovedLessons({
+    page = 1,
+    limit = 10,
+    q = '',
+    team_id,
+  }: PaginationDto & { team_id: number }): Promise<
+    PaginatedResult<LessonEntity>
+  > {
     let options:
       | FindOptionsWhere<LessonEntity>
       | FindOptionsWhere<LessonEntity>[] = {
       archived: false,
       approved: false,
+      team_id,
       course: {
         archived: false,
+        team_id,
       },
     };
 
@@ -328,11 +347,13 @@ export class LessonService extends PaginationService<LessonEntity> {
         {
           ...options,
           name: ILike(`%${q}%`),
+          team_id,
         },
         {
           ...options,
           created_by_user: {
             full_name: ILike(`%${q}%`),
+            team_id,
           },
         },
       ];
@@ -366,11 +387,17 @@ export class LessonService extends PaginationService<LessonEntity> {
     );
   }
 
-  async getSearchedLessons(userId: number, isMember = false, query = '') {
+  async getSearchedLessons({
+    userId,
+    isMember = false,
+    query = '',
+    userTeamId,
+  }: IGlobalSearchParams) {
     const queryBuilder = this.repository
       .createQueryBuilder('lesson')
       .andWhere('lesson.approved= :approved', { approved: true })
       .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
+      .andWhere('lesson.team_id = :teamId', { teamId: userTeamId })
       .leftJoin(
         'lesson.course',
         'course',
@@ -426,6 +453,14 @@ export class LessonService extends PaginationService<LessonEntity> {
       throw new Error('Lesson token not found');
     }
 
+    if (
+      ![UserTypeIdEnum.ADMIN, UserTypeIdEnum.SUPERADMIN].includes(
+        lessonToken.user.user_type_id,
+      )
+    ) {
+      throw new BadRequestException(en.unauthorizedFlagLesson);
+    }
+
     // Create new flagged lesson entry
     return await this.flaggedLessionService.create({
       user_id: lessonToken.user_id,
@@ -434,35 +469,42 @@ export class LessonService extends PaginationService<LessonEntity> {
     });
   }
 
-  async findAllFlaggedLesson(
+  async findAllFlaggedLesson({
     page = 1,
     limit = 10,
-    search = '',
-  ): Promise<PaginatedResult<FlaggedLessonEntity>> {
+    q = '',
+    team_id,
+  }: PaginationDto & { team_id: number }): Promise<
+    PaginatedResult<FlaggedLessonEntity>
+  > {
     // Add search condition if search term exists
     let findOptions:
       | FindOptionsWhere<FlaggedLessonEntity>
       | FindOptionsWhere<FlaggedLessonEntity>[] = {
       lesson: {
         archived: false,
+        team_id,
       },
       course: {
         archived: false,
+        team_id,
       },
     };
-    if (search) {
+    if (q) {
       findOptions = [
         {
           ...findOptions,
           lesson: {
-            name: ILike(`%${search}%`),
+            name: ILike(`%${q}%`),
             archived: false,
+            team_id,
           },
         },
         {
           ...findOptions,
           user: {
-            full_name: ILike(`%${search}%`),
+            full_name: ILike(`%${q}%`),
+            team_id,
           },
         },
       ];
@@ -495,8 +537,6 @@ export class LessonService extends PaginationService<LessonEntity> {
       await this.updateDailyLessonToken(hashedToken, +course_id, +lesson_id),
     ]);
 
-    console.log('lessonDetail', lessonDetail, +lesson_id, +course_id);
-
     return {
       lesson_detail: lessonDetail,
       user_lesson_read_info: userLessonReadInfo,
@@ -504,36 +544,48 @@ export class LessonService extends PaginationService<LessonEntity> {
     };
   }
 
-  async unFlagLesson(id: number): Promise<void> {
-    const isValid = await this.flaggedLessionService.get({ lesson_id: id });
+  async unFlagLesson(id: number, user: UserEntity): Promise<void> {
+    const isValid = await this.flaggedLessionService.get(
+      {
+        lesson_id: id,
+        user: {
+          team_id: user.team_id,
+        },
+      },
+      ['user'],
+    );
 
     if (!isValid) throw new BadRequestException(en.invalidLesson);
 
     await this.flaggedLessionService.delete({ lesson_id: id });
   }
 
-  async getUnApprovedLessonCount() {
+  async getUnApprovedLessonCount(user: UserEntity) {
     return await this.count(
       {
         archived: false,
         approved: false,
+        team_id: user.team_id,
         course: {
           archived: false,
+          team_id: user.team_id,
         },
       },
       ['course'],
     );
   }
 
-  async getFlaggedLessonCount() {
+  async getFlaggedLessonCount(user: UserEntity) {
     return await this.count(
       {
         archived: false,
+        team_id: user.team_id,
         flagged_lesson: {
           id: MoreThan(0),
         },
         course: {
           archived: false,
+          team_id: user.team_id,
         },
       },
       ['flagged_lesson'],

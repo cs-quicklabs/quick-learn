@@ -202,7 +202,7 @@ function CourseDetails() {
         // Check if the current roadmap is still assigned
         const isCurrentRoadmapAssigned = data.includes(roadmapId);
 
-        if (!isCurrentRoadmapAssigned && roadmapId) {
+        if (!isCurrentRoadmapAssigned && !isNaN(+roadmapId)) {
           router.replace(`${RouteEnum.CONTENT}/${roadmapId}`);
         } else {
           // Refresh course data to get updated roadmaps

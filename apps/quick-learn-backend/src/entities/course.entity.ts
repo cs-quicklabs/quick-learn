@@ -11,6 +11,7 @@ import { RoadmapEntity } from './roadmap.entity';
 import { BaseEntity } from './BaseEntity';
 import { UserEntity } from './user.entity';
 import { LessonEntity } from './lesson.entity';
+import { TeamEntity } from './team.entity';
 
 @Entity('course')
 export class CourseEntity extends BaseEntity {
@@ -66,4 +67,11 @@ export class CourseEntity extends BaseEntity {
     cascade: true,
   })
   lessons: LessonEntity[];
+
+  @Column({ type: 'int', nullable: false })
+  team_id: number;
+
+  @ManyToOne(() => TeamEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'team_id' })
+  team: TeamEntity;
 }

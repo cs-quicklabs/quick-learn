@@ -70,6 +70,8 @@ function EmailPreference() {
                 type="checkbox"
                 checked={isEmailChecked}
                 onChange={handleChange}
+                className="h-[18px] w-[18px]"
+                checkBoxclass="size-3.5"
               />
             </div>
           </div>

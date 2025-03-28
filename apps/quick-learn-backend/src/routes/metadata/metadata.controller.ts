@@ -4,6 +4,8 @@ import { SuccessResponse } from '@src/common/dto';
 import { en } from '@src/lang/en';
 import { JwtAuthGuard } from '../auth/guards';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '@src/common/decorators/current-user.decorators';
+import { UserEntity } from '@src/entities';
 
 @ApiTags('Metadata')
 @Controller({
@@ -16,16 +18,16 @@ export class MetadataController {
 
   @Get('content-repository')
   @ApiOperation({ summary: 'Get content repository metadata' })
-  async getAllRoadmaps() {
-    const metadata = await this.service.getContentRepositoryMetadata();
+  async getAllRoadmaps(@CurrentUser() user: UserEntity) {
+    const metadata = await this.service.getContentRepositoryMetadata(user);
     return new SuccessResponse(en.GetContentRepositoryMetadata, metadata);
   }
   @Get('system-preferences')
   @ApiOperation({
     summary: 'Get system prefrences like Unapproved Lesson count',
   })
-  async getLessonMetaData() {
-    const metadata = await this.service.getLessonMetaData();
+  async getLessonMetaData(@CurrentUser() user: UserEntity) {
+    const metadata = await this.service.getLessonMetaData(user);
     return new SuccessResponse(en.GetContentMetadata, metadata);
   }
 }

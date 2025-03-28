@@ -52,7 +52,7 @@ const LessonContent = memo(({ content }: { content: string }) => {
   const modules = {
     toolbar: false, // This disables the toolbar
     clipboard: {
-      matchVisual: false,
+      matchVisual: true,
     },
   };
 
@@ -83,17 +83,20 @@ const ApprovalCheckbox = memo(
     setValue?: (value: boolean) => void;
     text?: string;
   }) => (
-    <div className="flex items-center p-16 mb-16 w-full max-w-5xl justify-center mx-auto">
-      <InputCheckbox
-        id="default-checkbox"
-        checked={value}
-        onChange={() => setValue?.(true)}
-        disabled={value}
-        className="w-6 h-6 md:w-8 md:h-8 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 focus:ring-2 disabled:cursor-not-allowed"
-      />
+    <div className="flex items-center md:items-start p-16 mb-16 w-full max-w-5xl justify-center mx-auto">
+      <div className="group grid size-5 grid-cols-1 md:grid-cols-2 text-center">
+        <InputCheckbox
+          id="default-checkbox"
+          checked={value}
+          onChange={() => setValue?.(true)}
+          disabled={value}
+          className="w-6 h-6 md:w-8 md:h-8"
+          checkBoxclass="size-5"
+        />
+      </div>
       <label
         htmlFor="default-checkbox"
-        className="ms-4 sm:text-xl md:text-2xl ml-4 font-semibold text-gray-900"
+        className="ms-4 md:ms-7 sm:text-xl md:text-2xl font-semibold text-gray-900"
       >
         {text}
       </label>

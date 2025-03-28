@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { LeaderboardTypeEnum } from '@src/common/constants/constants';
+import { TeamEntity } from './team.entity';
 
 @Entity('leaderboard')
 export class LeaderboardEntity {
@@ -36,7 +37,14 @@ export class LeaderboardEntity {
   })
   created_at: Date;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
+
+  @Column({ type: 'int', nullable: false })
+  team_id: number;
+
+  @ManyToOne(() => TeamEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'team_id' })
+  team: TeamEntity;
 }

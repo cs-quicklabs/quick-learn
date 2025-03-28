@@ -55,8 +55,9 @@ export class CourseController {
   @ApiOperation({ summary: 'Get Archived Courses' })
   async findAllArchivedCourses(
     @Query() paginationDto: PaginationDto,
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    const courses = await this.service.getArchivedCourses(paginationDto, [
+    const courses = await this.service.getArchivedCourses(paginationDto, user, [
       'updated_by',
       'course_category',
     ]);
@@ -67,8 +68,12 @@ export class CourseController {
   @Roles(UserTypeId.SUPER_ADMIN, UserTypeId.ADMIN, UserTypeId.EDITOR)
   @Get('orphan')
   @ApiOperation({ summary: 'Get Orphan courses' })
-  async orphanCourse(@Query() params: BasePaginationDto) {
+  async orphanCourse(
+    @Query() params: BasePaginationDto,
+    @CurrentUser() user: UserEntity,
+  ) {
     const response = await this.service.getOrphanCourses(
+      user.team_id,
       params.page,
       params.limit,
       params.q,
@@ -89,9 +94,12 @@ export class CourseController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get course details' })
-  async getRoadmapDetails(@Param() param: CourseParamDto) {
+  async getRoadmapDetails(
+    @Param() param: CourseParamDto,
+    @CurrentUser() user: UserEntity,
+  ) {
     const data = await this.service.getCourseDetails(
-      { id: +param.id },
+      { id: +param.id, team_id: user.team_id },
       ['lessons', 'lessons.created_by_user', 'updated_by'],
       { countParticipant: true },
     );
@@ -114,8 +122,9 @@ export class CourseController {
   async updateRoadmap(
     @Param('id') id: string,
     @Body() updateCourseDto: UpdateCourseDto,
+    @CurrentUser() user: UserEntity,
   ) {
-    await this.service.updateCourse(+id, updateCourseDto);
+    await this.service.updateCourse(+id, updateCourseDto, user.team_id);
     return new SuccessResponse(en.UpdateCourse);
   }
 
@@ -124,10 +133,12 @@ export class CourseController {
   async assignRoadmapCourse(
     @Param() param: CourseParamDto,
     @Body() assignRoadmapsToCourseDto: AssignRoadmapsToCourseDto,
+    @CurrentUser() user: UserEntity,
   ) {
     await this.service.assignRoadmapCourse(
       +param.id,
       assignRoadmapsToCourseDto,
+      user.team_id,
     );
     return new SuccessResponse(en.UpdateCourse);
   }
@@ -148,10 +159,15 @@ export class CourseController {
     );
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeId.SUPER_ADMIN)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a course permanently' })
-  async deleteCourse(@Param() param: CourseParamDto): Promise<SuccessResponse> {
-    await this.service.deleteCourse(+param.id);
+  async deleteCourse(
+    @Param() param: CourseParamDto,
+    @CurrentUser('team_id') teamId: number,
+  ): Promise<SuccessResponse> {
+    await this.service.deleteCourse(+param.id, teamId);
     return new SuccessResponse(en.CourseDeleted);
   }
 }

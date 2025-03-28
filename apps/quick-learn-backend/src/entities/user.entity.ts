@@ -111,7 +111,7 @@ export class UserEntity extends BaseEntity {
     cascade: true,
   })
   @JoinTable({
-    name: 'user_roadmaps',
+    name: 'user_roadmap',
     joinColumn: {
       name: 'user_id',
       referencedColumnName: 'id',

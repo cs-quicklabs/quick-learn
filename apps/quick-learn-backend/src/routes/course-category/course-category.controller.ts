@@ -19,6 +19,8 @@ import { CourseCategoryParamDto } from './dto/course-category-param.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@src/common/decorators/roles.decorator';
 import { UserTypeIdEnum } from '@quick-learn/shared';
+import { CurrentUser } from '@src/common/decorators/current-user.decorators';
+import { UserEntity } from '@src/entities';
 
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/course-categories
 @ApiTags('Course Categories')
@@ -36,12 +38,18 @@ export class CourseCategoryController {
   @ApiOperation({ summary: 'Create course category.' })
   async create(
     @Body() createCourseCategoryDto: CreateCourseCategoryDto,
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
-    await this.courseCategoryService.create(createCourseCategoryDto);
+    await this.courseCategoryService.createCourseCategory(
+      createCourseCategoryDto,
+      user,
+    );
+
     const courseCategories = await this.courseCategoryService.getMany(
-      {},
+      { team_id: user.team_id },
       { name: 'ASC' },
     );
+
     return new SuccessResponse('Successfully added course category', {
       categories: courseCategories,
     });
@@ -49,9 +57,9 @@ export class CourseCategoryController {
 
   @Get()
   @ApiOperation({ summary: 'Get all course categories.' })
-  async findAll() {
+  async findAll(@CurrentUser() user: UserEntity) {
     const courseCategories = await this.courseCategoryService.getMany(
-      {},
+      { team_id: user.team_id },
       { name: 'ASC' },
     );
     return new SuccessResponse('Course Categories', {
@@ -61,8 +69,14 @@ export class CourseCategoryController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get the course category details.' })
-  findOne(@Param() param: CourseCategoryParamDto) {
-    return this.courseCategoryService.get({ id: +param.id });
+  findOne(
+    @Param() param: CourseCategoryParamDto,
+    @CurrentUser() user: UserEntity,
+  ) {
+    return this.courseCategoryService.get({
+      id: +param.id,
+      team_id: user.team_id,
+    });
   }
 
   @Patch(':id')
@@ -72,10 +86,12 @@ export class CourseCategoryController {
   async update(
     @Param() param: CourseCategoryParamDto,
     @Body() updateCourseCategoryDto: UpdateCourseCategoryDto,
+    @CurrentUser() user: UserEntity,
   ) {
-    await this.courseCategoryService.createCourseCategory(
+    await this.courseCategoryService.updateCourseCategory(
       +param.id,
       updateCourseCategoryDto,
+      user.team_id,
     );
     return new SuccessResponse(en.successUpdateCourse);
   }
@@ -84,8 +100,14 @@ export class CourseCategoryController {
   @UseGuards(RolesGuard)
   @Roles(UserTypeIdEnum.SUPERADMIN)
   @ApiOperation({ summary: 'Delete the course category.' })
-  async remove(@Param() param: CourseCategoryParamDto) {
-    await this.courseCategoryService.deleteCourseCategory(+param.id);
+  async remove(
+    @Param() param: CourseCategoryParamDto,
+    @CurrentUser() user: UserEntity,
+  ) {
+    await this.courseCategoryService.deleteCourseCategory(
+      +param.id,
+      user.team_id,
+    );
     return new SuccessResponse(en.successDeleteCourse);
   }
 }

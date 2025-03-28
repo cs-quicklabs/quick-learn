@@ -118,4 +118,6 @@ export const en = {
   // flagged lesson
   invalidLesson: 'Invalid lesson is provided.',
   successUnflagLesson: 'Successfully unflagged the lesson.',
+  unauthorizedFlagLesson: 'Unauthorized to flag the lesson.',
+  skillAlreadyExists: 'Primary skill already exists.',
 };

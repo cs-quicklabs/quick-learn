@@ -200,7 +200,9 @@ function TeamMemberDetails() {
     { id: 'courses', label: en.common.courses, count: allCourses.length },
   ];
 
-  if (isPageLoading && !openAssignModal) return <TeamMemberDetailsSkeleton />;
+  if (isPageLoading && !openAssignModal) {
+    return <TeamMemberDetailsSkeleton />;
+  }
 
   return (
     <>
@@ -235,7 +237,6 @@ function TeamMemberDetails() {
           onSubmit={assignCourses}
         />
       )}
-
       {/* Rest of the component remains the same */}
       <Breadcrumb links={links} />
       <div className="container mx-auto  px-6 md:px-4">

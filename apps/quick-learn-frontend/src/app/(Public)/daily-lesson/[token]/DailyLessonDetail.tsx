@@ -152,7 +152,7 @@ function DailyLessonDetail() {
     if (isRead) {
       return (
         <div className="w-full flex align-middle justify-center">
-          <p className="bg-green-100 p-5 rounded-md text-[#166534] flex justify-center items-center gap-2 my-5 mx-2 w-full lg:w-1/2 text-start">
+          <div className="bg-green-100 p-5 rounded-md text-[#166534] flex justify-center items-center gap-2 my-5 mx-2 w-full lg:w-1/2 text-start">
             <span className="text-[#166534] flex bg-white rounded-full w-5 h-5 aspect-square font-bold items-center justify-center">
               <InformationCircleIcon />
             </span>
@@ -169,7 +169,7 @@ function DailyLessonDetail() {
                 {en.myLearningPath.markAsUnread}
               </button>
             </p>
-          </p>
+          </div>
         </div>
       );
     }

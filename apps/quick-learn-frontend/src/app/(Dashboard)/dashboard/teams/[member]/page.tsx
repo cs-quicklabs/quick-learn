@@ -1,7 +1,8 @@
 import React from 'react';
 import TeamMemberDetails from './teamMemberDetails';
+import { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Member Details • Quick Learn',
   description: 'Team Member Details quick learn',
 };

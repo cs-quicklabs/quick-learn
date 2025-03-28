@@ -5,8 +5,9 @@ import { CourseEntity } from './course.entity';
 import { LessonEntity } from './lesson.entity';
 import { UserEntity } from './user.entity';
 import { FlaggedLessonEntity } from './flagged-lesson.enitity';
+import { TeamEntity } from './team.entity';
 
-@Entity('lesson_tokens')
+@Entity('lesson_token')
 export class LessonTokenEntity extends BaseEntity {
   @Column()
   token: string;
@@ -43,5 +44,12 @@ export class LessonTokenEntity extends BaseEntity {
   flagged_lesson: FlaggedLessonEntity;
 
   @Column()
-  expiresAt: Date;
+  expires_at: Date;
+
+  @Column({ type: 'int', nullable: false })
+  team_id: number;
+
+  @ManyToOne(() => TeamEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'team_id' })
+  team: TeamEntity;
 }

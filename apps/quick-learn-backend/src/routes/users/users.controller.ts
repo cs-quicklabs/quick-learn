@@ -58,6 +58,7 @@ export class UsersController {
       user.user_type_id,
       query,
       user.id,
+      user.team_id,
     );
 
     return new SuccessResponse(en.searchResults, searchedQueryResult);
@@ -118,6 +119,7 @@ export class UsersController {
     const roadmaps = await this.usersService.getUserRoadmaps(
       user.id,
       includeCourses,
+      user.team_id,
     );
     return new SuccessResponse(en.successGotUserRoadmaps, roadmaps);
   }
@@ -132,6 +134,7 @@ export class UsersController {
     const roadmaps = await this.usersService.getCourseDetails(
       !isNaN(param.userId) ? param.userId : user.id,
       +param.id,
+      user.team_id,
       roadmapId ? +roadmapId : undefined,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
@@ -162,6 +165,7 @@ export class UsersController {
     const roadmaps = await this.usersService.getRoadmapDetails(
       !isNaN(param.userId) ? param.userId : user.id,
       +param.id,
+      user.team_id,
     );
     return new SuccessResponse(en.successGotUserRoadmapDetail, roadmaps);
   }
@@ -178,7 +182,10 @@ export class UsersController {
     @Query() getUserQueryDto: GetUserQueryDto,
     @CurrentUser() currentUser: UserEntity,
   ): Promise<SuccessResponse> {
-    const fetchUserdetail = await this.usersService.findOne({ id: +userId });
+    const fetchUserdetail = await this.usersService.findOne({
+      id: +userId,
+      team_id: currentUser.team_id,
+    });
     if (currentUser.user_type_id > fetchUserdetail.user_type_id) {
       return new ErrorResponse(en.userNotFound);
     }
@@ -192,7 +199,7 @@ export class UsersController {
       relations.push('assigned_roadmaps.courses.lessons');
     }
     const user = await this.usersService.findOneWithSelectedRelationData(
-      { id: userId },
+      { id: userId, team_id: currentUser.team_id },
       relations,
     );
     return new SuccessResponse(en.successGotUser, user);
@@ -219,9 +226,15 @@ export class UsersController {
   @ApiOperation({ summary: 'Activate or deactivate user' })
   async activateUser(
     @Body() body: { userId: number; active: boolean },
+    @CurrentUser() user: UserEntity,
   ): Promise<SuccessResponse> {
     const { active, userId } = body;
-    const updatedUser = await this.usersService.updateUser(userId, { active });
+    const updatedUser = await this.usersService.updateUser(
+      userId,
+      { active },
+      false,
+      user.team_id,
+    );
     return new SuccessResponse(en.successUserStatusUpdate, updatedUser);
   }
 
@@ -232,10 +245,15 @@ export class UsersController {
     @CurrentUser() currentUser: UserEntity,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SuccessResponse> {
-    const user = await this.usersService.updateUser(param.userId, {
-      ...updateUserDto,
-      updated_by: currentUser,
-    });
+    const user = await this.usersService.updateUser(
+      param.userId,
+      {
+        ...updateUserDto,
+        updated_by: currentUser,
+      },
+      false,
+      currentUser.team_id,
+    );
     return new SuccessResponse(en.successUserUpdate, user);
   }
 
@@ -243,11 +261,13 @@ export class UsersController {
   @ApiOperation({ summary: 'Assign roadmaps to user' })
   async assignRoadmaps(
     @Param() param: UserParamDto,
+    @CurrentUser() currentUser: UserEntity,
     @Body() assignRoadmapsToUserDto: AssignRoadmapsToUserDto,
   ): Promise<SuccessResponse> {
     await this.usersService.assignRoadmaps(
       param.userId,
       assignRoadmapsToUserDto,
+      currentUser.team_id,
     );
     return new SuccessResponse(en.successUserUpdated);
   }
@@ -256,8 +276,8 @@ export class UsersController {
   @UseGuards(RolesGuard)
   @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN)
   @ApiOperation({ summary: 'Permanently delete user by userId' })
-  async remove(@Param() param: UserParamDto) {
-    await this.usersService.delete({ id: param.userId });
+  async remove(@Param() param: UserParamDto, @CurrentUser() user: UserEntity) {
+    await this.usersService.delete({ id: param.userId, team_id: user.team_id });
     return new SuccessResponse(en.successUserDelete);
   }
 }

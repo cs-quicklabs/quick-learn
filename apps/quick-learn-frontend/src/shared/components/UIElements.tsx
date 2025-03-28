@@ -494,10 +494,12 @@ export const ChevronDownIcon = ({ className = '' }) => (
   </svg>
 );
 
-export const CheckboxIcon = ({
-  className = 'pointer-events-none col-start-2 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25',
-}) => (
-  <svg fill="none" viewBox="0 0 14 14" className={className}>
+export const CheckboxIcon = ({ className = '' }) => (
+  <svg
+    fill="none"
+    viewBox="0 0 14 14"
+    className={`pointer-events-none col-start-2 row-start-1 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25 ${className}`}
+  >
     <path
       d="M3 8L6 11L11 3.5"
       strokeWidth={2}

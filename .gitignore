@@ -57,3 +57,6 @@ yarn.lock
 #ignore logs
 newrelic_agent.log
 newrelic_agent.log.*
+
+# ignoring cursor settings
+.cursor

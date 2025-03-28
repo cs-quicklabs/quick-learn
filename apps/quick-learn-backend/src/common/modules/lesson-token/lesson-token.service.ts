@@ -18,10 +18,10 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
    */
   async getAllTokenByUserId(userId: number) {
     return await this.repository
-      .createQueryBuilder('lesson_tokens')
-      .leftJoinAndSelect('lesson_tokens.lesson', 'lesson')
-      .where('lesson_tokens.user_id = :userId', { userId })
-      .select(['lesson_tokens', 'lesson.name'])
+      .createQueryBuilder('lesson_token')
+      .leftJoinAndSelect('lesson_token.lesson', 'lesson')
+      .where('lesson_token.user_id = :userId', { userId })
+      .select(['lesson_token', 'lesson.name'])
       .getMany();
   }
 
@@ -43,7 +43,19 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
       .getRawMany();
   }
 
-  async getUsersTokenBetweenDates(thisDate: { start: string; end: string }) {
+  async getUsersTokenBetweenDates(thisDate: {
+    start: string;
+    end: string;
+  }): Promise<
+    {
+      user_id: number;
+      lesson_count: number;
+      first_name: string;
+      last_name: string;
+      email: string;
+      team_id: number;
+    }[]
+  > {
     return await this.repository
       .createQueryBuilder('lesson_token')
       .where(
@@ -60,6 +72,7 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
         'user.first_name AS first_name',
         'user.last_name AS last_name',
         'user.email AS email',
+        'user.team_id AS team_id',
       ])
       .groupBy('user.id')
       .getRawMany();
@@ -91,7 +104,7 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
     }
 
     // CHECK IF TOKEN HAS EXPIRED
-    if (tokenEntity.expiresAt < new Date()) {
+    if (tokenEntity.expires_at < new Date()) {
       throw new BadRequestException(en.lessonTokenExpired);
     }
 

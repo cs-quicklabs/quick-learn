@@ -4,23 +4,11 @@ import AuthTemplate from '@src/shared/pageTemplates/AuthTemplate';
 import Login from './(Auth)/login/Login';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://learn.quicklabs.in/'),
-  openGraph: {
-    title: 'Quick Learn',
-    description: 'Quick Learn from Crownstack',
-    url: 'https://learn.quicklabs.in/',
-    siteName: 'Quick Learn',
-    images: [
-      {
-        url: '/quicklearn.png',
-        width: 1200,
-        height: 630,
-        alt: 'Quick Learn Preview',
-      },
-    ],
-    type: 'website',
-  },
+  title: 'Login • Quick Learn',
+  description:
+    'Quick Learn is a simple and efficient learning management system designed for bite-sized lessons. Get 2-minute daily learning nuggets, improve retention, and build a habit of continuous learning.',
 };
+
 function LoginPage() {
   return (
     <AuthTemplate title="Sign in to your account">

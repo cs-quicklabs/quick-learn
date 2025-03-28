@@ -68,8 +68,11 @@ const ActivityGraphWrapper: React.FC<Props> = ({
                         ? item.status === 'COMPLETED'
                           ? en.teams.readDailyLessons
                           : en.teams.missedDailyLessons
-                        : en.teams.markedCompletedOn}
-                      {format(new Date(item.event_at), DateFormats.fullDate)}
+                        : en.teams.markedCompletedOn}{' '}
+                      {item.event_at &&
+                      !isNaN(new Date(item.event_at).getTime())
+                        ? format(new Date(item.event_at), DateFormats.fullDate)
+                        : 'Invalid Date'}
                     </time>
                   </li>{' '}
                 </Fragment>
