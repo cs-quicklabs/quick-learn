@@ -58,6 +58,7 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
   > {
     return await this.repository
       .createQueryBuilder('lesson_token')
+      .leftJoinAndSelect('lesson_token.user', 'user')
       .where(
         'lesson_token.created_at >= :startDate AND lesson_token.created_at <= :endDate',
         {
@@ -65,7 +66,7 @@ export class LessonTokenService extends BasicCrudService<LessonTokenEntity> {
           endDate: thisDate.end,
         },
       )
-      .leftJoinAndSelect('lesson_token.user', 'user')
+      .andWhere('user.active = :active', { active: true })
       .select([
         'user.id AS user_id',
         'COUNT(lesson_token.id) AS lesson_count',

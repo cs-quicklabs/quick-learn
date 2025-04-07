@@ -1,7 +1,7 @@
 @import 'react-quill-new/dist/quill.snow.css';
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@theme{
+@theme {
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
   --color-primary-200: #bfdbfe;
@@ -103,12 +103,15 @@ input:-webkit-autofill:active {
 }
 
 .quill .ql-container .ql-editor {
-  min-height: 100vh;
   font:
     400 16px/28px 'Open Sans',
     sans-serif;
   line-height: 2rem !important;
   max-width: 100%;
+}
+
+.editor .quill .ql-container .ql-editor {
+  min-height: 100vh;
 }
 
 .quill .ql-container .ql-editor:focus {
@@ -127,8 +130,6 @@ input:-webkit-autofill:active {
   letter-spacing: normal;
   max-width: 85%;
 }
-
-
 
 .quill .ql-container .ql-editor a,
 .quill .ql-container .ql-editor p {
@@ -169,11 +170,10 @@ input:-webkit-autofill:active {
   margin: 1rem auto;
 }
 
-.ql-snow .ql-editor .ql-code-block-container{
+.ql-snow .ql-editor .ql-code-block-container {
   background-color: #ccc;
-  color:black
+  color: black;
 }
-
 
 .quill .ql-container ul,
 .quill .ql-container ol {
@@ -215,15 +215,14 @@ input:-webkit-autofill:active {
     max-width: 85%;
   }
   .quill .ql-container .ql-editor {
-  min-height: 100vh;
-  font:
-    400 16px/28px 'Open Sans',
-    sans-serif;
-  line-height: 2rem !important;
-  max-width: 100%;
-  padding-left: 0%;
-  padding-right: 0;
-}
+    font:
+      400 16px/28px 'Open Sans',
+      sans-serif;
+    line-height: 2rem !important;
+    max-width: 100%;
+    padding-left: 0%;
+    padding-right: 0;
+  }
 
   .quill .ql-container .ql-editor a,
   .quill .ql-container .ql-editor p {
