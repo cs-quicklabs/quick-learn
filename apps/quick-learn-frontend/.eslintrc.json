@@ -1,7 +1,6 @@
 {
   "extends": [
-    "airbnb",
-    "airbnb/hooks",
+    "react-hooks",
     "plugin:@nx/react-typescript",
     "next",
     "next/core-web-vitals",
