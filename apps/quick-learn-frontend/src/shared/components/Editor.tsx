@@ -186,7 +186,7 @@ const Editor: FC<Props> = ({
 
   return (
     <div
-      className="quillHeader flex flex-col h-full mx-4"
+      className="quillHeader editor flex flex-col h-full mx-4"
       ref={handleRefChange}
     >
       <EditorToolbar
