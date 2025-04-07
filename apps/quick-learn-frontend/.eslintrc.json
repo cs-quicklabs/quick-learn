@@ -1,6 +1,5 @@
 {
   "extends": [
-    "react-hooks",
     "plugin:@nx/react-typescript",
     "next",
     "next/core-web-vitals",
