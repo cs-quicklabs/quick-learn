@@ -22,7 +22,7 @@
     "@nestjs/cqrs": "^11.0.2",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^11.0.10",
+    "@nestjs/platform-express": "^11.1.0",
     "@nestjs/schedule": "^5.0.1",
     "@nestjs/typeorm": "^11.0.0",
     "@reduxjs/toolkit": "^2.3.0",
