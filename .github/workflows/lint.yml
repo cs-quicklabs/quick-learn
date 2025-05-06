@@ -15,22 +15,22 @@ jobs:
         node-version: [22.14]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Reset Nx cache
-      run: npx nx reset
+      - name: Reset Nx cache
+        run: npx nx reset
 
-    - name: Run Affected Lint
-      run: npx nx run-many --target=lint
+      - name: Run Lint
+        run: npx nx run-many --target=lint
 
   format:
     runs-on: ubuntu-latest
@@ -40,19 +40,19 @@ jobs:
         node-version: [22.14]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Reset Nx cache
-      run: npx nx reset
+      - name: Reset Nx cache
+        run: npx nx reset
 
-    - name: Run Affected Format Check
-      run: npx nx run-many --target=format:check
+      - name: Run Format Check
+        run: npx nx run-many --target=format:check
