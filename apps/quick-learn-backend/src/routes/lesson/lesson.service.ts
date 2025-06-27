@@ -398,12 +398,8 @@ export class LessonService extends PaginationService<LessonEntity> {
       .andWhere('lesson.approved= :approved', { approved: true })
       .andWhere('lesson.archived = :lessonArchived', { lessonArchived: false })
       .andWhere('lesson.team_id = :teamId', { teamId: userTeamId })
-      .leftJoin(
-        'lesson.course',
-        'course',
-        'course.archived = :courseArchived',
-        { courseArchived: false },
-      )
+      .leftJoin('lesson.course', 'course')
+      .andWhere('course.archived = :courseArchived', { courseArchived: false })
       .andWhere('lesson.name ILIKE :query', { query: `%${query}%` });
 
     if (isMember) {
