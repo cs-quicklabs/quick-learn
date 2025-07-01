@@ -19,7 +19,7 @@ import {
 } from '@src/store/features/userProgressSlice';
 import { UserLessonProgress } from '@src/shared/types/LessonProgressTypes';
 import { getUserProgress } from '@src/apiServices/lessonsService';
-import { motion } from 'framer-motion';
+import { motion, easeOut } from 'framer-motion';
 import { AxiosErrorObject } from '@src/apiServices/axios';
 
 const containerVariants = {
@@ -50,7 +50,7 @@ const headerVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: 'easeOut',
+      ease: easeOut,
     },
   },
 };
