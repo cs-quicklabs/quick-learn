@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0",
-    "nodemailer": "^6.9.14"
+    "nodemailer": "^7.0.2"
   },
   "type": "commonjs",
   "main": "./src/index.js",

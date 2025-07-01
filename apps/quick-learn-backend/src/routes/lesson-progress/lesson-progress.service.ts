@@ -205,20 +205,21 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
     return await this.lessonTokenService.getCompletedToken(range);
   }
 
-  async getLeaderboardDataService(type: LeaderboardTypeEnum) {
-    let dateToFindFrom;
-
+  getDateToFindFrom(type: LeaderboardTypeEnum): { start: string; end: string } {
     switch (type) {
       case LeaderboardTypeEnum.MONTHLY:
-        dateToFindFrom = getLastMonthRange();
-        break;
+        return getLastMonthRange();
       case LeaderboardTypeEnum.QUARTERLY:
-        dateToFindFrom = getLastQuarterRange();
-        break;
+        return getLastQuarterRange();
       default:
-        dateToFindFrom = getLastWeekRange();
+        return getLastWeekRange();
     }
-    //get all user with
+  }
+
+  async getLeaderboardDataService(type: LeaderboardTypeEnum) {
+    const dateToFindFrom = this.getDateToFindFrom(type);
+
+    //get all user with completed lessons
     const allUsers = await this.getAllUserProgressData(dateToFindFrom);
 
     const completedLessonsData =
@@ -265,6 +266,8 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
 
         const lessonIdsIndex = entry.lessonIds.map((item) => item[0]);
 
+        const dateToFindFrom = this.getDateToFindFrom(type);
+
         const completedLessons = await this.repository
           .createQueryBuilder('userLessonProgress')
           .withDeleted()
@@ -274,7 +277,13 @@ export class LessonProgressService extends BasicCrudService<UserLessonProgressEn
           .andWhere('userLessonProgress.lesson_id IN (:...lessonIds)', {
             lessonIds: lessonIdsIndex,
           })
-          .getRawMany();
+          .andWhere('userLessonProgress.completed_date >= :start', {
+            start: dateToFindFrom.start,
+          })
+          .andWhere('userLessonProgress.completed_date <= :end', {
+            end: dateToFindFrom.end,
+          })
+          .getMany();
 
         const totalOpeningTime = completedLessons
           .map((completedLesson) => {
