@@ -46,10 +46,7 @@ const profileSchema = z.object({
       onlyAlphabeticValidation,
       'Last name should only contain alphabetic characters',
     ),
-  profile_image: z
-    .union([z.instanceof(File), z.string()])
-    .optional()
-    .default(''),
+  profile_image: z.union([z.instanceof(File), z.string()]).optional(),
   email: z.string().email('Invalid email address').optional(),
 });
 

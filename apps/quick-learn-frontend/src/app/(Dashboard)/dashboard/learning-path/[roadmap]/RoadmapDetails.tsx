@@ -24,7 +24,7 @@ import {
   calculateRoadmapProgress,
 } from '@src/utils/helpers';
 import { selectDashboardData } from '@src/store/features/dashboardSlice';
-import { motion } from 'framer-motion';
+import { easeOut, motion } from 'framer-motion';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -54,7 +54,7 @@ const headerVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: 'easeOut',
+      ease: easeOut,
     },
   },
 };
