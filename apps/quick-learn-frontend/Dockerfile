@@ -23,6 +23,24 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Define build arguments for environment variables
+ARG NEXT_PUBLIC_BASE_API_URL
+ARG NEXT_PUBLIC_API_VERSION=v1
+ARG BACKEND_BASE_API_URL
+ARG BUCKET_URL
+ARG ENV=prod
+ARG NODE_ENV=production
+
+# Create .env file with the build arguments
+RUN echo "# Auto-generated .env file for build" > .env && \
+    echo "ENV=${ENV}" >> .env && \
+    echo "NODE_ENV=${NODE_ENV}" >> .env && \
+    echo "NEXT_PUBLIC_BASE_API_URL=${NEXT_PUBLIC_BASE_API_URL}" >> .env && \
+    echo "NEXT_PUBLIC_API_VERSION=${NEXT_PUBLIC_API_VERSION}" >> .env && \
+    echo "BACKEND_BASE_API_URL=${BACKEND_BASE_API_URL}" >> .env && \
+    echo "BUCKET_URL=${BUCKET_URL}" >> .env && \
+    echo "NEXT_TELEMETRY_DISABLED=1" >> .env
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Disable telemetry during the build.
