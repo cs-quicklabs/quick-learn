@@ -1,0 +1,133 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend-runner
+      args:
+        # Backend Environment Variables
+        ENV: prod
+        NODE_ENV: production
+        APP_PORT: 3001
+        FRONTEND_DOMAIN: ${FRONTEND_DOMAIN:-http://localhost:3000}
+        BACKEND_DOMAIN: ${BACKEND_DOMAIN:-http://localhost:3001}
+        API_PREFIX: ${API_PREFIX:-api}
+        APP_NAME: ${APP_NAME:-Quick Learn}
+
+        # Database Configuration
+        DATABASE_HOST: ${DATABASE_HOST:-postgres}
+        DATABASE_PORT: ${DATABASE_PORT:-5432}
+        DATABASE_NAME: ${DATABASE_NAME:-quicklearn}
+        DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+        DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
+        DATABASE_TYPE: ${DATABASE_TYPE:-postgres}
+        DATABASE_SYNCHRONIZE: ${DATABASE_SYNCHRONIZE:-false}
+        DATABASE_LOG: ${DATABASE_LOG:-false}
+        DATABASE_MAX_CONNECTIONS: ${DATABASE_MAX_CONNECTIONS:-100}
+        DATABASE_SSL_ENABLED: ${DATABASE_SSL_ENABLED:-false}
+        DATABASE_REJECT_UNAUTHORIZED: ${DATABASE_REJECT_UNAUTHORIZED:-false}
+
+        # JWT Configuration
+        JWT_SECRET_KEY: ${JWT_SECRET_KEY:-your-secret-key}
+        JWT_REFRESH_SECRET_KEY: ${JWT_REFRESH_SECRET_KEY:-your-refresh-secret-key}
+        JWT_EXPIRY_TIME: ${JWT_EXPIRY_TIME:-1h}
+        JWT_REFRESH_EXPIRY_TIME: ${JWT_REFRESH_EXPIRY_TIME:-1d}
+        JWT_REFRESH_REMEMBER_ME_EXPIRY_TIME: ${JWT_REFRESH_REMEMBER_ME_EXPIRY_TIME:-30d}
+
+        # AWS Configuration
+        ACCESS_KEY_ID: ${ACCESS_KEY_ID}
+        SECRET_ACCESS_KEY: ${SECRET_ACCESS_KEY}
+        AWS_DEFAULT_S3_BUCKET: ${AWS_DEFAULT_S3_BUCKET}
+        AWS_S3_REGION: ${AWS_S3_REGION:-us-east-1}
+        AWS_Endpoint: ${AWS_Endpoint:-https://s3.amazonaws.com}
+
+        # Email Configuration
+        SMTP_HOST: ${SMTP_HOST}
+        SMTP_PORT: ${SMTP_PORT:-587}
+        SMTP_EMAIL: ${SMTP_EMAIL}
+        SMTP_USER: ${SMTP_USER}
+        SMTP_PASS: ${SMTP_PASS}
+
+        # New Relic Configuration
+        NEW_RELIC_APP_NAME: ${NEW_RELIC_APP_NAME:-Quick Learn}
+        NEW_RELIC_LICENSE_KEY: ${NEW_RELIC_LICENSE_KEY}
+
+    ports:
+      - "3001:3001"
+    networks:
+      - quicklearn-network
+    depends_on:
+      - postgres
+    environment:
+      - NODE_ENV=production
+      - ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend-runner
+      args:
+        # Frontend Environment Variables
+        ENV: prod
+        NODE_ENV: production
+        NEXT_PUBLIC_BASE_API_URL: ${NEXT_PUBLIC_BASE_API_URL:-http://localhost:3001/api}
+        NEXT_PUBLIC_API_VERSION: ${NEXT_PUBLIC_API_VERSION:-v1}
+        BACKEND_BASE_API_URL: ${BACKEND_BASE_API_URL:-http://backend:3001/api}
+        BUCKET_URL: ${BUCKET_URL}
+
+    ports:
+      - "3000:3000"
+    networks:
+      - quicklearn-network
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-quicklearn}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-password}
+    ports:
+      - "5432:5432"
+    networks:
+      - quicklearn-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-postgres}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+networks:
+  quicklearn-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

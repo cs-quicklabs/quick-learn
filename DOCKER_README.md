@@ -1,123 +1,167 @@
 # Quick Learn Docker Setup
 
-This guide explains how to run the Quick Learn application using Docker containers.
+This directory contains a comprehensive Docker setup for the Quick Learn application, which includes both backend (NestJS) and frontend (Next.js) applications.
 
-## Prerequisites
+## 📁 Files Overview
 
-- Docker Engine 20.10+
-- Docker Compose 2.0+
-- At least 4GB of available RAM
-- Git (for cloning the repository)
+- **`Dockerfile`** - Multi-stage build configuration for both applications
+- **`docker-compose.yml`** - Orchestration file to run all services together
+- **`environment.example`** - Template for environment variables
 
-## Project Structure
+## 🚀 Quick Start
 
-```
-quick-learn/
-├── Dockerfile                          # Main application Dockerfile
-├── docker-compose.yml                  # Development compose file
-├── docker-compose.prod.yml             # Production compose file
-├── apps/
-│   ├── quick-learn-backend/
-│   │   └── Dockerfile                  # Backend-specific Dockerfile
-│   └── quick-learn-frontend/
-│       └── Dockerfile                  # Frontend-specific Dockerfile
-├── env.example                         # Environment variables template
-├── docker-scripts.sh                   # Docker management utility script
-└── .dockerignore                       # Docker ignore file
-```
+### 1. Environment Setup
 
-## Quick Start
-
-### 1. Clone and Setup
+First, create your environment configuration:
 
 ```bash
-git clone <repository-url>
-cd quick-learn
+# Copy the environment template
+cp environment.example .env
+
+# Edit the .env file with your actual values
+nano .env  # or use your preferred editor
 ```
 
-### 2. Environment Configuration
+**Important**: Update the following variables in your `.env` file:
+- Database credentials
+- JWT secret keys (generate secure ones for production)
+- AWS credentials for S3 storage
+- SMTP settings for email functionality
 
-Copy the environment template and configure it:
+### 2. Run with Docker Compose (Recommended)
 
 ```bash
-cp env.example .env
+# Start all services (backend, frontend, database)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
 ```
 
-Edit `.env` and update the following critical values:
+This will start:
+- **Backend**: http://localhost:3001
+- **Frontend**: http://localhost:3000  
+- **PostgreSQL Database**: localhost:5432
 
-```env
-# Required: Database Configuration (External Database)
-DATABASE_HOST=your-database-host
-DATABASE_PORT=5432
-DATABASE_NAME=your-database-name
-DATABASE_USERNAME=your-database-username
-DATABASE_PASSWORD=your-database-password
+### 3. Build Individual Services
 
-# Required: JWT secrets (generate secure random strings)
-JWT_SECRET_KEY=your-super-secret-jwt-key-here-change-this-in-production
-JWT_REFRESH_SECRET_KEY=your-super-secret-jwt-refresh-key-here-change-this-in-production
+You can also build and run individual services:
 
-# Required: AWS S3 Configuration
-ACCESS_KEY_ID=your-aws-access-key-id
-SECRET_ACCESS_KEY=your-aws-secret-access-key
-AWS_DEFAULT_S3_BUCKET=your-s3-bucket-name
-AWS_S3_REGION=us-east-1
-BUCKET_URL=https://your-bucket-url.s3.amazonaws.com
-
-# Required: SMTP Configuration
-SMTP_HOST=smtp.gmail.com
-SMTP_EMAIL=your-email@gmail.com
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
-```
-
-### 3. Run the Application
-
-**Development Mode:**
+#### Backend Only
 ```bash
-docker-compose up --build
+# Build backend image
+docker build --target backend-runner -t quicklearn-backend .
+
+# Run backend container
+docker run -p 3001:3001 \
+  --env-file .env \
+  quicklearn-backend
 ```
 
-**Production Mode:**
+#### Frontend Only
 ```bash
-docker-compose -f docker-compose.prod.yml up --build -d
+# Build frontend image
+docker build --target frontend-runner -t quicklearn-frontend .
+
+# Run frontend container
+docker run -p 3000:3000 \
+  --env-file .env \
+  quicklearn-frontend
 ```
 
-### 4. Access the Application
+## 🏗 Architecture Overview
 
-- **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:3001/api
-- **Database:** Your external database server (configured in .env)
+### Multi-Stage Build Process
 
-## Docker Images
+The Dockerfile uses a multi-stage build approach:
 
-### Backend (NestJS)
-- **Port:** 3001
-- **Database:** External PostgreSQL (configured via .env)
-- **Features:** JWT authentication, TypeORM, AWS S3, SMTP
+1. **Base Stage** (`base`) - Base Node.js Alpine image
+2. **Dependencies Stage** (`deps`) - Installs all dependencies
+3. **Production Dependencies Stage** (`production-deps`) - Production-only dependencies
+4. **Builder Stage** (`builder`) - Builds both applications
+5. **Backend Runner** (`backend-runner`) - Final backend production image
+6. **Frontend Runner** (`frontend-runner`) - Final frontend production image
 
-### Frontend (Next.js)
-- **Port:** 3000
-- **Features:** React, Tailwind CSS, Redux
+### Key Features
+
+- ✅ **Optimized for Production**: Minimal image sizes with multi-stage builds
+- ✅ **Security**: Non-root users, proper file permissions
+- ✅ **Health Checks**: Built-in health monitoring for both services
+- ✅ **Environment Variables**: Comprehensive configuration management
+- ✅ **NX Monorepo Support**: Properly handles NX workspace structure
+
+## 🔧 Configuration
+
+### Environment Variables
+
+The setup supports comprehensive environment configuration:
+
+#### Backend Variables
+- Database configuration (PostgreSQL)
+- JWT authentication settings
+- AWS S3 for file storage
+- SMTP for email functionality
+- New Relic monitoring (optional)
+
+#### Frontend Variables
+- API endpoint configurations
+- Next.js specific settings
+- Bucket URLs for static assets
 
 ### Database
-- **External:** Uses your existing database server
-- **Configuration:** Set via environment variables in .env file
 
-## Development Workflow
+The docker-compose setup includes a PostgreSQL database with:
+- Persistent data storage via Docker volumes
+- Health checks
+- Configurable credentials via environment variables
 
-### Building Individual Services
+## 🐛 Troubleshooting
 
+### Common Issues
+
+1. **Port Conflicts**
+   ```bash
+   # Check if ports are already in use
+   lsof -i :3000  # Frontend
+   lsof -i :3001  # Backend
+   lsof -i :5432  # Database
+   ```
+
+2. **Environment Variables Not Loading**
+   - Ensure `.env` file exists in the root directory
+   - Check file permissions
+   - Verify no syntax errors in the .env file
+
+3. **Database Connection Issues**
+   - Ensure PostgreSQL service is running: `docker-compose ps`
+   - Check database credentials in `.env` file
+   - Wait for database to be ready (health checks handle this automatically)
+
+4. **Build Failures**
+   ```bash
+   # Clean Docker cache and rebuild
+   docker system prune -a
+   docker-compose build --no-cache
+   ```
+
+### Health Checks
+
+Both services include health checks:
+- **Backend**: `GET /api/health`
+- **Frontend**: `GET /` (homepage)
+- **Database**: PostgreSQL ready check
+
+View health status:
 ```bash
-# Backend only
-docker build -f apps/quick-learn-backend/Dockerfile -t quick-learn-backend .
-
-# Frontend only
-docker build -f apps/quick-learn-frontend/Dockerfile -t quick-learn-frontend .
+docker-compose ps
 ```
 
-### Viewing Logs
+### Logs
 
+Access logs for debugging:
 ```bash
 # All services
 docker-compose logs -f
@@ -128,173 +172,68 @@ docker-compose logs -f frontend
 docker-compose logs -f postgres
 ```
 
-### Database Management
+## 🚢 Deployment
 
-```bash
-# Run migrations (connects to your external database)
-docker-compose exec backend npx nx run quick-learn-backend:migration:run
+### Production Considerations
 
-# Seed database (connects to your external database)
-docker-compose exec backend npx nx run quick-learn-backend:seed:run
+1. **Security**
+   - Change default database passwords
+   - Generate secure JWT secret keys
+   - Use SSL certificates
+   - Enable database SSL in production
 
-# Note: Database backup/restore should be done using your database server's tools
+2. **Performance**
+   - Configure database connection pooling
+   - Set up proper caching strategies
+   - Use a reverse proxy (nginx) for production
+
+3. **Monitoring**
+   - Configure New Relic for application monitoring
+   - Set up log aggregation
+   - Monitor health check endpoints
+
+### Docker Compose Production Override
+
+Create a `docker-compose.prod.yml` for production-specific configurations:
+
+```yaml
+version: '3.8'
+services:
+  backend:
+    restart: always
+    build:
+      args:
+        DATABASE_SSL_ENABLED: "true"
+  
+  frontend:
+    restart: always
+  
+  postgres:
+    restart: always
 ```
 
-## Production Deployment
-
-### 1. Environment Setup
-
+Run with production overrides:
 ```bash
-# Create production environment file
-cp env.example .env
-
-# Edit .env with production values
-nano .env
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
 
-### 2. SSL Configuration (Optional)
+## 📊 Monitoring
 
-Place SSL certificates in `./ssl/` directory:
-- `./ssl/cert.pem`
-- `./ssl/key.pem`
+The setup includes built-in monitoring capabilities:
 
-### 3. Deploy with Docker Compose
+- **Health Checks**: Automatic service health monitoring
+- **New Relic**: Application performance monitoring (when configured)
+- **Database Monitoring**: PostgreSQL health checks
 
-```bash
-# Production deployment
-docker-compose -f docker-compose.prod.yml up --build -d
+Access health endpoints directly:
+- Backend Health: http://localhost:3001/api/health
+- Frontend Health: http://localhost:3000
 
-# Check status
-docker-compose -f docker-compose.prod.yml ps
+## 🤝 Contributing
 
-# View logs
-docker-compose -f docker-compose.prod.yml logs -f
-```
+When modifying the Docker setup:
 
-### 4. External Services
-
-This setup connects to your external services:
-- **Database:** Configure your existing PostgreSQL server in .env
-- **File Storage:** Uses AWS S3 for file uploads
-- **Email:** Uses SMTP for email notifications
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Port Conflicts**
-   ```bash
-   # Check port usage
-   lsof -i :3000
-   lsof -i :3001
-   lsof -i :5432
-   
-   # Modify ports in docker-compose.yml if needed
-   ```
-
-2. **Database Connection Issues**
-   ```bash
-   # Check backend logs for database connection errors
-   docker-compose logs backend
-   
-   # Verify your external database is accessible
-   # Test connection from host machine to your database server
-   ```
-
-3. **Build Failures**
-   ```bash
-   # Clean build cache
-   docker system prune -a
-   
-   # Rebuild without cache
-   docker-compose build --no-cache
-   ```
-
-4. **Environment Variables**
-   ```bash
-   # Check environment variables in containers
-   docker-compose exec backend env
-   docker-compose exec frontend env
-   ```
-
-### Performance Optimization
-
-1. **Resource Limits** (add to docker-compose.yml):
-   ```yaml
-   services:
-     backend:
-       deploy:
-         resources:
-           limits:
-             cpus: '1.0'
-             memory: 1G
-   ```
-
-2. **Volume Optimization**:
-   ```bash
-   # Use named volumes for better performance
-   docker volume ls
-   docker volume inspect quick-learn_postgres_data
-   ```
-
-## Security Considerations
-
-1. **Environment Variables:**
-   - Never commit `.env` files
-   - Use strong, unique JWT secrets
-   - Rotate secrets regularly
-
-2. **Network Security:**
-   - Use Docker networks for service isolation
-   - Implement proper firewall rules
-   - Use HTTPS in production
-
-3. **Database Security:**
-   - Use strong database passwords
-   - Enable SSL for database connections in production
-   - Regular database backups
-
-## Backup and Recovery
-
-### Database Backup
-
-Since you're using an external database, use your database server's backup tools:
-
-```bash
-# Example for PostgreSQL (run on your database server)
-pg_dump -h your-db-host -U your-username your-database > backup.sql
-
-# Restore (run on your database server)
-psql -h your-db-host -U your-username your-database < backup.sql
-```
-
-### Application Data
-
-```bash
-# Backup email templates and other application files
-tar -czf app-backup.tar.gz apps/quick-learn-backend/src/email-templates/
-```
-
-## Health Checks
-
-All containerized services include health checks:
-- **Backend:** `curl -f http://localhost:3001/api/health`
-- **Frontend:** `curl -f http://localhost:3000`
-- **Database:** Monitor your external database server separately
-
-Check health status:
-```bash
-docker-compose ps
-```
-
-## Support
-
-For issues related to:
-- Docker setup: Check this README
-- Application bugs: Check the main project README
-- Database issues: Check PostgreSQL logs
-- Build failures: Check build logs and .dockerignore
-
-## License
-
-This Docker setup is part of the Quick Learn project and follows the same license terms. 
+1. Test changes locally with `docker-compose up --build`
+2. Verify health checks are working
+3. Update this README if adding new configuration options
+4. Test with both development and production environment variables 
