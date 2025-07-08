@@ -4,7 +4,6 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiTags('Health Check')
 // using the global prefix from main file (api) and putting versioning here as v1 /api/v1/health-check
 @Controller({
-  version: '1',
   path: 'health-check',
 })
 export class HealthCheckController {

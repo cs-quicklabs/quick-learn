@@ -1,48 +1,66 @@
-# Build stage
-FROM node:22.14-alpine AS builder
+# Multi-stage build for Quick Learn application
+FROM node:22.14-alpine AS base
 
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies first (for better layer caching)
-COPY package.json package-lock.json* ./
-RUN npm ci
+# Copy package files
+COPY package*.json ./
+COPY nx.json ./
+COPY tsconfig*.json ./
 
-# Reset NX cache before building
-RUN npx nx reset
+# Install dependencies
+RUN npm ci --only=production && npm cache clean --force
 
-# Copy the rest of the codebase
+# Build stage
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build the applications
-RUN npx nx reset && npx nx build quick-learn-backend --prod --skip-nx-cache
-RUN npx nx reset && npx nx build quick-learn-frontend --prod --skip-nx-cache
+RUN npx nx build quick-learn-backend --prod
+RUN npx nx build quick-learn-frontend --prod
 
-# Production stage
-FROM node:22.14-alpine
-
+# Production stage for backend
+FROM base AS backend-runner
 WORKDIR /app
 
-# Copy package.json files for runtime dependencies
-COPY --from=builder /app/package.json /app/package-lock.json* ./
-RUN npm ci
+ENV NODE_ENV=production
+ENV ENV=production
 
-# Copy Nest.js application from dist
-COPY --from=builder /app/dist/apps/quick-learn-backend ./dist/apps/quick-learn-backend
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nestjs
 
-# Copy Next.js application files
-COPY --from=builder /app/apps/quick-learn-frontend/.next ./apps/quick-learn-frontend/.next
-COPY --from=builder /app/apps/quick-learn-frontend/public ./apps/quick-learn-frontend/public
+# Copy backend build and dependencies
+COPY --from=builder /app/dist/apps/quick-learn-backend ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
 
-# Copy nx.json for potential runtime usage
-COPY --from=builder /app/nx.json ./
+USER nestjs
 
-# Expose ports for both Next.js and Nest.js applications
-EXPOSE 10000 4000
+EXPOSE 3001
 
-# Create a startup script in the app directory
+CMD ["node", "main.js"]
+
+# Production stage for frontend
+FROM base AS frontend-runner
 WORKDIR /app
-RUN printf '#!/bin/sh\ncd /app\nnode dist/apps/quick-learn-backend/main.js & \ncd /app/apps/quick-learn-frontend && \nnode /app/node_modules/.bin/next start -p 3000\n' > start.sh && \
-    chmod +x start.sh
 
-# Start both applications
-CMD ["/app/start.sh"]
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy frontend build and dependencies
+COPY --from=builder /app/dist/apps/quick-learn-frontend/standalone ./
+COPY --from=builder /app/dist/apps/quick-learn-frontend/static ./dist/apps/quick-learn-frontend/static
+
+USER nextjs
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]

@@ -1,4 +1,79 @@
+# Node.js
 node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
 dist
-tmp
+build
+.next
+.nx
+
+# Environment files
+.env
+.env.*
+!.env.example
+!env.example
+
+# IDE
 .vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Testing
+coverage
+*.test.js
+*.spec.js
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Cypress
+cypress/videos
+cypress/screenshots
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+nginx.conf
+
+# Documentation
+README.md
+docs/
+*.md
+
+# Temporary files
+tmp/
+temp/
+
+# Cache
+.cache
