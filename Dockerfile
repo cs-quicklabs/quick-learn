@@ -191,9 +191,9 @@ COPY --from=builder /app/apps/quick-learn-frontend/public ./public
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 # Copy standalone build (this recreates the full monorepo structure at /app/)
-COPY --from=builder --chown=nextjs:nodejs /app/dist/apps/quick-learn-frontend/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/quick-learn-frontend/.next/standalone ./
 # Copy static files where Next.js standalone expects them
-COPY --from=builder --chown=nextjs:nodejs /app/dist/apps/quick-learn-frontend/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/quick-learn-frontend/.next/static ./.next/static
 
 USER nextjs
 
