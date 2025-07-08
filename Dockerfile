@@ -1,7 +1,7 @@
 # Multi-stage build for Quick Learn application
 FROM node:22.14-alpine AS base
 
-# Install dependencies only when needed
+# Install all dependencies (for building)
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -11,7 +11,18 @@ COPY package*.json ./
 COPY nx.json ./
 COPY tsconfig*.json ./
 
-# Install dependencies
+# Install all dependencies (including dev dependencies for build)
+RUN npm ci && npm cache clean --force
+
+# Install production dependencies only
+FROM base AS production-deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install only production dependencies
 RUN npm ci --only=production && npm cache clean --force
 
 # Build stage
@@ -36,8 +47,8 @@ RUN adduser --system --uid 1001 nestjs
 
 # Copy backend build and dependencies
 COPY --from=builder /app/dist/apps/quick-learn-backend ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+COPY --from=production-deps /app/node_modules ./node_modules
+COPY --from=production-deps /app/package*.json ./
 
 USER nestjs
 
