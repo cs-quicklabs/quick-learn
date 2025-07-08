@@ -41,6 +41,9 @@ RUN echo "# Auto-generated .env file for build" > .env && \
     echo "BUCKET_URL=${BUCKET_URL}" >> .env && \
     echo "NEXT_TELEMETRY_DISABLED=1" >> .env
 
+# Copy .env file from frontend
+COPY --from=builder /app/apps/quick-learn-frontend/.env ./.env
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Disable telemetry during the build.
