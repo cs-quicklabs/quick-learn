@@ -1,0 +1,35 @@
+# docker-compose.prod.yml
+
+services:
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: apps/quick-learn-backend/Dockerfile
+    container_name: quick-learn-backend-prod
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT:-3001}:3001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/quick-learn-frontend/Dockerfile
+    container_name: quick-learn-frontend-prod
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+

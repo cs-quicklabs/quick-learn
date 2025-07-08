@@ -12,6 +12,8 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  // Enable standalone output for Docker optimization
+  output: 'standalone',
   images: {
     unoptimized: true,
     remotePatterns: [
