@@ -129,7 +129,7 @@ RUN echo "# Auto-generated .env file for frontend build" > .env.frontend && \
 # Disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copy appropriate .env files
+# Copy appropriate .env files and build backend
 RUN cp .env.backend .env
 
 # Build the backend using NX
@@ -137,7 +137,12 @@ RUN npx nx build quick-learn-backend --prod
 
 # Copy frontend .env and build
 RUN cp .env.frontend .env
-RUN npx nx build quick-learn-frontend --prod
+
+# Copy frontend-specific .env if it exists
+RUN if [ -f apps/quick-learn-frontend/.env ]; then cp apps/quick-learn-frontend/.env .env.frontend.local; fi
+
+# Build the frontend using NX
+RUN npx nx build quick-learn-frontend
 
 # Production stage for backend
 FROM base AS backend-runner
@@ -216,3 +221,79 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
 CMD ["node", "server.js"]
+
+# Combined stage for both backend and frontend (for single service deployment)
+FROM base AS combined-runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Add curl for health checks and PM2 for process management
+RUN apk add --no-cache curl
+RUN npm install -g pm2
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 appuser
+
+# Copy built backend application
+COPY --from=builder --chown=appuser:nodejs /app/dist/apps/quick-learn-backend ./backend
+
+# Copy production dependencies
+COPY --from=production-deps --chown=appuser:nodejs /app/node_modules ./node_modules
+
+# Copy package.json for reference
+COPY --from=production-deps --chown=appuser:nodejs /app/package*.json ./
+
+# Copy public folder from frontend
+COPY --from=builder --chown=appuser:nodejs /app/apps/quick-learn-frontend/public ./frontend/public
+
+# Copy standalone build for frontend
+COPY --from=builder --chown=appuser:nodejs /app/apps/quick-learn-frontend/.next/standalone ./frontend
+# Copy static files where Next.js standalone expects them
+COPY --from=builder --chown=appuser:nodejs /app/apps/quick-learn-frontend/.next/static ./frontend/.next/static
+
+# Create PM2 ecosystem file
+RUN echo '{ \
+  "apps": [ \
+    { \
+      "name": "backend", \
+      "script": "./backend/main.js", \
+      "cwd": "/app", \
+      "env": { \
+        "NODE_ENV": "production", \
+        "ENV": "production", \
+        "PORT": "3001" \
+      } \
+    }, \
+    { \
+      "name": "frontend", \
+      "script": "./frontend/apps/quick-learn-frontend/server.js", \
+      "cwd": "/app/frontend", \
+      "env": { \
+        "NODE_ENV": "production", \
+        "NEXT_TELEMETRY_DISABLED": "1", \
+        "PORT": "3000", \
+        "HOSTNAME": "0.0.0.0" \
+      } \
+    } \
+  ] \
+}' > ecosystem.config.json
+
+# Create a simple health check script
+RUN echo '#!/bin/sh\n\
+curl -f http://localhost:3001/api/health && curl -f http://localhost:3000\n\
+' > /app/health-check.sh && chmod +x /app/health-check.sh
+
+USER appuser
+
+# Expose both ports
+EXPOSE 3000 3001
+
+# Health check for both services
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD /app/health-check.sh
+
+# Start both services with PM2
+CMD ["pm2-runtime", "ecosystem.config.json"]
