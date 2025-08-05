@@ -34,7 +34,7 @@
     "cypress-dotenv": "^3.0.1",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
-    "dotenv": "^16.5.0",
+    "dotenv": "^17.2.1",
     "framer-motion": "^12.9.7",
     "handlebars": "^4.7.8",
     "helmet": "^8.1.0",
