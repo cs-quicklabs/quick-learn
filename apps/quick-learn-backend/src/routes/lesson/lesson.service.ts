@@ -20,6 +20,7 @@ import { FlaggedLessonService } from './flagged-lesson.service';
 import { LessonTokenService } from '@src/common/modules/lesson-token/lesson-token.service';
 import { AuthService } from '../auth/auth.service';
 import { LessonProgressService } from '../lesson-progress/lesson-progress.service';
+import { ConfigService } from '@nestjs/config';
 
 interface IDailyLessonDetails {
   lesson_detail: LessonEntity;
@@ -29,6 +30,7 @@ interface IDailyLessonDetails {
 
 @Injectable()
 export class LessonService extends PaginationService<LessonEntity> {
+  private frontendURL: string;
   constructor(
     @InjectRepository(LessonEntity)
     repo: Repository<LessonEntity>,
@@ -38,8 +40,10 @@ export class LessonService extends PaginationService<LessonEntity> {
     private readonly flaggedLessionService: FlaggedLessonService,
     private readonly courseService: CourseService,
     private readonly FileService: FileService,
+    private readonly configService: ConfigService,
   ) {
     super(repo);
+    this.frontendURL = this.configService.get<string>('app.frontendDomain');
   }
   /**
    * Get a lesson
@@ -538,6 +542,26 @@ export class LessonService extends PaginationService<LessonEntity> {
       user_lesson_read_info: userLessonReadInfo,
       user_detail: userTokenDetail.user,
     };
+  }
+
+  async getPublicLessonByUuid(uuid: string): Promise<LessonEntity> {
+    const lesson = await this.repository.findOne({
+      where: { uuid, approved: true, archived: false },
+      select: ['name', 'content'],
+    });
+
+    if (!lesson) {
+      throw new BadRequestException(en.lessonNotFound);
+    }
+
+    return lesson;
+  }
+
+  async getLessonPublicLink(id: number): Promise<string> {
+    const lesson = await this.get({ id });
+    if (!lesson) throw new BadRequestException(en.invalidLesson);
+
+    return `${this.frontendURL}/public/lesson/${lesson.uuid}`;
   }
 
   async unFlagLesson(id: number, user: UserEntity): Promise<void> {
