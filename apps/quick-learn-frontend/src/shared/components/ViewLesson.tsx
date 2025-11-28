@@ -17,7 +17,7 @@ const ReactQuill = dynamic(() => import('react-quill-new'), {
 });
 
 // Separate components for better performance
-const LessonHeader = memo(
+export const LessonHeader = memo(
   ({
     name,
     full_name,
@@ -47,7 +47,7 @@ const LessonHeader = memo(
 
 LessonHeader.displayName = 'LessonHeader';
 
-const LessonContent = memo(({ content }: { content: string }) => {
+export const LessonContent = memo(({ content }: { content: string }) => {
   // Configure modules without toolbar
   const modules = {
     toolbar: false, // This disables the toolbar

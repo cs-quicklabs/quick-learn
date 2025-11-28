@@ -28,6 +28,7 @@ export const en = {
     unknown: 'Unknown',
     on: 'on',
     deletePermanently: 'Delete Permanently',
+    share: 'Share',
 
     //dashboard
     loading: 'Loading...',
@@ -204,6 +205,7 @@ export const en = {
     goBack: 'Go back?',
     goBackDescription:
       'Are you sure you want to go back? Your changes will be lost.',
+    copiedPublicLink: 'Public link copied to clipboard!',
   },
 
   /**

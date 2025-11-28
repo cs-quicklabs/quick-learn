@@ -19,6 +19,7 @@ import {
 } from '@src/apiServices/contentRepositoryService';
 import {
   getLessonDetails,
+  getPublicLessonLink,
   updateLesson,
 } from '@src/apiServices/lessonsService';
 import { en } from '@src/constants/lang/en';
@@ -86,7 +87,7 @@ SaveButton.displayName = 'SaveButton';
 const ArchiveButton = ({ onClick }: { onClick: () => void }) => (
   <button
     type="button"
-    className="fixed bottom-4 left-4 rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
+    className="rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
     onClick={onClick}
   >
     {en.common.Archive}
@@ -94,6 +95,19 @@ const ArchiveButton = ({ onClick }: { onClick: () => void }) => (
 );
 
 ArchiveButton.displayName = 'ArchiveButton';
+
+// share button
+const ShareButton = ({ onClick }: { onClick: () => void }) => (
+  <button
+    type="button"
+    className="rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-500"
+    onClick={onClick}
+  >
+    {en.common.share}
+  </button>
+);
+
+ShareButton.displayName = 'ShareButton';
 
 // Custom hook for form logic
 const useLessonForm = () => {
@@ -137,6 +151,7 @@ function Lesson() {
   const isAdmin = [UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN].includes(
     user?.user_type_id ?? -1,
   );
+  const isEditor = [UserTypeIdEnum.EDITOR].includes(user?.user_type_id ?? -1);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isEditing, setIsEditing] = useState<boolean>(
@@ -445,6 +460,18 @@ function Lesson() {
     }
   }, [lessonId, roadmapId, courseId, router]);
 
+  const getShareableLink = async () => {
+    if (lessonId === 'add') return;
+    await getPublicLessonLink(parseInt(lessonId, 10))
+      .then((res) => {
+        navigator.clipboard.writeText(res.data.publicLink);
+        showApiMessageInToast(res);
+      })
+      .catch((err) => {
+        showApiErrorInToast(err as AxiosErrorObject);
+      });
+  };
+
   if (isSkeleton) return <LessonSkeleton isEdit />;
 
   return (
@@ -500,8 +527,15 @@ function Lesson() {
           />
         </form>
 
-        {lessonId !== 'add' && isAdmin && (
-          <ArchiveButton onClick={() => setShowArchiveModal(true)} />
+        {lessonId !== 'add' && (
+          <div className="fixed bottom-4 left-4 flex items-center space-x-4">
+            {isAdmin && (
+              <ArchiveButton onClick={() => setShowArchiveModal(true)} />
+            )}
+            {(isAdmin || isEditor) && (
+              <ShareButton onClick={getShareableLink} />
+            )}
+          </div>
         )}
 
         <ConformationModal

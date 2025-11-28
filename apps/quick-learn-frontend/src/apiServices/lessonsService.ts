@@ -228,3 +228,23 @@ export const markLessonAsUnFlagged = async (
   );
   return response.data;
 };
+
+// get public lesson link
+export const getPublicLessonLink = async (
+  lessonId: number,
+): Promise<AxiosSuccessResponse<{ publicLink: string }>> => {
+  const response = await axiosInstance.get<
+    AxiosSuccessResponse<{ publicLink: string }>
+  >(`${ContentRepositoryApiEnum.PUBLIC_LESSON_LINK}/${lessonId}`);
+  return response.data;
+};
+
+// get public lesson details
+export const getPublicLessonDetails = async (
+  uuid: string,
+): Promise<AxiosSuccessResponse<TLesson>> => {
+  const response = await axiosInstance.get<AxiosSuccessResponse<TLesson>>(
+    `${ContentRepositoryApiEnum.PUBLIC_LESSON}/${uuid}`,
+  );
+  return response.data;
+};

@@ -153,6 +153,24 @@ export class LessonController {
     return new SuccessResponse(en.getLesson, lesson);
   }
 
+  @Get('public-link/:id')
+  @ApiOperation({ summary: 'Get public link for a lesson.' })
+  @UseGuards(RolesGuard)
+  @Roles(UserTypeIdEnum.SUPERADMIN, UserTypeIdEnum.ADMIN, UserTypeIdEnum.EDITOR)
+  /**
+   * Retrieves a public link for a specific lesson by its id.
+   * @param id The id of the lesson that needs to be retrieved.
+   * @throws BadRequestException if the lesson doesn't exist
+   * @returns A promise that resolves to a success response containing the public link.
+   */
+  async getPublicLink(@Param('id') id: string): Promise<SuccessResponse> {
+    if (!id || isNaN(+id)) {
+      throw new BadRequestException(en.invalidLesson);
+    }
+    const publicLink = await this.service.getLessonPublicLink(+id);
+    return new SuccessResponse(en.getPublicLink, { publicLink });
+  }
+
   @ApiOperation({ summary: 'Update an existing lesson.' })
   @Patch('/:id')
   @UseGuards(RolesGuard)
@@ -282,5 +300,15 @@ export class LessonController {
   async flagLesson(@Param('token') token: string): Promise<SuccessResponse> {
     await this.service.flagLesson(token);
     return new SuccessResponse(en.succcessLessonFlagged);
+  }
+
+  @Get('public/:uuid')
+  @Public()
+  @ApiOperation({ summary: 'Get lesson by public uuid' })
+  async getLessonByPublicUuid(
+    @Param('uuid') uuid: string,
+  ): Promise<SuccessResponse> {
+    const lesson = await this.service.getPublicLessonByUuid(uuid);
+    return new SuccessResponse(en.getLesson, lesson);
   }
 }
