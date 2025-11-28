@@ -45,6 +45,8 @@ export enum ContentRepositoryApiEnum {
   LESSON_FLAGGED = '/lesson/flag',
   GET_FLAGGED_LESSON = '/lesson/flagged',
   ORPHAN_COURSES = '/course/orphan',
+  PUBLIC_LESSON = '/lesson/public',
+  PUBLIC_LESSON_LINK = '/lesson/public-link',
 }
 
 export enum ArchivedApiEnum {

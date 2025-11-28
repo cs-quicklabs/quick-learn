@@ -81,6 +81,7 @@ export const en = {
   triggeredLeaderboardEmail: 'Successfully triggered leaderboard email',
   succcessLessonFlagged: 'Lesson flagged successfully',
   leaderboardDeleteError: 'Failed to delete leaderboard data',
+  getPublicLink: 'Successfully got lesson public link.',
 
   // Skill related messages
   successSkillDelete: 'Primary skill is deleted.',

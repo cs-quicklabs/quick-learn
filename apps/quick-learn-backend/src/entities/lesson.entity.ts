@@ -1,11 +1,14 @@
 import {
   Column,
   Entity,
+  Generated,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import { CourseEntity } from './course.entity';
 import { UserEntity } from './user.entity';
 import { BaseEntity } from './BaseEntity';
@@ -78,4 +81,10 @@ export class LessonEntity extends BaseEntity {
   @ManyToOne(() => TeamEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
+
+  @Generated('uuid')
+  @Index('LESSON_UUID_IDX', { unique: true })
+  @Column({ type: 'varchar', unique: true, nullable: false })
+  @Exclude({ toPlainOnly: true })
+  uuid: string;
 }
